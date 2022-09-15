@@ -1,0 +1,69 @@
+[15-Jul-2022 16:41:35 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[15-Jul-2022 17:13:42 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[15-Jul-2022 17:13:56 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[15-Jul-2022 17:14:14 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[15-Jul-2022 18:00:41 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[16-Jul-2022 10:05:46 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrasharm...', 'testing', 37)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[16-Jul-2022 10:05:55 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrasharm...', 'testing', 38)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[20-Jul-2022 12:09:02 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrasharm...', 'Developer First...', 39)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[20-Jul-2022 12:27:49 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrasharm...', 'third survey', 41)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[20-Jul-2022 12:45:50 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrasharm...', 'forth survey', 42)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[20-Jul-2022 15:47:33 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 130 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:597
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(130): send_survey_email('shailendrashhar...', 'testing', 43)
+#1 /home/dgfm/demo.dgfm.app/index.php(199): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 597
+[20-Jul-2022 18:04:43 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:05:01 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:05:55 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:05:58 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:06:12 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:06:33 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:06:45 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:06:47 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:07:04 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:07:08 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:08:37 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:08:40 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:08:41 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:10:16 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:10:18 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:10:35 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:11:52 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:11:53 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:11:53 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:11:54 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:12:33 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:12:40 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[20-Jul-2022 18:25:15 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[21-Jul-2022 16:18:34 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[21-Jul-2022 16:19:01 Asia/calcutta] PHP Fatal error:  Cannot redeclare date_formate_cdate() (previously declared in /home/dgfm/demo.dgfm.app/function/function.php:1193) in /home/dgfm/demo.dgfm.app/function/function.php on line 1193
+[21-Jul-2022 10:51:25 UTC] PHP Notice:  Undefined index: "post_values" in /home/dgfm/demo.dgfm.app/export-report-table.php on line 4
+[21-Jul-2022 10:51:27 UTC] PHP Notice:  Undefined index: "post_values" in /home/dgfm/demo.dgfm.app/export-report-table.php on line 4
+[21-Jul-2022 10:51:45 UTC] PHP Notice:  Undefined index: "post_values" in /home/dgfm/demo.dgfm.app/export-report-table.php on line 4

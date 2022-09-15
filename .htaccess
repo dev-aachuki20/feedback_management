@@ -1,0 +1,6 @@
+Header set X-Robots-Tag "noindex, nofollow"
+
+RewriteEngine On
+
+RewriteCond %{HTTP_USER_AGENT} (googlebot|bingbot|yahoo|yandex) [NC]
+RewriteRule .* - [R=403,L]
