@@ -41,10 +41,12 @@ if(isset($_POST['assign'])){
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$user_name,
             'created_date'=>date("Y-m-d H:i:s")
         );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action,1);
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
     }
     // send mail to user assigned task
     send_email_to_assign_user($user_name,$user_email);
@@ -71,11 +73,21 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
             "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
+            "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
             "assign_by_user_type" => $assign_by_user_type,
             "cdate"               => date("Y-m-d H:i:s")
         );
         $insert_value =  dbRowInsert("assign_task",$data);
+        $data_contact_action = array(
+            "user_id"=> $tasks,
+            "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
+            "comment"=> 'response assigned to '.$_SESSION['user_name'],
+            'created_date'=>date("Y-m-d H:i:s")
+        );
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
     }
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";

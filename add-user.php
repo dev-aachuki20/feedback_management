@@ -4,6 +4,7 @@
   }
 </style>
 <?php
+
   $coloumn_name = '';
 	if(!empty($_GET['id'])){
     if($_GET['t']=='a'){
@@ -27,6 +28,7 @@
 $client_id = '';
 $admin_id  = '';
 $user_type = '';
+
 	if(!empty($_POST['update'])){
       $file_name=$_FILES['photo']['name'];
       $file_tempname = $_FILES['photo']['tmp_name'];
@@ -39,7 +41,7 @@ $user_type = '';
           unlink("upload_image/".$row_get_admin_id['photo']);	
           $data = array(
               "name"      => $_POST['name'],
-              "email"     => $_POST['email'],
+              //"email"     => $_POST['email'],
               "phone"     => $_POST['phone'],
               "photo"     => $result,
               "cstatus"   => $_POST['status']
@@ -47,7 +49,7 @@ $user_type = '';
       }else{			
           $data = array(
               "name"      => $_POST['name'],
-              "email"     => $_POST['email'],		
+              //"email"     => $_POST['email'],		
               "phone"     => $_POST['phone'],
               "cstatus"   => $_POST['status'],
           );
@@ -126,7 +128,7 @@ $user_type = '';
           
               //location update
               $row_data_department='';
-              record_set("data_locations","select id,$coloumn_name from locations",);
+              record_set("data_locations","select id,$coloumn_name from locations");
               while($row_data_locations=mysqli_fetch_assoc($data_locations)){
                 $manager_ids = str_replace("|".$uid."|","",$row_data_locations[$coloumn_name]);
                 if(in_array($row_data_locations['id'], $_POST['locationids'])){
@@ -274,7 +276,7 @@ if(!empty($_POST['submit'])){
           
               //location update
               $row_data_department='';
-              record_set("data_locations","select id,$coloumn_name from locations",);
+              record_set("data_locations","select id,$coloumn_name from locations");
               while($row_data_locations=mysqli_fetch_assoc($data_locations)){
                 $manager_ids = str_replace("|".$uid."|","",$row_data_locations[$coloumn_name]);
                 if(in_array($row_data_locations['id'], $_POST['locationids'])){

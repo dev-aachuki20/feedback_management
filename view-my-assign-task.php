@@ -21,6 +21,7 @@ if(isset($_POST['assign'])){
             "assign_to_user_id"   => $assing_to_user_id,
             "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
+            "task_status"         => 2,
             "survey_id"           => $survey_id,
             "assign_by_user_id"   => $assign_by_user_id,
             "assign_by_user_type" => $assign_by_user_type,
@@ -36,6 +37,23 @@ if(isset($_POST['assign'])){
         }else {
             $insert_value =  dbRowInsert("assign_task",$data);
         }
+        $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
+
+        $user_email = $userdata['email'];
+        $user_name  = $userdata['name']; 
+
+        $data_contact_action = array(
+            "user_id"=> $tasks,
+            "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
+            "comment"=> 'response assigned to '.$user_name,
+            'created_date'=>date("Y-m-d H:i:s")
+        );
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+
+        // send mail to user assigned task
+        send_email_to_assign_user($user_name,$user_email);
     }
     $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
     $user_email = $userdata['email'];
@@ -111,8 +129,11 @@ if(isset($_POST['assign'])){
             $que= " and  answerid != -2 and answerval != 10";
         }
     }
-
-    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type");
+    $filter_status = '';
+    if(!empty($_POST['task_status'])){
+        $filter_status = ' and task_status ='.$_POST['task_status'];
+    }
+    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type".$filter_status);
 
     $arr_task_id = array();
     while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -142,127 +163,120 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
 <section class="content">
     <!-- top box container start-->
     <div class="box box-default">
-        <form action="" method="POST" id="viewReportcsv">
-            <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
-            <div class="box-header">
-                <i class="fa fa-search" aria-hidden="true"></i>
-                <h3 class="box-title">Search</h3>
-            </div>
-            
-            <div class="box-body">
-                <form action="" method="post">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Start Date</label>
-                                <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
-                            </div>
+        <div class="box-header">
+            <i class="fa fa-search" aria-hidden="true"></i>
+            <h3 class="box-title">Search</h3>
+        </div>
+        
+        <div class="box-body">
+            <form action="" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>End Date</label>
-                                <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
-                            </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
                         </div>
-                        <div class="col-md-3">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Survey</label>
+                            <select id="surveys" name="surveys" class="form-control surveys" required>
+                                <option value="">Select</option>
+                                <?php
+                                    // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
+                                    // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                    
+                                foreach($surveyByUsers as $row_get_surveys){ ?>
+                                    <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['surveys']==$row_get_surveys['id'])?'selected':''?>><?php echo $row_get_surveys['name'];?></option>
+                                <?php }?>
+                            </select>
+                            <label for="" class="error" style="display:none ;"> This field is required</label>
+                        </div>
+                    </div>
+                    <!-- filter by group -->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Group</label>
+                            <select name="groupid" id="groupid" class="form-control form-control-lg group">
+                                <option value="">Select</option>
+                                <?php foreach($groupByUsers as $groupData){ 
+                                    $groupId    = $groupData['id'];
+                                    $groupName  = $groupData['name']; ?>
+                                    <option value="<?php echo $groupId;?>"><?php echo $groupName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <select name="locationid" id="locationid" class="form-control form-control-lg locationid">
+                                <option value="">Select</option>
+                                <?php
+                                    // record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        
+                                    // while($row_get_location = mysqli_fetch_assoc($get_location)){ 
+                                    foreach($locationByUsers as $locationData){ 
+                                    $locationId     = $locationData['id'];
+                                    $locationName   = $locationData['name'];?>
+                                    <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Department</label>
+                            <select name="departmentid" id="departmentid" class="form-control form-control-lg department">
+                                <option value="">Select</option>
+                                <?php
+                                    // record_set("get_department", "select * from departments where cstatus=1");        
+                                    // while($row_get_department = mysqli_fetch_assoc($get_department)){ 
+                                    foreach($departmentByUsers as $departmentData){ 
+                                    $departmentId     = $departmentData['id'];
+                                    $departmentName   = $departmentData['name'];?>
+                                    <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Contact</label>
+                            <select name="contacted" id="contacted" class="form-control form-control-lg contact">
+                                <option value="3">All</option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="contact-date" style="font-size:14px;"><strong> Status</strong></label>
                             <div class="form-group">
-                                <label>Survey</label>
-                                <select id="surveys" name="surveys" class="form-control surveys" required>
-                                    <option value="">Select</option>
-                                    <?php
-                                        // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
-                                        // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-                                        
-                                    foreach($surveyByUsers as $row_get_surveys){ ?>
-                                        <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['surveys']==$row_get_surveys['id'])?'selected':''?>><?php echo $row_get_surveys['name'];?></option>
-                                    <?php }?>
+                                <select id="task_status" name="task_status" class="form-control" >
+                                <option value="">SELECT</option>
+                                <?php foreach(assign_task_status() as $key => $value) { ?>
+                                    <option value="<?=$key?>"><?=$value?></option>
+                                <?php } ?>
                                 </select>
-                                <label for="" class="error" style="display:none ;"> This field is required</label>
-                            </div>
-                        </div>
-                        <!-- filter by group -->
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Group</label>
-                                <select name="groupid" id="groupid" class="form-control form-control-lg group">
-                                    <option value="">Select</option>
-                                    <?php foreach($groupByUsers as $groupData){ 
-                                        $groupId    = $groupData['id'];
-                                        $groupName  = $groupData['name']; ?>
-                                        <option value="<?php echo $groupId;?>"><?php echo $groupName;?></option>
-                                    <?php }?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Location</label>
-                                <select name="locationid" id="locationid" class="form-control form-control-lg locationid">
-                                    <option value="">Select</option>
-                                    <?php
-                                        // record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        
-                                        // while($row_get_location = mysqli_fetch_assoc($get_location)){ 
-                                        foreach($locationByUsers as $locationData){ 
-                                        $locationId     = $locationData['id'];
-                                        $locationName   = $locationData['name'];?>
-                                        <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
-                                    <?php }?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Department</label>
-                                <select name="departmentid" id="departmentid" class="form-control form-control-lg department">
-                                    <option value="">Select</option>
-                                    <?php
-                                        // record_set("get_department", "select * from departments where cstatus=1");        
-                                        // while($row_get_department = mysqli_fetch_assoc($get_department)){ 
-                                        foreach($departmentByUsers as $departmentData){ 
-                                        $departmentId     = $departmentData['id'];
-                                        $departmentName   = $departmentData['name'];?>
-                                        <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
-                                    <?php }?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Contact</label>
-                                <select name="contacted" id="contacted" class="form-control form-control-lg contact">
-                                    <option value="3">All</option>
-                                    <option value="1">Yes</option>
-                                    <option value="2">No</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="contact-date" style="font-size:14px;"><strong> Status</strong></label>
-                                <div class="form-group">
-                                    <select id="task_status" name="task_status" class="form-control" >
-                                    <option value="">SELECT</option>
-                                    <?php foreach(assign_task_status() as $key => $value) { ?>
-                                        <option value="<?=$key?>"><?=$value?></option>
-                                    <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>&nbsp;</label>
-                                <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
                             </div>
                         </div>
                     </div>
-                </form>    
-            </div>
-                
-            <!-- <div3
-                <button type="button" class="btn btn-success" id="exportascsv" style="margin-bottom: 20px;">Export CSV</button>
-            </div> -->
-        </form>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                        </div>
+                    </div>
+                </div>
+            </form>    
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-12" id="dataforpdf">
@@ -361,10 +375,14 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     }else{ 
                                         $contacted ='<a class="btn btn-xs btn-info">No</a>';
                                     } 
+                                    // get taskstatus
+                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+                                    $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+                                    $task_status = $row_check_assign_task['task_status'];
                                     ?>
                                     <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
                                     <td><?=$contacted ?></td>
-                                    <td></td>
+                                    <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                     <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?> &status=assign" target="_blank">VIEW DETAILS</a></td>
                                 </tr> 
                                 <?php }
