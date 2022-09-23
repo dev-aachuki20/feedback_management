@@ -137,11 +137,14 @@ if(isset($_POST['selectSurvey'])){
         $urlSecond   = 'monthly-report';
      //for second box
         $titleThird = 'CREATE REPORT';
-        $urlThird   = '#';
+        $urlThird   = 'create-report&type=report';
      //for second box
         $titleFourth = 'STATISTICS';
         $urlFourth   = 'view-statistics';
     }
+
+    // get survey name
+    $surveyByUsers = get_filter_data_by_user('surveys');
 ?>
     <!-- Dashboard Counter new-->
     
@@ -304,8 +307,9 @@ if(isset($_POST['selectSurvey'])){
                                     <select class="form-control" name="selectSurvey" onchange="this.form.submit()">
                                         <option value=''>All Survey</option>
                                         <?php 
-                                        record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");				
-                                        while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ ?>
+                                        // record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");				
+                                        // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                        foreach($surveyByUsers as $row_get_surveys){ ?>
                                         <option value="<?=$row_get_surveys['id']?>"><?=$row_get_surveys['name']?></option>
                                         <?php }?>
                                     </select>

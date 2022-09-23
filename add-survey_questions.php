@@ -131,27 +131,14 @@ $languages = explode(',',$row_get_survey_details['language']);
 			</div>
 		<?php } ?>
 
-		<!-- Start language nav bar -->
-		<ul class="nav nav-tabs" id="langTab" role="tablist">
-			<?php
-				foreach($languages as $val){
-					record_set("get_language", "select * from languages where id='".$val."'");				
-					$row_get_language = mysqli_fetch_assoc($get_language);
-			?>
-				<li class="nav-item <?=($row_get_language['id'] == '1')?'active':''?>" id="nav-item_<?=$row_get_language['iso_code']?>" data-langid="<?=$row_get_language['id'];?>" data-langcode=<?=($row_get_language['id'] != '1')?$row_get_language['iso_code']:''?> >
-					<a class="nav-link <?=($row_get_language['id'] == '1')?'active':''?>" data-toggle="tab" href="#lang_<?=$row_get_language['iso_code']?>" role="tab" id="<?=$row_get_language['iso_code']?>-tab" aria-controls="lang_<?=$row_get_language['iso_code']?>" aria-selected="true" ><?=$row_get_language['name']?></a>
-				</li>
-			<?php } ?>
-		</ul>
-		<!-- End language nav bar -->
 
 		<form action="" method="post" enctype="multipart/form-data">
 			<!-- Start Language tab panel -->
 			<div class="tab-content" id="myTabContent">
 				<?php
-					foreach($languages as $val){
-						record_set("get_language", "select * from languages where id='".$val."'");				
-						$row_get_language = mysqli_fetch_assoc($get_language);
+				foreach($languages as $val){
+					record_set("get_language", "select * from languages where id='".$val."'");				
+					$row_get_language = mysqli_fetch_assoc($get_language);
 				?>
 				<div class="tab-pane fade <?=($row_get_language['id'] == '1')?'active in':''?>" id="lang_<?=$row_get_language['iso_code']?>" role="tabpanel" aria-labelledby="<?=$row_get_language['iso_code']?>-tab">
 

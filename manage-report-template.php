@@ -101,13 +101,13 @@ if(isset($_POST['schedule_btn'])){
               <?php $i = 1;
               while($rpt = mysqli_fetch_assoc($template)){     
                     $temp_id = $rpt['temp_id'];
-                    $days = $rpt['frequency']/24;
+                    // $days = $rpt['frequency']/24;
                   ?>
                   <tr>
                     <td><?=$i?></td>
                     <td><?=$rpt['temp_name']?></td>
                     <td><?=$rpt['cby']?></td>
-                    <td><?=$days?></td>
+                    <td><?=ucfirst(service_type()[$rpt['frequency']])?></td>
                     <td><?=date('d-m-Y', strtotime($rpt['schedule_date']))?></td>
                     <td><?=date('d-m-Y ', strtotime($rpt['next_schedule_date']))?></td>
                     <td>

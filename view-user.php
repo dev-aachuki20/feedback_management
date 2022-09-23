@@ -7,7 +7,7 @@ if($_POST['user_type']==1 || !isset($_POST['user_type']) || $_POST['user_type']=
     }
 }				
 if($_POST['user_type']==2 || !isset($_POST['user_type']) || $_POST['user_type']==0){
-    record_set("get_admin", "select * from admin where cstatus=1 order by cdate desc");
+    record_set("get_admin", "select * from admin  order by cdate desc");
     while($row_get_admin = mysqli_fetch_assoc($get_admin)){
         $userdata[] = $row_get_admin ;
     }

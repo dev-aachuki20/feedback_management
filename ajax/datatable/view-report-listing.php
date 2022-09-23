@@ -9,6 +9,9 @@ $columns = array(
     3 => 'cdate',
     4 => 'cdate', 
 );
+$loggedIn_user_id    = $_SESSION['user_id'];
+$loggedIn_user_type  = $_SESSION['user_type'];
+
 if(!empty($_POST['surveys'])){
     $dateflag= false;
     $query = 'SELECT * FROM answers ';
@@ -66,7 +69,6 @@ if(!empty($_POST['surveys'])){
             }
         }
     }
-
     if(!empty($requestData['contact'])){
         if($requestData['contact']==1){
             $que= " and  answerid =-2 and answerval=10";
@@ -75,6 +77,14 @@ if(!empty($_POST['surveys'])){
         }
     }
 
+    // for my task
+    if($requestData['my_task']=='my-task'){
+        record_set("get_assign_task", "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type");	
+        $row_get_assign_task = mysqli_fetch_assoc($get_assign_task);
+        $task_id = $row_get_assign_task['task_id'];
+
+        $query .= " and cby IN (".$task_id.")";
+    }
     $query .= " GROUP by cby";
     record_set("get_departments", "SELECT * FROM departments");	
     $departments = array();
@@ -86,7 +96,6 @@ if(!empty($_POST['surveys'])){
         $query.=" AND ( DATE(cdate) LIKE '".$requestData['search']['value']."%' ";    
         $query.="  )";
     }
-   
     $query.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
     
     //$query.=" ORDER BY cdate DESC   LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
@@ -103,7 +112,7 @@ if(!empty($_POST['surveys'])){
             record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
             
             $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-
+            $nestedData[] = '<input type="checkbox" name="assign" value="'.$row_get_recent_entry['cby'].'" class="assignSurveyCheckbox" task-type="" data-sid="'.$row_get_recent_entry['surveyid'].'">';
             $nestedData[] = date("d-m-Y", strtotime($row_get_recent_entry['cdate']));
             $nestedData[] = $row_get_survey_detail['name'];
             //$nestedData[] = ordinal($row_survey_entry);
@@ -154,10 +163,10 @@ if(!empty($_POST['surveys'])){
             
             $label_class = 'success';
             if($result_response<50){
-            $label_class = 'danger';
+                $label_class = 'danger';
             }else 
             if($result_response<75){
-            $label_class = 'info';
+                $label_class = 'info';
             }
             
             $nestedData[] = '<label class="label label-'.$label_class.'">'.round($result_response,2).'%</label>';

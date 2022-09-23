@@ -13,7 +13,7 @@ if($_SESSION['user_type']==3){
 
 /* sidebar active permission */
 
-$configuration = array('add-department','manage-department','add-location','manage-locations','add-group','manage-groups','view-survey');
+$configuration = array('add-department','manage-department','add-location','manage-locations','add-group','manage-groups','view-survey','add-survey');
 
 $surveysMenu = array('view-report','monthly-report','view-statistics','report-statistics','add-group','manage-groups','view-survey','view-analytics','survey-outcomes');
 

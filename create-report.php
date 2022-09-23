@@ -94,7 +94,42 @@ if(isset($_GET['type']) && $_GET['type']=='schedule-details'){
 $template_loc = explode(',',$locationId);
 $template_dep = explode(',',$departmentId);
 $template_grp = explode(',',$groupId);
+if(isset($_GET['viewid'])){
+    $checkDisable = "disabled";
+}else {
+    $checkDisable = "enable";
+}
 
+
+
+if(isset($_GET['viewid'])){
+    $departmentByUsers = array();
+    $locationByUsers   = array();
+    $groupByUsers      = array();
+    // get department for view template and schedule
+    record_set("get_departments", "select * from departments where cstatus=1");
+    while($row_get_departments = mysqli_fetch_assoc($get_departments)){
+        $departmentByUsers[] = $row_get_departments;
+    }
+
+     // get locations for view template and schedule
+    record_set("get_locations", "select * from locations where cstatus=1");
+    while($row_get_locations = mysqli_fetch_assoc($get_locations)){
+        $locationByUsers[] = $row_get_locations;
+    }
+
+     // get groups for view template and schedule
+    record_set("get_groups", "select * from groups where cstatus=1");
+    while($row_get_groups = mysqli_fetch_assoc($get_groups)){
+        $groupByUsers[] = $row_get_groups;
+    }
+}else {
+    // get data by user
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $surveyByUsers     = get_filter_data_by_user('surveys');
+}
 ?>
 
 <section class="content-header">
@@ -110,25 +145,32 @@ $template_grp = explode(',',$groupId);
                             <label>Survey</label>
                             <select name="survey_id" id="survey_id" class="form-control form-control-lg survey" id="">
                                 <option value="">Select Survey</option>
-                                <?php foreach(get_allowed_data('surveys',$_SESSION['user_type']) as $key=> $value){ ?>
-                                <option value="<?=$key?>"><?=$value?></option>
+                                <?php foreach($surveyByUsers as $surveyData){ 
+                                    $surveyId   = $surveyData['id'];
+                                    $surveyName = $surveyData['name'];
+                                ?>
+                                <option value="<?=$surveyId?>"><?=$surveyName?></option>
                                 <?php  } ?>
                             </select>
+                            <span class="errorSurvey error" style="display: none;"> This field required</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Section</label>
-                            <select name="section_id" id="section_id" class="form-control form-control-lg section" id="">
-                            
+                            <input type="checkbox"id="allstep" class="multiselect" onchange="select_all_option('allstep','section_id')">
+                            <select name="section_id" id="section_id" class="form-control form-control-lg section multiple-select" id="" multiple=multiple>
                             </select>
+                            <span class="errorSection error" style="display: none;"> This field required</span>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Question</label>
-                            <select name="question_id" class="form-control form-control-lg question" id="question_id">
+                            <input type="checkbox"id="allquestion" class="multiselect" onchange="select_all_option('allquestion','question_id')">
+                            <select name="question_id" class="form-control form-control-lg question multiple-select" id="question_id" multiple=multiple>
                             </select>
+                            <span class="errorQuestion error" style="display: none;"> This field required</span>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -164,61 +206,75 @@ $template_grp = explode(',',$groupId);
             </div>
             <div class="checkboxForm">
                 <form action="<?=($_GET['type']=='report') ? './excel-import-files/create-report.php?export=1&type=export' : ''?>" method="post">
+                    <input type="hidden" name="hidden" id="searchdata" value=<?=json_encode($_POST)?>>
+                    <input type="hidden" name="survey_hidden" id="survey_hidden" value="">
+                    <input type="hidden" name="step_hidden" id="step_hidden" value="">
+                    <input type="hidden" name="question_hidden" id="question_hidden" value="">
+                    <input type="hidden" name="report_name_hidden" value="" class="report_name_hidden">
                     <!-- assign location -->
+                    <?php if(count($locationByUsers)>0) { ?>
                     <div class="row locationCheck">
-                        <input type="hidden" name="hidden" id="searchdata" value=<?=json_encode($_POST)?>>
-                        <input type="hidden" name="survey_hidden" id="survey_hidden" value="">
-                        <input type="hidden" name="step_hidden" id="step_hidden" value="">
-                        <input type="hidden" name="question_hidden" id="question_hidden" value="">
-                        <input type="hidden" name="report_name_hidden" value="" class="report_name_hidden">
                         <div class="col-md-12 with-border">
                             <h4>Assign Location</h4>
-                            <input type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
+                            <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
                         </div>
                         <?php 
-                        foreach(get_allowed_data('locations',$_SESSION['user_type']) as $key => $value){ ?>
+                        foreach($locationByUsers as $locationData){ 
+                        $locationId     = $locationData['id'];
+                        $locationName   = $locationData['name']; ?>
                         <div class="col-md-4">
-                            <input type="checkbox" id="locationids<?php echo $key ?>" <?=(in_array($key,$template_loc)) ? 'checked':''?> class="loc_checkbox" value="<?php echo $key; ?>" name="locationids[<?php echo $key; ?>]" /> 
+                            <input <?=$checkDisable?> type="checkbox" id="locationids<?php echo $locationId ?>" <?=(in_array($locationId,$template_loc)) ? 'checked':''?> class="loc_checkbox" value="<?php echo $locationId; ?>" name="locationids[<?php echo $locationId; ?>]" /> 
                             
-                            <label for="locationids<?php echo $key; ?>">
-                            <?php echo $value ?>
+                            <label for="locationids<?php echo $locationId; ?>">
+                            <?php echo $locationName ?>
                             </label>
                         </div>
                         <?php } ?>
                     </div>
+                    <?php } ?>
                     <!-- assign department -->
-                    <div class="row departmentCheck">        
-                        <div class="col-md-12 with-border">
-                            <h4>Assign Departments</h4>
-                            <input type="checkbox" onclick="checked_all(this,'dept_checkbox')" /><strong> Select All</strong><br/><br/>
-                        </div>
-                        <?php 
-                        foreach(get_allowed_data('departments',$_SESSION['user_type']) as $key => $value){ ?>
-                            <div class="col-md-4">
-                            <input type="checkbox" id="departmentids<?php echo $key ?>" class="dept_checkbox" <?=(in_array($key,$template_dep)) ? 'checked':''?> value="<?php echo $key; ?>" name="departmentids[<?php echo $key; ?>]"/> 
-                            <label for="departmentids<?php echo $key; ?>">
-                            <?php echo $value ?>
-                            </label>
+                    <?php if(count($departmentByUsers)>0) { ?>
+                        <div class="row departmentCheck">        
+                            <div class="col-md-12 with-border">
+                                <h4>Assign Departments</h4>
+                                <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'dept_checkbox')" /><strong> Select All</strong><br/><br/>
                             </div>
-                        <?php }?>
-                    </div>
-                    <!-- assign group -->
-                    <div class="row groupCheck">         
-                        <div class="col-md-12 with-border">
-                            <h4>Assign Group</h4>
-                            <input type="checkbox" onclick="checked_all(this,'group_checkbox')" /><strong> Select All</strong><br/><br/>
-                        </div>
-                        <?php 
-                        foreach(get_allowed_data('groups',$_SESSION['user_type']) as $key => $value){ ?>
-                            <div class="col-md-4">
-                                <input type="checkbox" id="groupids<?php echo $key ?>" class="group_checkbox" <?=(in_array($key,$template_grp)) ? 'checked':''?> value="<?php echo $key; ?>" name="groupids[<?php echo $key; ?>]" /> 
-                                
-                                <label for="groupids<?php echo $key; ?>">
-                                <?php echo $value ?>
+                            <?php 
+                            foreach($departmentByUsers as $departmentData){ 
+                                $departmentId   = $departmentData['id'];
+                                $departmentName = $departmentData['name'];
+                                ?>
+                                <div class="col-md-4">
+                                <input <?=$checkDisable?> type="checkbox" id="departmentids<?php echo $departmentId ?>" class="dept_checkbox" <?=(in_array($departmentId,$template_dep)) ? 'checked':''?> value="<?php echo $departmentId; ?>" name="departmentids[<?php echo $departmentId; ?>]"/> 
+                                <label for="departmentids<?php echo $departmentId; ?>">
+                                <?php echo $departmentName ?>
                                 </label>
+                                </div>
+                            <?php }?>
+                        </div>
+                    <?php } ?>
+                    <!-- assign group -->
+                    <?php if(count($groupByUsers)>0) { ?>
+                        <div class="row groupCheck">         
+                            <div class="col-md-12 with-border">
+                                <h4>Assign Group</h4>
+                                <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'group_checkbox')" /><strong> Select All</strong><br/><br/>
                             </div>
-                        <?php } ?>  
-                    </div>
+                            <?php 
+                            foreach($groupByUsers as $groupData){ 
+                                $groupId    = $groupData['id'];
+                                $groupName  = $groupData['name'];
+                            ?>
+                                <div class="col-md-4">
+                                    <input <?=$checkDisable?> type="checkbox" id="groupids<?php echo $groupId ?>" class="group_checkbox" <?=(in_array($groupId,$template_grp)) ? 'checked':''?> value="<?php echo $groupId; ?>" name="groupids[<?php echo $groupId; ?>]" /> 
+                                    
+                                    <label for="groupids<?php echo $groupId; ?>">
+                                    <?php echo $groupName ?>
+                                    </label>
+                                </div>
+                            <?php } ?>  
+                        </div>
+                    <?php } ?>
                     <div class="col-md-12 pull-right filter_form">
                         <?php if($_GET['type']=='report') { ?>
                         <input type="submit" class="btn btn-success green-btn" value="Export">
@@ -291,16 +347,38 @@ $template_grp = explode(',',$groupId);
 		});
 
         $('#filter-btn').click(function(){
+            let surveyValue  = $('#survey_id').val();
+            let sectionValue = $('#section_id').val();
+            let questionValue  = $('.question').val();
+            // check the filter form not empty
+            if(surveyValue == ''){
+                $('.errorSurvey').show();
+                return false;
+            }else {
+                $('.errorSurvey').hide();
+            }
+            if(sectionValue == '' || sectionValue == null){
+                $('.errorSection').show();
+                return false;
+            }else {
+                $('.errorSection').hide();
+            }
+            if(questionValue == '' || questionValue == null){
+                $('.errorQuestion').show();
+                return false;
+            }else {
+                $('.errorQuestion').hide();
+            }
+
             $('.checkboxForm').hide();
             $('.loader').show();
-            $('#survey_hidden').val($('#survey_id').val());
+            $('#survey_hidden').val(surveyValue);
             $('#step_hidden').val($('#section_id').val());
             $('#question_hidden').val($('#question_id').val());
              myTimeout = setTimeout(function(){ 
                 $('.checkboxForm').show();
                 $('.loader').hide();
             }, 1000);
-
         })
     })
     function get_step_ajax(survey_id){
@@ -353,6 +431,7 @@ $template_grp = explode(',',$groupId);
     }
 
     $(document).on('change','#survey_id',function(){
+       $('.multiselect').prop('checked', false);
 
        $('#section_id').html('<option value="" data-qid="">Select step</option>');
        $('.question').html('<option value="" data-qid="">Select question</option>');
@@ -374,5 +453,17 @@ var report_name = $('#report_name_hidden').val();
 console.log(report_name);
 if(report_name){
     $('#create_popup').hide();
+}
+//select all option for location department,group
+function select_all_option(idFirst,idSecond){
+    idFirst  = "#"+idFirst;
+    idSecond = "#"+idSecond;
+    if($(idFirst).is(':checked')){
+        $(idSecond+" > option").prop("selected", "selected");
+        $(idSecond).trigger("change");
+    } else {
+        $(idSecond+"> option").removeAttr("selected");
+        $(idSecond).trigger("change");
+    }
 }
 </script>

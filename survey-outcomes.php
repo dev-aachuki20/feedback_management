@@ -1,3 +1,10 @@
+<?php 
+// get data by user
+$departmentByUsers = get_filter_data_by_user('departments');
+$locationByUsers   = get_filter_data_by_user('locations');
+$groupByUsers      = get_filter_data_by_user('groups');
+$surveyByUsers     = get_filter_data_by_user('surveys');
+?>
 <style>
     .d-none{
         display: none !important;
@@ -187,12 +194,10 @@
                             <label>Survey</label>
                             <select id="surveys" name="surveys" class="form-control surveys">
                                 <option value="">Select</option>
-                                <?php
-                                    record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
-                                    while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-                                ?>
-                                    <option value="<?php echo $row_get_surveys['id'];?>"><?php echo $row_get_surveys['name'];?></option>
-                                <?php }?>
+                            <?php
+                            foreach($surveyByUsers as $row_get_surveys){ ?>
+                                <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['groupid']==$row_get_surveys['id']) ? 'selected' :''?>><?php echo $row_get_surveys['name'];?></option>
+                            <?php }?>
                             </select>
                             <label for="" class="error" style="display:none ;"> This field is required</label>
                         </div>
@@ -203,8 +208,10 @@
                             <label>Group</label>
                             <select name="groupid" id="groupid" class="form-control form-control-lg group">
                                 <option value="">Select</option>
-                                <?php foreach(getGroup() as $key =>$value){ ?>
-                                    <option value="<?php echo $key;?>"><?php echo $value;?></option>
+                                <?php foreach($groupByUsers as $groupData){ 
+                                    $groupId    = $groupData['id'];
+                                    $groupName  = $groupData['name']; ?>
+                                    <option value="<?php echo $groupId;?>" <?=($_POST['groupid']==$groupId) ? 'selected' :''?>><?php echo $groupName;?></option>
                                 <?php }?>
                             </select>
                         </div>
@@ -215,10 +222,10 @@
                             <select name="locationid" id="locationid" class="form-control form-control-lg locationid">
                                 <option value="">Select</option>
                                 <?php
-                                    record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        
-                                    while($row_get_location = mysqli_fetch_assoc($get_location)){ 
-                                ?>
-                                    <option value="<?php echo $row_get_location['id'];?>"><?php echo $row_get_location['name'];?></option>
+                                 foreach($locationByUsers as $locationData){ 
+                                    $locationId     = $locationData['id'];
+                                    $locationName   = $locationData['name'];?>
+                                    <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
                                 <?php }?>
                             </select>
                         </div>
@@ -229,10 +236,12 @@
                             <select name="departmentid" id="departmentid" class="form-control form-control-lg department">
                                 <option value="">Select</option>
                                 <?php
-                                    record_set("get_department", "select * from departments where cstatus=1");        
-                                    while($row_get_department = mysqli_fetch_assoc($get_department)){ 
-                                ?>
-                                    <option value="<?php echo $row_get_department['id'];?>"><?php echo $row_get_department['name'];?></option>
+                                    // record_set("get_department", "select * from departments where cstatus=1");        
+                                    // while($row_get_department = mysqli_fetch_assoc($get_department)){ 
+                                foreach($departmentByUsers as $departmentData){ 
+                                    $departmentId     = $departmentData['id'];
+                                    $departmentName   = $departmentData['name'];?>
+                                    <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
                                 <?php }?>
                             </select>
                         </div>

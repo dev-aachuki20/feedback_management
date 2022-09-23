@@ -137,9 +137,9 @@ h4{margin-bottom:1px;font-size:16px;}
 .form-control.error{
     border: solid 1px #ff0000 !important;
 }
-.dropdwn{
+/* .dropdwn{
     padding:0px !important;
-}
+} */
 
 /* sidebar css */
 .timeline-area li:before {
@@ -200,4 +200,20 @@ h4{margin-bottom:1px;font-size:16px;}
 .left{
     width: 50%;
     float: left;
+}
+.dropdwn {
+    min-height: 80px;
+}
+
+.multiselect {
+    position: absolute;
+    top: 27px;
+    right: 25px;
+    width: 15px;
+    height: 20px;
+    margin: auto;
+    display: block;
+    background-size: contain;
+    cursor: pointer;
+    z-index: 999;
 }

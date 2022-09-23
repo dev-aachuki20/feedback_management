@@ -18,7 +18,7 @@ if($_POST['update']){
     $data =  array(
         "name"          => $_POST['name'],
         "cstatus"       => $_POST['status'],
-        "location_id"   => implode('|',$_POST['locations']),
+        "location_id"   => implode(',',$_POST['locations']),
         "client_ids"    => $client_id,
         "admin_ids"     => $admin_id 
     );
@@ -40,8 +40,9 @@ if($_POST['update']){
         $data =  array(
             "name"          => $_POST['name'],
             "cstatus"       => $_POST['status'],
-            "location_id"   => implode('|',$_POST['locations']),
+            "location_id"   => implode(',',$_POST['locations']),
             'cip'           => ipAddress(),
+            "user_type"     => $_SESSION["user_type"],
             "client_ids"    => $client_id,
             "admin_ids"     => $admin_id,
             'cby'           => $_SESSION['user_id'],
@@ -58,7 +59,10 @@ if($_POST['update']){
         }
        // reDirect("?page=manage-groups&msg=".$msg);		
 	}
-  // End Insert  
+  // End Insert 
+
+  // get group by user
+  $locationByUsers = get_filter_data_by_user('locations');
 ?>
 <section class="content-header">
   <h1> Add Group</h1>
@@ -75,40 +79,58 @@ if($_POST['update']){
             </div>
           </div>
           <!-- End name according to languages -->
+            <?php
+              //only created by and super admin can change status
+                if(!empty($_GET['id'])) {
+                  if((($_SESSION['user_type']==1) OR ($row_get_groups_id['cby'] == $_SESSION['user_id'] and $row_get_groups_id['user_type']==$_SESSION['user_type']))){
+                    $disabled = "";
+                  }else {
+                    $disabled = "disabled";
+                  }
+                }else {
+                  $disabled = "";
+                }
+            ?>
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
-              <select class="form-control" name="status">
-                <?php 
-                  foreach(status() as $key => $value){
-                ?>
+              <select class="form-control" name="status" <?=$disabled?>>
+                <?php  
+             
+                foreach(status() as $key => $value){ ?>
                   <option <?php if($row_get_groups_id['cstatus']==$key){?> selected="selected"<?php }?>value="<?php echo $key; ?>"><?php echo $value; ?></option>                    
                 <?php }?>
               </select>
             </div>
           </div>
           <!-- add location -->
-          <div class="col-md-12 with-border">
+          <?php if(count($locationByUsers)>0){ ?>     
+            <div class="">
+            <div class="col-md-12 with-border">
               <h4>Location</h4>
               <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'locCheckbox')" /><strong> Select All</strong><br/><br/>
             </div>
             <div class="col-md-12">
               <?php
-               $location_ids = explode('|',$row_get_groups_id['location_id']);
-               foreach(getLocation() as $key => $value){
+                $location_ids = explode(',',$row_get_groups_id['location_id']);
+                foreach($locationByUsers as $locData){
+                $locId    = $locData['id'];
+                $locName  = $locData['name'];
                 ?>
                 <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($key,$location_ids) ? 'checked ':' ')?> id="locations_id_<?php echo $key ?>" class="locCheckbox" value="<?php echo $key; ?>" name="locations[<?php echo $key; ?>]" /> 
+                  <input type="checkbox" <?=(in_array($locId,$location_ids) ? 'checked ':' ')?> id="locations_id_<?php echo $locId ?>" class="locCheckbox" value="<?php echo $locId; ?>" name="locations[<?php echo $locId; ?>]" /> 
                   
-                  <label for="locations_id_<?php echo $key; ?>">
-                  <?php echo $value ?>
+                  <label for="locations_id_<?php echo $locId; ?>">
+                  <?php echo $locName ?>
                   </label>
                 </div>
               <?php } ?>
               <!-- <div class="row">
                 <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
               </div> -->
-            </div>          
+            </div>  
+            </div> 
+          <?php } ?>        
           <!-- assign user start -->        
             <div class="col-md-12 with-border">
               <h4>Assign Admins</h4>

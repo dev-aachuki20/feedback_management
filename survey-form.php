@@ -1017,7 +1017,7 @@ die();*/
 
 									?>
 
-										<div class="col-md-3"></div>
+										<!-- <div class="col-md-3"></div>
 
 										<div class="col-md-6">
 
@@ -1037,7 +1037,7 @@ die();*/
 
 										</div>
 
-										<div class="col-md-3"></div>
+										<div class="col-md-3"></div> -->
 
 									<?php
 										}
@@ -1977,79 +1977,79 @@ if($row_get_survey['isSchoolAllowed'] == 1){
 
 ?>
 
-$(function() {
+// $(function() {
 
 
 
-	var langId = 0;
+// 	var langId = 0;
 
 
 
-	$( ".school_autocomplete" ).autocomplete({
+// 	$( ".school_autocomplete" ).autocomplete({
 
-		// source: 'ajax/ajaxOnSelectSchool.php'+$(this).val(),
+// 		// source: 'ajax/ajaxOnSelectSchool.php'+$(this).val(),
 
-		source: function(request, response) {
+// 		source: function(request, response) {
 
-		$.getJSON('ajax/ajaxOnSelectSchool.php', 
+// 		$.getJSON('ajax/ajaxOnSelectSchool.php', 
 
-			{ 
+// 			{ 
 
-				term: request.term,
+// 				term: request.term,
 
-				langId: langId
+// 				langId: langId
 
-			}, 
+// 			}, 
 
-		response);
+// 		response);
 
-		},
+// 		},
 
-		focus: function(event, ui) {
+// 		focus: function(event, ui) {
 
-					// prevent autocomplete from updating the textbox
+// 					// prevent autocomplete from updating the textbox
 
-					event.preventDefault();
+// 					event.preventDefault();
 
-					// manually update the textbox
+// 					// manually update the textbox
 
-					$(this).val(ui.item.label);
+// 					$(this).val(ui.item.label);
 
-		},
+// 		},
 
-		select: function(event, ui) {
+// 		select: function(event, ui) {
 
-			// prevent autocomplete from updating the textbox
+// 			// prevent autocomplete from updating the textbox
 
-			event.preventDefault();
+// 			event.preventDefault();
 
-			// manually update the textbox and hidden field
+// 			// manually update the textbox and hidden field
 
-			$(this).val(ui.item.label);
+// 			$(this).val(ui.item.label);
 
-			$(".school_value").val(ui.item.value);
+// 			$(".school_value").val(ui.item.value);
 
-		},
+// 		},
 
-		change:function(event,ui){
+// 		change:function(event,ui){
 
-			event.preventDefault();
+// 			event.preventDefault();
 
-			if(ui.item == null){
+// 			if(ui.item == null){
 
-				$(".school_autocomplete").val('');
+// 				$(".school_autocomplete").val('');
 
-				$(".school_value").val('');  
+// 				$(".school_value").val('');  
 
-			}
+// 			}
 
-		}
+// 		}
 
-	});
+// 	});
 
 	
 
-});
+// });
 
 <?php } ?>
 

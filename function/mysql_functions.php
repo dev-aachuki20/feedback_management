@@ -199,7 +199,7 @@ function getallrow_fn($sql){
 		}
 		$connection=get_connection();
 	    // run  query result resource
-		return$qry =  mysqli_query($connection,$sql);
+		return $qry =  mysqli_query($connection,$sql);
 	}
 	function alertSuccess($mess =null,$url ="#"){ ?>
 		<script>

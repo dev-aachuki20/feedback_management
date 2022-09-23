@@ -48,13 +48,14 @@ if($_POST['update']){
   // Start insert
 	if(!empty($_POST['submit'])){
     $dataCol =  array(
-        "name"=> $_POST['name'],
-        "cstatus" => $_POST['status'],
-        'cip'=>ipAddress(),
+        "name"        => $_POST['name'],
+        "cstatus"     => $_POST['status'],
+        'cip'         => ipAddress(),
         "client_ids"  => $client_id,
+        "user_type"   => $_SESSION["user_type"],
         "admin_ids"   => $admin_id,
-        'cby'=>$_SESSION['user_id'],
-        'cdate'=>date("Y-m-d H:i:s")
+        'cby'         => $_SESSION['user_id'],
+        'cdate'       => date("Y-m-d H:i:s")
     );
 
     //   $lang_col=array();
@@ -78,7 +79,10 @@ if($_POST['update']){
 			}
 			//reDirect("?page=manage-locations&msg=".$msg);		
 	}
-  // End Insert  
+  // End Insert 
+
+// get department by user
+$departmentByUsers = get_filter_data_by_user('departments'); 
 ?>
 <section class="content-header">
   <h1> Add Location</h1>
@@ -96,13 +100,23 @@ if($_POST['update']){
           </div>
         
            <!-- Status name -->
+            <?php
+              //only created by and super admin can change status
+                if(!empty($_GET['id'])) {
+                  if((($_SESSION['user_type']==1) OR ($row_get_locations_id['cby'] == $_SESSION['user_id'] and $row_get_locations_id['user_type']==$_SESSION['user_type']))){
+                    $disabled = "";
+                  }else {
+                    $disabled = "disabled";
+                  }
+                }else {
+                  $disabled = "";
+                }
+            ?>
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
-              <select class="form-control" name="status">
-                <?php 
-                  foreach(status() as $key => $value){
-                ?>
+              <select class="form-control" name="status" <?=$disabled?>>
+                <?php  foreach(status() as $key => $value){ ?>
                   <option <?php if($row_get_locations_id['cstatus']==$key){?> selected="selected"<?php }?>value="<?php echo $key; ?>"><?php echo $value; ?></option>                    
                 <?php }?>
               </select>
@@ -121,12 +135,15 @@ if($_POST['update']){
 							$department_ids = array();
 						}
             
-            foreach(getDepartment() as $key => $value){ ?>
+            foreach($departmentByUsers as $deptData){ 
+              $deptId   = $deptData['id'];
+              $deptName = $deptData['name'];
+              ?>
               <div class="col-md-4">
-                <input type="checkbox" <?=(in_array($key,$department_ids) ? 'checked ':' ')?> id="deparment_id_<?php echo $key ?>" value="<?php echo $key; ?>" class="deptCheckbox" name="deparments[<?php echo $key; ?>]" /> 
+                <input type="checkbox" <?=(in_array($deptId,$department_ids) ? 'checked ':' ')?> id="deparment_id_<?php echo $key ?>" value="<?php echo $deptId; ?>" class="deptCheckbox" name="deparments[<?php echo $deptId; ?>]" /> 
                 
-                <label for="deparment_id_<?php echo $key; ?>">
-                <?php echo $value ?>
+                <label for="deparment_id_<?php echo $deptId; ?>">
+                <?php echo $deptName ?>
                 </label>
               </div>
             <?php } ?>

@@ -17,7 +17,16 @@
             </thead>
             <tbody>
               <?php 
-                record_set("get_locations", "select * from locations where cby='".$_SESSION['user_id']."' order by cdate desc");				
+              if($_SESSION['user_type']==1){
+                $filter = '';
+              }else if($_SESSION['user_type']==2){
+                //for admin
+                $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
+              }else if($_SESSION['user_type']==3){
+                 //for manager
+                $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
+              }
+                record_set("get_locations", "select * from locations where id>0 $filter order by cdate desc");				
                 while($row_get_locations = mysqli_fetch_assoc($get_locations)){
               ?>
                 <tr>

@@ -1,4 +1,6 @@
-<?php include('function/function.php'); 
+<?php 
+include('function/function.php'); 
+include('function/get_data_function.php');
 
 if(isset($_POST['login']))
 {
@@ -15,6 +17,12 @@ if(isset($_POST['login']))
 				$_SESSION['user_'.$key] =$val;
 			}
 			$_SESSION['user_type'] =2;
+      $location =  get_filter_data_by_user('locations');
+      $arr = array();
+      foreach($location as $loc){
+        $arr[] = $loc['id'];
+      }
+      $_SESSION['user_locationid'] = implode(',', $arr);
 			$mess='Admin Login Successful';
 			//print_r($_SESSION);
 	    	reDirect('index.php?mess='.$mess);

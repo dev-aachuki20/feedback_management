@@ -15,7 +15,7 @@
     </li>
     <li><a href="index.php"><i class="fa fa-dashboard"></i><span>DASHBOARD</span></a></li>
     <!-- Configuration menu-->
-    <?php if(count(array_intersect($configuration,$user_permission))>0) {?>
+    <?php if(count(array_intersect($configuration,$user_permission))>0) { ?>
         <li class="treeview <?=make_sidebar_active($_GET['page'],$configuration )?>">
             <a href="#"><i class="fa fa-solid fa-gear"></i> <span>CONFIGURATION</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu">
@@ -43,10 +43,14 @@
                     </ul>
                 </li>
 
-                <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-survey'))?>">
+                <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
                     <a href="#" class="nav-link"> <i class="fa fa-list-alt"></i> <span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i></a> 
-                    <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],'view-survey')?>">
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>View Survey</span></a> </li>
+                    <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
+                        <?php if($_SESSION['user_type']==1) {?>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>Add Survey</span></a> </li>
+                        <?php } ?>    
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>View Surveys</span></a> </li>
+                        
                     </ul>
                 </li>
             </ul>
@@ -54,7 +58,7 @@
     <?php } ?>
      <!-- Surveys menu-->
     <?php if(count(array_intersect($surveysMenu,$user_permission))>0) { ?> 
-        <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes'))?>">
+        <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics'))?>">
             <a href="#"><i class="fa fa-poll"></i><span>  SURVEYS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu ">
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes'))?>">
@@ -66,7 +70,7 @@
                 </li>
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'monthly-report')?>"><a href="?page=monthly-report" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
                 <?php if($_SESSION['user_type']<2) {?>
-                    <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-statistics')?>">
+                    <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'survey-statistics')?>">
                         <a href="?page=survey-statistics" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                     </li>
                 <?php } ?>
@@ -131,10 +135,10 @@
     <?php } ?>
      <!-- Users menu-->
     <?php if(count(array_intersect($userMenu,$user_permission))>0) {?>     
-        <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-user','import-users','view-user'))?>">
+        <li class="treeview <?=(in_array($_GET['page'],array('add-user','import-users','view-user')) && !isset($_GET['user'])) ? 'active':''?>">
             <a href="#"><i class="fa fa-list-alt"></i> <span>USERS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu timeline-area">
-                <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-user')?>">
+                <li class="treeview cusul-line <?=($_GET['page']=='add-user' and !($_GET['user'])) ? 'active':'' ?>">
                     <a href="?page=add-user" class="nav-link"> <i class=""></i> <span>ADD USER</span> </a> 
                 </li>
 

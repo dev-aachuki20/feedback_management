@@ -1,7 +1,8 @@
-<?php include('function/function.php'); 
+<?php 
+include('function/function.php'); 
+include('function/get_data_function.php');
 
-if(isset($_POST['login']))
-{
+if(isset($_POST['login'])){
   if(isset($_POST['email']) && isset($_POST['password']) !=''){
 	$uemail = $_POST['email'];
 	$upassword = $_POST['password'];
@@ -11,11 +12,18 @@ if(isset($_POST['login']))
 		if(mysqli_num_rows($admin)>0){
 			$row_user_admin=mysqli_fetch_array($admin,MYSQLI_ASSOC);
 			foreach($row_user_admin as $key=>$val){
-        
-				$_SESSION['user_'.$key] =$val;
+        if($key !='locationid'){
+          $_SESSION['user_'.$key] =$val;
+        }
 			}
+      
 			$_SESSION['user_type'] = 3;
- 
+      $location =  get_filter_data_by_user('locations');
+      $arr = array();
+      foreach($location as $loc){
+        $arr[] = $loc['id'];
+      }
+      $_SESSION['user_locationid'] = implode(',', $arr);
 			$mess='Admin Login Successful';
 	    	reDirect('index.php?mess='.$mess);
 		}else{

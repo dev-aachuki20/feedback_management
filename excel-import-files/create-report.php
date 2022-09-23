@@ -50,16 +50,18 @@
             $query .=" and surveyid=$surveyId";
         }
         if(!empty($sectionId)){
-            $query .=" and survey_step_id=$sectionId";
+            $query .=" and survey_step_id IN ($sectionId)";
         }
         if(!empty($questionId)){
-            $query .=" and id=$questionId";
+            $query .=" and id IN ($questionId)";
         }
         //record_set("get_result", $query,1);
         $get_result =  mysqli_query($conn,$query);
+        // echo $query; die();
         $question_data = array();	
         while($row_get_step = mysqli_fetch_assoc($get_result)){
             $get_answer_result =  mysqli_query($conn,"SELECT * FROM `answers` WHERE `questionid` =". $row_get_step['id']."$filterData");
+            // echo "SELECT * FROM `answers` WHERE `questionid` =". $row_get_step['id']."$filterData"; die();
             if(mysqli_num_rows($get_answer_result)>0){
                 $i=0;
                 while($row_get_answer = mysqli_fetch_assoc($get_answer_result)){
@@ -76,6 +78,7 @@
                 }
             }
         }
+     
         $objPHPExcel = new PHPExcel;
         $objPHPExcel->getDefaultStyle()->getFont()->setName('Calibri');
         $objPHPExcel->getDefaultStyle()->getFont()->setSize(12);
@@ -85,7 +88,7 @@
         foreach($arrayHeading as $key=> $value){
             $objSheet->getCell($key)->setValue($value);
         }
-    
+        $i=1;
         foreach($question_data as $ques){
             // get step name
             $get_step_name =  mysqli_query($conn,"SELECT * FROM `surveys_steps` WHERE `id` =". $ques['step_id']);
@@ -129,7 +132,6 @@
             $surveyName     = $row_get_survey_name['name'];
             $stepName       = $row_get_step_name['step_title'];
             $questionName   = $row_get_question_name['question'];
-            $i=1;
             foreach($ques['answertext'] as $answer){ $i++;
                 if($answer['ans']==0){
                     $get_survey_questions_detail =  mysqli_query($conn,"SELECT * FROM `questions_detail` WHERE `id` =". $answer['ansid']);

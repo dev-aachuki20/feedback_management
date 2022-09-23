@@ -1,7 +1,96 @@
-<style>
-    .d-none{
-        display: none !important;
+<?php 
+// get data by user
+$departmentByUsers = get_filter_data_by_user('departments');
+$locationByUsers   = get_filter_data_by_user('locations');
+$groupByUsers      = get_filter_data_by_user('groups');
+$surveyByUsers     = get_filter_data_by_user('surveys');
+
+// assign task to user
+if(isset($_POST['assign'])){
+    $survey_id           = $_POST['survey_id_hidden'];
+    $task_id             = explode(',',$_POST['response_id_hidden']);
+    $assing_to_user_id   = $_POST['assing_to_user_id'];
+    $assign_to_user_type = $_POST['user_type'];
+    $assign_by_user_type = $_SESSION['user_type'];
+    $assign_by_user_id   = $_SESSION['user_id'];
+    foreach($task_id as $tasks){
+        $data = array(
+            "assign_to_user_id"   => $assing_to_user_id,
+            "assign_to_user_type" => $assign_to_user_type,
+            "task_id"             => $tasks,
+            "survey_id"           => $survey_id,
+            "task_status"         => 2,
+            "assign_by_user_id"   => $assign_by_user_id,
+            "assign_by_user_type" => $assign_by_user_type,
+            "cdate"               => date("Y-m-d H:i:s")
+        );
+
+         // check the assign task already exists for this user or not
+         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
+         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+         if($totalRows_check_assign_task > 0 ){
+             $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
+         }else {
+             $insert_value =  dbRowInsert("assign_task",$data);
+         }
+        $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
+
+        $user_email = $userdata['email'];
+        $user_name  = $userdata['name'];  
+           
+        $data_contact_action = array(
+            "user_id"=> $tasks,
+            "action"=> 2,
+            "comment"=> 'response assigned to '.$user_name,
+            'created_date'=>date("Y-m-d H:i:s")
+        );
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action,1);
     }
+    // send mail to user assigned task
+    send_email_to_assign_user($user_name,$user_email);
+
+    if(!empty($insert_value )){	
+        $msg = "Task Assigned Successfully";
+        alertSuccess( $msg,'?page=view-report');
+        die();
+    }
+        $msg = "Task Not Assigned";
+        alertdanger( $msg,'?page=view-report');
+}
+//self assign task
+if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){
+    $survey_id           = $_POST['survey_id_hidden'];
+    $task_id             = explode(',',$_POST['response_id_hidden']);
+    $assing_to_user_id   = $_SESSION['user_id'];
+    $assign_to_user_type = $_SESSION['user_type'];
+    $assign_by_user_type = $_SESSION['user_type'];
+    $assign_by_user_id   = $_SESSION['user_id'];
+    foreach($task_id as $tasks){
+        $data = array(
+            "assign_to_user_id"   => $assing_to_user_id,
+            "assign_to_user_type" => $assign_to_user_type,
+            "task_id"             => $tasks,
+            "survey_id"           => $survey_id,
+            "assign_by_user_id"   => $assign_by_user_id,
+            "assign_by_user_type" => $assign_by_user_type,
+            "cdate"               => date("Y-m-d H:i:s")
+        );
+        $insert_value =  dbRowInsert("assign_task",$data);
+    }
+    if(!empty($insert_value )){	
+        $msg = "Task Assigned Successfully";
+        alertSuccess( $msg,'?page=view-report');
+        die();
+    }
+        $msg = "Task Not Assigned";
+        alertdanger( $msg,'?page=view-report');
+}
+
+?>
+<style>
+.d-none{
+    display: none !important;
+}
 </style>
 <section class="content-header">
   <h1>Report</h1>
@@ -117,7 +206,7 @@
             <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
             <div class="box-header">
                 <i class="fa fa-search" aria-hidden="true"></i>
-                <h3 class="box-title"> Search</h3>
+                <h3 class="box-title">Search</h3>
             </div>
             
             <div class="box-body">
@@ -140,9 +229,10 @@
                             <select id="surveys" name="surveys" class="form-control surveys">
                                 <option value="">Select</option>
                                 <?php
-                                    record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
-                                    while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-                                ?>
+                                    // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
+                                    // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                    
+                                foreach($surveyByUsers as $row_get_surveys){ ?>
                                     <option value="<?php echo $row_get_surveys['id'];?>"><?php echo $row_get_surveys['name'];?></option>
                                 <?php }?>
                             </select>
@@ -155,8 +245,10 @@
                             <label>Group</label>
                             <select name="groupid" id="groupid" class="form-control form-control-lg group">
                                 <option value="">Select</option>
-                                <?php foreach(getGroup() as $key =>$value){ ?>
-                                    <option value="<?php echo $key;?>"><?php echo $value;?></option>
+                                <?php foreach($groupByUsers as $groupData){ 
+                                    $groupId    = $groupData['id'];
+                                    $groupName  = $groupData['name']; ?>
+                                    <option value="<?php echo $groupId;?>"><?php echo $groupName;?></option>
                                 <?php }?>
                             </select>
                         </div>
@@ -167,10 +259,12 @@
                             <select name="locationid" id="locationid" class="form-control form-control-lg locationid">
                                 <option value="">Select</option>
                                 <?php
-                                    record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        
-                                    while($row_get_location = mysqli_fetch_assoc($get_location)){ 
-                                ?>
-                                    <option value="<?php echo $row_get_location['id'];?>"><?php echo $row_get_location['name'];?></option>
+                                    // record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        
+                                    // while($row_get_location = mysqli_fetch_assoc($get_location)){ 
+                                    foreach($locationByUsers as $locationData){ 
+                                    $locationId     = $locationData['id'];
+                                    $locationName   = $locationData['name'];?>
+                                    <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
                                 <?php }?>
                             </select>
                         </div>
@@ -181,10 +275,12 @@
                             <select name="departmentid" id="departmentid" class="form-control form-control-lg department">
                                 <option value="">Select</option>
                                 <?php
-                                    record_set("get_department", "select * from departments where cstatus=1");        
-                                    while($row_get_department = mysqli_fetch_assoc($get_department)){ 
-                                ?>
-                                    <option value="<?php echo $row_get_department['id'];?>"><?php echo $row_get_department['name'];?></option>
+                                    // record_set("get_department", "select * from departments where cstatus=1");        
+                                    // while($row_get_department = mysqli_fetch_assoc($get_department)){ 
+                                    foreach($departmentByUsers as $departmentData){ 
+                                    $departmentId     = $departmentData['id'];
+                                    $departmentName   = $departmentData['name'];?>
+                                    <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
                                 <?php }?>
                             </select>
                         </div>
@@ -219,9 +315,28 @@
             <div class="box">
                 <div class="box-header"></div>
                     <div class="box-body">
+                        <div>
+                            <form method="get">
+                                <input type="hidden" name="page" value="view-my-assign-task">
+                                <!-- <input type="hidden" name="id" value="" id="hidden_survey_id"> -->
+                                <!-- <input type="hidden" name="hidden_start_date" value="" id="hidden_start_date">
+                                <input type="hidden" name="hidden_end_date" value="" id="hidden_end_date">
+                                <input type="hidden" name="hidden_survey_id" value="" id="hidden_survey_id">
+                                <input type="hidden" name="hidden_group_id" value="" id="hidden_group_id">
+                                <input type="hidden" name="hidden_location_id" value="" id="hidden_location_id">
+                                <input type="hidden" name="hidden_department_id" value="" id="hidden_department_id">
+                                <input type="hidden" name="hidden_contact" value="" id="hidden_contact"> -->
+                                <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
+                                    <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Task</button>
+                            
+                                </div>
+                            </form>
+                            
+                        </div>
                         <table id="datatable-ajax" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th> RESPONDENT NUMBER</th>
@@ -230,6 +345,23 @@
                                     <th class="notforpdf">ACTION</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th style="text-align: right;">
+                                        <button type="button" class="btn btn-primary self-assign-btn" style="display: none;" name="self_assign">Self Assign</button>
+                                    </th>
+                                    <th class="notforpdf">
+                                        <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter" style="display: none;">
+                                        Assign
+                                        </button>
+                                    </th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -238,6 +370,54 @@
     </div>
    
 </section>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <form method="post" id="assign_form">
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="form-group">
+                    <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
+                    <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
+                    <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
+                    <label>User Type</label>
+                        <select class="form-control" tabindex=7 id="user_type" name="user_type">
+                            <option value="">Select User Type</option>
+                        <?php 
+                            $user_types_array=user_type();  
+                            foreach($user_types_array as $key => $value){
+                            if($_SESSION['user_type']==2){
+                                $allowed_key=2;
+                            }
+                            if($key>=$_SESSION['user_type'] and $key!=1){ ?>
+                            <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
+                            </option>
+                            <?php }
+                            }
+                        
+                        ?>
+                        </select>
+                    </div>
+                </div>
+                <!-- select admin -->
+                <div class="col-md-12" id="users">
+                </div>                                    
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" name="assign">Save changes</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <!-- Resources -->
 
@@ -255,6 +435,8 @@
     $(document).on('click','.search',function(){
         // destroy datatable
         $("#datatable-ajax").dataTable().fnDestroy()
+        // for my task 
+        let my_task     =  $(this).data('type');
         let start_data  = $('.start_data').val();
         let end_date    = $('.end_date').val();
         let surveys     = $('.surveys').val();
@@ -262,6 +444,17 @@
         let locationid  = $('.locationid').val();
         let departmentid  = $('.department').val();
         let contacted   = $('.contact').val();
+
+
+        //add data in hidden field of my task form
+        $('#hidden_survey_id').val(surveys);
+        // $('#hidden_start_date').val(start_data);
+        // $('#hidden_end_date').val(end_date);
+        // $('#hidden_group_id').val(group);
+        // $('#hidden_location_id').val(locationid);
+        // $('#hidden_department_id').val(departmentid);
+        // $('#hidden_contact').val(contacted);
+
         if(surveys ==''){
             $(".col-md-3").css("height", "87");
             $('.error').show();
@@ -270,9 +463,9 @@
             $('.error').hide();
         }
         // this is the id of the form
-        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted);
+        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted,my_task);
     });
-    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted){
+    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted,my_task=''){
         var dataTable = $('#datatable-ajax').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -288,6 +481,7 @@
                     locationid:locationid, 
                     departmentid:departmentid,
                     contact:contacted,
+                    my_task:my_task,
                 },
                 error: function(){  
                     // $(".datatable-ajax-error").html("");
@@ -297,4 +491,57 @@
             }
         } );
     }
+
+$(document).on('change','.assignSurveyCheckbox',function(){
+    //$(".assignSurveyCheckbox").prop("checked", false);
+    var value = $(this).is(':checked');
+    let sid  = $(this).data('sid');
+    var checkedArray=[];
+    $("input[name='assign']:checked").each(function(){
+        checkedArray.push($(this).val());
+    });
+    
+    if(value){
+       $('.survey_id_hidden').val(sid);
+       $('.response_id_hidden').val(checkedArray);
+       $('.btn-submit').show();
+       $('.self-assign-btn').show();
+    }else{
+        $('.btn-submit').hide();
+        $('.self-assign-btn').hide();
+    }
+});
+
+function assign_user(survey_id,user_type){
+    $.ajax({
+        method:"POST",
+        url:'<?=baseUrl()?>ajax/common_file.php',
+        data:{
+            survey_id:survey_id,
+            user_type:user_type,
+            mode:'assign_users'
+        },
+        success:function(response){
+            response = JSON.parse(response);
+            console.log(response);
+            $('#users').html(response);
+        }
+    })
+}
+// ajax on the user type change in assign task
+$(document).on('change','#user_type',function(){
+    let user_type = $(this).val();
+    let survey_id  = $('.survey_id_hidden').val();
+    assign_user(survey_id,user_type);
+});
+$(document).on('click','.btn-submit',function(){
+    $('#set_self_assign').val('');
+    let checkSurveyIdExist = $('.survey_id_hidden').val();
+})
+// submit form when self assign the tasks 
+$(document).on('click','.self-assign-btn',function(){
+    let checkSurveyIdExist = $('.survey_id_hidden').val();
+    $('#set_self_assign').val('set');
+    $('#assign_form').submit();
+})
 </script>

@@ -53,6 +53,7 @@ if($_POST['update']){
         "cstatus"     => $_POST['status'],
         "client_ids"  => $client_id,
         "admin_ids"   => $admin_id,
+        "user_type"   => $_SESSION["user_type"],
         'cip'         => ipAddress(),
         'cby'         => $_SESSION['user_id'],
         'cdate'       => date("Y-m-d H:i:s")
@@ -116,13 +117,22 @@ if($_POST['update']){
               <input type="text" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>"/>
             </div>
           </div>
+              <?php
+              //only created by and super admin can change status
+                if(!empty($_GET['id'])) {
+                  if((($_SESSION['user_type']==1) OR ($row_get_departments_id['cby'] == $_SESSION['user_id'] and $row_get_departments_id['user_type']==$_SESSION['user_type']))){
+                    $disabled = "";
+                  }else {
+                    $disabled = "disabled";
+                  }
+                }else {
+                  $disabled = "";
+                }
+              ?>
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
-              <select class="form-control" name="status">
-                <?php 
-                  foreach(status() as $key => $value){
-                ?>
+              <select class="form-control" name="status" <?=$disabled ?>><?php foreach(status() as $key => $value){ ?>
                   <option <?php if($row_get_departments_id['cstatus']==$key){?> selected="selected"<?php }?>value="<?php echo $key; ?>"><?php echo $value; ?></option>                    
                 <?php }?>
               </select>

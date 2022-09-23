@@ -11,12 +11,11 @@
             "css_txt"              => $_POST['css_txt'],
             "alter_email"          => $_POST['alter_email'],
             "cstatus"              => $_POST['status'],
-            "locationid"           => $_POST['locationid'],
-            "groupid"              => $_POST['groupid'],
+            //"locationid"           => $_POST['locationid'],
+            //"groupid"              => $_POST['groupid'],
             "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
             "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
-            "isSchoolAllowed"      => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
-            "language"             => implode(",",$_POST['langid']),
+           // "isSchoolAllowed"      => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
             "locations"            => implode(",",$_POST['locationid']),
             "groups"               => implode(",",$_POST['groupid']),
             "departments"          => implode(",",$_POST['departments']),
@@ -73,19 +72,20 @@
   			"name"                   => $_POST['name'],
   			"survey_needed"          => $_POST['survey_needed'],
   			"clientid"               => $_POST['clientid'],
-  			"departmentid"           => (isset($_POST['departmentid']))?$_POST['departmentid']:'',
-  			"locationid"             => (isset($_POST['locationid']))?$_POST['locationid']:'',
-  			"groups"                => (isset($_POST['groupid']))?$_POST['groupid']:'',
+            "adminid"                => $_POST['adminid'],
+            "user_type"              => $_POST['user_type'],
+  			//"departmentid"         => (isset($_POST['departmentid']))?$_POST['departmentid']:'',
+  			//"locationid"           => (isset($_POST['locationid']))?$_POST['locationid']:'',
+  			//"groups"               => (isset($_POST['groupid']))?$_POST['groupid']:'',
             "alter_email"            => $_POST['alter_email'],
             "isStep"                 => (isset($_POST['isStep'])) ? 1 : 0,
             "isEnableContacted"      => (isset($_POST['isEnableContacted'])) ? 1 : 0,
-            "isSchoolAllowed"        => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
+            //"isSchoolAllowed"        => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
   			"css_txt"                => $_POST['css_txt'],
   			"cstatus"                => $_POST['status'],
   			"cip"                    => ipAddress(),
             "cby"                    => $_SESSION['user_id'],
-            "language"               => implode(",",$_POST['langid']),
-            "groupid"                => implode(",",$_POST['groupid']),
+            "groups"                => implode(",",$_POST['groupid']),
             "locations"              => implode(",",$_POST['locationid']),
             "departments"            => implode(",",$_POST['departments']),
   			"cdate"                  => date("Y-m-d H:i:s"),
@@ -132,10 +132,16 @@
         }
         //reDirect("?page=add-survey&msg=".$msg);		
     }
+
+// get data by user
+$departmentByUsers = get_filter_data_by_user('departments');
+$locationByUsers   = get_filter_data_by_user('locations');
+$groupByUsers      = get_filter_data_by_user('groups');
+    
 ?>
 
 <section class="content-header">
-    <h1> Add Survey</h1>
+    <h1> <?=($_GET['id'])?'Edit Survey':'Add Survey'?></h1>
     <a href="?page=view-survey" class="btn btn-primary pull-right" style="margin-top:-25px">View Survey</a> 
 </section>
 <section class="content">
@@ -149,63 +155,50 @@
             <div class="col-md-12">
                 <div class="box-header"><i class="fa fa-edit"></i>Input</div>
                 <div class="box-body">
-                    <form action="" method="post" enctype="multipart/form-data">
+                    <form action="" method="post" enctype="multipart/form-data" id="survey_from">
                         <div class="row">
-                            <div class="col-md-12">
-                                <label>Language</label>
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <!-- english default -->
-                                    <input type="hidden" name="langid[]" value="1">
-                                    <?php 
-                                        record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-                                        while($row_get_language = mysqli_fetch_assoc($get_language)){	
-                                            if($row_get_language['id'] !=1){
-                                    ?>
-                                        <input type="checkbox" class="form-check-input" id="lang_<?=$row_get_language['iso_code']?>" name="langid[]" value="<?php echo $row_get_language['id'];?>" <?php echo (in_array($row_get_language['id'], explode(',',$row_get_surveys['language']))) ? "checked" : ""; ?> <?=(!empty($_GET['id']))?'disabled':''?> >
-                                        <label class="form-check-label" for="langid" style="margin-left:5px;margin-right:10px;"> <?php echo $row_get_language['name'];?> </label>
-
-                                    <?php  } } ?>
+                                    <label>Survey Name</label>
+                                    <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_surveys['name'];?>" />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Survey Name</label>
-                                    <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_surveys['name'];?>"/>
+                                    <label>User Type</label>
+                                    <select class="form-control" name="user_type" id="user_type"  <?=($_GET['id'])? 'disabled':'' ?>>
+                                        <option value="">Select User</option>
+                                        <option value="2" <?=($row_get_surveys['user_type'] ==2)?'selected':''?>>Admin</option>
+                                        <option value="3" <?=($row_get_surveys['user_type'] ==3)?'selected':''?>>Manager</option>
+                                    </select>
                                 </div>
                             </div>
-              
-                            <div class="survey-name">
-                                <?php
-                                    if(!empty($_GET['id'])){
-                                        foreach($languages as $lid){
-                                            record_set("get_langs", "select * from languages where id='".$lid."' and cby='".$_SESSION['user_id']."'");				
-                                            $row_get_langs = mysqli_fetch_assoc($get_langs);	
-                                            if($row_get_langs['id'] !=1){
-                                ?>
-                                    <div class="col-md-6 lang_<?=$row_get_langs['iso_code']?>">
-                                        <div class="form-group">
-                                            <label>Survey Name - <?=$row_get_langs['name']?></label> 
-                                            <input type="text" class="form-control" name="name_<?=$row_get_langs['iso_code']?>" id="name_<?=$row_get_langs['iso_code']?>" value="<?=$row_get_surveys['name_'.$row_get_langs['iso_code']]?>">
-                                        </div>
-                                    </div>
-                                <?php  } } } ?>
-                            </div>
-
-                            <?php if(empty($_GET['id'])){?>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Client Name</label>
-                                        <select class="form-control" name="clientid" id="clientId">
-                  	                        <?php
-          		                                record_set("get_client", "select * from clients where cby='".$_SESSION['user_id']."'");				
-                                                while($row_get_client = mysqli_fetch_assoc($get_client)){
-                                            ?>
-                                                <option value="<?php echo $row_get_client['id'];?>"><?php echo $row_get_client['name'];?></option>
-                                            <?php }?>
-                                        </select>
-                                    </div>
+                            <div class="col-md-6" id="client-field" style="<?=($row_get_surveys['clientid']>0) ? 'display: block;':'display: none;'?>">
+                                <div class="form-group">
+                                    <label>Client Name</label>
+                                    <select class="form-control" name="clientid" id="clientId" <?=($_GET['id'])? 'disabled':'' ?>>
+                                    <option value="">Select Client</option>
+                                        <?php
+                                            record_set("get_client", "select * from clients where cby='".$_SESSION['user_id']."' and cstatus = 1" );				
+                                            while($row_get_client = mysqli_fetch_assoc($get_client)){ ?>
+                                            <option value="<?php echo $row_get_client['id'];?>" <?=($row_get_surveys['clientid'] ==$row_get_client['id'])?'selected':''?>><?php echo $row_get_client['name'];?></option>
+                                        <?php }?>
+                                    </select>
                                 </div>
-                            <?php }?>
+                            </div>
+                            <div class="col-md-6" id="admin-field" style="<?=($row_get_surveys['adminid']>0) ? 'display: block;':'display: none;'?>">
+                                <div class="form-group">
+                                    <label>Admin Name</label>
+                                    <select class="form-control" name="adminid" id="adminId" <?=($_GET['id'])? 'disabled':'' ?>>
+                                        <option value="">Select Admin</option>
+                                        <?php
+                                            record_set("get_admin", "select * from admin where cby='".$_SESSION['user_id']."' and cstatus = 1");				
+                                            while($row_get_admin = mysqli_fetch_assoc($get_admin)){ ?>
+                                            <option value="<?php echo $row_get_admin['id'];?>" <?=($row_get_surveys['adminid'] ==$row_get_admin['id'])?'selected':''?>><?php echo $row_get_admin['name'];?></option>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                            </div>
              
                             <?php if(empty($_GET['id'])){?>
                                 <div class="col-md-3" style="display:none;">
@@ -244,24 +237,79 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select class="form-control" name="status">
-                                        <?php 
-                                            foreach(status() as $key => $value){
-                                        ?>
+                                    <select class="form-control" name="status" <?=($_GET['id']) ? 'disabled ': ''?>>
+                                        <?php foreach(status() as $key => $value){ ?>
                                             <option <?php if($row_get_surveys['cstatus']==$key){?> selected="selected"<?php }?> value="<?php echo $key; ?>"><?php echo $value;?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" id="isSchoolAllowed" name="isSchoolAllowed" <?php echo ($row_get_surveys['isSchoolAllowed'] == 1) ? "checked" : ""; ?>>
                                         <label class="form-check-label" for="isSchoolAllowed"> School Allow </label>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="col-md-6 dropdwn ">
+                                <label>Group</label>
+                                <input type="checkbox"id="allgrp" class="multiselect" onchange="select_all_option('allgrp','group_id')">
+                                <select name="groupid[]" id="group_id" class="form-control form-control-lg multiple-select" multiple=multiple>
+                                    <!-- <option value="">Please select</option> -->
+                                    <?php //if(!empty($row_get_surveys['locations'])){
+                                        $groups = explode(',',$row_get_surveys['groups']);
+                                        $selected_option_group = array();
+                                        foreach($groups as $val){
+                                            $selected_option_group[] = $val;
+                                        }
+                                    foreach($groupByUsers as $groupData){ 
+                                        $groupId    = $groupData['id'];
+                                        $groupName  = $groupData['name'];
+                                    ?>
+                                        <option value="<?php echo $groupId;?>" <?php echo (in_array($groupId, $selected_option_group))? 'selected':''; ?>><?php echo $groupName;?></option>
+                                    <?php }  ?>
+                                </select>	
+                            </div>
+                            <div class="col-md-6 dropdwn ">
+                                <div><label>Location</label>
+                                <input type="checkbox" id="allLoc" class="multiselect" onchange="select_all_option('allLoc','location_id')"></div>
+                                
+                                <select name="locationid[]" id="location_id" class="form-control form-control-lg multiple-select" multiple=multiple>
+                                    <!-- <option value="">Please select</option> -->
+                                    <?php //if(!empty($row_get_surveys['locations'])){
+                                        $locations = explode(',',$row_get_surveys['locations']);
+                                        $selected_option_location = array();
+                                        // if($row_get_surveys['isSchoolAllowed'] == 0){
+                                            foreach($locations as $val){
+                                                $selected_option_location[] = $val;
+                                            }
+                                        //}
+                                        foreach($locationByUsers as $row_get_location) {?>
+                                        <option value="<?php echo $row_get_location['id'];?>" <?php echo (in_array($row_get_location['id'], $selected_option_location))? 'selected':''; ?>><?php echo $row_get_location['name'];?></option>
+                                    <?php }  ?>
+                                </select>	
+                            </div>
+                            <div class="col-md-6 dropdwn ">
+                                <label>Department</label>
+                                <input type="checkbox"id="alldep" class="multiselect" onchange="select_all_option('alldep','departments')">
+                                <select name="departments[]" id="departments" class="form-control form-control-lg multiple-select" multiple=multiple>
+                                    <!-- <option value="">Please select</option> -->
+                                    <?php
+                                        $departments = explode(',',$row_get_surveys['departments']);
+                                        $selected_option_department = array();
+                                        //if($row_get_surveys['isSchoolAllowed'] == 0){
+                                            foreach($departments as $val){
+                                                $selected_option_department[] = $val;
+                                            }
+                                        //}
+                                        foreach($departmentByUsers as $row_get_department) {?>
+                                        <option value="<?php echo $row_get_department['id'];?>" <?php echo (in_array($row_get_department['id'], $selected_option_department))? 'selected':''; ?>><?php echo $row_get_department['name'];?></option>
+                                    <?php  } ?>
+                                </select>	
                             </div>
                             <div class="col-md-6">
+                                <label for=""></label>
                                 <div class="form-group">
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
@@ -269,125 +317,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-12 dropdwn">
-                                <div class="col-md-6">
-                                    <?php 
-                                        $groupCount = 0;
-                                        if(!empty($row_get_surveys['groups'])){
-                                            $groups = explode(',',$row_get_surveys['groups']);
-                                            foreach($groups as $val){
-                                                ++$groupCount;
-                                            }
-                                        }
-                                    ?>
-                                    <div class="col-md-12 grplabel dropdwn" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <div class="form-group">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="isEnableGroup" name="isEnableGroup" <?php echo ($row_get_surveys['isSchoolAllowed']== 0 && $groupCount>1)?'checked':'';?>>
-                                                <label class="form-check-label" for="isEnableGroup"> Group Allow </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 grp dropdwn" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <label>Group</label>
-                                        <select name="groupid[]" id="group_id" class="form-control form-control-lg "   <?php echo ($groupCount>1)?'multiple=multiple':'';?>>
-                                            <option value="">Please select</option>
-                                            <?php //if(!empty($row_get_surveys['locations'])){
-                                                $groups = explode(',',$row_get_surveys['groups']);
-                                                $selected_option_group = array();
-                                                if($row_get_surveys['isSchoolAllowed'] == 0){
-                                                    foreach($groups as $val){
-                                                        $selected_option_group[] = $val;
-                                                    }
-                                                }
-                                            foreach(getGroup() as $key => $value){ ?>
-                                                <option value="<?php echo $key;?>" <?php echo (in_array($key, $selected_option_group))? 'selected':''; ?>><?php echo $value;?></option>
-                                            <?php }  ?>
-                                        </select>	
-                                    </div>               
-                                </div>
-                                <div class="col-md-6">
-                                    <?php 
-                                        $locationCount = 0;
-                                        if(!empty($row_get_surveys['locations'])){
-                                            $locations = explode(',',$row_get_surveys['locations']);
-                                            foreach($locations as $val){
-                                                ++$locationCount;
-                                            }
-                                        }
-                                    ?>
-                                    <div class="col-md-12 loclabel" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <div class="form-group">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="isEnableLocation" name="isEnableLocation" <?php echo ($row_get_surveys['isSchoolAllowed']== 0 && $locationCount>1)?'checked':'';?>>
-                                                <label class="form-check-label" for="isEnableLocation"> Location Allow </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 loc" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <label>Location</label>
-                                        <select name="locationid[]" id="location_id" class="form-control form-control-lg"   <?php echo ($locationCount>1)?'multiple=multiple':'';?>>
-                                            <option value="">Please select</option>
-                                            <?php //if(!empty($row_get_surveys['locations'])){
-                                                $locations = explode(',',$row_get_surveys['locations']);
-                                                $selected_option_location = array();
-                                                if($row_get_surveys['isSchoolAllowed'] == 0){
-                                                    foreach($locations as $val){
-                                                        $selected_option_location[] = $val;
-                                                    }
-                                                }
-                                                record_set("get_location", "select * from locations where cstatus=1 and id != 4 order by name asc");	
-                                                // record_set("get_location", "select * from locations where id in(".$row_get_location['id'].") cstatus=1 and id != 4 order by name asc");				  			  
-                                                if($totalRows_get_location > 0){
-                                                    while($row_get_location = mysqli_fetch_assoc($get_location)){	
-                    
-                                            ?>
-                                                <option value="<?php echo $row_get_location['id'];?>" <?php echo (in_array($row_get_location['id'], $selected_option_location))? 'selected':''; ?>><?php echo $row_get_location['name'];?></option>
-                                            <?php } } ?>
-                                        </select>	
-                                    </div>              
-                                </div>
-                                <div class="col-md-6">
-                                    <?php 
-                                        $departmentCount = 0;
-                                        if(!empty($row_get_surveys['departments'])){
-                                            $departments = explode(',',$row_get_surveys['departments']);
-                                            foreach($departments as $val){
-                                                ++$departmentCount;
-                                            }
-                                        }
-                                    ?>  
-                                    <div class="col-md-12 dropdwn deptlabel" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <div class="form-group">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="isEnableDepartment" name="isEnableDepartment" <?php echo ($row_get_surveys['isSchoolAllowed']== 0 && $departmentCount>1)?'checked':'';?>>
-                                                <label class="form-check-label" for="isEnableDepartment"> Department Allow </label>
-                                            </div>
-                                        </div>
-                                    </div>  
-                                    <div class="col-md-12 dropdwn dept" style="<?php echo ($row_get_surveys['isSchoolAllowed'] == 1)?'display:none;':'';?>">
-                                        <label>Department</label>
-                                        <select name="departments[]" id="departments" class="form-control form-control-lg " <?php echo ($departmentCount>1)?'multiple=multiple':'';?>>
-                                            <option value="">Please select</option>
-                                            <?php
-                                                $departments = explode(',',$row_get_surveys['departments']);
-                                                $selected_option_department = array();
-                                                if($row_get_surveys['isSchoolAllowed'] == 0){
-                                                    foreach($departments as $val){
-                                                        $selected_option_department[] = $val;
-                                                    }
-                                                }
-                                                record_set("get_department", "select * from departments where cstatus=1 and id != 4");				
-                                                if($totalRows_get_department > 0){
-                                                    while($row_get_department = mysqli_fetch_assoc($get_department)){
-                                            ?>
-                                                <option value="<?php echo $row_get_department['id'];?>" <?php echo (in_array($row_get_department['id'], $selected_option_department))? 'selected':''; ?>><?php echo $row_get_department['name'];?></option>
-                                            <?php  }  } ?>
-                                        </select>	
-                                    </div>                   
-                                </div>
-                            </div>
+                           
                             <div class="col-md-12" style="padding-top:20px;">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="isStep" name="isStep" <?php echo ($row_get_surveys['isStep'] == 1) ? "checked" : ""; ?>>
@@ -418,23 +348,6 @@
                                 </div>
                             <?php  } } ?>
                             <div id="stepsTitle" class="whenStepAllow">
-                                <?php 
-                                    if(!empty($_GET['id'])){
-                                        record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
-                                        if($totalRows_get_surveys_steps > 0){ 
-                                            while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
-                                                foreach($languages as $key=>$val){
-                                                    record_set("get_language", "select * from languages where id='".$val."'");				
-                                                    $row_get_language = mysqli_fetch_assoc($get_language);
-                                                    if($row_get_language['id']!=1){
-                                ?>
-                                    <div class="col-md-12" id="lang_<?=$row_get_language['iso_code']?>">
-                                        <div class="form-group">
-                                            <label>Step <?php echo $row_get_surveys_steps['step_number']; ?> Title - <?=$row_get_language['name']?></label>
-                                            <input type="text" class="form-control" id="stepTitle<?php echo $row_get_surveys_steps['step_number']; ?>" name="stepstitle_<?=$row_get_language['iso_code']?>[]" value="<?php echo $row_get_surveys_steps['step_title_'.$row_get_language['iso_code']]?>">
-                                        </div>
-                                    </div>
-                                <?php } } } } } ?>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -477,9 +390,11 @@
                                     <span class="text-danger"><?php echo $_GET['msg']; ?></span> &nbsp;
                                     <?php if(empty($_GET['id'])){ ?>
                                         <input type="Submit" class="btn btn-primary" value="Create" name="submit" id="submit" style="margin-top:24px"/>
-                                    <?php }else{?>
-                                        <input type="Submit" class="btn btn-primary" value="Update" id="update" name="update" style="margin-top:24px"/>
-                                    <?php }?>
+                                    <?php }else{ 
+                                        if($_SESSION['user_type']==1){ ?>
+                                          <input type="Submit" class="btn btn-primary" value="Update" id="update" name="update" style="margin-top:24px"/>
+                                        <?php } ?>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <!-- End submit button -->
@@ -492,6 +407,22 @@
 </section>
 <script type="text/javascript">
 $(document).ready(function(){
+    //check user type selcted
+    $('#user_type').change(function(){
+        let userType = $(this).val();
+        if(userType==2){
+            $('#client-field').hide();
+            $('#admin-field').show();
+            $('#clientId').val('');
+        }else if(userType==3){
+            $('#admin-field').hide();
+            $('#client-field').show();
+            $('#adminId').val('');
+        }
+    })
+
+
+
     if ($('#isStep').is(':checked')) {
       $(".whenStepAllow").show();
     } else {
@@ -502,6 +433,8 @@ $(document).ready(function(){
         $(".whenStepAllow").show();
       }else{
         $(".whenStepAllow").hide();
+        $("#stepsTitle").html("");
+        $('#numberOfStep').val('');
       }
     });
 
@@ -538,113 +471,103 @@ $(document).ready(function(){
 
     // Start js according to language
     <?php 
-          record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-          while($row_get_language = mysqli_fetch_assoc($get_language)){	
-            if($row_get_language['id'] !=1){
+        record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
+        while($row_get_language = mysqli_fetch_assoc($get_language)){	
+            if($row_get_language['id'] !=1){ ?>
+
+            //   $('#update').click(function(e){
+            //     $('#lang_<?=$row_get_language['iso_code']?>').removeAttr('disabled');
+            //   });
             
-      ?>
+            // $('#lang_<?=$row_get_language['iso_code']?>').change(function() {
+            //     if($(this).is(':checked')) {
+            //         // $("#stepsTitle").html("");
+                    
+            //         var numberOfSteps = $('#numberOfStep').val();
+            //         var i;
+            //         var html = "";
+            //         var intial = 1;
 
-      $('#update').click(function(e){
-        $('#lang_<?=$row_get_language['iso_code']?>').removeAttr('disabled');
-      });
+            //         if(numberOfSteps != "" && numberOfSteps > 0){
+            //         var intial = "<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps+1 : 1; ?>";
+            //         }
 
-      
-        $('#lang_<?=$row_get_language['iso_code']?>').change(function() {
-            if($(this).is(':checked')) {
-              // $("#stepsTitle").html("");
-              
-              var numberOfSteps = $('#numberOfStep').val();
-              var i;
-              var html = "";
-              var intial = 1;
+            //         if($(this).prop('checked') == true){
+                    
+            //         if($(this).val() == '<?=$row_get_language['id']?>'){
 
-              if(numberOfSteps != "" && numberOfSteps > 0){
-                var intial = "<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps+1 : 1; ?>";
-              }
+            //             for(i=intial; i <= numberOfSteps; i++){
+            //             html += '<div class="col-md-12" id="lang_<?=$row_get_language['iso_code']?>"><div class="form-group"><label>Step '+i+' Title - <?=$row_get_language['name']?></label><input type="text" class="form-control" id="stepTitle'+i+'" name="stepstitle_<?=$row_get_language['iso_code']?>[]"></div></div>';
+            //             }
 
-              if($(this).prop('checked') == true){
-              
-                if($(this).val() == '<?=$row_get_language['id']?>'){
-
-                  for(i=intial; i <= numberOfSteps; i++){
-                    html += '<div class="col-md-12" id="lang_<?=$row_get_language['iso_code']?>"><div class="form-group"><label>Step '+i+' Title - <?=$row_get_language['name']?></label><input type="text" class="form-control" id="stepTitle'+i+'" name="stepstitle_<?=$row_get_language['iso_code']?>[]"></div></div>';
-                  }
-
-                  
-                  <?php 
-                  if(!empty($_GET['id'])){
-                  record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
-                 if($totalRows_get_surveys_steps > 0){ 
-                  while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
-                      foreach($languages as $key=>$val){
                         
-                        record_set("get_lang_step", "select * from languages where id='".$val."'");				
-                        $row_get_lang_step = mysqli_fetch_assoc($get_lang_step);
-                        if($row_get_lang_step['id']!=1){
-                 ?>
-                    html +='<div class="col-md-12" id="lang_<?=$row_get_lang_step['iso_code']?>">'
-                      +'<div class="form-group">'
-                          +'<label>Step <?php echo $row_get_surveys_steps['step_number']; ?> - <?=$row_get_lang_step['name']?></label>'
-                          +'<input type="text" class="form-control" id="stepTitle<?php echo $row_get_surveys_steps['step_number']; ?>" name="stepstitle_<?=$row_get_lang_step['iso_code']?>[]" value="<?php echo $row_get_surveys_steps['step_title_'.$row_get_lang_step['iso_code']]?>">'
-                        +'</div>'
-                    +'</div>';
-                 <?php 
-                        }
-                      }
-                    }
-                  }
-                }
-                ?>
+            //             <?php 
+            //             if(!empty($_GET['id'])){
+            //             record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
+            //             if($totalRows_get_surveys_steps > 0){ 
+            //             while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
+            //                 foreach($languages as $key=>$val){
+                            
+            //                 record_set("get_lang_step", "select * from languages where id='".$val."'");				
+            //                 $row_get_lang_step = mysqli_fetch_assoc($get_lang_step);
+            //                 if($row_get_lang_step['id']!=1){
+            //             ?>
+            //             html +='<div class="col-md-12" id="lang_<?=$row_get_lang_step['iso_code']?>">'
+            //                 +'<div class="form-group">'
+            //                     +'<label>Step <?php echo $row_get_surveys_steps['step_number']; ?> - <?=$row_get_lang_step['name']?></label>'
+            //                     +'<input type="text" class="form-control" id="stepTitle<?php echo $row_get_surveys_steps['step_number']; ?>" name="stepstitle_<?=$row_get_lang_step['iso_code']?>[]" value="<?php echo $row_get_surveys_steps['step_title_'.$row_get_lang_step['iso_code']]?>">'
+            //                 +'</div>'
+            //             +'</div>';
+            //             <?php 
+            //                 }
+            //                 }
+            //             }
+            //             }
+            //         }
+            //         ?>
 
 
-                  $('.survey-name').append('<div class="col-md-6 lang_<?=$row_get_language['iso_code']?>">'
-                    +'<div class="form-group">'
-                    +'<label>Survey Name - <?=$row_get_language['name']?></label>'
-                    +'<input type="text" class="form-control" name="name_<?=$row_get_language['iso_code']?>"' +'id="name_<?=$row_get_language['iso_code']?>" value="<?php echo $row_get_surveys['name_'.$row_get_language['iso_code']]?>"/>'
-                    +'</div>'
-                  +'</div>');
+            //             $('.survey-name').append('<div class="col-md-6 lang_<?=$row_get_language['iso_code']?>">'
+            //             +'<div class="form-group">'
+            //             +'<label>Survey Name - <?=$row_get_language['name']?></label>'
+            //             +'<input type="text" class="form-control" name="name_<?=$row_get_language['iso_code']?>"' +'id="name_<?=$row_get_language['iso_code']?>" value="<?php echo $row_get_surveys['name_'.$row_get_language['iso_code']]?>"/>'
+            //             +'</div>'
+            //             +'</div>');
 
-                }
-              }
-              
-              <?php if(!empty($_GET['id'])){ ?>
-                $("#stepsTitle").html(html);
-              <?php }else{ ?>
-              $("#stepsTitle").append(html);
-              <?php } ?>
-            }
-           
-           if($(this).prop("checked") == false){
-            // console.log('hello <?php // echo $row_get_language['name']?>');
-              $("#stepsTitle").find('#lang_<?=$row_get_language['iso_code']?>').remove();
-
-              $('.survey-name').find('.lang_<?=$row_get_language['iso_code']?>').remove();
-            }
-        });
-      
-      <?php 
-            } 
-          } 
-      ?>
+            //         }
+            //         }
+                    
+            //         <?php if(!empty($_GET['id'])){ ?>
+            //         $("#stepsTitle").html(html);
+            //         <?php }else{ ?>
+            //         $("#stepsTitle").append(html);
+            //         <?php } ?>
+            //     }
+                
+            //     if($(this).prop("checked") == false){
+            //     // console.log('hello <?php // echo $row_get_language['name']?>');
+            //         $("#stepsTitle").find('#lang_<?=$row_get_language['iso_code']?>').remove();
+            //         $('.survey-name').find('.lang_<?=$row_get_language['iso_code']?>').remove();
+            //     }
+            // });
+        
+        <?php  }  }  ?>
   
      
     // End js according to language
-
 		$('.form-control').click(function(){
-				$(this).css("border-color", "#ccc");
-			});
+			$(this).css("border-color", "#ccc");
+		});
 		
 		$("#submit").click(function(){
-			
-				var name = $("#name").val();
-				if(name==''){
-					
-						document.getElementById('name').style.borderColor = "#ff0000";
-						alert('Name field is required');
-						document.getElementById('name').focus();
-						return false;
-					}
-			});
+            var name = $("#name").val();
+            if(name==''){
+                document.getElementById('name').style.borderColor = "#ff0000";
+                alert('Name field is required');
+                document.getElementById('name').focus();
+                return false;
+            }
+		});
 
     // $('#clientId').change(function(){
   
@@ -668,65 +591,57 @@ $(document).ready(function(){
     // });  
 
    
-    $('#isEnableLocation').click(function(){
-        if($(this).prop("checked") == true){
-            $('#location_id').attr('multiple','multiple');
-          }
-          else if($(this).prop("checked") == false){
-            $('#location_id').removeAttr('multiple','multiple');
-          }
-    });
+    // $('#isEnableLocation').click(function(){
+    //     if($(this).prop("checked") == true){
+    //         $('#location_id').attr('multiple','multiple');
+    //       }
+    //       else if($(this).prop("checked") == false){
+    //         $('#location_id').removeAttr('multiple','multiple');
+    //       }
+    // });
 
-    $('#isEnableDepartment').click(function(){
-        if($(this).prop("checked") == true){
-            $('#departments').attr('multiple','multiple');
-          }
-          else if($(this).prop("checked") == false){
-            $('#departments').removeAttr('multiple','multiple');
-          }
-    });
+    // $('#isEnableDepartment').click(function(){
+    //     if($(this).prop("checked") == true){
+    //         $('#departments').attr('multiple','multiple');
+    //       }
+    //       else if($(this).prop("checked") == false){
+    //         $('#departments').removeAttr('multiple','multiple');
+    //       }
+    // });
 
-    $('#isEnableGroup').click(function(){
-        if($(this).prop("checked") == true){
-            $('#group_id').attr('multiple','multiple');
-          }
-          else if($(this).prop("checked") == false){
-            $('#group_id').removeAttr('multiple','multiple');
-          }
-    });
+    // $('#isEnableGroup').click(function(){
+    //     if($(this).prop("checked") == true){
+    //         $('#group_id').attr('multiple','multiple');
+    //       }
+    //       else if($(this).prop("checked") == false){
+    //         $('#group_id').removeAttr('multiple','multiple');
+    //       }
+    // });
 
-    $('#isSchoolAllowed').click(function(){
-       if($(this).prop("checked") == true){
-          $('.dept').css('display','none');
-          $('.loc').css('display','none');
-          $('.grp').css('display','none');
-          $('.grplabel').css('display','none');
-          $('.loclabel').css('display','none');
-          $('.deptlabel').css('display','none');
-
-          if($('#isEnableLocation').prop("checked")){
-            $('#isEnableLocation').prop('checked', false);
-          }
-
-          if($('#isEnableDepartment').prop("checked")){
-            $('#isEnableDepartment').prop('checked', false);
-          }
-
-        }
-        else if($(this).prop("checked") == false){
-          $('.dept').css('display','block');
-          $('.loc').css('display','block');
-          $('.loclabel').css('display','block');
-          $('.deptlabel').css('display','block');
-          $('.grp').css('display','block');
-          $('.grplabel').css('display','block');
-
-          $('#group_id').removeAttr('multiple','multiple');
-          $('#location_id').removeAttr('multiple','multiple');
-          $('#departments').removeAttr('multiple','multiple');
-        }
-    });
-				
-	});
+});
     
+//select all option for location department,group
+function select_all_option(idFirst,idSecond){
+    idFirst  = "#"+idFirst;
+    idSecond = "#"+idSecond;
+    if($(idFirst).is(':checked')){
+        $(idSecond+" > option").prop("selected", "selected");
+        $(idSecond).trigger("change");
+    } else {
+        $(idSecond+"> option").removeAttr("selected");
+        $(idSecond).trigger("change");
+    }
+}
+//disabled form for other users
+<?php if($_GET['id']){ ?>
+    $('#survey_from input').attr('readonly', 'readonly');
+    $('#survey_from textarea').attr('readonly', 'readonly');
+    <?php if($_SESSION['user_type'] == 1) { ?>
+    $('#survey_from input:checkbox').not('.multiselect').attr('disabled','true');
+    <?php }else { ?> 
+    $('#survey_from input:checkbox').attr('disabled','true');
+    $('.multiple-select').attr('disabled','true');
+    <?php } ?>
+<?php } ?>
+
 </script>

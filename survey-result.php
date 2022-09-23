@@ -28,16 +28,22 @@ if($totalRows_get_contact_action > 0){
 $i = 0;
   while($row_get_contact_action = mysqli_fetch_assoc($get_contact_action)){
     if($row_get_contact_action['action'] == 1){
-      $showAllComment[$i]['action']='In progress';
+      $showAllComment[$i]['action']='UNASSIGNED';
     }
     if($row_get_contact_action['action'] == 2){
-      $showAllComment[$i]['action']='Void';
+      $showAllComment[$i]['action']='ASSIGNED';
     }
     if($row_get_contact_action['action'] == 3){
-      $showAllComment[$i]['action']='Resolved-Positive';
+      $showAllComment[$i]['action']='IN PROGRESS';
     }
     if($row_get_contact_action['action'] == 4){
-      $showAllComment[$i]['action']='Resolved-Negative';
+      $showAllComment[$i]['action']='VOID';
+    }
+    if($row_get_contact_action['action'] == 5){
+      $showAllComment[$i]['action']='RESOLVED-POSITIVE';
+    }
+    if($row_get_contact_action['action'] == 6){
+      $showAllComment[$i]['action']='RESOLVED-NEGATIVE';
     }
     
     $showAllComment[$i]['comment']=$row_get_contact_action['comment'];
@@ -159,7 +165,15 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
     </style>
   </head>
   <body>
+
   <div id="reportPage">
+    <?php if(!isset($_GET['status']) and $_GET['status']!='assign') { ?>
+    <div class="container">
+      <marquee style="background: red;color: #fff;">
+          <p style="margin-top: 5px;font-weight: 500;font-size: 16px;">This Task is Not Assigned Yet</p>
+      </marquee>
+    </div>
+    <?php } ?>
     <div align="center"><img src="upload_image/logo.png" width="200"></div>
     <h2 align="center" style="margin:20px;"> <?= $row_get_survey['name']; ?> </h2>
     <?php 
@@ -193,7 +207,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
         <div class="container">
           <?php foreach($survey_steps AS $key => $value) {  ?>
           <div class="">  
-            <h4 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['number'].".".$value['title']; ?></h4>
+            <h4 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['title']; ?></h4>
             <table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
               <thead>
                 <tr>
@@ -270,7 +284,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
           <?php } ?>
             <br>
           <div class="row">
+            <?php if(count($showAllComment) > 0 ) { ?>
             <h4 align="center" style="margin-top:20px;margin-bottom:10px;">CONTACT</h4>
+            <?php } ?>
             <?php foreach($showAllComment as $comm) { ?>
               <hr style="border: 0.5px solid #d3cccc;"/>
                 <!-- <div class="left">
@@ -297,7 +313,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                    <?php ?>
                    <div class="col-md-4">
                          <div class="col-md-5" style="padding: 0px;text-align: right;"><strong>USERNAME :</strong></div>
-                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo $_SESSION['name']; ?></div>
+                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo $_SESSION['user_name']; ?></div>
                    </div>
                    <div class="col-md-4">
                          <div class="col-md-7" style="padding: 0px;text-align: right;"><strong>CONTACTED ON :</strong></div>
@@ -312,47 +328,52 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                </div>
               <hr style="border: 0.5px solid #d3cccc;"/>
              <?php } ?>
-            <form id="contactActionForm" role="form" method="POST">
-              <div class="row notforpdf" style="text-align: center;margin-top: 20px;">
-                <div class="col-md-12">
-                  <div class="col-md-6" >
-                    <label for="contact-date" style="font-size:14px;"><strong>CONTACT DATE</strong></label>
-                    <div class="form-group">
-                      <input type="date" name="" id="" class="form-control" value="<?=date('Y-m-d',strtotime($created_date))?>">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="contact-date" style="font-size:14px;"><strong>CONTACT STATUS</strong></label>
-                    <div class="form-group">
-                      <select id="contact_action" name="contact_action" class="form-control" required="required">
-                        <option value="">SELECT</option>
-                        <option value="1" <?php echo ($co_action == 'In progress')?'selected':'';?>>IN PROGRESS</option>
-                        <option value="2" <?php echo ($co_action == 'Void')?'selected':'';?>>VOID</option>
-                        <option value="3" <?php echo ($co_action == 'Resolved-Positive')?'selected':'';?>>RESOLVED-POSITIVE</option>
-                        <option value="4" <?php echo ($co_action == 'Resolved-Negative')?'selected':'';?>>RESOLVED-NEGATIVE</option>
-                      </select>
-                    </div>
-                  </div>
+             <?php if($_GET['status']== 'assign') { ?>
+              <form id="contactActionForm" role="form" method="POST">
+                <div class="row notforpdf" style="text-align: center;margin-top: 20px;">
                   <div class="col-md-12">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8">
-                      <label for="contact-date" style="font-size:14px;"><strong>CONTACT COMMENT</strong></label>
+                    <div class="col-md-6" >
+                      <label for="contact-date" style="font-size:14px;"><strong>CONTACT DATE</strong></label>
                       <div class="form-group">
-                          <textarea class="form-control" name="comment" placeholder="Comments" required="required"><?php echo (!empty($contact_comment))?$contact_comment:'';?></textarea>
+                        <input type="date" name="" id="" class="form-control" max="<?=date('2050-01-01')?>" min="<?=date('Y-m-d')?>" value="<?=(!empty($created_date)) ? date('Y-m-d',strtotime($created_date)) : date('Y-m-d')?>">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="contact-date" style="font-size:14px;"><strong>CONTACT STATUS</strong></label>
+                      <div class="form-group">
+                        <select id="contact_action" name="contact_action" class="form-control" required="required">
+                          <option value="">SELECT</option>
+                          <?php foreach(assign_task_status() as $key => $value) { 
+                             if($key < $row_get_contact_action_single['action']){
+                               continue;
+                             }
+                            ?>
+                            <option value="<?=$key?>" <?=($row_get_contact_action_single['action'] == $key) ? 'selected' : '' ?>><?=$value?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-8">
+                        <label for="contact-date" style="font-size:14px;"><strong>CONTACT COMMENT</strong></label>
+                        <div class="form-group">
+                            <textarea class="form-control" name="comment" placeholder="Comments" required="required"><?php echo (!empty($contact_comment))?$contact_comment:'';?></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-8">
+                        <div class="form-group">
+                          <input type="submit" name="submit" value="Submit" class="btn btn-primary">
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-12">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8">
-                      <div class="form-group">
-                        <input type="submit" name="submit" value="Submit" class="btn btn-primary">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> 
-            </form>
+                </div> 
+              </form>
+            <?php } ?>
           </div>
           <?php //} ?>
           </div>

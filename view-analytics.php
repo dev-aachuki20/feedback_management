@@ -25,30 +25,30 @@
 
 </style>
 <?php
-  $query = "";
-  if(isset($_POST['survey_id'])&& !empty($_POST['survey_id'])){
-    $query .= " and  surveyid = ".$_POST['survey_id'];
-  }
-  if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
-    $query .= " and answers.cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
-  }
+$query = "";
+if(isset($_POST['survey_id'])&& !empty($_POST['survey_id'])){
+  $query .= " and  surveyid = ".$_POST['survey_id'];
+}
+if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
+  $query .= " and answers.cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
+}
 
   $perLocations = array();
   //Per Location Statistic
   record_set("per_location", "SELECT * FROM (SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, locations.name AS location_name FROM answers LEFT JOIN locations ON answers.locationid = locations.id $locationJoinWhereCondition where 1=1  $query GROUP BY locationid ) AS NEWTABLE ORDER BY total_surveys DESC");
+
   $locationsChartlabels = array();
-  $locationsChartData = array();  
+  $locationsChartData   = array();  
   while($row_per_location = mysqli_fetch_assoc($per_location)){
     $labels = ($row_per_location['location_name'])?$row_per_location['location_name']:'NA';
     $tSurvey = ($row_per_location['total_surveys'])?$row_per_location['total_surveys']:'';
-
     $locationsChartlabels[]  = $labels;
     $locationsChartData[]    = $tSurvey;
     $perLocations[$labels]  += $tSurvey; 
   }
   $perDepartments = array();
   //Per Department Statistic
-  record_set("per_department", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, departments.name AS department_name FROM answers LEFT JOIN departments ON answers.departmentid = departments.id  $query  GROUP BY departmentid  ) AS NEWTABLE ORDER BY total_surveys DESC");
+  record_set("per_department", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, departments.name AS department_name FROM answers LEFT JOIN departments ON answers.departmentid = departments.id where 1=1 $query  GROUP BY departmentid  ) AS NEWTABLE ORDER BY total_surveys DESC");
 
   $departmentChartlabels = array();
   $departmentChartData = array();
@@ -61,7 +61,7 @@
   }
    //Per Group Statistic
    $perGroups = array();
-   record_set("per_group", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, groups.name AS group_name FROM answers LEFT JOIN groups ON answers.groupid = groups.id  $query  GROUP BY groupid  ) AS NEWTABLE ORDER BY total_surveys DESC");
+   record_set("per_group", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, groups.name AS group_name FROM answers LEFT JOIN groups ON answers.groupid = groups.id where 1=1 $query  GROUP BY groupid  ) AS NEWTABLE ORDER BY total_surveys DESC");
 
    $groupChartlabels = array();
    $groupChartData = array();
@@ -115,15 +115,18 @@
       $order_by = 'ASC';
     }
     //Locations
-    $query_b = "";
-    if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter'])){
-      $query_b .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
-    }
+    // $query_b = "";
+    // if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
+    //   $query_b .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
+    // }
 
-    record_set("average_survey_result","SELECT * FROM ( SELECT locationid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query_b GROUP BY locationid ) AS NEWTABLE ORDER BY survey_val_sum $order_by ");
+    record_set("average_survey_result","SELECT * FROM ( SELECT locationid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY locationid ) AS NEWTABLE ORDER BY survey_val_sum $order_by");
     $achieved_result_val = 0;
     if($totalRows_average_survey_result > 0){
       while($row_average_survey_result = mysqli_fetch_assoc($average_survey_result)){
+        // echo '<pre>';
+        // print_r($row_average_survey_result);
+        // echo '</pre>';
         record_set("location_details", "select * from locations where id = '".$row_average_survey_result['locationid']."'");
         $row_location_details = mysqli_fetch_assoc($location_details);
 
@@ -144,10 +147,16 @@
         }
       }
     }
+   
+  arsort($best_locations);
+  asort($worst_locations);
   // echo '<pre>';
-  // print_r($best_locations);die();
+  // print_r($worst_locations);
+  // echo '</pre>';
+
+  // die();
     //Departments
-    record_set("average_department_result","SELECT * FROM ( SELECT departmentid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query_b GROUP BY departmentid ) AS NEWTABLE ORDER BY survey_val_sum $order_by ");
+    record_set("average_department_result","SELECT * FROM ( SELECT departmentid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY departmentid ) AS NEWTABLE ORDER BY survey_val_sum $order_by ");
     if($totalRows_average_department_result > 0){
       while($row_average_department_result = mysqli_fetch_assoc($average_department_result)){
         record_set("department_details", "select * from departments where id = '".$row_average_department_result['departmentid']."'");
@@ -169,8 +178,10 @@
       
       }
     }
+    arsort($best_departments);
+    asort($worst_departments);
       //Groups
-      record_set("average_group_result","SELECT * FROM ( SELECT groupid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query_b GROUP BY groupid ) AS NEWTABLE ORDER BY survey_val_sum $order_by");
+      record_set("average_group_result","SELECT * FROM ( SELECT groupid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY groupid ) AS NEWTABLE ORDER BY survey_val_sum $order_by");
       if($totalRows_average_group_result > 0){
         while($row_average_group_result = mysqli_fetch_assoc($average_group_result)){
           record_set("group_details", "select * from groups where id = '".$row_average_group_result['groupid']."'");
@@ -193,6 +204,9 @@
         }
       }
   }
+
+  arsort($best_group_labels);
+  asort($worst_group_score);
   // echo '<pre>';
   // print_r($best_group_labels); 
   // print_r($best_group_score); 
@@ -222,8 +236,15 @@
               <label>Survey</label>
               <select name="survey_id" class="form-control form-control-lg contact" id="">
                 <option value="">select survey</option>
-                <?php foreach(get_allowed_data('surveys',$_SESSION['user_id']) as $key =>$value){ ?>
-                  <option value="<?=$key?>"><?=$value?></option>
+                <?php 
+                // survey by user
+                $surveyByUsers = get_filter_data_by_user('surveys');
+
+                foreach($surveyByUsers as $surveyData){ 
+                  $surveyId   = $surveyData['id'];
+                  $surveyName = $surveyData['name'];
+                ?>
+                  <option value="<?=$surveyId?>" <?php if($surveyId==$_POST['survey_id']) {echo 'selected';}?>><?=$surveyName?></option>
                 <?php } ?>
               </select>
             </div>
@@ -231,13 +252,13 @@
           <div class="col-md-3">
             <div class="form-group">
               <label>Start Date</label>
-              <input type="date"  name="fdate" class="form-control" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
+              <input type="date"  name="fdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control" value="<?php echo $_POST['fdate']; ?>"/>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label>End Date</label>
-              <input type="date"  name="sdate" class="form-control" value="<?php //echo date('Y-m-d'); ?>"/>
+              <input type="date"  name="sdate" class="form-control" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php echo $_POST['sdate']; ?>"/>
             </div>
           </div>
           <div class="col-md-3">
@@ -263,7 +284,10 @@
                 </div>
               </div>
               <div class="box-body " style="display: block;">
-                <?php if($locationsChartData){ ?>
+                <?php 
+                $countLocation = $perLocations;
+                unset($countLocation['NA']);
+                if($countLocation){ ?>
                 <div class="row">
                     <div class="col-sm-8">
                       <canvas id="locationChart"></canvas>
@@ -278,7 +302,7 @@
                         </thead>
                         <tbody>
                           <?php 
-                          if($perLocations){
+                          if($countLocation){
                             foreach($perLocations AS $locationName => $locationSurvey){ ?>
                               <tr>
                                 <th scope="row" style="text-align: left;"><?php echo $locationName; ?></th>
@@ -386,7 +410,10 @@
                 </div>
               </div>
               <div class="box-body " style="display: block;">
-                <?php if($perDepartments){ ?>
+                <?php 
+                $countDepartment = $perDepartments;
+                unset($countDepartment['NA']);
+                if($countDepartment){ ?>
                   <div class="row">
                     <div class="col-sm-8">
                       <canvas id="departmentChart"></canvas>
@@ -484,7 +511,9 @@
                       <?php } ?>
                     </div>
                   </div>
-                <?php }?> 
+                <?php }else{ ?>
+                  <p>No Data Dound.</p>
+                <?php } ?> 
               </div>
             </div>
           </div>
@@ -499,8 +528,13 @@
                   <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
               </div>
+
               <div class="box-body " style="display: block;">
-                <?php if($perGroups){ ?>
+                <?php 
+                $countGroup = $perGroups;
+                unset($countGroup['NA']);
+                //print_r($countGroup);
+                if($countGroup){ ?>
                   <div class="row">
                     <div class="col-sm-8">
                       <canvas id="groupChart"></canvas>
@@ -602,6 +636,8 @@
                       <?php } ?>
                     </div>
                   </div>
+                <?php }else { ?>
+                  <p>No Data Found.</p>
                 <?php } ?>  
               </div>
             </div>
@@ -841,7 +877,8 @@ if(worth_groups_length>0){
     const pages = document.getElementById('reportPage');
     $('#exportPDF').click(function(){
         html2PDF(pages, {
-            margin: [20,10],//PDF margin (in jsPDF units). Can be a single number, [vMargin, hMargin], or [top, left, bottom, right].
+            margin: [50,50,50,50],
+            //margin: [20,20],//PDF margin (in jsPDF units). Can be a single number, [vMargin, hMargin], or [top, left, bottom, right].
             jsPDF: {
                 orientation: "p",
                 unit: "in",

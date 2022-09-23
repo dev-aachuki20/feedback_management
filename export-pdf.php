@@ -76,7 +76,7 @@ $message =
 
   foreach($survey_steps AS $key => $value) { 
       $message .= '<div class="container" style="page-break-after: always;height: 500px;">
-        <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['number'].'.'.$value['title'].'</h4>';
+        <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
         foreach($questions[$key] AS $question){
           $questionid   = $question['id'];
           $answer_type  = $question['answer_type'];
@@ -111,8 +111,6 @@ $message =
             $counts = array_count_values($answers_array);
           }
         
-
-          
           if($answer_type==1 || $answer_type==4 || $answer_type==6){
             if($answer_type==1){
               //get Child Questions

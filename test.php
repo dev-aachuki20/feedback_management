@@ -1,85 +1,47 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-more.js"></script>
-<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<style>
+.select2-container {
+  width: 90% !important;
+}
 
+.select2-container .select-all {
+        position: absolute;
+        top: 6px;
+        right: 4px;
+        width: 20px;
+        height: 20px;
+        margin: auto;
+        display: block;
+        background-size: contain;
+        cursor: pointer;
+        z-index: 999999;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
-<figure class="highcharts-figure">
-    <div id="container-speed" class="chart-container"></div>
-    <div id="container-rpm" class="chart-container"></div>
-
-</figure>
-
+<select class="multiple-selectss" multiple id="my-select">
+<option value="1">Option 1</option>
+<option value="2">Option 2</option>
+<option value="3">Option 3</option>
+<option value="4">Option 4</option>
+</select>
 
 <script>
-    var gaugeOptions = {
-    chart: {
-        type: 'gauge'
-    },
+$('.multiple-selectss').select2({
+    placeholder: 'Press CTRL+A for selecr or unselect all options'
+});
 
-    title: null,
-
-    pane: {
-        center: ['50%', '85%'],
-        size: '140%',
-        startAngle: -90,
-        endAngle: 90,
-        background: {
-            backgroundColor:
-                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
-        }
-    },
-
-    exporting: {
-        enabled: false
-    },
-
-    tooltip: {
-        enabled: false
-    },
-
-    // the value axis
-    yAxis: {
-        stops: [
-            [0.1, '#55BF3B'], // green
-            [0.5, '#DDDF0D'], // yellow
-            [0.9, '#DF5353'] // red
-        ],
-        lineWidth: 0,
-        tickWidth: 0,
-        minorTickInterval: null,
-        tickAmount: 2,
-        title: {
-            y: -70
-        },
-        labels: {
-            y: 16
-        }
-    },
-
-};
-
-// The speed gauge
-var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptions, {
-    yAxis: {
-        min: 0,
-        max: 200,
-        title: {
-            text: 'Speed'
-        }
-    },
-
-    credits: {
-        enabled: false
-    },
-
-    series: [{
-        name: 'Speed',
-        data: [50],
+$('.multiple-selectss[multiple]').siblings('.select2-container').append('<input type="checkbox" name="" id="" value="1" onclick="selectAll()" class="select-all">');
         
-    }]
-
-}));
+function selectAll() {
+    let isChecked = $('.select-all').is(':checked');
+    if(isChecked){
+        $("#my-select > option").prop("selected", true);
+    }else {
+        $("#my-select > option").prop("selected", false);
+    }
+    $("#my-select").trigger("change");
+}
+      
 </script>

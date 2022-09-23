@@ -18,9 +18,18 @@
             </thead>
             <tbody>
             <?php 
-              record_set("get_departments", "select * from departments where cby='".$_SESSION['user_id']."' order by cdate desc");				
-              while($row_get_departments = mysqli_fetch_assoc($get_departments)){
-            ?>
+            //for super admin
+            if($_SESSION['user_type']==1){
+              $filter = '';
+            }else if($_SESSION['user_type']==2){
+              //for admin
+              $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
+            }else if($_SESSION['user_type']==3){
+               //for manager
+              $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
+            }
+              record_set("get_departments", "select * from departments where id>0 $filter order by cdate desc");				
+              while($row_get_departments = mysqli_fetch_assoc($get_departments)){ ?>
               <tr>
                 <td><?php echo $row_get_departments['name'];?></td>
                 <td>
@@ -34,7 +43,7 @@
                   <a class="btn btn-xs btn-info" href="?page=add-department&id=<?php echo $row_get_departments['id'];?>">Edit</a>
                 </td>
               </tr>
-             <?php }?>
+             <?php } ?>
             </tbody>
             <tfoot>
               <tr>
