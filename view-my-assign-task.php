@@ -130,7 +130,6 @@ if(isset($_POST['assign'])){
             $que= " and  answerid != -2 and answerval != 10";
         }
     }
-
     $filter_status = '';
     if(!empty($_POST['task_status'])){
         $filter_status = ' and task_status ='.$_POST['task_status'];
@@ -177,43 +176,40 @@ if($_SESSION['user_type'] == 3){
 <section class="content">
     <!-- top box container start-->
     <div class="box box-default">
-        <form action="" method="POST" id="viewReportcsv">
-            <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
-            <div class="box-header">
-                <i class="fa fa-search" aria-hidden="true"></i>
-                <h3 class="box-title">Search</h3>
-            </div>
-            
-            <div class="box-body">
-                <form action="" method="post">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Start Date</label>
-                                <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
-                            </div>
+        <div class="box-header">
+            <i class="fa fa-search" aria-hidden="true"></i>
+            <h3 class="box-title">Search</h3>
+        </div>
+        
+        <div class="box-body">
+            <form action="" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>End Date</label>
-                                <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
-                            </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Survey</label>
-                                <select id="surveys" name="surveys" class="form-control surveys" required>
-                                    <option value="">Select</option>
-                                    <?php
-                                        // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
-                                        // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-                                        
-                                    foreach($surveyByUsers as $row_get_surveys){ ?>
-                                        <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['surveys']==$row_get_surveys['id'])?'selected':''?>><?php echo $row_get_surveys['name'];?></option>
-                                    <?php }?>
-                                </select>
-                                <label for="" class="error" style="display:none ;"> This field is required</label>
-                            </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Survey</label>
+                            <select id="surveys" name="surveys" class="form-control surveys" required>
+                                <option value="">Select</option>
+                                <?php
+                                    // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
+                                    // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                    
+                                foreach($surveyByUsers as $row_get_surveys){ ?>
+                                    <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['surveys']==$row_get_surveys['id'])?'selected':''?>><?php echo $row_get_surveys['name'];?></option>
+                                <?php }?>
+                            </select>
+                            <label for="" class="error" style="display:none ;"> This field is required</label>
                         </div>
                         <!-- filter by group -->
                         <div class="col-md-3">
@@ -284,20 +280,16 @@ if($_SESSION['user_type'] == 3){
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>&nbsp;</label>
-                                <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
-                            </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
                         </div>
                     </div>
-                </form>    
-            </div>
-                
-            <!-- <div3
-                <button type="button" class="btn btn-success" id="exportascsv" style="margin-bottom: 20px;">Export CSV</button>
-            </div> -->
-        </form>
+                </div>
+            </form>    
+        </div>
     </div>
     <div class="row">
         <div class="col-lg-12" id="dataforpdf">

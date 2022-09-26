@@ -59,7 +59,6 @@ $sid                 = $_GET['id'];
 </section>
 <section class="content">
     <!-- top box container start-->
-
     <div class="row">
         <div class="col-lg-12" id="dataforpdf">
             <div class="box">

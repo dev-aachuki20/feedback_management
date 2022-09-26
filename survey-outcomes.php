@@ -239,6 +239,7 @@
                         <table id="datatable-ajax" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th> RESPONDENT NUMBER</th>
