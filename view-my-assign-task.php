@@ -8,6 +8,7 @@
 $loggedIn_user_id    = $_SESSION['user_id'];
 $loggedIn_user_type  = $_SESSION['user_type'];
 $sid                 = $_GET['id'];
+$surveyByUsers     = get_filter_data_by_user('surveys');
 // assign task to user
 if(isset($_POST['assign'])){
     $survey_id           = $_POST['survey_id'];
@@ -21,6 +22,7 @@ if(isset($_POST['assign'])){
             "assign_to_user_id"   => $assing_to_user_id,
             "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
+            "task_status"         => 2,
             "survey_id"           => $survey_id,
             "assign_by_user_id"   => $assign_by_user_id,
             "assign_by_user_type" => $assign_by_user_type,
@@ -36,7 +38,25 @@ if(isset($_POST['assign'])){
         }else {
             $insert_value =  dbRowInsert("assign_task",$data);
         }
+        $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
+
+        $user_email = $userdata['email'];
+        $user_name  = $userdata['name']; 
+
+        $data_contact_action = array(
+            "user_id"=> $tasks,
+            "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
+            "comment"=> 'response assigned to '.$user_name,
+            'created_date'=>date("Y-m-d H:i:s")
+        );
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+
+        // send mail to user assigned task
+        send_email_to_assign_user($user_name,$user_email);
     }
+
     $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
     $user_email = $userdata['email'];
     $user_name  = $userdata['name'];
@@ -99,8 +119,7 @@ if(isset($_POST['assign'])){
             if($dateflag == true){
                 $query .= " and groupid = '".$_POST['groupid']."'";
             }else{
-                $deptflag = (!empty($_POST['hidden_department_id']))?'and':'where';
-                $query .= "".$deptflag." groupid = '".$_POST['groupid']."'";
+                //$query .= " and groupid = '".$_POST['groupid']."'";
             }
         }
     }
@@ -112,7 +131,11 @@ if(isset($_POST['assign'])){
         }
     }
 
-    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type");
+    $filter_status = '';
+    if(!empty($_POST['task_status'])){
+        $filter_status = ' and task_status ='.$_POST['task_status'];
+    }
+    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type".$filter_status);
 
     $arr_task_id = array();
     while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -122,6 +145,14 @@ if(isset($_POST['assign'])){
     if(empty($task_id)){
         $task_id = '0';
     }
+    if($loggedIn_user_type > 1){
+        $assign_survey = array();
+        foreach($surveyByUsers as $survey){
+            $assign_survey[] = $survey['id'];
+        }
+        $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+    }
+
     $query .= " and cby IN (".$task_id.") GROUP by cby";
     record_set("get_recent_entry",$query);
 // get data by user
@@ -130,6 +161,10 @@ $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_filter_data_by_user('surveys');
 
+$display = '';
+if($_SESSION['user_type'] == 3){
+    $display = 'display:none;';
+}
 ?>
 <style>
 .d-none{
@@ -189,7 +224,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     <?php foreach($groupByUsers as $groupData){ 
                                         $groupId    = $groupData['id'];
                                         $groupName  = $groupData['name']; ?>
-                                        <option value="<?php echo $groupId;?>"><?php echo $groupName;?></option>
+                                        <option value="<?php echo $groupId;?>" <?=($_POST['groupid']==$groupId)?'selected':''?>><?php echo $groupName;?></option>
                                     <?php }?>
                                 </select>
                             </div>
@@ -205,7 +240,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                         foreach($locationByUsers as $locationData){ 
                                         $locationId     = $locationData['id'];
                                         $locationName   = $locationData['name'];?>
-                                        <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
+                                        <option value="<?php echo $locationId;?>" <?=($_POST['locationid']==$locationId)?'selected':''?>><?php echo $locationName;?></option>
                                     <?php }?>
                                 </select>
                             </div>
@@ -221,12 +256,12 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                         foreach($departmentByUsers as $departmentData){ 
                                         $departmentId     = $departmentData['id'];
                                         $departmentName   = $departmentData['name'];?>
-                                        <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
+                                        <option value="<?php echo $departmentId;?>" <?=($_POST['departmentid']==$departmentId)?'selected':''?>><?php echo $departmentName;?></option>
                                     <?php }?>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <div class="form-group">
                                 <label>Contact</label>
                                 <select name="contacted" id="contacted" class="form-control form-control-lg contact">
@@ -235,7 +270,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     <option value="2">No</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="contact-date" style="font-size:14px;"><strong> Status</strong></label>
@@ -243,7 +278,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     <select id="task_status" name="task_status" class="form-control" >
                                     <option value="">SELECT</option>
                                     <?php foreach(assign_task_status() as $key => $value) { ?>
-                                        <option value="<?=$key?>"><?=$value?></option>
+                                        <option value="<?=$key?>" <?=($_POST['task_status']==$key) ? 'selected':'' ?>><?=$value?></option>
                                     <?php } ?>
                                     </select>
                                 </div>
@@ -281,7 +316,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th style="<?=$display?>"></th>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th>GROUP</th>
@@ -305,7 +340,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                 $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
                                 ?>
                                 <tr>
-                                    <td scope="row"><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
+                                    <td scope="row" style="<?=$display?>" ><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
 
                                     <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
@@ -361,17 +396,21 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     }else{ 
                                         $contacted ='<a class="btn btn-xs btn-info">No</a>';
                                     } 
+                                    // get taskstatus
+                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+                                    $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+                                    $task_status = $row_check_assign_task['task_status'];
                                     ?>
                                     <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
                                     <td><?=$contacted ?></td>
-                                    <td></td>
+                                    <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                     <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?> &status=assign" target="_blank">VIEW DETAILS</a></td>
                                 </tr> 
                                 <?php }
                                  ?>
                             </tbody>            
-                            <tfoot>
-                                <tr>
+                            <tfoot style="<?=$display?>">
+                                <tr >
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -383,11 +422,9 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     <th></th>
                                     <th></th>
                                     <th class="notforpdf">
-                                        <?php if($_POST['surveys']) { ?>
-                                        <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter">
+                                        <button type="button" class="btn btn-primary btn-submit" style="display:none;" data-toggle="modal" value="" data-target="#exampleModalCenter">
                                         Re Assign
                                         </button>
-                                    <?php } ?>
                                     </th>
                                 </tr>
                             </tfoot>
@@ -462,6 +499,8 @@ $(document).on('change','.assignSurveyCheckbox',function(){
      if(survey_id == ''){
         $('.error').show();
         alert("Please Choose Survey Type To Re Assign Any Task");
+     }else{
+        $('.btn-submit').show();
      }
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');
@@ -469,14 +508,20 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
     });
+    console.log(checkedArray.length);
+    if(checkedArray.length >0 && survey_id !=''){
+        $('.btn-submit').show();
+    }else{
+        $('.btn-submit').hide();
+    }
     
     if(value){
        $('.survey_id').val(sid);
        $('.response_id_hidden').val(checkedArray);
-       $('.btn-submit').show();
+       //$('.btn-submit').show();
        $('.self-assign-btn').show();
     }else{
-        $('.btn-submit').hide();
+       // $('.btn-submit').hide();
         $('.self-assign-btn').hide();
     }
 });

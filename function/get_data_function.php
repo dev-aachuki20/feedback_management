@@ -102,4 +102,25 @@ function getClient($id=null){
 
 	return $row_get_data;
 }
+function get_assign_task_count_by_status($status_id){
+	$user_id   = $_SESSION['user_id'];
+	$user_type = $_SESSION['user_type'];
+	$array = array();
+	if($status_id == 1){
+		// if($_SESSION['user_type'] !=1){
+		// 	$location = get_filter_data_by_user('locations');
+		// 	$location
+		// }
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id and assign_to_user_type =$user_type");
+		while($row_get_data=mysqli_fetch_assoc($user_data)){
+			$array[] =$row_get_data['task_id'];
+		}
+		$task_ids = implode(",",$array );
+		$user_data = getaxecuteQuery_fn("SELECT * FROM answers where cby NOT IN ($task_ids) group by cby" );
+	}else {
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id and assign_to_user_type =$user_type and task_status = $status_id");
+	}
+	$row = mysqli_num_rows ( $user_data );
+	return $row;
+}
 ?>

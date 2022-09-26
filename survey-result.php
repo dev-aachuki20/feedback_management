@@ -1,6 +1,9 @@
 <?php 
 include('function/function.php');
+include('function/get_data_function.php');
+
 //Get Survey Details
+
 $surveyid = $_GET['surveyid'];
 $client_id = '';
 if(isset($_GET['surveyid'])){
@@ -29,25 +32,35 @@ $i = 0;
   while($row_get_contact_action = mysqli_fetch_assoc($get_contact_action)){
     if($row_get_contact_action['action'] == 1){
       $showAllComment[$i]['action']='UNASSIGNED';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
+
     }
     if($row_get_contact_action['action'] == 2){
       $showAllComment[$i]['action']='ASSIGNED';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
     }
     if($row_get_contact_action['action'] == 3){
       $showAllComment[$i]['action']='IN PROGRESS';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
     }
     if($row_get_contact_action['action'] == 4){
       $showAllComment[$i]['action']='VOID';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
     }
     if($row_get_contact_action['action'] == 5){
       $showAllComment[$i]['action']='RESOLVED-POSITIVE';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
     }
     if($row_get_contact_action['action'] == 6){
       $showAllComment[$i]['action']='RESOLVED-NEGATIVE';
+      $showAllComment[$i]['status']=$row_get_contact_action['action'];
     }
     
     $showAllComment[$i]['comment']=$row_get_contact_action['comment'];
     $showAllComment[$i]['created_date']=$row_get_contact_action['created_date'];
+
+    $showAllComment[$i]['cby_user_type']=$row_get_contact_action['cby_user_type'];
+    $showAllComment[$i]['cby_user_id']=$row_get_contact_action['cby_user_id'];
     $i++;
   }
 }
@@ -82,7 +95,7 @@ record_set("get_contact_action_single", "select * from survey_contact_action whe
 
 if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
   $user_id = $_GET['userid'];
-  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."");
+  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']." and cby_user_type=".$_SESSION['user_type']." and cby_user_id=".$_SESSION['user_id']."");
  
   if($totalRows_total_contact > 0){
    
@@ -96,19 +109,24 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
     if($update_contact_action){
       header("Refresh:0");
     }
-
   }else{
-    
     $data_contact_action = array(
       "user_id"=> $_GET['userid'],
       "action"=> $_POST['contact_action'],
+      "cby_user_type" =>$_SESSION['user_type'],
+      "cby_user_id" =>$_SESSION['user_id'],
       "comment"=> $_POST['comment'],
       'created_date'=>date("Y-m-d H:i:s")
     );
     $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+    $data =array(
+      'task_status' => $_POST['contact_action'],
+    );
+    $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and assign_to_user_type =". $_SESSION['user_type']." and task_id=".$_GET['userid']);
     if($insert_contact_action){
       header("Refresh:0");
     }
+
   }
 
 }
@@ -167,7 +185,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   <body>
 
   <div id="reportPage">
-    <?php if(!isset($_GET['status']) and $_GET['status']!='assign') { ?>
+    <?php if(!isset($_GET['status']) and $_GET['status']!='assign' and isset($_GET['userid'])) { ?>
     <div class="container">
       <marquee style="background: red;color: #fff;">
           <p style="margin-top: 5px;font-weight: 500;font-size: 16px;">This Task is Not Assigned Yet</p>
@@ -287,7 +305,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
             <?php if(count($showAllComment) > 0 ) { ?>
             <h4 align="center" style="margin-top:20px;margin-bottom:10px;">CONTACT</h4>
             <?php } ?>
-            <?php foreach($showAllComment as $comm) { ?>
+            <?php 
+            foreach($showAllComment as $comm) { ?>
               <hr style="border: 0.5px solid #d3cccc;"/>
                 <!-- <div class="left">
                   <div class="child-left"><strong>STATUS UPDATED TO:</strong></div>
@@ -313,7 +332,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                    <?php ?>
                    <div class="col-md-4">
                          <div class="col-md-5" style="padding: 0px;text-align: right;"><strong>USERNAME :</strong></div>
-                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo $_SESSION['user_name']; ?></div>
+                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo get_user_datails($comm['cby_user_id'],$comm['cby_user_type'])['name'] ?></div>
                    </div>
                    <div class="col-md-4">
                          <div class="col-md-7" style="padding: 0px;text-align: right;"><strong>CONTACTED ON :</strong></div>
@@ -342,13 +361,12 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                       <label for="contact-date" style="font-size:14px;"><strong>CONTACT STATUS</strong></label>
                       <div class="form-group">
                         <select id="contact_action" name="contact_action" class="form-control" required="required">
-                          <option value="">SELECT</option>
                           <?php foreach(assign_task_status() as $key => $value) { 
-                             if($key < $row_get_contact_action_single['action']){
+                             if($key <= $comm['status']){
                                continue;
                              }
                             ?>
-                            <option value="<?=$key?>" <?=($row_get_contact_action_single['action'] == $key) ? 'selected' : '' ?>><?=$value?></option>
+                            <option value="<?=$key?>" <?=($comm['status'] == $key) ? 'selected' : '' ?>><?=$value?></option>
                           <?php } ?>
                         </select>
                       </div>
@@ -358,7 +376,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                       <div class="col-md-8">
                         <label for="contact-date" style="font-size:14px;"><strong>CONTACT COMMENT</strong></label>
                         <div class="form-group">
-                            <textarea class="form-control" name="comment" placeholder="Comments" required="required"><?php echo (!empty($contact_comment))?$contact_comment:'';?></textarea>
+                            <textarea class="form-control" name="comment" placeholder="Comments" required="required"></textarea>
                         </div>
                       </div>
                     </div>

@@ -179,8 +179,9 @@ $languages = explode(',',$row_get_survey_details['language']);
             <div class="form-group">
               <label>Status</label>
               <select class="form-control" name="status">
-                <option value="1">Active</option>
-                <option value="0">Deactive</option>
+                <?php foreach(status() as $key => $value) {?> 
+                <option value="<?=$key?>" <?=($row_get_questions['cstatus'] == $key)?'selected':''?>><?=$value?></option>
+                <?php }?>
               </select>
             </div>
           </div>

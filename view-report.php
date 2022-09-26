@@ -41,10 +41,12 @@ if(isset($_POST['assign'])){
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$user_name,
             'created_date'=>date("Y-m-d H:i:s")
         );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action,1);
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
     }
     // send mail to user assigned task
     send_email_to_assign_user($user_name,$user_email);
@@ -71,11 +73,30 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
             "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
+            "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
             "assign_by_user_type" => $assign_by_user_type,
             "cdate"               => date("Y-m-d H:i:s")
         );
-        $insert_value =  dbRowInsert("assign_task",$data);
+         // check the assign task already exists for this user or not
+         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
+         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+         
+         if($totalRows_check_assign_task > 0 ){
+             $insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
+         }else {
+             $insert_value = dbRowInsert("assign_task",$data);
+         }
+
+        $data_contact_action = array(
+            "user_id"=> $tasks,
+            "action"=> 2,
+            "cby_user_type" =>$assign_to_user_type,
+            "cby_user_id" =>$assing_to_user_id,
+            "comment"=> 'response assigned to '.$_SESSION['user_name'],
+            'created_date'=>date("Y-m-d H:i:s")
+        );
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
     }
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
@@ -86,6 +107,11 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
         alertdanger( $msg,'?page=view-report');
 }
 
+//disable checkbox and assign button for manager
+$display = '';
+if($_SESSION['user_type'] == 3){
+    $display = "display:none;";
+}
 ?>
 <style>
 .d-none{
@@ -318,14 +344,6 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
                         <div>
                             <form method="get">
                                 <input type="hidden" name="page" value="view-my-assign-task">
-                                <!-- <input type="hidden" name="id" value="" id="hidden_survey_id"> -->
-                                <!-- <input type="hidden" name="hidden_start_date" value="" id="hidden_start_date">
-                                <input type="hidden" name="hidden_end_date" value="" id="hidden_end_date">
-                                <input type="hidden" name="hidden_survey_id" value="" id="hidden_survey_id">
-                                <input type="hidden" name="hidden_group_id" value="" id="hidden_group_id">
-                                <input type="hidden" name="hidden_location_id" value="" id="hidden_location_id">
-                                <input type="hidden" name="hidden_department_id" value="" id="hidden_department_id">
-                                <input type="hidden" name="hidden_contact" value="" id="hidden_contact"> -->
                                 <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
                                     <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Task</button>
                             
@@ -336,7 +354,9 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
                         <table id="datatable-ajax" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
+                                    <?php if($_SESSION['user_type'] != 3){ ?>
                                     <th></th>
+                                    <?php } ?>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th> RESPONDENT NUMBER</th>
@@ -345,6 +365,7 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
                                     <th class="notforpdf">ACTION</th>
                                 </tr>
                             </thead>
+                            <?php if($_SESSION['user_type'] != 3){ ?>
                             <tfoot>
                                 <tr>
                                     <th></th>
@@ -353,15 +374,16 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
                                     <th></th>
                                     <th></th>
                                     <th style="text-align: right;">
-                                        <button type="button" class="btn btn-primary self-assign-btn" style="display: none;" name="self_assign">Self Assign</button>
+                                        <button type="button" class="btn btn-primary self-assign-btn" style="display: none; <?=$display?>" name="self_assign">Self Assign</button>
                                     </th>
                                     <th class="notforpdf">
-                                        <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter" style="display: none;">
+                                        <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter" style="display: none; <?=$display?>">
                                         Assign
                                         </button>
                                     </th>
                                 </tr>
                             </tfoot>
+                            <?php } ?>
                         </table>
                     </div>
                 </div>
@@ -500,15 +522,23 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
     });
-    
-    if(value){
-       $('.survey_id_hidden').val(sid);
-       $('.response_id_hidden').val(checkedArray);
-       $('.btn-submit').show();
+
+    if(checkedArray.length >0){
+        $('.btn-submit').show();
        $('.self-assign-btn').show();
     }else{
         $('.btn-submit').hide();
         $('.self-assign-btn').hide();
+    }
+
+    if(value){
+       $('.survey_id_hidden').val(sid);
+       $('.response_id_hidden').val(checkedArray);
+    //    $('.btn-submit').show();
+    //    $('.self-assign-btn').show();
+    }else{
+        // $('.btn-submit').hide();
+        // $('.self-assign-btn').hide();
     }
 });
 

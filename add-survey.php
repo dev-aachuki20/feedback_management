@@ -59,7 +59,7 @@
             }
         }
             $msg = "Survey Updated Successfully";  
-            alertSuccess($msg,'?page=add-survey&id='.$_GET["id"]);
+            alertSuccess($msg,'?page=view-survey');
         }else{
             $msg = "Some error occured. Please try again later.";
             alertdanger($msg,'?page=add-survey&id='.$_GET["id"]);
@@ -163,7 +163,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_surveys['name'];?>" />
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <!-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label>User Type</label>
                                     <select class="form-control" name="user_type" id="user_type"  <?=($_GET['id'])? 'disabled':'' ?>>
@@ -172,7 +172,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                         <option value="3" <?=($row_get_surveys['user_type'] ==3)?'selected':''?>>Manager</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-md-6" id="client-field" style="<?=($row_get_surveys['clientid']>0) ? 'display: block;':'display: none;'?>">
                                 <div class="form-group">
                                     <label>Client Name</label>
@@ -331,7 +331,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-12 whenStepAllow">
                                 <div class="form-group">
                                     <label for="numberOfStep">How many steps</label>
-                                    <input type="number" class="form-control" id="numberOfStep" name="numberOfStep" placeholder="Number Of Steps" value="<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps : ""; ?>">
+                                    <input type="number" class="form-control" id="numberOfStep" name="numberOfStep" min="1" max="50" placeholder="Number Of Steps" value="<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps : ""; ?>">
                                 </div>
                             </div>
                             <?php 
@@ -448,7 +448,7 @@ $(document).ready(function(){
         var intial = "<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps+1 : 1; ?>";
       }
       for(i=intial; i <= numberOfSteps; i++){
-        html += '<div class="col-md-12"><div class="form-group"><label>Step '+i+' Title</label><input type="text" class="form-control" id="stepTitle'+i+'" name="stepstitle[]"></div></div>';
+        html += '<div class="col-md-12"><div class="form-group"><label>Step '+i+' Title</label><input type="text" class="form-control step_checkbox" id="stepTitle'+i+'" name="stepstitle[]"></div></div>';
       }
       <?php 
           record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
@@ -467,6 +467,7 @@ $(document).ready(function(){
           } 
       ?>
       $("#stepsTitle").html(html);
+      $(".step_checkbox").attr("required", true);
     });
 
     // Start js according to language
@@ -643,5 +644,6 @@ function select_all_option(idFirst,idSecond){
     $('.multiple-select').attr('disabled','true');
     <?php } ?>
 <?php } ?>
+
 
 </script>

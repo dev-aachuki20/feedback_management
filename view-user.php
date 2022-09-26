@@ -99,15 +99,19 @@ if($_POST['user_type']==2 || !isset($_POST['user_type']) || $_POST['user_type']=
 
               <tr>
 
+               
                 <th>Name</th>
 
                 <th>Email</th>
 
                 <th>Phone</th>
 
-                <!-- <th>Address</th> -->
+                <th>Type</th>
+
+                <th>Status</th>
 
                 <th>Action</th>
+
 
               </tr>
 

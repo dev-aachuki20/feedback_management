@@ -81,7 +81,7 @@ if(isset($_POST['login'])){
           </div>
           <div class="form-group has-feedback">
             <input type="password" name="password" class="form-control" placeholder="Password">
-            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            <span class="glyphicon glyphicon-eye-open form-control-feedback view_password"></span>
           </div>
           <div class="row">
             <div class="col-xs-8">
@@ -112,6 +112,9 @@ if(isset($_POST['login'])){
           increaseArea: '20%' // optional
         });
       });
+      // $(".view_password").click(function(){
+      //   alert('amit');
+      // })
     </script>
 <center>Powered by Datagroup Solutions<br><img  src="https://www.datagroupsolutions.com/wp-content/uploads/2020/11/Data-Group-Solutions-survey.png" alt="" width="200" height="36" /></center>
 </body>

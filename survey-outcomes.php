@@ -1,9 +1,33 @@
 <?php 
-// get data by user
-$departmentByUsers = get_filter_data_by_user('departments');
-$locationByUsers   = get_filter_data_by_user('locations');
-$groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_filter_data_by_user('surveys');
+    // get data by user
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $surveyByUsers     = get_filter_data_by_user('surveys');
+
+    // get asssign ids only
+    $assign_department = array();
+    foreach($departmentByUsers as $department){
+        $assign_department[] = $department['id'];
+    }
+    $assign_location = array();
+    foreach($locationByUsers as $location){
+        $assign_location[] = $location['id'];
+    }
+    $assign_group = array();
+
+    foreach($groupByUsers as $group){
+        $assign_group[] = $group['id'];
+    }
+    $assign_survey = array();
+    foreach($surveyByUsers as $survey){
+        $assign_survey[] = $survey['id'];
+    }
+
+    $dep_ids     = implode(',',$assign_department);
+    $loc_ids     = implode(',',$assign_location);
+    $grp_ids     = implode(',',$assign_group);
+    $surveys_ids = implode(',',$assign_survey);
 ?>
 <style>
     .d-none{
@@ -17,26 +41,14 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
     <!-- top box container start-->
     <div class="row">
         <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&req=contact request&aid=-2&avl=10" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&req=assigned&task_status=1" target="_blank"> 
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-blue"><i class="fa-solid fa-bars"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">UNASSIGNED</span>
                         <span class="info-box-number">
-                            <?php 
-                                $reqCount =0; 
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                                while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                    record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                    if($totalRows_get_action == 0){
-                                        ++$reqCount;
-                                    }
-                                }
-                            ?>
-                            <?php 
-                                echo $reqCount;
-                            ?>
+                            <?=get_assign_task_count_by_status(1,$surveys_ids,$dep_ids,$grp_ids,$loc_ids) ?>
                         </span>
                     </div>
                     <!-- /.info-box-content -->
@@ -45,126 +57,74 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
             </div>
         </a> 
    
-        <a class="" href="index.php?page=survey-manage&req=in progress&testact=1" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&req=assigned&task_status=2" target="_blank"> 
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-orange"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-orange"><i class="fa-solid fa-list-check"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">ASSIGNED</span>
-                        <?php 
-                            $progressCount = 0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_progress_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_progress_action = mysqli_fetch_assoc($get_progress_action);
-                                if($row_get_progress_action['max(action)'] == 1){
-                                    ++$progressCount;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $progressCount; ?></span>
+                        <span class="info-box-number"><?=get_assign_task_count_by_status(2,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=void&testact=2" target="_blank">
+        <a class="" href="index.php?page=survey-manage&req=in progress&task_status=3" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-aqua"><i class="fa-solid fa-spinner"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">IN PROGRESS</span>
-                        <?php 
-                            $voidCount = 0;  
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_void_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_void_action = mysqli_fetch_assoc($get_void_action);
-                                if($row_get_void_action['max(action)'] == 2){
-                                    ++$voidCount;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $voidCount; ?></span>
+                        <span class="info-box-number"><?=get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=resolved&testact=3" target="_blank">
+        <a class="" href="index.php?page=survey-manage&req=void&task_status=4" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-gray"><i class="fa-sharp fa-solid fa-bars-progress"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">RESOLVED</span>
-                        <?php 
-                            $totalResolved=0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_resolved_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_resolved_action = mysqli_fetch_assoc($get_resolved_action);
-                                if($row_get_resolved_action['max(action)'] == 3){
-                                    ++$totalResolved;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $totalResolved; ?></span>
+                        <span class="info-box-text">VOID</span>
+                       
+                        <span class="info-box-number"><?=get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=resolved&testact=3" target="_blank">
+        <a class="" href="index.php?page=survey-manage&req=resolved negative&task_status=6" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-black"><<i class="fa-brands fa-resolving"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">RESOLVED</span>
-                        <?php 
-                            $totalResolved=0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_resolved_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_resolved_action = mysqli_fetch_assoc($get_resolved_action);
-                                if($row_get_resolved_action['max(action)'] == 3){
-                                    ++$totalResolved;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $totalResolved; ?></span>
+                        <span class="info-box-text">RESOLVED NEGATIVE</span>
+                        
+                        <span class="info-box-number"><?=get_assign_task_count_by_status(6,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
             </div>
         </a> 
-        <a class="" href="index.php?page=survey-manage&req=resolved&testact=3" target="_blank">
+        <a class="" href="index.php?page=survey-manage&req=resolved postive&task_status=5" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-gray"><i class="ion ion-ios-gear-outline" style="color:#7f7f7f"></i></span>
+                    <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">VOID</span>
-                        <?php 
-                            $totalResolved=0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_resolved_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_resolved_action = mysqli_fetch_assoc($get_resolved_action);
-                                if($row_get_resolved_action['max(action)'] == 3){
-                                    ++$totalResolved;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $totalResolved; ?></span>
+                        <span class="info-box-text">RESOLVED POSITIVE</span>
+                        <span class="info-box-number"><?=get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
             </div>
-        </a>   
+        </a>
+          
     </div>
     <!-- top box container start-->
     <div class="box box-default">
@@ -335,7 +295,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
             "serverSide": true,
             "sPagingType": 'simple',
             "ajax":{
-                url :"<?=baseUrl()?>ajax/datatable/view-report-listing.php", 
+                url :"<?=baseUrl()?>ajax/datatable/view-survey-outcomes.php", 
                 type: "post",  
                 data: { 
                     fdate: start_data,
