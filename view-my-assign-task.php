@@ -211,6 +211,7 @@ if($_SESSION['user_type'] == 3){
                             </select>
                             <label for="" class="error" style="display:none ;"> This field is required</label>
                         </div>
+                    </div>
                         <!-- filter by group -->
                         <div class="col-md-3">
                             <div class="form-group">
@@ -280,13 +281,13 @@ if($_SESSION['user_type'] == 3){
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                            </div>
                         </div>
-                    </div>
+                    
                 </div>
             </form>    
         </div>

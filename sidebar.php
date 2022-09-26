@@ -58,10 +58,10 @@
     <?php } ?>
      <!-- Surveys menu-->
     <?php if(count(array_intersect($surveysMenu,$user_permission))>0) { ?> 
-        <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics'))?>">
+        <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics','view-leagues'))?>">
             <a href="#"><i class="fa fa-poll"></i><span>  SURVEYS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu ">
-                <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes'))?>">
+                <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes','view-leagues'))?>">
                     <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>RESPONSES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
                     <ul class="treeview-menu timeline-area child">
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-report')?>"><a href="?page=view-report" class="nav-link"> <i class=""></i> <span>Individual</span></a> </li>
@@ -76,6 +76,9 @@
                 <?php } ?>
                 <li class="treeview  cusul-line <?=make_sidebar_active($_GET['page'],'view-analytics')?>">
                     <a href="?page=view-analytics" class="nav-link "> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
+                </li>
+                <li class="treeview  cusul-line <?=make_sidebar_active($_GET['page'],'view-leagues')?>">
+                    <a href="?page=view-leagues" class="nav-link "> <i class="fa fa-bar-chart"></i> <span>LEAGUE TABLES</span> </a> 
                 </li>
             </ul>
         </li>

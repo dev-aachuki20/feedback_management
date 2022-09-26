@@ -126,7 +126,7 @@ if(isset($_POST['filter'])){
 }
 </style>
 <section class="content-header">
-  <h1>Report</h1>
+  <h1>Statistics</h1>
 </section>
 <section class="content">
     <div class="box">

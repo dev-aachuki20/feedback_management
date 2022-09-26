@@ -66,17 +66,16 @@ if(!empty($_POST['submit'])){
 				}else{
 			
 				$data = array(
-							"name" => $_POST['name'],
-							"email" => $_POST['email'],
-							"password" => md5($_POST['password']),					
-							"phone"=> $_POST['phone'],
-							"photo" => $result,
-							"cstatus" => $_POST['status'],
-							'cip'=>ipAddress(),
-							'cby'=>$_SESSION['user_id'],
-							'cdate'=>date("Y-m-d H:i:s")
-							
-						);
+					"name" => $_POST['name'],
+					"email" => $_POST['email'],
+					"password" => md5($_POST['password']),					
+					"phone"=> $_POST['phone'],
+					"photo" => $result,
+					"cstatus" => $_POST['status'],
+					'cip'=>ipAddress(),
+					'cby'=>$_SESSION['user_id'],
+					'cdate'=>date("Y-m-d H:i:s")
+				);
 				
 				$insert_value =  dbRowInsert("admin",$data);
 			
