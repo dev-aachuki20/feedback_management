@@ -477,18 +477,23 @@ function send_email_to_users($name,$email,$enc_id){
     $msg='Message sent successfully !!';
   }
 }
-function send_email_to_assign_user($name,$email){
+function send_email_to_assign_user($name,$email,$type='assign'){
 	$from = DEFAULT_FROM_EMAIL;
 	//$link = $_SERVER['HTTP_HOST'].'/verify_email.php?id='.$enc_id;
 	  $to ='amitpandey.his@gmail.com';
-	  $subject = "Task Assigned";
-	  $body = "Dear $name,
-	  <br><br>
-	  	A new task has been assign to you.
-		<br><br>
-	  Thank you !!
-		<br>
-	  ";
+		if($type='completed'){
+			$subject = "Task Completed";
+			$body = "Dear $name, <br><br>
+			".$_SESSION['user_name']." has changed the task status to RESOLVED-NEGATIVE <br><br>
+			Thank you !!<br>";
+		}else{
+			$subject = "Task Assigned";
+			$body = "Dear $name,
+			<br><br>
+			A new task has been assign to you.
+			<br><br>
+			Thank you !!<br>";
+		}
 	  $headers = "MIME-Version: 1.0" . "\r\n";
 	  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 	  $headers .= 'From: <'.$from.'>' . "\r\n";

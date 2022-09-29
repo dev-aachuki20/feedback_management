@@ -1,7 +1,6 @@
 <?php 
 include('function/function.php');
 include('function/get_data_function.php');
-
 //Get Survey Details
 
 $surveyid = $_GET['surveyid'];
@@ -98,7 +97,6 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
   record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']." and cby_user_type=".$_SESSION['user_type']." and cby_user_id=".$_SESSION['user_id']."");
  
   if($totalRows_total_contact > 0){
-   
     $data_contact_action_update = array(
       "action"=> $_POST['contact_action'],
       "comment"=> $_POST['comment'],
@@ -123,6 +121,24 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
       'task_status' => $_POST['contact_action'],
     );
     $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and assign_to_user_type =". $_SESSION['user_type']." and task_id=".$_GET['userid']);
+
+    // send mail if status change to Resolve-negative
+    if($_POST['contact_action'] == 6){
+      record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
+      if($totalRows_get_survey_id > 0){ 
+        $row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
+        $survey_id = $row_get_survey_id['surveyid'];
+        $user_data = get_admin_manager_of_survey($survey_id);
+        foreach($user_data as $key => $value){
+          foreach($value as $val){
+            $uemail = $val['email'];
+            $uname  = $val['name'];
+            send_email_to_assign_user($uemail,$uname);
+          }
+        }
+      }
+    }  
+
     if($insert_contact_action){
       header("Refresh:0");
     }

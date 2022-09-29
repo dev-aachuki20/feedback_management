@@ -5,113 +5,6 @@ $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_filter_data_by_user('surveys');
 
-// assign task to user
-if(isset($_POST['assign'])){
-    $survey_id           = $_POST['survey_id_hidden'];
-    $task_id             = explode(',',$_POST['response_id_hidden']);
-    $assing_to_user_id   = $_POST['assing_to_user_id'];
-    $assign_to_user_type = $_POST['user_type'];
-    $assign_by_user_type = $_SESSION['user_type'];
-    $assign_by_user_id   = $_SESSION['user_id'];
-    foreach($task_id as $tasks){
-        $data = array(
-            "assign_to_user_id"   => $assing_to_user_id,
-            "assign_to_user_type" => $assign_to_user_type,
-            "task_id"             => $tasks,
-            "survey_id"           => $survey_id,
-            "task_status"         => 2,
-            "assign_by_user_id"   => $assign_by_user_id,
-            "assign_by_user_type" => $assign_by_user_type,
-            "cdate"               => date("Y-m-d H:i:s")
-        );
-
-         // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
-         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-         if($totalRows_check_assign_task > 0 ){
-             $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-         }else {
-             $insert_value =  dbRowInsert("assign_task",$data);
-         }
-        $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
-
-        $user_email = $userdata['email'];
-        $user_name  = $userdata['name'];  
-           
-        $data_contact_action = array(
-            "user_id"=> $tasks,
-            "action"=> 2,
-            "cby_user_type" =>$assign_to_user_type,
-            "cby_user_id" =>$assing_to_user_id,
-            "comment"=> 'response assigned to '.$user_name,
-            'created_date'=>date("Y-m-d H:i:s")
-        );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-    }
-    // send mail to user assigned task
-    send_email_to_assign_user($user_name,$user_email);
-
-    if(!empty($insert_value )){	
-        $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report');
-        die();
-    }
-        $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report');
-}
-//self assign task
-if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){
-    $survey_id           = $_POST['survey_id_hidden'];
-    $task_id             = explode(',',$_POST['response_id_hidden']);
-    $assing_to_user_id   = $_SESSION['user_id'];
-    $assign_to_user_type = $_SESSION['user_type'];
-    $assign_by_user_type = $_SESSION['user_type'];
-    $assign_by_user_id   = $_SESSION['user_id'];
-    foreach($task_id as $tasks){
-        $data = array(
-            "assign_to_user_id"   => $assing_to_user_id,
-            "assign_to_user_type" => $assign_to_user_type,
-            "task_id"             => $tasks,
-            "survey_id"           => $survey_id,
-            "task_status"         => 2,
-            "assign_by_user_id"   => $assign_by_user_id,
-            "assign_by_user_type" => $assign_by_user_type,
-            "cdate"               => date("Y-m-d H:i:s")
-        );
-         // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
-         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-         
-         if($totalRows_check_assign_task > 0 ){
-             $insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-         }else {
-             $insert_value = dbRowInsert("assign_task",$data);
-         }
-
-        $data_contact_action = array(
-            "user_id"=> $tasks,
-            "action"=> 2,
-            "cby_user_type" =>$assign_to_user_type,
-            "cby_user_id" =>$assing_to_user_id,
-            "comment"=> 'response assigned to '.$_SESSION['user_name'],
-            'created_date'=>date("Y-m-d H:i:s")
-        );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-    }
-    if(!empty($insert_value )){	
-        $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report');
-        die();
-    }
-        $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report');
-}
-
-//disable checkbox and assign button for manager
-$display = '';
-if($_SESSION['user_type'] == 3){
-    $display = "display:none;";
-}
 ?>
 <style>
 .d-none{
@@ -341,22 +234,9 @@ if($_SESSION['user_type'] == 3){
             <div class="box">
                 <div class="box-header"></div>
                     <div class="box-body">
-                        <div>
-                            <form method="get">
-                                <input type="hidden" name="page" value="view-my-assign-task">
-                                <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
-                                    <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Task</button>
-                            
-                                </div>
-                            </form>
-                            
-                        </div>
                         <table id="datatable-ajax" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <?php if($_SESSION['user_type'] != 3){ ?>
-                                    <th></th>
-                                    <?php } ?>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th> RESPONDENT NUMBER</th>
@@ -365,25 +245,6 @@ if($_SESSION['user_type'] == 3){
                                     <th class="notforpdf">ACTION</th>
                                 </tr>
                             </thead>
-                            <?php if($_SESSION['user_type'] != 3){ ?>
-                            <tfoot>
-                                <tr>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th style="text-align: right;">
-                                        <button type="button" class="btn btn-primary self-assign-btn" style="display: none; <?=$display?>" name="self_assign">Self Assign</button>
-                                    </th>
-                                    <th class="notforpdf">
-                                        <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter" style="display: none; <?=$display?>">
-                                        Assign
-                                        </button>
-                                    </th>
-                                </tr>
-                            </tfoot>
-                            <?php } ?>
                         </table>
                     </div>
                 </div>
@@ -392,54 +253,6 @@ if($_SESSION['user_type'] == 3){
     </div>
    
 </section>
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-        <form method="post" id="assign_form">
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="form-group">
-                    <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
-                    <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
-                    <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
-                    <label>User Type</label>
-                        <select class="form-control" tabindex=7 id="user_type" name="user_type">
-                            <option value="">Select User Type</option>
-                        <?php 
-                            $user_types_array=user_type();  
-                            foreach($user_types_array as $key => $value){
-                            if($_SESSION['user_type']==2){
-                                $allowed_key=2;
-                            }
-                            if($key>=$_SESSION['user_type'] and $key!=1){ ?>
-                            <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
-                            </option>
-                            <?php }
-                            }
-                        
-                        ?>
-                        </select>
-                    </div>
-                </div>
-                <!-- select admin -->
-                <div class="col-md-12" id="users">
-                </div>                                    
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" name="assign">Save changes</button>
-            </div>
-        </form>
-    </div>
-  </div>
-</div>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <!-- Resources -->
 
@@ -514,64 +327,4 @@ if($_SESSION['user_type'] == 3){
         } );
     }
 
-$(document).on('change','.assignSurveyCheckbox',function(){
-    //$(".assignSurveyCheckbox").prop("checked", false);
-    var value = $(this).is(':checked');
-    let sid  = $(this).data('sid');
-    var checkedArray=[];
-    $("input[name='assign']:checked").each(function(){
-        checkedArray.push($(this).val());
-    });
-
-    if(checkedArray.length >0){
-        $('.btn-submit').show();
-       $('.self-assign-btn').show();
-    }else{
-        $('.btn-submit').hide();
-        $('.self-assign-btn').hide();
-    }
-
-    if(value){
-       $('.survey_id_hidden').val(sid);
-       $('.response_id_hidden').val(checkedArray);
-    //    $('.btn-submit').show();
-    //    $('.self-assign-btn').show();
-    }else{
-        // $('.btn-submit').hide();
-        // $('.self-assign-btn').hide();
-    }
-});
-
-function assign_user(survey_id,user_type){
-    $.ajax({
-        method:"POST",
-        url:'<?=baseUrl()?>ajax/common_file.php',
-        data:{
-            survey_id:survey_id,
-            user_type:user_type,
-            mode:'assign_users'
-        },
-        success:function(response){
-            response = JSON.parse(response);
-            console.log(response);
-            $('#users').html(response);
-        }
-    })
-}
-// ajax on the user type change in assign task
-$(document).on('change','#user_type',function(){
-    let user_type = $(this).val();
-    let survey_id  = $('.survey_id_hidden').val();
-    assign_user(survey_id,user_type);
-});
-$(document).on('click','.btn-submit',function(){
-    $('#set_self_assign').val('');
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
-})
-// submit form when self assign the tasks 
-$(document).on('click','.self-assign-btn',function(){
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
-    $('#set_self_assign').val('set');
-    $('#assign_form').submit();
-})
 </script>

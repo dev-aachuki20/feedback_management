@@ -16,7 +16,7 @@ if(!empty($_POST['surveys'])){
     $dateflag= false;
     $query = 'SELECT * FROM answers where id !=0 ';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
-        $query .= " where cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
+        $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
     }
 
     if(!empty($_POST['departmentid'])){
@@ -56,15 +56,6 @@ if(!empty($_POST['surveys'])){
             $que= " and  answerid != -2 and answerval != 10";
         }
     }
-
-    // for my task
-    // if($requestData['my_task']=='my-task'){
-    //     record_set("get_assign_task", "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type");	
-    //     $row_get_assign_task = mysqli_fetch_assoc($get_assign_task);
-    //     $task_id = $row_get_assign_task['task_id'];
-
-    //     $query .= " and cby IN (".$task_id.")";
-    // }
     $query .= " GROUP by cby";
     record_set("get_departments", "SELECT * FROM departments");	
     $departments = array();
@@ -92,7 +83,7 @@ if(!empty($_POST['surveys'])){
             record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
             
             $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-            $nestedData[] = '<input type="checkbox" name="assign" value="'.$row_get_recent_entry['cby'].'" class="assignSurveyCheckbox" task-type="" data-sid="'.$row_get_recent_entry['surveyid'].'">';
+            // $nestedData[] = '<input type="checkbox" name="assign" value="'.$row_get_recent_entry['cby'].'" class="assignSurveyCheckbox" task-type="" data-sid="'.$row_get_recent_entry['surveyid'].'">';
             $nestedData[] = date("d-m-Y", strtotime($row_get_recent_entry['cdate']));
             $nestedData[] = $row_get_survey_detail['name'];
             //$nestedData[] = ordinal($row_survey_entry);
@@ -100,15 +91,7 @@ if(!empty($_POST['surveys'])){
             
             $total_result_val=0;
             record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
-            // if($requestData['contact']==1){
-            //     if($totalRows_get_survey_result==0 || empty($totalRows_get_recent_entry)){
-            //         continue;
-            //     }
-            // }else {
-            //     if($totalRows_get_survey_result>0){
-            //         continue;
-            //     }
-            // }
+
             $achieved_result_val = 0;
             $to_bo_contacted     = 0;
             $i=0;

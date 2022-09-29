@@ -316,6 +316,16 @@ function delete_data(table,id){
 	})
 }
 
+//jquery datatable
+$(document).ready( function () {
+    $('#datatable').DataTable({
+        "sPaginationType": "simple_numbers",
+        "aoColumnDefs": [
+        { 'bSortable': false, 'aTargets': [0] }
+        ],
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    });
+});
 </script>
 </body>
 </html>

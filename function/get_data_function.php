@@ -140,4 +140,34 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 	$row = mysqli_num_rows ($user_data);
 	return $row;
 }
+function get_admin_manager_of_survey($survey_id){
+	$user_data = getaxecuteQuery_fn("SELECT * from surveys where id = $survey_id");
+	$row = mysqli_fetch_assoc ($user_data);
+	$manager = $row['client_ids'];
+	$admin  = $row['admin_ids'];
+	$manager_ids = explode('|',$manager);
+	$admin_ids   = explode('|',$admin);
+	$user_array  = array();
+	// for admin email and name
+	$i=0;
+	foreach($admin_ids as $admin){
+		if($admin){
+			$user_details = get_user_datails($admin, 2);
+			$user_array[2][$i]['email']   = $user_details['email'];
+			$user_array[2][$i]['name']   = $user_details['name'];
+		}
+		$i++;
+	}
+	//for manager name and email
+	$i = 0;
+	foreach($manager_ids as $manager){
+		if($manager){
+			$user_details = get_user_datails($manager, 3);
+			$user_array[3][$i]['email']  = $user_details['email'];
+			$user_array[3][$i]['name']   = $user_details['name'];
+		}
+		$i++;
+	}
+	return $user_array;
+}
 ?>

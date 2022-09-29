@@ -65,11 +65,11 @@ if(isset($_POST['assign'])){
     send_email_to_assign_user($user_name,$user_email);
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report');
+        alertSuccess( $msg,'?page=view-contacted-list');
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report');
+        alertdanger( $msg,'?page=view-contacted-list');
 }
 
     $dateflag= false;
@@ -299,10 +299,9 @@ if($_SESSION['user_type'] == 3){
                     <div class="box-body">
                         <div>
                             <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
-                                <a href="?page=view-report">
+                                <a href="?page=view-contacted-list">
                                 <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">Back</button>
                                 </a>
-                        
                             </div>
                         </div>
                         
@@ -317,91 +316,136 @@ if($_SESSION['user_type'] == 3){
                                     <th>DEPARTMENT</th>
                                     <th>RESPONDENT NUMBER</th>
                                     <th>RESULT</th>
-                                    <th>Contacted</th>
+                                    <!-- <th>Contacted</th> -->
                                     <th>Status</th>
                                     <th class="notforpdf">ACTION</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){
-                                record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
-                                $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
-                                $row_survey_entry = 1;
-                                record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
-                                
-                                $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-                                ?>
-                                <tr>
-                                    <td scope="row" style="<?=$display?>" ><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
+                                    if($totalRows_get_recent_entry >0){
+                                        $i=0;
+                                        while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ 
+                                            record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
+                                            $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
+                                            $row_survey_entry = 1;
+                                            record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
 
-                                    <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
+                                            $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
 
-                                    <td><?=getSurvey()[$row_get_recent_entry['surveyid']]?></td>
-                                    <td><?=getGroup()[$row_get_recent_entry['groupid']]?></td>
-                                    <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
-                                    <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
-                                    
-                                    <td><?=$row_survey_entry?></td>
-                                    <?php
-                                    $total_result_val=0;
-                                    record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
-                                    $achieved_result_val = 0;
-                                    $to_bo_contacted     = 0;
-                                    $i=0;
-                                    while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
-                                            if($result_question){
-                                                if(!in_array($result_question['answer_type'],array(2,3,5))){
-                                                    $total_result_val = ($i+1)*100;
-                                                    $achieved_result_val += $row_get_survey_result['answerval'];
-                                                    $i++;
+                                            $total_result_val=0;
+                                            record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
+
+                                            $achieved_result_val = 0;
+                                            $to_bo_contacted     = 0;
+                                            $i=0;
+                                            while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                                if($result_question){
+                                                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+
+                                                        $total_result_val = ($i+1)*100;
+                                                        $achieved_result_val += $row_get_survey_result['answerval'];
+                                                        $i++;
+                                                    }
+                                                }
+                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                    $to_bo_contacted = 1;
                                                 }
                                             }
-                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
-                                                $to_bo_contacted = 1;
+                                            // for showing only contacted yes data
+                                            if($to_bo_contacted == 0){
+                                                continue;
+                                            }
+                                            $result_response = $achieved_result_val*100/$total_result_val;
+                                            if($achieved_result_val==0 and $total_result_val==0){
+                                                $result_response=100;
+                                            }
+                                            $label_class = 'success';
+                                            if($result_response<50){
+                                                $label_class = 'danger';
+                                            }
+                                            if($result_response<75){
+                                                $label_class = 'info';
                                             }
                             
-                                    }
-                                    $result_response = $achieved_result_val*100/$total_result_val;
+                                            ?>
+                                            <tr>
+                                                <td scope="row" style="<?=$display?>" ><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>">
+                                                </td>
 
-                                    // for filter using contact
-                                    // if($_POST['contact']!=3){
-                                    //     if($to_bo_contacted == 1 && $_POST['contact']!=1){
-                                    //         continue;
-                                    //     }
-                                    //     if($to_bo_contacted == 0 && $_POST['contact']==1){
-                                    //         continue;
-                                    //     }
-                                    // }
-                                    if($achieved_result_val==0 and $total_result_val==0){
-                                        $result_response=100;
+                                                <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?>
+                                                </td>
+                                                
+                                                <td><?=getSurvey()[$row_get_recent_entry['surveyid']]?></td>
+
+                                                <td><?=getGroup()[$row_get_recent_entry['groupid']]?></td>
+
+                                                <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
+
+                                                <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
+
+                                                <td><?=$row_survey_entry?></td>
+
+                                                <?php
+                                                    $total_result_val=0;
+                                                    record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
+                                                    $achieved_result_val = 0;
+                                                    $to_bo_contacted     = 0;
+                                                    $i=0;
+                                                    while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+                                                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                                            if($result_question){
+                                                                if(!in_array($result_question['answer_type'],array(2,3,5))){
+                                                                    $total_result_val = ($i+1)*100;
+                                                                    $achieved_result_val += $row_get_survey_result['answerval'];
+                                                                    $i++;
+                                                                }
+                                                            }
+                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                                $to_bo_contacted = 1;
+                                                            }
+                                            
+                                                    }
+                                                    $result_response = $achieved_result_val*100/$total_result_val;
+
+                                                    // for filter using contact
+                                                    if($to_bo_contacted == 0 && $_POST['contact']==1){
+                                                        continue;
+                                                    }
+                                                    if($achieved_result_val==0 and $total_result_val==0){
+                                                        $result_response=100;
+                                                    }
+                                                    $label_class = 'success';
+                                                    if($result_response<50){
+                                                        $label_class = 'danger';
+                                                    }else 
+                                                    if($result_response<75){
+                                                        $label_class = 'info';
+                                                    }
+                                                    if($to_bo_contacted==1){ 
+                                                        $contacted='<a class="btn btn-xs btn-success">Yes</a>';
+                                                    }else{ 
+                                                        $contacted ='<a class="btn btn-xs btn-info">No</a>';
+                                                    } 
+                                                    // get taskstatus
+                                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+                                                    $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+                                                    $task_status = $row_check_assign_task['task_status'];
+                                                    ?>
+
+                                                    <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
+
+                                                    <!-- <td><?=$contacted ?></td> -->
+
+                                                    <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
+                                                    <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?>&status=assign" target="_blank">VIEW DETAILS</a></td>
+                                            </tr>  
+                                      <?php }
                                     }
-                                    $label_class = 'success';
-                                    if($result_response<50){
-                                        $label_class = 'danger';
-                                    }else 
-                                    if($result_response<75){
-                                        $label_class = 'info';
-                                    }
-                                    if($to_bo_contacted==1){ 
-                                        $contacted='<a class="btn btn-xs btn-success">Yes</a>';
-                                    }else{ 
-                                        $contacted ='<a class="btn btn-xs btn-info">No</a>';
-                                    } 
-                                    // get taskstatus
-                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
-                                    $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-                                    $task_status = $row_check_assign_task['task_status'];
-                                    ?>
-                                    <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
-                                    <td><?=$contacted ?></td>
-                                    <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
-                                    <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?> &status=assign" target="_blank">VIEW DETAILS</a></td>
-                                </tr> 
-                                <?php }
-                                 ?>
-                            </tbody>            
+                                ?>
+                               
+                             </tbody>            
                             <tfoot style="<?=$display?>">
                                 <tr >
                                     <th></th>
@@ -542,13 +586,5 @@ function assign_user(survey_id,user_type){
         }
     })
 }
-$(document).ready( function () {
-    $('#datatable').DataTable({
-        "sPaginationType": "simple_numbers",
-        "aoColumnDefs": [
-        { 'bSortable': false, 'aTargets': [0] }
-        ],
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    });
-});
+
 </script>
