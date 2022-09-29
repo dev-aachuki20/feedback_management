@@ -185,13 +185,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   <body>
 
   <div id="reportPage">
-    <?php if(!isset($_GET['status']) and $_GET['status']!='assign' and isset($_GET['userid'])) { ?>
-    <div class="container">
-      <marquee style="background: red;color: #fff;">
-          <p style="margin-top: 5px;font-weight: 500;font-size: 16px;">This Task is Not Assigned Yet</p>
-      </marquee>
-    </div>
-    <?php } ?>
     <div align="center"><img src="upload_image/logo.png" width="200"></div>
     <h2 align="center" style="margin:20px;"> <?= $row_get_survey['name']; ?> </h2>
     <?php 

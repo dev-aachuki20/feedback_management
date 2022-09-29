@@ -208,11 +208,12 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Contact Status</label>
-                            <select name="contacted" id="contacted" class="form-control form-control-lg contact">
-                                <option value="3">All</option>
-                                <option value="1">Yes</option>
-                                <option value="2">No</option>
+                            <label>Status</label>
+                            <select name="contacted" id="contacted" class="form-control form-control-lg status">
+                                <option value="">Select status</option>
+                            <?php foreach(assign_task_status() as $key => $value) { ?>
+                                <option value="<?=$key?>" <?=($_POST['task_status']==$key) ? 'selected':'' ?>><?=$value?></option>
+                            <?php } ?>
                             </select>
                         </div>
                     </div>
@@ -239,12 +240,11 @@
                         <table id="datatable-ajax" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <th></th>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th> RESPONDENT NUMBER</th>
                                     <th>RESULT</th>
-                                    <th>CONTACT STATUS </th>
+                                    <th>STATUS </th>
                                     <th class="notforpdf">ACTION</th>
                                 </tr>
                             </thead>
@@ -279,7 +279,7 @@
         let group       = $('.group').val();
         let locationid  = $('.locationid').val();
         let departmentid  = $('.department').val();
-        let contacted   = $('.contact').val();
+        let status   = $('.status').val();
         if(surveys ==''){
             $(".col-md-3").css("height", "87");
             $('.error').show();
@@ -288,9 +288,9 @@
             $('.error').hide();
         }
         // this is the id of the form
-        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted);
+        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,status);
     });
-    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted){
+    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,status){
         var dataTable = $('#datatable-ajax').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -305,7 +305,7 @@
                     groupid:group,
                     locationid:locationid, 
                     departmentid:departmentid,
-                    contact:contacted,
+                    status:status,
                 },
                 error: function(){  
                     // $(".datatable-ajax-error").html("");

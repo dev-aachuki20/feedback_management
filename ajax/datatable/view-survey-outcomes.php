@@ -14,7 +14,7 @@ $loggedIn_user_type  = $_SESSION['user_type'];
 
 if(!empty($_POST['surveys'])){
     $dateflag= false;
-    $query = 'SELECT * FROM answers ';
+    $query = 'SELECT * FROM answers where id !=0 ';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " where cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
         $dateflag= true;
@@ -27,17 +27,9 @@ if(!empty($_POST['surveys'])){
             while($row_get_all_department = mysqli_fetch_assoc($get_all_department)){
                 $all_departments[] = $row_get_all_department['id'];
             }
-            if($dateflag == true){
-                $query .= " and departmentid in (".implode(',',$all_departments).")";
-            }else{
-                $query .= " where departmentid in (".implode(',',$all_departments).")";
-            }  
+            $query .= " and departmentid in (".implode(',',$all_departments).")";
         }else{
-            if($dateflag == true){
-                $query .= " and departmentid = '".$_POST['departmentid']."'";
-            }else{
-                $query .= " where departmentid = '".$_POST['departmentid']."' ";
-            }
+            $query .= " and departmentid = '".$_POST['departmentid']."'";
         }
     }
 
@@ -45,45 +37,55 @@ if(!empty($_POST['surveys'])){
         if($_POST['locationid'] == 4){
             $query .= " and locationid in (select id from locations where cstatus=1)";  
         }else{
-            if($dateflag == true){
-                $query .= "and locationid = '".$_POST['locationid']."'";
-            }else{
-                $deptflag = (!empty($_POST['departmentid']))?'and':'where';
-                $query .= "".$deptflag." locationid = '".$_POST['locationid']."'";
-            }
+            $query .= "and locationid = '".$_POST['locationid']."'";
         }
     }
     if(!empty($_POST['surveys'])){
-        $query .= " where surveyid =".$_POST['surveys'];
-        $dateflag= true;
+        $query .= " and surveyid =".$_POST['surveys'];
     }
     if(!empty($_POST['groupid'])){
         if($_POST['groupid'] == 4){
             $query .= " and groupid in (select id from groups where cstatus=1)";  
         }else{
-            if($dateflag == true){
-                $query .= " and groupid = '".$_POST['groupid']."'";
-            }else{
-                $deptflag = (!empty($_POST['departmentid']))?'and':'where';
-                $query .= "".$deptflag." groupid = '".$_POST['groupid']."'";
-            }
+            $query .= " and groupid = '".$_POST['groupid']."'";
         }
     }
-    if(!empty($requestData['contact'])){
-        if($requestData['contact']==1){
-            $que= " and  answerid =-2 and answerval=10";
-        }else {
-            $que= " and  answerid != -2 and answerval != 10";
-        }
-    }
+
+    // if(!empty($requestData['contact'])){
+    //     if($requestData['contact']==1){
+    //         $que= " and  answerid =-2 and answerval=10";
+    //     }else {
+    //         $que= " and  answerid != -2 and answerval != 10";
+    //     }
+    // }
 
     // for my task
-    if($requestData['my_task']=='my-task'){
-        record_set("get_assign_task", "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type");	
-        $row_get_assign_task = mysqli_fetch_assoc($get_assign_task);
-        $task_id = $row_get_assign_task['task_id'];
-
-        $query .= " and cby IN (".$task_id.")";
+    if(!empty($requestData['status'])){
+        $statusFilter = "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type";
+        $task_id =array();
+        if($requestData['status'] == 1){
+            record_set("get_assign_task", $statusFilter);
+            while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
+                $task_id[] = $row_get_assign_task['task_id'];
+            }
+            $task_id = implode(',',$task_id);
+            if($task_id){
+                $query .= " and cby NOT IN (".$task_id.")";
+            }
+        }else{
+            $statusFilter .= ' and task_status = '.$requestData['status'];
+            record_set("get_assign_task", $statusFilter);	
+            while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
+                $task_id[] = $row_get_assign_task['task_id'];
+            }
+            $task_id = implode(',',$task_id);
+            if($task_id){
+                $query .= " and cby IN (".$task_id.")";
+            }else {
+                $query .= " and cby = 0";
+            }
+           
+        }
     }
     $query .= " GROUP by cby";
     record_set("get_departments", "SELECT * FROM departments");	
@@ -145,15 +147,15 @@ if(!empty($_POST['surveys'])){
                 }
 
             }
-            // for filter using contact
-            if($requestData['contact']!=3){
-                if($to_bo_contacted == 1 && $requestData['contact']!=1){
-                    continue;
-                }
-                if($to_bo_contacted == 0 && $requestData['contact']==1){
-                    continue;
-                }
-            }
+            // // for filter using contact
+            // if($requestData['contact']!=3){
+            //     if($to_bo_contacted == 1 && $requestData['contact']!=1){
+            //         continue;
+            //     }
+            //     if($to_bo_contacted == 0 && $requestData['contact']==1){
+            //         continue;
+            //     }
+            // }
             
             $result_response = $achieved_result_val*100/$total_result_val;
             if($achieved_result_val==0 and $total_result_val==0){
@@ -167,15 +169,21 @@ if(!empty($_POST['surveys'])){
             if($result_response<75){
                 $label_class = 'info';
             }
-            
+            // get taskstatus
+            record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+            $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+            $task_status = $row_check_assign_task['task_status'];
+            $param = "&status=assign";
+            if(empty($task_status)){
+                $task_status =1;
+                $param = "";
+            }
             $nestedData[] = '<label class="label label-'.$label_class.'">'.round($result_response,2).'%</label>';
-            if($to_bo_contacted==1){ 
-                $nestedData[] ='<a class="btn btn-xs btn-success">Yes</a>';
-            }else{ 
-                $nestedData[] ='<a class="btn btn-xs btn-info">No</a>';
-            } 
+            
+                $nestedData[] ='<a class="btn btn-xs btn-success">'.assign_task_status()[$task_status].'</a>';
+            
 
-            $nestedData[] =' <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid='.$row_get_recent_entry['surveyid'].'&userid='.$row_get_recent_entry['cby'].'" target="_blank">VIEW DETAILS</a>';
+            $nestedData[] =' <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid='.$row_get_recent_entry['surveyid'].'&userid='.$row_get_recent_entry['cby'].''.$param.'" target="_blank">VIEW DETAILS</a>';
 
             $data[] = $nestedData;
         }

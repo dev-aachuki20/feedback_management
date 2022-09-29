@@ -32,7 +32,7 @@
     }
 </style>
 <section class="content-header">
-  <h1>Report</h1>
+  <h1>League Table</h1>
 </section>
 <section class="content">
     <div class="box">
@@ -130,14 +130,12 @@
         </div>
     </div>
 </section>
-
 <script>
-
     ajax_league_table();
     function ajax_league_table(fdate,sdate,type,survey){
         $.ajax({
             method:"POST",
-            url:'<?=baseUrl()?>ajax/common_file.php',
+            url:'<?=baseUrl()?>ajax/view-league-data.php',
             data:{
                 survey_type:type,
                 fdate:fdate,
@@ -163,13 +161,24 @@
     })
 
     $(document).on('click','.search',function(){
-        $('.loader').show();
-        $('.renderTable').hide();
         let fdate       = $('.start_data').val();
         let sdate       = $('.end_date').val();
         let type        = $('.survey_type').val();
         let survey      = $('.survey').val();
+        if(new Date(fdate) > new Date(sdate)){
+            alert('End Date Must Be Greater Than Start Date');
+            return ;
+        }
+        if(survey == ''){
+            $('.error').show();
+            return false;
+        }else {
+            $('.error').hide();
+        }
+        $('.loader').show();
+        $('.renderTable').hide();
         ajax_league_table(fdate,sdate,type,survey);
     })
 </script>
+
 

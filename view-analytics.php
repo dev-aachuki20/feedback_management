@@ -30,189 +30,108 @@ if(isset($_POST['survey_id'])&& !empty($_POST['survey_id'])){
   $query .= " and  surveyid = ".$_POST['survey_id'];
 }
 if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
-  $query .= " and answers.cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
+  $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
 }
 
+  //get no. of survey of all locations
   $perLocations = array();
-  //Per Location Statistic
-  record_set("per_location", "SELECT * FROM (SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, locations.name AS location_name FROM answers LEFT JOIN locations ON answers.locationid = locations.id $locationJoinWhereCondition where 1=1  $query GROUP BY locationid ) AS NEWTABLE ORDER BY total_surveys DESC");
+  record_set("per_location", "SELECT DISTINCT(surveyid),locationid FROM `answers` WHERE `locationid` in (select id from locations where cstatus=1) $query ORDER BY `locationid` ASC");
 
-  $locationsChartlabels = array();
-  $locationsChartData   = array();  
   while($row_per_location = mysqli_fetch_assoc($per_location)){
-    $labels = ($row_per_location['location_name'])?$row_per_location['location_name']:'NA';
-    $tSurvey = ($row_per_location['total_surveys'])?$row_per_location['total_surveys']:'';
-    $locationsChartlabels[]  = $labels;
-    $locationsChartData[]    = $tSurvey;
-    $perLocations[$labels]  += $tSurvey; 
-  }
-  $perDepartments = array();
-  //Per Department Statistic
-  record_set("per_department", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, departments.name AS department_name FROM answers LEFT JOIN departments ON answers.departmentid = departments.id where 1=1 $query  GROUP BY departmentid  ) AS NEWTABLE ORDER BY total_surveys DESC");
-
-  $departmentChartlabels = array();
-  $departmentChartData = array();
-  while($row_per_department = mysqli_fetch_assoc($per_department)){
-    $labels = ($row_per_department['department_name'])?$row_per_department['department_name']:'NA';
-    $tSurvey = ($row_per_department['total_surveys'])?$row_per_department['total_surveys']:'';
-    $departmentChartlabels[]  = $labels;
-    $departmentChartData[]    = $tSurvey;
-    $perDepartments[$labels]  += $tSurvey;
-  }
-   //Per Group Statistic
-   $perGroups = array();
-   record_set("per_group", "SELECT * FROM ( SELECT COUNT(DISTINCT(surveyid)) AS total_surveys, groups.name AS group_name FROM answers LEFT JOIN groups ON answers.groupid = groups.id where 1=1 $query  GROUP BY groupid  ) AS NEWTABLE ORDER BY total_surveys DESC");
-
-   $groupChartlabels = array();
-   $groupChartData = array();
-   while($row_per_group = mysqli_fetch_assoc($per_group)){
-    $labels = ($row_per_group['group_name'])?$row_per_group['group_name']:'NA';
-    $tSurvey = ($row_per_group['total_surveys'])?$row_per_group['total_surveys']:'';
-      
-    $groupChartlabels[] = $labels;
-    $groupChartData[]   = $tSurvey;
-    $perGroups[$labels] += $tSurvey;
-   }
-
-  //Yearly Best & Worst Locations
-  $currentYear = date('Y');
-  $datasets = array("best", "worst");
-
-  //Locations
-  $location_labels = array();
-  $best_locations = array();
-  $best_location_labels = array();
-  $best_location_score = array();
-  $worst_locations = array();
-  $worst_location_labels = array();
-  $worst_location_score = array();
-  
-
-  //Departments
-  $department_graph_data = array();
-  $department_labels = array();
-  $best_departments = array();
-  $best_department_labels = array();
-  $best_department_score = array();
-  $worst_departments = array();
-  $worst_department_labels = array();
-  $worst_department_score = array();
-
-  //Groups
-  $group_graph_data = array();
-  $group_labels = array();
-  $best_groups = array();
-  $best_group_labels = array();
-  $best_group_score = array();
-  $worst_groups = array();
-  $worst_group_labels = array();
-  $worst_group_score = array();
-  foreach($datasets AS $dataset){
-    if($dataset == 'best'){
-      $order_by = 'DESC';
-    }
-    if($dataset == 'worst'){
-      $order_by = 'ASC';
-    }
-    //Locations
-    // $query_b = "";
-    // if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
-    //   $query_b .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
-    // }
-
-    record_set("average_survey_result","SELECT * FROM ( SELECT locationid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY locationid ) AS NEWTABLE ORDER BY survey_val_sum $order_by");
-    $achieved_result_val = 0;
-    if($totalRows_average_survey_result > 0){
-      while($row_average_survey_result = mysqli_fetch_assoc($average_survey_result)){
-        // echo '<pre>';
-        // print_r($row_average_survey_result);
-        // echo '</pre>';
-        record_set("location_details", "select * from locations where id = '".$row_average_survey_result['locationid']."'");
-        $row_location_details = mysqli_fetch_assoc($location_details);
-
-        if($dataset == 'best'){
-          $best_score = number_format((floatval($row_average_survey_result['survey_val_sum'] * 100) / floatval($row_average_survey_result['survey_count'] * 10)) / intval($totalRows_average_survey_result), 2);
-          $locName = (trim($row_location_details['name']))?trim($row_location_details['name']):'NA';
-          $best_locations[$locName] += $best_score;
-          $best_location_labels[] = $locName;
-          $best_location_score[] = $best_score;
-        }
-
-        if($dataset == 'worst'){
-          $worst_score = number_format((floatval($row_average_survey_result['survey_val_sum'] * 100) / floatval($row_average_survey_result['survey_count'] * 10)) / intval($totalRows_average_survey_result), 2);
-          $locName = (trim($row_location_details['name']))?trim($row_location_details['name']):'NA';
-          $worst_locations[$locName] += $worst_score;
-          $worst_location_labels[]   = $locName;
-          $worst_location_score[]    = $worst_score;
-        }
+      record_set("survey_data", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_location['surveyid']." and locationid =".$row_per_location['locationid']);
+      $count = 0;
+      $answerval=0;
+      while($row_survey_data = mysqli_fetch_assoc($survey_data)){
+        $count++;
+        $answerval +=  $row_survey_data['answerval'];
       }
-    }
-   
-  arsort($best_locations);
-  asort($worst_locations);
-  // echo '<pre>';
-  // print_r($worst_locations);
-  // echo '</pre>';
-
-  // die();
-    //Departments
-    record_set("average_department_result","SELECT * FROM ( SELECT departmentid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY departmentid ) AS NEWTABLE ORDER BY survey_val_sum $order_by ");
-    if($totalRows_average_department_result > 0){
-      while($row_average_department_result = mysqli_fetch_assoc($average_department_result)){
-        record_set("department_details", "select * from departments where id = '".$row_average_department_result['departmentid']."'");
-        $row_department_details = mysqli_fetch_assoc($department_details);
-        if($dataset == 'best'){
-          $best_dscore = number_format((floatval($row_average_department_result['survey_val_sum'] * 100) / floatval($row_average_department_result['survey_count'] * 10)) / intval($totalRows_average_department_result), 2);
-          $deptName = (trim($row_department_details['name']))?trim($row_department_details['name']):'NA';
-          $best_departments[$deptName] += $best_dscore;
-          $best_department_labels[] = $deptName;
-          $best_department_score[] = $best_dscore;
-        }
-        if($dataset == 'worst'){
-          $worst_dscore = number_format((floatval($row_average_department_result['survey_val_sum'] * 100) / floatval($row_average_department_result['survey_count'] * 10)) / intval($totalRows_average_department_result), 2);
-          $deptName = (trim($row_department_details['name']))?trim($row_department_details['name']):'NA';
-          $worst_departments[$deptName] += $worst_dscore;
-          $worst_department_labels[] = $deptName;
-          $worst_department_score[] = $worst_dscore;
-        }
-      
-      }
-    }
-    arsort($best_departments);
-    asort($worst_departments);
-      //Groups
-      record_set("average_group_result","SELECT * FROM ( SELECT groupid, COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE YEAR(cdate) = '$currentYear' $query GROUP BY groupid ) AS NEWTABLE ORDER BY survey_val_sum $order_by");
-      if($totalRows_average_group_result > 0){
-        while($row_average_group_result = mysqli_fetch_assoc($average_group_result)){
-          record_set("group_details", "select * from groups where id = '".$row_average_group_result['groupid']."'");
-          $row_group_details = mysqli_fetch_assoc($group_details);
-          if($dataset == 'best'){
-            $best_dscore = number_format((floatval($row_average_group_result['survey_val_sum'] * 100) / floatval($row_average_group_result['survey_count'] * 10)) / intval($totalRows_average_group_result), 2);
-            $grpName = (trim($row_group_details['name']))?trim($row_group_details['name']):'NA';
-            $best_groups[$grpName] += $best_dscore;
-            $best_group_labels[]    = $grpName;
-            $best_group_score[]     = $best_dscore;
-            //$graph_data[$grpName] += $best_dscore;
-          }
-          if($dataset == 'worst'){
-            $worst_dscore = number_format((floatval($row_average_group_result['survey_val_sum'] * 100) / floatval($row_average_group_result['survey_count'] * 10)) / intval($totalRows_average_group_result), 2);
-            $grpName = (trim($row_group_details['name']))?trim($row_group_details['name']):'NA';
-            $worst_groups[$grpName] += $worst_dscore;
-            $worst_group_labels[] = $grpName;
-            $worst_group_score[] = $worst_dscore;
-          }
-        }
-      }
+      $avgresult = $answerval/$count;
+      $perLocations[$row_per_location['locationid']][$row_per_location['surveyid']]['result'] =$avgresult;
+      $perLocations[$row_per_location['locationid']][$row_per_location['surveyid']]['count'] =$count;
   }
 
-  arsort($best_group_labels);
-  asort($worst_group_score);
-  // echo '<pre>';
-  // print_r($best_group_labels); 
-  // print_r($best_group_score); 
-  // print_r($graph_data); 
-  // die();
-  ?>
+  $finial_data_location = array();
+  $locSurveyScore = array();
+  foreach($perLocations as $key => $value){
+    $total_loc_result = 0;
+    $count_number = 0;
+    foreach($value as $survey_result){
+      $count_number++;
+      $total_loc_result += $survey_result['result'];
+    }
+    $avg_score = $total_loc_result/$count_number;
+    $avg_score = round($avg_score, 2);
+    $finial_data_location[getLocation()[$key]]['count']  = $count_number;
+    $finial_data_location[getLocation()[$key]]['result'] = $avg_score;
+    $locSurveyScore[getLocation()[$key]] = $avg_score;
+    $overall_location_result += $avg_score;
+    $overall_loc_response_no +=$count_number; 
+  }
+
+//get no. of survey of all department
+$perDepartments = array();
+record_set("per_department", "SELECT DISTINCT(surveyid),departmentid FROM `answers` WHERE `departmentid` in (select id from departments where cstatus=1) $query ORDER BY `departmentid` ASC");
+while($row_per_department = mysqli_fetch_assoc($per_department)){
+    record_set("survey_data_dept", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_department['surveyid']." and departmentid =".$row_per_department['departmentid']);
+    $count = 0;
+    $answerval=0;
+    while($row_survey_data_dept = mysqli_fetch_assoc($survey_data_dept)){
+      $count++;
+      $answerval +=  $row_survey_data_dept['answerval'];
+    }
+    $avgresult = $answerval/$count;
+    $perDepartments[$row_per_department['departmentid']][$row_per_department['surveyid']]['result'] =$avgresult;
+    $perDepartments[$row_per_department['departmentid']][$row_per_department['surveyid']]['count'] = $count;
+}
+
+$finial_data_department = array();
+$deptSurveyScore = array();
+foreach($perDepartments as $key => $value){
+  $total_dep_result = 0;
+  $count_number = 0;
+  foreach($value as $survey_result){
+    $count_number++;
+    $total_dep_result += $survey_result['result'];
+  }
+  $avg_score = $total_dep_result/$count_number;
+  $finial_data_department[getDepartment()[$key]]['count']  = $count_number;
+  $finial_data_department[getDepartment()[$key]]['result'] = round($avg_score, 2);
+  $deptSurveyScore[getDepartment()[$key]] = round($avg_score, 2);
+  $overall_dept_response_no +=$count_number; 
+}
+//get no. of survey of all group
+$perGroups = array();
+record_set("per_group", "SELECT DISTINCT(surveyid),groupid FROM `answers` WHERE `groupid` in (select id from groups where cstatus=1) $query ORDER BY `groupid` ASC");
+
+while($row_per_group = mysqli_fetch_assoc($per_group)){
+    record_set("survey_data_grp", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_group['surveyid']." and departmentid =".$row_per_group['groupid']);
+    $count = 0;
+    $answerval=0;
+    while($row_survey_data_grp = mysqli_fetch_assoc($row_survey_data_grp)){
+      $count++;
+      $answerval +=  $row_survey_data_grp['answerval'];
+    }
+    $avgresult = $answerval/$count;
+    $perGroups[$row_per_group['groupid']][$row_per_group['surveyid']]['result'] =$avgresult;
+    $perGroups[$row_per_group['groupid']][$row_per_group['surveyid']]['count'] = $count;
+}
+
+$finial_data_group = array();
+$grpSurveyScore =array();
+foreach($perGroups as $key => $value){
+  $total_grp_result = 0;
+  $count_number = 0;
+  foreach($value as $survey_result){
+    $count_number++;
+    $total_grp_result += $survey_result['result'];
+  }
+  $avg_score = $total_grp_result/$count_number;
+  $finial_data_group[getGroup()[$key]]['count']  = $count_number;
+  $finial_data_group[getGroup()[$key]]['result'] = round($avg_score, 2);
+  $grpSurveyScore[getGroup()[$key]] = round($avg_score, 2);
+  $overall_grp_response_no +=$count_number; 
+}
+?>
 <style>
   #exportPDF{
     text-decoration: none;
@@ -285,9 +204,17 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
               </div>
               <div class="box-body " style="display: block;">
                 <?php 
-                $countLocation = $perLocations;
-                unset($countLocation['NA']);
-                if($countLocation){ ?>
+                if(count($finial_data_location)>0){ ?>
+                <div class="row" style="text-align:center;margin-bottom: 20px;">
+                  <div class="col-md-6">
+                     <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
+                     <div class="col-6"><strong><?=$overall_loc_response_no?></strong></div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
+                    <div class="col-6"><strong><?=round(array_sum($locSurveyScore)/count($locSurveyScore),2) ?> %</strong></div>
+                  </div>
+                </div>
                 <div class="row">
                     <div class="col-sm-8">
                       <canvas id="locationChart"></canvas>
@@ -298,15 +225,17 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                           <tr>
                             <th scope="col" style="text-align: left;">Location Name</th>
                             <th scope="col" style="text-align: left;">Total Surveys</th>
+                            <th scope="col" style="text-align: left;">Average Score</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php 
-                          if($countLocation){
-                            foreach($perLocations AS $locationName => $locationSurvey){ ?>
+                          if($finial_data_location){
+                            foreach($finial_data_location AS $key => $value){ ?>
                               <tr>
-                                <th scope="row" style="text-align: left;"><?php echo $locationName; ?></th>
-                                <td style="text-align: left;"><?php echo $locationSurvey; ?></td>
+                                <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
+                                <td style="text-align: left;"><?php echo $value['count']; ?></td>
+                                <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
                               </tr>
                             <?php } ?>
                           <?php }else{ ?>
@@ -319,77 +248,6 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                     </div>
                 </div>
                 <hr style="border: 0.5px solid #e8e3e3;"/>
-                <div class="row">
-                  <div class="box-header with-border">
-                    <h3 class="box-title">Best Survey Locations Of Year</h3>
-                  </div>
-                  <div class="col-md-8">
-                    <?php if($best_locations){ ?>
-                    <canvas id="yearBestLocationChart"></canvas>
-                  </div>
-                  <div class="col-md-4 listing">  
-                    <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                              <th scope="col" style="text-align: left;">Location Name</th>
-                              <th scope="col" style="text-align: left;">Average Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                          if($best_locations){
-                              foreach($best_locations AS $key => $value){ ?>
-                              <tr>
-                                  <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                  <td style="text-align: left;"><?php echo $value; ?></td>
-                              </tr>
-                              <?php } ?>
-                          <?php }else{ ?>
-                              <tr>
-                              <td colspan="2">No Data Found.</td>
-                              </tr>
-                          <?php } ?>
-                        </tbody>
-                    </table> 
-                    <?php }else { ?>
-                       <p>No Data Found.</p>
-                    <?php } ?>        
-                  </div>
-                </div>
-                
-                <div class="row"> 
-                  <div class="box-header with-border">
-                    <h3 class="box-title">Worst Survey Locations Of Year</h3>
-                  </div> 
-                  <div class="col-md-8">
-                    <?php if($worst_locations){ ?>
-                      <canvas id="yearWorstLocationChart"></canvas>
-                  </div>
-                  <div class="col-md-4 listing">    
-                    <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                              <th scope="col" style="text-align: left;">Location Name</th>
-                              <th scope="col" style="text-align: left;">Average Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                          if($worst_locations){
-                            foreach($worst_locations AS $key => $value){ ?>
-                            <tr>
-                                <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                <td style="text-align: left;"><?php echo $value; ?></td>
-                            </tr>
-                            <?php } ?>
-                          <?php }?>
-                        </tbody>
-                    </table>
-                    <?php }else{ ?>
-                        <p>No Data Dound.</p>
-                    <?php } ?>
-                  </div>
-                </div>
                 <?php }else{ ?>
                     <div class="col-md-12">
                       <p>No Data Found.</p>
@@ -410,10 +268,19 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                 </div>
               </div>
               <div class="box-body " style="display: block;">
+               
                 <?php 
-                $countDepartment = $perDepartments;
-                unset($countDepartment['NA']);
-                if($countDepartment){ ?>
+                if(count($finial_data_department)>0){ ?>
+                  <div class="row" style="text-align:center;margin-bottom: 20px;">
+                    <div class="col-md-6">
+                      <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
+                      <div class="col-6"><strong><?=$overall_dept_response_no?></strong></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
+                      <div class="col-6"><strong><?=round(array_sum($deptSurveyScore)/count($deptSurveyScore),2) ?> %</strong></div>
+                    </div>
+                  </div>  
                   <div class="row">
                     <div class="col-sm-8">
                       <canvas id="departmentChart"></canvas>
@@ -424,15 +291,17 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                           <tr>
                             <th scope="col" style="text-align: left;">Department Name</th>
                             <th scope="col" style="text-align: left;">Total Surveys</th>
+                            <th scope="col" style="text-align: left;">Average Score</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php 
-                          if($perDepartments){
-                            foreach($perDepartments AS $departmentName => $departmentSurvey){ ?>
+                          if($finial_data_department){
+                            foreach($finial_data_department AS $key => $value){ ?>
                               <tr>
-                                <th scope="row" style="text-align: left;"><?php echo $departmentName; ?></th>
-                                  <td style="text-align: left;"><?php echo $departmentSurvey; ?></td>
+                                <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
+                                  <td style="text-align: left;"><?php echo $value['count']; ?></td>
+                                  <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
                                 </tr>
                             <?php } ?>
                           <?php }else{ ?>
@@ -445,72 +314,6 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                     </div>
                   </div>
                   <hr style="border: 0.5px solid #e8e3e3;"/>
-                  <div class="row">
-                    <div class="box-header with-border">
-                      <h3 class="box-title">Best Survey Departments Of Year</h3>
-                    </div>
-                    <div class="col-md-8">
-                      <?php if($best_departments){ ?>
-                      <canvas id="yearBestDepartmentChart"></canvas>
-                    </div>  
-                    <div class="col-md-4">
-                      <table class="table">
-                          <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" style="text-align: left;">Department Name</th>
-                                <th scope="col" style="text-align: left;">Average Score</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <?php 
-                            if($best_departments){
-                              foreach($best_departments AS $key => $value){ ?>
-                                <tr>
-                                  <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                  <td style="text-align: left;"><?php echo $value; ?></td>
-                                </tr>
-                              <?php } ?>
-                            <?php }?>
-                          </tbody>
-                      </table> 
-                      <?php }else{ ?>
-                        <p>No Data Dound.</p>
-                      <?php } ?>       
-                    </div>
-                  </div>
-                  <div class="row"> 
-                    <div class="box-header with-border">
-                      <h3 class="box-title">Worst Survey Departments Of Year</h3>
-                    </div> 
-                    <div class="col-md-8">
-                      <?php if($worst_departments){ ?>
-                        <canvas id="yearWorstDepartmentChart"></canvas>
-                    </div>
-                    <div class="col-md-4 listing">
-                        <table class="table">
-                            <thead class="thead-dark">
-                              <tr>
-                                <th scope="col" style="text-align: left;">Department Name</th>
-                                <th scope="col" style="text-align: left;">Average Score</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <?php 
-                              if($worst_departments){
-                                foreach($worst_departments AS $key => $value){ ?>
-                                  <tr>
-                                    <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                    <td style="text-align: left;"><?php echo $value; ?></td>
-                                  </tr>
-                                <?php } ?>
-                              <?php }?>
-                            </tbody>
-                        </table>
-                      <?php }else{ ?>
-                        <p>No Data Dound.</p>
-                      <?php } ?>
-                    </div>
-                  </div>
                 <?php }else{ ?>
                   <p>No Data Dound.</p>
                 <?php } ?> 
@@ -531,11 +334,18 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
 
               <div class="box-body " style="display: block;">
                 <?php 
-                $countGroup = $perGroups;
-                unset($countGroup['NA']);
-                //print_r($countGroup);
-                if($countGroup){ ?>
+                if($finial_data_group){ ?>
                   <div class="row">
+                    <div class="row" style="text-align:center;margin-bottom: 20px;">
+                      <div class="col-md-6">
+                        <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
+                        <div class="col-6"><strong><?=$overall_dept_response_no?></strong></div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
+                        <div class="col-6"><strong><?=round(array_sum($grpSurveyScore)/count($grpSurveyScore),2) ?> %</strong></div>
+                      </div>
+                    </div> 
                     <div class="col-sm-8">
                       <canvas id="groupChart"></canvas>
                     </div>
@@ -545,15 +355,17 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                           <tr>
                             <th scope="col" style="text-align: left;">Group Name</th>
                             <th scope="col" style="text-align: left;">Total Surveys</th>
+                            <th scope="col" style="text-align: left;">Average Score</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php 
-                          if($perGroups){
-                            foreach($perGroups AS $groupName => $groupSurvey){ ?>
+                          if($finial_data_group){
+                            foreach($finial_data_group AS $key => $value){ ?>
                               <tr>
-                                  <th scope="row" style="text-align: left;"><?php echo $groupName; ?></th>
-                                  <td style="text-align: left;"><?php echo $groupSurvey; ?></td>
+                                  <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
+                                  <td style="text-align: left;"><?php echo $value['count']; ?></td>
+                                  <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
                               </tr>
                             <?php } ?>
                           <?php }else{ ?>
@@ -566,76 +378,6 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
                     </div>
                   </div>
                   <hr style="border: 0.5px solid #e8e3e3;"/>
-                  <div class="row">
-                    <div class="box-header with-border">
-                      <h3 class="box-title">Best Survey Group Of Year</h3>
-                    </div>
-                    <div class="col-md-8">
-                      <?php if($best_group_score){ ?>
-                      <canvas id="yearBestGroupChart"></canvas>
-                    </div>
-                    <div class="col-md-4 listing">      
-                      <table class="table">
-                          <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" style="text-align: left;">Group Name</th>
-                                <th scope="col" style="text-align: left;">Average Score</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <?php 
-                            if($best_groups){
-                              foreach($best_groups AS $key => $value){ ?>
-                                <tr>
-                                  <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                  <td style="text-align: left;"><?php echo $value; ?></td>
-                                </tr>
-                              <?php } ?>
-                            <?php }else{ ?>
-                                <tr>
-                                <td colspan="2">No Data Found.</td>
-                                </tr>
-                            <?php } ?>
-                          </tbody>
-                      </table> 
-                      <?php }else { ?>
-                        <p>No Data Found.</p>
-                      <?php } ?>        
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="box-header with-border">
-                      <h3 class="box-title">Worst Survey Group Of Year</h3>
-                    </div>
-                    <div class="col-md-8">
-                      <?php if($worst_group_score){ ?>
-                        <canvas id="yearWorstGroupChart"></canvas>
-                    </div>
-                    <div class="col-md-4 listing">   
-                        <table class="table">
-                            <thead class="thead-dark">
-                              <tr>
-                                <th scope="col" style="text-align: left;">Group Name</th>
-                                <th scope="col" style="text-align: left;">Average Score</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <?php 
-                              if($worst_groups){
-                                foreach($worst_groups AS $key => $value){ ?>
-                                  <tr>
-                                    <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                    <td style="text-align: left;"><?php echo $value; ?></td>
-                                  </tr>
-                                <?php } ?>
-                              <?php }?>
-                            </tbody>
-                        </table>
-                      <?php }else { ?>
-                        <p>No Data Found.</p>
-                      <?php } ?>
-                    </div>
-                  </div>
                 <?php }else { ?>
                   <p>No Data Found.</p>
                 <?php } ?>  
@@ -646,222 +388,66 @@ if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) &
     </div>
 </section>
 
-<?php 
-// echo $color_implode = '"'.implode('","',generate_unique_color(count($perLocations))).'"'; die();
-
-?>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
 <script type="text/javascript">
 
-let best_locations          =  '<?=count($perLocations)?>';
-let best_locations_length   =  '<?=count($best_locations)?>';
-let worth_locations_length  =  '<?=count($worst_locations)?>';
-
+let best_locations  =  '<?=count($locSurveyScore)?>';
 //for location
 if(best_locations>0){
   var locationChartCtx = document.getElementById('locationChart').getContext('2d');   
   var locationChart = new Chart(locationChartCtx, {
     type: 'pie',
     data: {
-      labels: <?php echo json_encode(array_keys($perLocations)); ?>,
+      labels: <?php echo json_encode(array_keys($locSurveyScore)); ?>,
       datasets: [
           {
             backgroundColor: [<?='"'.implode('","',generate_unique_color(count($perLocations))).'"'?>],
-            data: <?php echo json_encode(array_values($perLocations)); ?>
+            data: <?php echo json_encode(array_values($locSurveyScore)); ?>
           }
       ]
     }
   }); 
 }
 
-if(best_locations_length>0){
-  var yearBestLocationChartCtx = document.getElementById('yearBestLocationChart').getContext('2d');   
-  var yearBestLocationChart = new Chart(yearBestLocationChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($best_locations)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($best_locations))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($best_locations)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Best Locations'
-      }
-    }
-  });
-}
-if(worth_locations_length>0){
-  var yearWorstLocationChartCtx = document.getElementById('yearWorstLocationChart').getContext('2d');   
-  var yearWorstLocationChart = new Chart(yearWorstLocationChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($worst_locations)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($worst_locations))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($worst_locations)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Worst Locations'
-      }
-    }
-  });
-}
-
-
 // for department
-let best_departments          =  '<?=count($perDepartments)?>';
-let best_departments_length   =  '<?=count($best_departments)?>';
-let worth_departments_length  =  '<?=count($worst_departments)?>';
+let best_departments  =  '<?=count($perDepartments)?>';
 
 if(best_departments>0){
   var departmentChartCtx = document.getElementById('departmentChart').getContext('2d');  
   var departmentChart = new Chart(departmentChartCtx, {
     type: 'pie',
     data: {
-      labels: <?php echo json_encode(array_keys($perDepartments)); ?>,
+      labels: <?php echo json_encode(array_keys($deptSurveyScore)); ?>,
       datasets: [
           {
             backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($perDepartments))).'"'?>
+              <?='"'.implode('","',generate_unique_color(count($deptSurveyScore))).'"'?>
             ],
-            data: <?php echo json_encode(array_values($perDepartments)); ?>
+            data: <?php echo json_encode(array_values($deptSurveyScore)); ?>
           }
       ]
     }
   });
 }
-
-if(best_departments_length>0){
-  var yearBestDepartmentChartCtx = document.getElementById('yearBestDepartmentChart').getContext('2d');   
-  var yearBestDepartmentChart = new Chart(yearBestDepartmentChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($best_departments)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($best_departments))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($best_departments)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Best Departments'
-      }
-    }
-  });
-}
-
-if(worth_departments_length>0){
-  var yearWorstDepartmentChartCtx = document.getElementById('yearWorstDepartmentChart').getContext('2d');   
-  var yearWorstDepartmentChart = new Chart(yearWorstDepartmentChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($worst_departments)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($worst_departments))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($worst_departments)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Worst Departments'
-      }
-    }
-  });
-}
-
 
 // for group
-let best_groups          =  '<?=count($perGroups)?>';
-let best_groups_length   =  '<?=count($best_groups)?>';
-let worth_groups_length  =  '<?=count($worst_groups)?>';
+let best_groups =  '<?=count($deptSurveyScore)?>';
 
 if(best_groups>0){
   var groupChartCtx = document.getElementById('groupChart').getContext('2d');   
   var groupChart = new Chart(groupChartCtx, {
     type: 'pie',
     data: {
-      labels: <?php echo json_encode(array_keys($perGroups)); ?>,
+      labels: <?php echo json_encode(array_keys($deptSurveyScore)); ?>,
       datasets: [
           {
             backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($perGroups))).'"'?>
+              <?='"'.implode('","',generate_unique_color(count($deptSurveyScore))).'"'?>
             ],
-            data: <?php echo json_encode(array_values($perGroups)); ?>
+            data: <?php echo json_encode(array_values($deptSurveyScore)); ?>
           }
       ]
-    }
-  });
-}
-
-if(best_groups_length>0){
-  var yearBestGroupChartCtx = document.getElementById('yearBestGroupChart').getContext('2d');   
-  var yearBestGroupChart = new Chart(yearBestGroupChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($best_groups)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($best_groups))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($best_groups)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Best Groups'
-      }
-    }
-  });
-}
-
-if(worth_groups_length>0){
-  var yearWorstGroupChartCtx = document.getElementById('yearWorstGroupChart').getContext('2d');   
-  var yearWorstGroupChart = new Chart(yearWorstGroupChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($worst_groups)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($worst_groups))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($worst_groups)); ?>
-          }
-      ]
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'Year Worst Groups'
-      }
     }
   });
 }

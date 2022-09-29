@@ -46,6 +46,7 @@ css variables
 }
 .btn-success {
     background-color: var(--framework_blue) !important;
+    border-color: unset;
 }
 .box {
     color: black !important;
