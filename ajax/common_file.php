@@ -54,8 +54,18 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
   $admin    = $row_get_admin['admin_ids'];
   $manager  = $row_get_admin['client_ids'];
   //$html = '<span style="color:red;">No user Available</span>';
-
-  if($user_type == 2){
+  if($user_type == 1){
+    record_set("get_sadmin", "SELECT * FROM `super_admin` where cstatus = 1");
+    $html = '<div class="form-group">
+    <label>Admin</label>
+    <select class="form-control" tabindex=7 name="assing_to_user_id">
+    <option value="">Select Admin</option></option>';
+    while($row_get_sadmin = mysqli_fetch_assoc($get_sadmin)){
+      $html .='<option value="'.$row_get_sadmin['id'].'">'.$row_get_sadmin['name'].'</option>';
+    }
+    $html .= '</select>';
+  }
+  else if($user_type == 2){
     $adminId    = explode("|",$admin);
     $adminId    = array_filter($adminId);
     $alladminId = implode(',',$adminId);
@@ -85,6 +95,7 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
             $html .= '</select>
       </div>';
   }
+  
   echo json_encode($html); die();
 }
 

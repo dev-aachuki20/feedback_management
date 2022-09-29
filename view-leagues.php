@@ -23,6 +23,7 @@
     .graph-btn.active {
         background: #a020f0;
         color: #fff;
+        border: unset;
     }
     .table-bordered>thead>tr>th, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
         border: 1px solid #c4c1c1;
@@ -37,17 +38,6 @@
 <section class="content">
     <div class="box">
         <div class="box-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
-                </div>
-                <div class="col-md-3">
-                    <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
-                </div>
-                <div class="col-md-3">
-                    <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
-                </div>
-            </div>
             <div class="row filter_form">
             
                     <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
@@ -90,6 +80,17 @@
                             </div>
                         </div>
                         <hr style="border: 2px solid #6c757d36;">
+                        <div class="row" style="margin-bottom: 21px;">
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="gauge-wrapper">
                                 <div class="row">
@@ -125,14 +126,15 @@
                     <!-- <div3
                         <button type="button" class="btn btn-success" id="exportascsv" style="margin-bottom: 20px;">Export CSV</button>
                     </div> -->
-                
             </div>
+
         </div>
     </div>
 </section>
 <script>
     ajax_league_table();
     function ajax_league_table(fdate,sdate,type,survey){
+        
         $.ajax({
             method:"POST",
             url:'<?=baseUrl()?>ajax/view-league-data.php',
@@ -148,6 +150,8 @@
                 $('.renderTable').html(response);
                 $('.loader').hide();
                 $('.renderTable').show();
+                $('#datatable1').DataTable( {  "aaSorting": [ [2,'desc'] ]}).destroy();  
+                $('#datatable1').DataTable( {  "aaSorting": [ [2,'desc']]});
             }
         })
     }
@@ -167,6 +171,10 @@
         let survey      = $('.survey').val();
         if(new Date(fdate) > new Date(sdate)){
             alert('End Date Must Be Greater Than Start Date');
+            return ;
+        }
+        if(type == ''){
+            alert('Please choose Location,Group or department');
             return ;
         }
         if(survey == ''){

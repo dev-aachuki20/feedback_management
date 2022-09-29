@@ -160,10 +160,10 @@ $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_filter_data_by_user('surveys');
 
-$display = '';
-if($_SESSION['user_type'] == 3){
-    $display = 'display:none;';
-}
+ $display = '';
+// if($_SESSION['user_type'] == 3){
+//     $display = 'display:none;';
+// }
 ?>
 <style>
 .d-none{
@@ -499,12 +499,11 @@ if($_SESSION['user_type'] == 3){
                             if($_SESSION['user_type']==2){
                                 $allowed_key=2;
                             }
-                            if($key>=$_SESSION['user_type'] and $key!=1){ ?>
+                             ?>
                             <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                             </option>
                             <?php }
-                            }
-                        
+                            
                         ?>
                         </select>
                     </div>
@@ -529,62 +528,60 @@ if($_SESSION['user_type'] == 3){
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 
 <script>
-
-$(document).on('change','.assignSurveyCheckbox',function(){
-    //$(".assignSurveyCheckbox").prop("checked", false);
-     let survey_id = $('#surveys').val();
-     if(survey_id == ''){
-        $('.error').show();
-        alert("Please Choose Survey Type To Re Assign Any Task");
-     }else{
-        $('.btn-submit').show();
-     }
-    var value = $(this).is(':checked');
-    let sid  = $(this).data('sid');
-    var checkedArray=[];
-    $("input[name='assign']:checked").each(function(){
-        checkedArray.push($(this).val());
-    });
-    console.log(checkedArray.length);
-    if(checkedArray.length >0 && survey_id !=''){
-        $('.btn-submit').show();
-    }else{
-        $('.btn-submit').hide();
-    }
-    
-    if(value){
-       $('.survey_id').val(sid);
-       $('.response_id_hidden').val(checkedArray);
-       //$('.btn-submit').show();
-       $('.self-assign-btn').show();
-    }else{
-       // $('.btn-submit').hide();
-        $('.self-assign-btn').hide();
-    }
-});
-
-// ajax on the user type change in assign task
-$(document).on('change','#user_type',function(){
-    let user_type = $(this).val();
-    let survey_id  = $('.survey_id').val();
-    assign_user(survey_id,user_type);
-});
-
-function assign_user(survey_id,user_type){
-    $.ajax({
-        method:"POST",
-        url:'<?=baseUrl()?>ajax/common_file.php',
-        data:{
-            survey_id:survey_id,
-            user_type:user_type,
-            mode:'assign_users'
-        },
-        success:function(response){
-            response = JSON.parse(response);
-            console.log(response);
-            $('#users').html(response);
+    $(document).on('change','.assignSurveyCheckbox',function(){
+        //$(".assignSurveyCheckbox").prop("checked", false);
+        let survey_id = $('#surveys').val();
+        if(survey_id == ''){
+            $('.error').show();
+            alert("Please Choose Survey Type To Re Assign Any Task");
+        }else{
+            $('.btn-submit').show();
         }
-    })
-}
+        var value = $(this).is(':checked');
+        let sid  = $(this).data('sid');
+        var checkedArray=[];
+        $("input[name='assign']:checked").each(function(){
+            checkedArray.push($(this).val());
+        });
+        console.log(checkedArray.length);
+        if(checkedArray.length >0 && survey_id !=''){
+            $('.btn-submit').show();
+        }else{
+            $('.btn-submit').hide();
+        }
+        
+        if(value){
+        $('.survey_id').val(sid);
+        $('.response_id_hidden').val(checkedArray);
+        //$('.btn-submit').show();
+        $('.self-assign-btn').show();
+        }else{
+        // $('.btn-submit').hide();
+            $('.self-assign-btn').hide();
+        }
+    });
 
+    // ajax on the user type change in assign task
+    $(document).on('change','#user_type',function(){
+        let user_type = $(this).val();
+        let survey_id  = $('.survey_id').val();
+        assign_user(survey_id,user_type);
+    });
+
+    function assign_user(survey_id,user_type){
+        $.ajax({
+            method:"POST",
+            url:'<?=baseUrl()?>ajax/common_file.php',
+            data:{
+                survey_id:survey_id,
+                user_type:user_type,
+                mode:'assign_users'
+            },
+            success:function(response){
+                response = JSON.parse(response);
+                console.log(response);
+                $('#users').html(response);
+            }
+        })
+    }
 </script>

@@ -504,7 +504,7 @@ function send_email_to_assign_user($name,$email,$type='assign'){
 	else{
 	  $msg='Message sent successfully !!';
 	}
-  }
+}
 function get_boostrap_bg_colors($status){
 	$status_id=boostrap_bg_colors();
 	return $status_id[$status];

@@ -144,6 +144,7 @@ ksort($survey_data);
 $current_data =array();
 foreach($survey_data as $key => $value){
     $current_data[$key]['count']  = count($value);
+    $current_data[$key]['id']  = $key;
     $current_data[$key]['avg']  = array_sum($value)/count($value);
 }
 
@@ -153,14 +154,16 @@ foreach($survey_data_lastweek as $key => $value){
     $last_week_data[$key]['count']  = count($value);
     $last_week_data[$key]['avg']  = array_sum($value)/count($value);
 }
-// send data with table
 
+$key_values = array_column($current_data, 'avg'); 
+array_multisort($key_values, SORT_DESC, $current_data);
+
+// send data with table
 if(count($current_data)>0){
     $html ='';
-    $html ='<table class="table table-bordered">
+    $html ='<table id="datatable1" class="table table-bordered">
     <thead>
       <tr>
-        <th scope="col">#</th>
         <th scope="col">'.$title.'</th>
         <th scope="col">Number of survey</th>
         <th scope="col">Average Score</th>
@@ -171,31 +174,30 @@ if(count($current_data)>0){
             $total =  round($datasurvey['avg'], 2);
             $titleName='';
             if($survey_type=='location'){
-                $titleName = getLocation()[$key];
+                $titleName = getLocation()[$datasurvey['id']];
             }
             else if($survey_type=='group'){
-                $titleName = getGroup()[$key];
+                $titleName = getGroup()[$datasurvey['id']];
             }
             else if($survey_type=='department'){
                 $title = 'Department';
-                $titleName = getDepartment()[$key];
+                $titleName = getDepartment()[$datasurvey['id']];
             }
             //compare value
-            if($last_week_data[$key]){
-                $last_week_total =  round($last_week_data[$key]['avg'], 2);
-                if($last_week_total < $total){
-                    $status = '<img src="'.getHomeUrl().'dist/img/up-arrow.png" style="height: 20px;width: 20px;">';
-                }else if($last_week_total > $total){
-                    $status = '<img src="'.getHomeUrl().'dist/img/down-arrow.png" style="height: 20px;width: 20px;">';
-                }else {
-                    $status = '<img src="'.getHomeUrl().'dist/img/right-arrow.png" style="height: 20px;width: 20px;">';
-                }
-            }else {
-                $status = '<img src="'.getHomeUrl().'dist/img/up-arrow.png" style="height: 20px;width: 20px;">';
-            }
+            // if($last_week_data[$key]){
+            //     $last_week_total =  round($last_week_data[$key]['avg'], 2);
+            //     if($last_week_total < $total){
+            //         $status = '<img src="'.getHomeUrl().'dist/img/up-arrow.png" style="height: 20px;width: 20px;">';
+            //     }else if($last_week_total > $total){
+            //         $status = '<img src="'.getHomeUrl().'dist/img/down-arrow.png" style="height: 20px;width: 20px;">';
+            //     }else {
+            //         $status = '<img src="'.getHomeUrl().'dist/img/right-arrow.png" style="height: 20px;width: 20px;">';
+            //     }
+            // }else {
+            //     $status = '<img src="'.getHomeUrl().'dist/img/up-arrow.png" style="height: 20px;width: 20px;">';
+            // }
             
         $html .='<tr>
-            <td>'.$status.'</td>
             <td>'.$titleName.'</td>
             <td >'.$datasurvey['count'].'</td>
             <td>'.$total.' %</td>
@@ -203,7 +205,7 @@ if(count($current_data)>0){
         }
     $html .='</tbody></table>';
 }else {
-    $html = 'No result Found';
+    $html = '';
 }
   echo json_encode($html); die();
 ?>
