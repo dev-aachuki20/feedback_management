@@ -115,7 +115,7 @@ if(isset($_POST['selectSurvey'])){
     $final_chart_array_item = implode(" ",$final_chart_array);
     
     //for dashboard top boxs
-    if($_SESSION['user_type']==3){
+    if($_SESSION['user_type']==4){
      //for first box
         $titleFirst = 'CONTACT REQUESTS';
         $urlFirst   = 'view-report';
@@ -439,11 +439,11 @@ if(isset($_POST['selectSurvey'])){
                                         <?php } ?>
                                     </td>
                                     <!-- <td>
-                                        <?php if($to_bo_contacted==1){ ?>
+                                        <?php if($to_bo_contacted==2){ ?>
                                             <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>&userid=<?php echo $row_get_recent_entry['cby'];?>&contacted=<?=$to_bo_contacted?>" target="_blank">User Response</a> &nbsp;
                                         <?php }?>
                                             <a class="btn btn-xs btn-info" href="survey-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>" target="_blank">Overall Result</a> &nbsp;
-                                        <?php if($_SESSION['user_type'] ==2){ ?>
+                                        <?php if($_SESSION['user_type'] ==3){ ?>
                                             <a class="btn btn-xs btn-warning" href="manager-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>" target="_blank">Survey Result</a> &nbsp;
                                         <?php } ?>
                                         <?php if($to_bo_contacted==1){ ?>

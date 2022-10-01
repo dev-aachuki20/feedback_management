@@ -533,38 +533,13 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 
 <script>
+    var checkedArray=[];
     $(document).on('change','.assignSurveyCheckbox',function(){
-        //$(".assignSurveyCheckbox").prop("checked", false);
-        let survey_id = $('#surveys').val();
-        if(survey_id == ''){
-            $('.error').show();
-            alert("Please Choose Survey Type To Re Assign Any Task");
-        }else{
-            $('.btn-submit').show();
-        }
-        var value = $(this).is(':checked');
-        let sid  = $(this).data('sid');
-        var checkedArray=[];
-        $("input[name='assign']:checked").each(function(){
-            checkedArray.push($(this).val());
+        $.each($("input[name='assign']:checked"), function (K, V) {    
+            checkedArray.push(V.value);        
         });
-        console.log(checkedArray.length);
-        if(checkedArray.length >0 && survey_id !=''){
-            $('.btn-submit').show();
-        }else{
-            $('.btn-submit').hide();
-        }
-        
-        if(value){
-        $('.survey_id').val(sid);
-        $('.response_id_hidden').val(checkedArray);
-        //$('.btn-submit').show();
-        $('.self-assign-btn').show();
-        }else{
-        // $('.btn-submit').hide();
-            $('.self-assign-btn').hide();
-        }
     });
+    console
 
     // ajax on the user type change in assign task
     $(document).on('change','#user_type',function(){
