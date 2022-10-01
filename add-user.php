@@ -19,7 +19,12 @@
       record_set("get_admin_id", "select * from super_admin where id='".$_GET['id']."'");
       $title = 'Super Admin';
       $coloumn_name = 'admin_ids';
-    }else {
+    }else if($_GET['t']=='dgs'){
+      record_set("get_admin_id", "select * from super_admin where id='".$_GET['id']."'");
+      $title = 'Super Admin';
+      $coloumn_name = 'admin_ids';
+    }
+    else {
       echo 'Invalid User'; die();
     }
     $row_get_admin_id = mysqli_fetch_assoc($get_admin_id);
@@ -57,11 +62,11 @@ $user_type = '';
       if(!empty($_POST['password'])){
           $data['password']= md5($_POST['password']);
       }
-      if($user_type==1){
+      if($user_type==1 || $user_type==2){
         // for super admin update
         $updte=	dbRowUpdate("super_admin", $data, "where id=".$_GET['id']);
       }
-      if($user_type==2){
+      if($user_type==3){
         // for admin update
           $updte=	dbRowUpdate("admin", $data, "where id=".$_GET['id']);
       }else {
@@ -160,12 +165,7 @@ $user_type = '';
             }
           }
           $msg = "User Updated Successfully";
-          if(isset($_GET['user'])){
-            alertSuccess( $msg,'');
-          }else {
-            //alertSuccess( $msg,'?page=view-user');
-          }
-          
+          alertSuccess($msg,'');
       }else{
           $msg = "User Not Updated Successfully";
           if(isset($_GET['user'])){
@@ -350,14 +350,7 @@ if(!empty($_POST['submit'])){
               <div class="col-md-6">
                 <?php 
                   $user_types_array=user_type();
-                  if($_GET['t']==='sa'){
-                    $type = 1;
-                  }else if($_GET['t']==='a'){
-                    $type = 2;
-                  }else {
-                    $type = 3;
-                  }
-                  
+                
                   ?>
                 <div class="form-group">
                   <input type="hidden" id="hidden_user_type" name="user_type" value="<?=$row_get_admin_id['user_type']?>">
@@ -370,7 +363,7 @@ if(!empty($_POST['submit'])){
                             $allowed_key=3;
                           }
                           if($key>=$_SESSION['user_type']){ ?>
-                          <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
+                          <option <?php if(($_GET['user'] ? $_SESSION['user_type'] : $row_get_admin_id['user_type'])==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                           </option>
                         <?php }
                         }

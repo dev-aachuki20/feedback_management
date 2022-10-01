@@ -568,6 +568,7 @@ function date_formate_cdate($string){
 }
 function user_type(){
 	return array(
+		'1' => 'DGS',
 		'2' => 'Super Admin',
 		'3' => 'Admin',
 		'4' => 'Manager',

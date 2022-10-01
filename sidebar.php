@@ -2,7 +2,11 @@
     <?php 
     ?>
     <li class="treeview profile-active">
-        <?php if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){ ?>
+        <?php if($_SESSION['user_type']==1){ ?>
+            <!-- for super admin  -->
+            <a href="?page=add-user&t=dgs&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
+        <?php } ?>
+        <?php if($_SESSION['user_type']==2){ ?>
             <!-- for super admin  -->
             <a href="?page=add-user&t=sa&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
         <?php }else if($_SESSION['user_type']==3){ ?>

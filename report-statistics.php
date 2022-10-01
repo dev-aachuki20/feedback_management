@@ -258,7 +258,7 @@ $que_count =0;
                                   record_set("get_locations","SELECT * FROM locations");
                                 }
 
-                                if($_SESSION['user_type'] == 2){
+                                if($_SESSION['user_type'] == 3){
                                   $client_locations = $_SESSION['user_locationid'];
                                   record_set("get_locations","SELECT * FROM locations where id IN($client_locations)");
                                   echo "<option value='0'>Select-Location</option>";
