@@ -17,7 +17,7 @@ if(isset($_POST['login'])){
         }
 			}
       
-			$_SESSION['user_type'] = 3;
+			$_SESSION['user_type'] = 4;
       $location =  get_filter_data_by_user('locations');
       $arr = array();
       foreach($location as $loc){

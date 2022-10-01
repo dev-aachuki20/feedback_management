@@ -254,7 +254,7 @@ $que_count =0;
                             <h5>Location</h5>
                             <select class="locations" name="location_id">
                               <?php
-                                if($_SESSION['user_type'] == 1){
+                                if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
                                   record_set("get_locations","SELECT * FROM locations");
                                 }
 

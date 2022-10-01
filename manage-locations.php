@@ -17,7 +17,7 @@
             </thead>
             <tbody>
               <?php 
-              if($_SESSION['user_type']==1){
+              if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
                 $filter = '';
               }else if($_SESSION['user_type']==2){
                 //for admin

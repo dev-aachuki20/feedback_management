@@ -21,13 +21,13 @@
                 </thead>
                 <tbody>
                  <?php 
-                    //for super admin
-                    if($_SESSION['user_type']==1){
+                    //for super admin and dgs login
+                    if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
                       $filter = '';
-                    }else if($_SESSION['user_type']==2){
+                    }else if($_SESSION['user_type']==3){
                       //for admin
                       $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
-                    }else if($_SESSION['user_type']==3){
+                    }else if($_SESSION['user_type']==4){
                         //for manager
                       $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
                     }

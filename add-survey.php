@@ -391,7 +391,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <?php if(empty($_GET['id'])){ ?>
                                         <input type="Submit" class="btn btn-primary" value="Create" name="submit" id="submit" style="margin-top:24px"/>
                                     <?php }else{ 
-                                        if($_SESSION['user_type']==1){ ?>
+                                        if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){ ?>
                                           <input type="Submit" class="btn btn-primary" value="Update" id="update" name="update" style="margin-top:24px"/>
                                         <?php } ?>
                                     <?php } ?>
@@ -637,7 +637,7 @@ function select_all_option(idFirst,idSecond){
 <?php if($_GET['id']){ ?>
     $('#survey_from input').attr('readonly', 'readonly');
     $('#survey_from textarea').attr('readonly', 'readonly');
-    <?php if($_SESSION['user_type'] == 1) { ?>
+    <?php if($_SESSION['user_type']==1 || $_SESSION['user_type']==2) { ?>
     $('#survey_from input:checkbox').not('.multiselect').attr('disabled','true');
     <?php }else { ?> 
     $('#survey_from input:checkbox').attr('disabled','true');

@@ -8,7 +8,8 @@
 $loggedIn_user_id    = $_SESSION['user_id'];
 $loggedIn_user_type  = $_SESSION['user_type'];
 $sid                 = $_GET['id'];
-$surveyByUsers     = get_filter_data_by_user('surveys');
+$surveyByUsers       = get_filter_data_by_user('surveys');
+
 // assign task to user
 if(isset($_POST['assign'])){
     $survey_id           = $_POST['survey_id'];
@@ -26,6 +27,7 @@ if(isset($_POST['assign'])){
             "survey_id"           => $survey_id,
             "assign_by_user_id"   => $assign_by_user_id,
             "assign_by_user_type" => $assign_by_user_type,
+            "reassign_status"     => 1,
             "cdate"               => date("Y-m-d H:i:s")
         );
 
@@ -149,7 +151,10 @@ if(isset($_POST['assign'])){
         foreach($surveyByUsers as $survey){
             $assign_survey[] = $survey['id'];
         }
-        $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        if($assign_survey){
+            $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        }
+       
     }
 
     $query .= " and cby IN (".$task_id.") GROUP by cby";
@@ -457,7 +462,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                     <th></th>
                                     <th></th>
                                     <th></th>
-                                    <th></th>
+                                    
                                     <th class="notforpdf">
                                         <button type="button" class="btn btn-primary btn-submit" style="display:none;" data-toggle="modal" value="" data-target="#exampleModalCenter">
                                         Re Assign
@@ -528,38 +533,35 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 
 <script>
+ 
     $(document).on('change','.assignSurveyCheckbox',function(){
-        //$(".assignSurveyCheckbox").prop("checked", false);
+        var checkedArray=[];
         let survey_id = $('#surveys').val();
+        // get checked value only
+        $.each($("input[name='assign']:checked"), function (K, V) {    
+            checkedArray.push(V.value);        
+        });
+        $('.response_id_hidden').val(checkedArray);
+        $('.self-assign-btn').show();
+        console.log(checkedArray);
+
+        //Must have atleast one checked
+        if(checkedArray.length >0 && survey_id !=''){
+            $('.btn-submit').show();
+        }else{
+            $('.error').show();
+            alert("Please Choose Survey Type To Re Assign Any Task");
+            $('.btn-submit').hide();
+        }
+        //check survey type not empty
         if(survey_id == ''){
             $('.error').show();
             alert("Please Choose Survey Type To Re Assign Any Task");
         }else{
             $('.btn-submit').show();
         }
-        var value = $(this).is(':checked');
-        let sid  = $(this).data('sid');
-        var checkedArray=[];
-        $("input[name='assign']:checked").each(function(){
-            checkedArray.push($(this).val());
-        });
-        console.log(checkedArray.length);
-        if(checkedArray.length >0 && survey_id !=''){
-            $('.btn-submit').show();
-        }else{
-            $('.btn-submit').hide();
-        }
-        
-        if(value){
-        $('.survey_id').val(sid);
-        $('.response_id_hidden').val(checkedArray);
-        //$('.btn-submit').show();
-        $('.self-assign-btn').show();
-        }else{
-        // $('.btn-submit').hide();
-            $('.self-assign-btn').hide();
-        }
     });
+  
 
     // ajax on the user type change in assign task
     $(document).on('change','#user_type',function(){

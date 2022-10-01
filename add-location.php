@@ -103,7 +103,7 @@ $departmentByUsers = get_filter_data_by_user('departments');
             <?php
               //only created by and super admin can change status
                 if(!empty($_GET['id'])) {
-                  if((($_SESSION['user_type']==1) OR ($row_get_locations_id['cby'] == $_SESSION['user_id'] and $row_get_locations_id['user_type']==$_SESSION['user_type']))){
+                  if((($_SESSION['user_type']==1 OR $_SESSION['user_type']==2) OR ($row_get_locations_id['cby'] == $_SESSION['user_id'] and $row_get_locations_id['user_type']==$_SESSION['user_type']))){
                     $disabled = "";
                   }else {
                     $disabled = "disabled";

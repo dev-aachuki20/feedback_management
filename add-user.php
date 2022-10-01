@@ -366,10 +366,10 @@ if(!empty($_POST['submit'])){
                         <option value="">Select User Type</option>
                       <?php   
                         foreach($user_types_array as $key => $value){
-                          if($_SESSION['user_type']==2){
-                            $allowed_key=2;
+                          if($_SESSION['user_type']==3){
+                            $allowed_key=3;
                           }
-                          if($key>=$_SESSION['user_type'] and $key!=1){ ?>
+                          if($key>=$_SESSION['user_type']){ ?>
                           <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                           </option>
                         <?php }
@@ -392,12 +392,12 @@ if(!empty($_POST['submit'])){
                   <input type="password" class="form-control" name="password" id="password" value=""/>
                 </div>
               </div>
-              <!-- <div class="col-md-6 location_field" style="display:<?=($_SESSION['user_type']==3 OR $_GET['t']=='c')?'block':'none'?>">
+              <!-- <div class="col-md-6 location_field" style="display:<?=($_SESSION['user_type']==4 OR $_GET['t']=='c')?'block':'none'?>">
 	              <label style="width:100%;">Location</label>
 	              <select name="locationid[]" id="locationid" class="form-control form-control-lg multiple-select" required multiple="multiple" name="locationid">
 	              <?php
                 $filterQuery = '';
-                if($_SESSION['user_type']==3){
+                if($_SESSION['user_type']==4){
                   if($_SESSION['user_locationid']){
                     $filterQuery = " and id IN (".$_SESSION['user_locationid'].")";
                   }else{
@@ -431,7 +431,7 @@ if(!empty($_POST['submit'])){
                   <?php }?>
                 </div>
               </div>
-            <?php if(empty($_GET['user']) || $_SESSION['user_type'] >1 ) { ?>
+            <?php if(empty($_GET['user']) || $_SESSION['user_type'] >2 ) { ?>
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Status</label>

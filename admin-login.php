@@ -16,7 +16,7 @@ if(isset($_POST['login']))
 			foreach($row_user_admin as $key=>$val){
 				$_SESSION['user_'.$key] =$val;
 			}
-			$_SESSION['user_type'] =2;
+			$_SESSION['user_type'] =3;
       $location =  get_filter_data_by_user('locations');
       $arr = array();
       foreach($location as $loc){

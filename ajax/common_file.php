@@ -58,7 +58,7 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
     record_set("get_sadmin", "SELECT * FROM `super_admin` where cstatus = 1");
     $html = '<div class="form-group">
     <label>Admin</label>
-    <select class="form-control" tabindex=7 name="assing_to_user_id">
+    <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id">
     <option value="">Select Admin</option></option>';
     while($row_get_sadmin = mysqli_fetch_assoc($get_sadmin)){
       $html .='<option value="'.$row_get_sadmin['id'].'">'.$row_get_sadmin['name'].'</option>';
@@ -72,12 +72,13 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
     $admin_data = getAdmin($alladminId);
     $html = '<div class="form-group">
           <label>Admin</label>
-          <select class="form-control" tabindex=7 name="assing_to_user_id">
+          <select class="form-control" tabindex=7 name="assing_to_user_id" id="user_id">
             <option value="">Select Admin</option></option>';
             foreach($admin_data as $key => $value){
               $html .='<option value="'.$key.'">'.$value.'</option></option>';
             }
           $html .= '</select>
+          <p  class="error_1" style="display:none;color: red;font-weight: 600;"> These Task is either completed by users or already reassigned. Please Choose Other Task </p>
     </div>';
   }else if($user_type == 3) {
     $html = '';
@@ -87,16 +88,26 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
     $manager_data = getClient($allmanagerId);
       $html = '<div class="form-group">
             <label>Manager</label>
-            <select class="form-control" tabindex=7 name="assing_to_user_id">
+            <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id">
               <option value="">Select Manager</option></option>';
               foreach($manager_data as $key => $value){
                 $html .='<option value="'.$key.'">'.$value.'</option></option>';
               }
             $html .= '</select>
+            <p class="error_1" style="display:none;color: red;font-weight: 600;"> These Task is either completed by users or already reassigned. Please Choose Other Task </p>
       </div>';
   }
-  
   echo json_encode($html); die();
 }
 
+if(isset($_POST['mode']) and $_POST['mode'] == 'check_assign_task_for_user'){
+  $user_id      = $_POST['user_id'];
+  $user_type    = $_POST['user_type'];
+  $response_id  = $_POST['response_ids'];
+  if($user_type > 1){
+    $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id AND `assign_to_user_type` = $user_type AND task_id IN ($response_id) AND (`task_status` IN (5,6) OR reassign_status =1)");
+    echo $totalRows_get_task;
+    
+  }
+}
 ?>

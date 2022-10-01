@@ -9,7 +9,7 @@ $locationDropDownCondition = "";
 $locationJoinCondition = "";
 $locationJoinWhereCondition = "";
 $locationRecentContact="";
-if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 2){
+if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 3){
   if($_SESSION['user_locationid'] == 4){
     $locationQueryAndCondition = "and locationid in (select id from locations where cstatus=1)";
     $locationQueryWhereCondition = "where locationid in (select id from locations where cstatus=1)";
@@ -28,6 +28,10 @@ if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 2){
     $locationJoinWhereCondition = "and answers.locationid in (select id from locations where cstatus=1)";
   }
 }
+//checked logged in user type
+$loggedIn_user_id    = $_SESSION['user_id'];
+$loggedIn_user_type  = $_SESSION['user_type'];
+
 if(isset($_REQUEST['page'])){
 	$page_heading = ucwords(str_replace("-"," ",$_REQUEST['page']));
 	if($_REQUEST['page']=='logout'){

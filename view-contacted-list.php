@@ -100,16 +100,16 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
     }
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report');
+        alertSuccess( $msg,'?page=view-my-assign-task');
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report');
+        alertdanger( $msg,'?page=view-my-assign-task');
 }
 
 //disable checkbox and assign button for manager
 $display = '';
-if($_SESSION['user_type'] == 3){
+if($_SESSION['user_type'] == 4){
     $display = "display:none;";
 }
 
@@ -148,13 +148,35 @@ if(!empty($_POST['surveys'])){
             $query .= " and groupid = '".$_POST['groupid']."'";
         }
     }
-    $query .= " GROUP by cby";
-    record_set("get_departments", "SELECT * FROM departments");	
-    $departments = array();
-    while($row_get_departments = mysqli_fetch_assoc($get_departments)){
-        $departments[$row_get_departments['id']] = $row_get_departments['name'];
+    if($loggedIn_user_type == 3){
+        record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type".$filter_status);
+
+        $arr_task_id = array();
+        while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
+            $arr_task_id[] = $row_get_assign_task['task_id'];
+        }
+        $task_id = implode(",",$arr_task_id);
+        if(empty($task_id)){
+            $task_id = '0';
+        }
+        if($loggedIn_user_type > 1){
+            $assign_survey = array();
+            foreach($surveyByUsers as $survey){
+                $assign_survey[] = $survey['id'];
+            }
+            $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        }
+
+        $query .= " and cby IN (".$task_id.")";
     }
+    $query .= " GROUP by cby";
     record_set("get_recent_entry",$query);
+
+     // record_set("get_departments", "SELECT * FROM departments");	
+    // $departments = array();
+    // while($row_get_departments = mysqli_fetch_assoc($get_departments)){
+    //     $departments[$row_get_departments['id']] = $row_get_departments['name'];
+    // }
 }
 ?>
 <style>
@@ -376,7 +398,7 @@ if(!empty($_POST['surveys'])){
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <?php if($_SESSION['user_type'] != 3){ ?>
+                                    <?php if($_SESSION['user_type'] != 4){ ?>
                                     <th></th>
                                     <?php } ?>
                                     <th>DATE</th>
@@ -454,7 +476,7 @@ if(!empty($_POST['surveys'])){
                                
                              </tbody>                
 
-                            <?php if($_SESSION['user_type'] != 3){ ?>
+                            <?php if($_SESSION['user_type'] != 4){ ?>
                             <tfoot>
                                 <tr>
                                     <th></th>
@@ -503,8 +525,8 @@ if(!empty($_POST['surveys'])){
                         <?php 
                             $user_types_array=user_type();  
                             foreach($user_types_array as $key => $value){
-                            if($_SESSION['user_type']==2){
-                                $allowed_key=2;
+                            if($_SESSION['user_type']==3){
+                                $allowed_key=3;
                             } ?>
                             <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                             </option>
@@ -521,7 +543,7 @@ if(!empty($_POST['surveys'])){
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" name="assign">Save changes</button>
+                <button type="submit" class="btn btn-primary submit_task" name="assign">Save changes</button>
             </div>
         </form>
     </div>
@@ -602,13 +624,15 @@ if(!empty($_POST['surveys'])){
     }
 
 $(document).on('change','.assignSurveyCheckbox',function(){
-    //$(".assignSurveyCheckbox").prop("checked", false);
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');
     var checkedArray=[];
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
     });
+    $('.survey_id_hidden').val(sid);
+    $('.response_id_hidden').val(checkedArray);
+   
 
     if(checkedArray.length >0){
         $('.btn-submit').show();
@@ -616,16 +640,6 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     }else{
         $('.btn-submit').hide();
         $('.self-assign-btn').hide();
-    }
-
-    if(value){
-       $('.survey_id_hidden').val(sid);
-       $('.response_id_hidden').val(checkedArray);
-    //    $('.btn-submit').show();
-    //    $('.self-assign-btn').show();
-    }else{
-        // $('.btn-submit').hide();
-        // $('.self-assign-btn').hide();
     }
 });
 
@@ -652,6 +666,7 @@ $(document).on('change','#user_type',function(){
     assign_user(survey_id,user_type);
 });
 $(document).on('click','.btn-submit',function(){
+    
     $('#set_self_assign').val('');
     let checkSurveyIdExist = $('.survey_id_hidden').val();
 })
@@ -661,4 +676,34 @@ $(document).on('click','.self-assign-btn',function(){
     $('#set_self_assign').val('set');
     $('#assign_form').submit();
 })
+
+// ajax to check the task is completed or reassigned to choose user so it can not be resassign
+$(document).on('change','#user_id',function(){
+    let user_type   = $('#user_type').val();
+    let user_id     = $(this).val();
+    let response_ids = $('.response_id_hidden').val();
+    check_selected_task(user_id,user_type,response_ids);
+});
+
+function check_selected_task(user_id,user_type,response_ids){
+    $('.error_1').hide();
+    $('.submit_task').show();
+    $.ajax({
+        method:"POST",
+        url:'<?=baseUrl()?>ajax/common_file.php',
+        data:{
+            user_id     : user_id,
+            user_type   : user_type,
+            response_ids: response_ids,
+            mode:'check_assign_task_for_user'
+        },
+        success:function(response){
+            console.log(response);
+            if(response>0){
+                $('.error_1').show();
+                $('.submit_task').hide();
+            }
+        }
+    })
+}
 </script>

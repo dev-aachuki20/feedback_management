@@ -363,7 +363,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                     <div class="col-md-6" >
                       <label for="contact-date" style="font-size:14px;"><strong>CONTACT DATE</strong></label>
                       <div class="form-group">
-                        <input type="date" name="" id="" class="form-control" max="<?=date('2050-01-01')?>" min="<?=date('Y-m-d')?>" value="<?=(!empty($created_date)) ? date('Y-m-d',strtotime($created_date)) : date('Y-m-d')?>">
+                        <input type="date" name="" id="" class="form-control" max="<?=date('2050-01-01')?>" min="<?=date('Y-m-d')?>" value="<?= date('Y-m-d')?>">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -431,7 +431,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   </body>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <!-- Resources -->
-
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
@@ -455,8 +454,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
             window.location.reload();
         }, 2000);
     });
-
  // End export pdf
+
+ 
  </script>
 </html>
 
