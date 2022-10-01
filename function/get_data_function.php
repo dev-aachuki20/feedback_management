@@ -59,10 +59,10 @@ function getClient($id=null){
  function get_allowed_data($table,$user_id){
 	$arr = array();
 	
-	if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
+	if($_SESSION['user_type']==1){
 		$allowed_data = getaxecuteQuery_fn("select id,name from $table  order by name ASC ");
 	}
-	else if($_SESSION['user_type']==3){
+	else if($_SESSION['user_type']==2){
 		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `admin_ids` LIKE '|$user_id|' order by name ASC ");
 	}else{
 		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `client_ids` LIKE '|$user_id|' order by name ASC ");
@@ -73,12 +73,12 @@ function getClient($id=null){
 	return $arr;
  }
  function get_filter_data_by_user($table){
-	if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
+	if($_SESSION['user_type']==1){
 		$filter = '';
-	  }else if($_SESSION['user_type']==3){
+	  }else if($_SESSION['user_type']==2){
 		//for admin
 		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%')) ";
-	  }else if($_SESSION['user_type']==4){
+	  }else if($_SESSION['user_type']==3){
 		 //for manager
 		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') )";
 	  }
@@ -106,6 +106,7 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 	$user_id   = $_SESSION['user_id'];
 	$user_type = $_SESSION['user_type'];
 	$array = array();
+
 	$filter = '';
 		if($surevy_ids){
 			$filter .= " and surveyid IN ($surevy_ids)";

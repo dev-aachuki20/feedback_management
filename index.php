@@ -9,7 +9,7 @@ $locationDropDownCondition = "";
 $locationJoinCondition = "";
 $locationJoinWhereCondition = "";
 $locationRecentContact="";
-if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 3){
+if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 2){
   if($_SESSION['user_locationid'] == 4){
     $locationQueryAndCondition = "and locationid in (select id from locations where cstatus=1)";
     $locationQueryWhereCondition = "where locationid in (select id from locations where cstatus=1)";

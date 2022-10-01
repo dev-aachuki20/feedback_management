@@ -4,12 +4,8 @@
     <li class="treeview profile-active">
         <?php if($_SESSION['user_type']==1){ ?>
             <!-- for super admin  -->
-            <a href="?page=add-user&t=dgs&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
-        <?php } ?>
-        <?php if($_SESSION['user_type']==2){ ?>
-            <!-- for super admin  -->
             <a href="?page=add-user&t=sa&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
-        <?php }else if($_SESSION['user_type']==3){ ?>
+        <?php }else if($_SESSION['user_type']==2){ ?>
              <!-- for admin  -->
             <a href="?page=add-user&t=a&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
         <?php }else { ?>
@@ -50,7 +46,7 @@
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
                     <a href="#" class="nav-link"> <i class="fa fa-list-alt"></i> <span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
-                        <?php if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2) {?>
+                        <?php if($_SESSION['user_type']==1) {?>
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>Add Survey</span></a> </li>
                         <?php } ?>    
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>View Surveys</span></a> </li>
@@ -74,7 +70,7 @@
                     </ul>
                 </li>
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'monthly-report')?>"><a href="?page=monthly-report" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<3) {?>
+                <?php if($_SESSION['user_type']<2) {?>
                     <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'survey-statistics')?>">
                         <a href="?page=survey-statistics" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                     </li>
@@ -93,7 +89,7 @@
         <li class="treeview ">
             <a href="#"><i class="fa fa-list-alt"></i> <span>PULSES</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu timeline-area">
-                <?php if($_SESSION['user_type'] <4) {?>
+                <?php if($_SESSION['user_type'] <3) {?>
                 <li class="treeview cusul-line">
                     <a href="?page=#" class="nav-link"> <i class=""></i> <span>ABOUT</span> </a> 
                 </li>
@@ -105,7 +101,7 @@
                 <li class="treeview cusul-line">
                     <a href="?page=#" class="nav-link"> <i class=""></i> <span>RESULTS</span> </a> 
                 </li>
-                <?php if($_SESSION['user_type']<3) {?>
+                <?php if($_SESSION['user_type']<2) {?>
                 <li class="treeview cusul-line">
                     <a href="?page=#" class="nav-link"> <i class=""></i> <span>STATISTICS</span> </a> 
                 </li>

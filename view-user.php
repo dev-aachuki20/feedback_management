@@ -1,28 +1,22 @@
 <?php
 $userdata = array();
-record_set("get_super_admin", "select * from super_admin where user_type=2 order by cdate desc");
+record_set("get_clients", "select * from clients where cby='".$_SESSION['user_id']."' order by cdate desc");
 if($_POST['user_type']==1 || !isset($_POST['user_type']) || $_POST['user_type']==0){
-    while($row_get_super_admin = mysqli_fetch_assoc($get_super_admin)){
-        $userdata[] = $row_get_super_admin ;
-    }
-}	
-if($_POST['user_type']==2 || !isset($_POST['user_type']) || $_POST['user_type']==0){
-  record_set("get_admin", "select * from admin  order by cdate desc");
-  while($row_get_admin = mysqli_fetch_assoc($get_admin)){
-      $userdata[] = $row_get_admin ;
-  }
-}
-//print_r($userdata);
-
-if($_POST['user_type']==3 || !isset($_POST['user_type']) || $_POST['user_type']==0){
-  record_set("get_clients", "select * from clients order by cdate desc");
     while($row_get_clients = mysqli_fetch_assoc($get_clients)){
         $userdata[] = $row_get_clients ;
     }
 }				
+if($_POST['user_type']==2 || !isset($_POST['user_type']) || $_POST['user_type']==0){
+    record_set("get_admin", "select * from admin  order by cdate desc");
+    while($row_get_admin = mysqli_fetch_assoc($get_admin)){
+        $userdata[] = $row_get_admin ;
+    }
+}
 ?>
 <section class="content-header">
+
   <h1> View Clients</h1>
+
   <!-- <a href="?page=add-clients" class="btn btn-primary pull-right" style="margin-top:-25px">Add Clients</a>  -->
 </section>
 <section class="content">
@@ -33,10 +27,8 @@ if($_POST['user_type']==3 || !isset($_POST['user_type']) || $_POST['user_type']=
                     <label for="user">User Type</label>
                     <select class="form-control" aria-label="Default select example" onchange="this.form.submit()" name="user_type">
                         <option selected value="0">Select All</option>
-                        <option value="1" <?php if($_POST['user_type']==1){ echo 'selected';}?>>Super Admin</option>
+                        <option value="1" <?php if($_POST['user_type']==1){ echo 'selected';}?>>Client</option>
                         <option value="2" <?php if($_POST['user_type']==2){ echo 'selected';}?>>Admin</option>
-                        <option value="3" <?php if($_POST['user_type']==3){ echo 'selected';}?>>Client</option>
-                       
                     </select> 
                 </div>
             </form>
@@ -65,25 +57,13 @@ if($_POST['user_type']==3 || !isset($_POST['user_type']) || $_POST['user_type']=
             </thead>
 
             <tbody>
-             <?php  
-             foreach($userdata as $row_get_clients){ 
-
-                // if (array_key_exists('locationid', $row_get_clients)) {
-                //     $userType = 'Client';
-                //     $t ='c';
-                // }else {
-                //     $userType = 'Admin';
-                //     $t ='a';
-                // }
-                if($row_get_clients['user_type']==2){
-                  $userType = 'Super Admin';
-                  $t ='sa';
-                }else if($row_get_clients['user_type']==3){
-                  $userType = 'Admin';
-                  $t ='a';
-                }else if($row_get_clients['user_type']==4){
-                  $userType = 'Client';
-                  $t ='c';
+             <?php  foreach($userdata as $row_get_clients){ 
+                if (array_key_exists('locationid', $row_get_clients)) {
+                    $userType = 'Client';
+                    $t ='c';
+                }else {
+                    $userType = 'Admin';
+                    $t ='a';
                 }
              ?>
               <tr>

@@ -14,7 +14,7 @@ if(isset($_POST['login']))
 			foreach($row_user_admin as $key=>$val){
 				$_SESSION['user_'.$key] =$val;
 			}
-			$_SESSION['user_type'] =$val['user_type'];
+			$_SESSION['user_type'] =1;
 			$mess='Admin Login Successful';
 			//print_r($_SESSION);
 	    	reDirect('index.php?mess='.$mess);

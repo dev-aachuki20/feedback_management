@@ -17,12 +17,12 @@
             </thead>
             <tbody>
               <?php 
-              if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
+              if($_SESSION['user_type']==1){
                 $filter = '';
-              }else if($_SESSION['user_type']==3){
+              }else if($_SESSION['user_type']==2){
                 //for admin
                 $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '|".$_SESSION['user_id']."|') ";
-              }else if($_SESSION['user_type']==4){
+              }else if($_SESSION['user_type']==3){
                  //for manager
                 $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '|".$_SESSION['user_id']."|') ";
               }

@@ -254,11 +254,11 @@ $que_count =0;
                             <h5>Location</h5>
                             <select class="locations" name="location_id">
                               <?php
-                                if($_SESSION['user_type']==1 OR $_SESSION['user_type']==2){
+                                if($_SESSION['user_type'] == 1){
                                   record_set("get_locations","SELECT * FROM locations");
                                 }
 
-                                if($_SESSION['user_type'] == 3){
+                                if($_SESSION['user_type'] == 2){
                                   $client_locations = $_SESSION['user_locationid'];
                                   record_set("get_locations","SELECT * FROM locations where id IN($client_locations)");
                                   echo "<option value='0'>Select-Location</option>";

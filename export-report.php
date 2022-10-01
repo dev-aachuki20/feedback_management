@@ -32,11 +32,11 @@ $i=0;
 $array_locations = array();
 $array_header = array();
 
-if($_SESSION['user_type'] == 2){
+if($_SESSION['user_type'] == 1){
     record_set("get_locations","SELECT * FROM locations");
 }
 
-if($_SESSION['user_type'] == 3){
+if($_SESSION['user_type'] == 2){
     $client_locations = $_SESSION['user_locationid'];
     record_set("get_locations","SELECT * FROM locations where id IN($client_locations)");
 }

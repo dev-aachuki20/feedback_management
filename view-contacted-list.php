@@ -109,7 +109,7 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
 
 //disable checkbox and assign button for manager
 $display = '';
-if($_SESSION['user_type'] == 4){
+if($_SESSION['user_type'] == 3){
     $display = "display:none;";
 }
 
@@ -398,7 +398,7 @@ if(!empty($_POST['surveys'])){
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <?php if($_SESSION['user_type'] != 4){ ?>
+                                    <?php if($_SESSION['user_type'] != 3){ ?>
                                     <th></th>
                                     <?php } ?>
                                     <th>DATE</th>
@@ -476,7 +476,7 @@ if(!empty($_POST['surveys'])){
                                
                              </tbody>                
 
-                            <?php if($_SESSION['user_type'] != 4){ ?>
+                            <?php if($_SESSION['user_type'] != 3){ ?>
                             <tfoot>
                                 <tr>
                                     <th></th>
@@ -525,8 +525,8 @@ if(!empty($_POST['surveys'])){
                         <?php 
                             $user_types_array=user_type();  
                             foreach($user_types_array as $key => $value){
-                            if($_SESSION['user_type']==3){
-                                $allowed_key=3;
+                            if($_SESSION['user_type']==2){
+                                $allowed_key=2;
                             } ?>
                             <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                             </option>
@@ -630,10 +630,21 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
     });
-    $('.survey_id_hidden').val(sid);
-    $('.response_id_hidden').val(checkedArray);
+    if(value == false){
+        checkedArray.pop($(this).val());
+        removeItem($(this).val(), ary);
+        console.log(checkedArray);
+    }
+    console.log(checkedArray);
+    if(value){
+       $('.survey_id_hidden').val(sid);
+       $('.response_id_hidden').val(checkedArray);
    
-
+    }else{
+        checkedArray.pop($(this).val());
+        // $('.btn-submit').hide();
+        // $('.self-assign-btn').hide();
+    }
     if(checkedArray.length >0){
         $('.btn-submit').show();
        $('.self-assign-btn').show();
@@ -687,7 +698,6 @@ $(document).on('change','#user_id',function(){
 
 function check_selected_task(user_id,user_type,response_ids){
     $('.error_1').hide();
-    $('.submit_task').show();
     $.ajax({
         method:"POST",
         url:'<?=baseUrl()?>ajax/common_file.php',
@@ -701,7 +711,7 @@ function check_selected_task(user_id,user_type,response_ids){
             console.log(response);
             if(response>0){
                 $('.error_1').show();
-                $('.submit_task').hide();
+                $('.submit_task').remove();
             }
         }
     })

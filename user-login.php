@@ -17,7 +17,7 @@ if(isset($_POST['login']))
 		$_SESSION['client']=$row_user_admin['email'];
 		$_SESSION['user_id'] =$row_user_admin['id'];
 		$_SESSION['user_name'] =$row_user_admin['name'];
-		$_SESSION['user_type'] = 3;
+		$_SESSION['user_type'] = 2;
 		$mess='Client Login Successful';
 	    reDirect('index.php?mess='.$mess);
 		}
