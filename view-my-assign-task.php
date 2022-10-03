@@ -533,13 +533,25 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 
 <script>
-    var checkedArray=[];
     $(document).on('change','.assignSurveyCheckbox',function(){
-        $.each($("input[name='assign']:checked"), function (K, V) {    
-            checkedArray.push(V.value);        
-        });
+    var value = $(this).is(':checked');
+    let sid  = $(this).data('sid');
+    var checkedArray=[];
+    $("input[name='assign']:checked").each(function(){
+        checkedArray.push($(this).val());
     });
-    console
+    $('.survey_id').val(sid);
+    $('.response_id_hidden').val(checkedArray);
+   
+
+    if(checkedArray.length >0){
+        $('.btn-submit').show();
+       $('.self-assign-btn').show();
+    }else{
+        $('.btn-submit').hide();
+        $('.self-assign-btn').hide();
+    }
+    });
 
     // ajax on the user type change in assign task
     $(document).on('change','#user_type',function(){

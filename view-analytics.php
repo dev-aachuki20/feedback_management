@@ -22,117 +22,13 @@
 .listing::-webkit-scrollbar-thumb:window-inactive {
   background: #c0c0c0;
 }
-
-</style>
-<?php
-$query = "";
-if(isset($_POST['survey_id'])&& !empty($_POST['survey_id'])){
-  $query .= " and  surveyid = ".$_POST['survey_id'];
+.btn-outline-secondary {
+    color: #6c757d;
+    background-color: transparent;
+    background-image: none;
+    border-color: #6c757d;
+    width: 100%;
 }
-if(isset($_POST['fdate']) && isset($_POST['sdate']) && isset($_POST['filter']) && !empty($_POST['fdate']) && !empty($_POST['sdate'])){
-  $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
-}
-
-  //get no. of survey of all locations
-  $perLocations = array();
-  record_set("per_location", "SELECT DISTINCT(surveyid),locationid FROM `answers` WHERE `locationid` in (select id from locations where cstatus=1) $query ORDER BY `locationid` ASC");
-
-  while($row_per_location = mysqli_fetch_assoc($per_location)){
-      record_set("survey_data", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_location['surveyid']." and locationid =".$row_per_location['locationid']);
-      $count = 0;
-      $answerval=0;
-      while($row_survey_data = mysqli_fetch_assoc($survey_data)){
-        $count++;
-        $answerval +=  $row_survey_data['answerval'];
-      }
-      $avgresult = $answerval/$count;
-      $perLocations[$row_per_location['locationid']][$row_per_location['surveyid']]['result'] =$avgresult;
-      $perLocations[$row_per_location['locationid']][$row_per_location['surveyid']]['count'] =$count;
-  }
-
-  $finial_data_location = array();
-  $locSurveyScore = array();
-  foreach($perLocations as $key => $value){
-    $total_loc_result = 0;
-    $count_number = 0;
-    foreach($value as $survey_result){
-      $count_number++;
-      $total_loc_result += $survey_result['result'];
-    }
-    $avg_score = $total_loc_result/$count_number;
-    $avg_score = round($avg_score, 2);
-    $finial_data_location[getLocation()[$key]]['count']  = $count_number;
-    $finial_data_location[getLocation()[$key]]['result'] = $avg_score;
-    $locSurveyScore[getLocation()[$key]] = $avg_score;
-    $overall_location_result += $avg_score;
-    $overall_loc_response_no +=$count_number; 
-  }
-
-//get no. of survey of all department
-$perDepartments = array();
-record_set("per_department", "SELECT DISTINCT(surveyid),departmentid FROM `answers` WHERE `departmentid` in (select id from departments where cstatus=1) $query ORDER BY `departmentid` ASC");
-while($row_per_department = mysqli_fetch_assoc($per_department)){
-    record_set("survey_data_dept", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_department['surveyid']." and departmentid =".$row_per_department['departmentid']);
-    $count = 0;
-    $answerval=0;
-    while($row_survey_data_dept = mysqli_fetch_assoc($survey_data_dept)){
-      $count++;
-      $answerval +=  $row_survey_data_dept['answerval'];
-    }
-    $avgresult = $answerval/$count;
-    $perDepartments[$row_per_department['departmentid']][$row_per_department['surveyid']]['result'] =$avgresult;
-    $perDepartments[$row_per_department['departmentid']][$row_per_department['surveyid']]['count'] = $count;
-}
-
-$finial_data_department = array();
-$deptSurveyScore = array();
-foreach($perDepartments as $key => $value){
-  $total_dep_result = 0;
-  $count_number = 0;
-  foreach($value as $survey_result){
-    $count_number++;
-    $total_dep_result += $survey_result['result'];
-  }
-  $avg_score = $total_dep_result/$count_number;
-  $finial_data_department[getDepartment()[$key]]['count']  = $count_number;
-  $finial_data_department[getDepartment()[$key]]['result'] = round($avg_score, 2);
-  $deptSurveyScore[getDepartment()[$key]] = round($avg_score, 2);
-  $overall_dept_response_no +=$count_number; 
-}
-//get no. of survey of all group
-$perGroups = array();
-record_set("per_group", "SELECT DISTINCT(surveyid),groupid FROM `answers` WHERE `groupid` in (select id from groups where cstatus=1) $query ORDER BY `groupid` ASC");
-
-while($row_per_group = mysqli_fetch_assoc($per_group)){
-    record_set("survey_data_grp", "SELECT * FROM answers where id!=0 and surveyid =".$row_per_group['surveyid']." and departmentid =".$row_per_group['groupid']);
-    $count = 0;
-    $answerval=0;
-    while($row_survey_data_grp = mysqli_fetch_assoc($row_survey_data_grp)){
-      $count++;
-      $answerval +=  $row_survey_data_grp['answerval'];
-    }
-    $avgresult = $answerval/$count;
-    $perGroups[$row_per_group['groupid']][$row_per_group['surveyid']]['result'] =$avgresult;
-    $perGroups[$row_per_group['groupid']][$row_per_group['surveyid']]['count'] = $count;
-}
-
-$finial_data_group = array();
-$grpSurveyScore =array();
-foreach($perGroups as $key => $value){
-  $total_grp_result = 0;
-  $count_number = 0;
-  foreach($value as $survey_result){
-    $count_number++;
-    $total_grp_result += $survey_result['result'];
-  }
-  $avg_score = $total_grp_result/$count_number;
-  $finial_data_group[getGroup()[$key]]['count']  = $count_number;
-  $finial_data_group[getGroup()[$key]]['result'] = round($avg_score, 2);
-  $grpSurveyScore[getGroup()[$key]] = round($avg_score, 2);
-  $overall_grp_response_no +=$count_number; 
-}
-?>
-<style>
   #exportPDF{
     text-decoration: none;
     background-color: deepskyblue;
@@ -141,6 +37,11 @@ foreach($perGroups as $key => $value){
     font-size: 16px;
     margin-bottom: 18px;
   }
+  .graph-btn.active {
+    background: #a020f0;
+    color: #fff;
+    border: unset;
+}
 </style>
 <section class="content-header">
   <h1>ANALYTICS</h1>
@@ -148,22 +49,22 @@ foreach($perGroups as $key => $value){
 <section class="content">
   <div class="box">
     <div class="box-body">
-      <form action="" method="post">
+      <form action="" method="post" id="survey_analytics_form">
         <div class="row">
+          <input type="hidden" name="survey_type" id="survey_type" value="">
           <div class="col-md-3">
             <div class="form-group">
               <label>Survey</label>
-              <select name="survey_id" class="form-control form-control-lg contact" id="">
+              <select name="survey_name" class="form-control form-control-lg survey_id" id="">
                 <option value="">select survey</option>
                 <?php 
                 // survey by user
                 $surveyByUsers = get_filter_data_by_user('surveys');
-
                 foreach($surveyByUsers as $surveyData){ 
                   $surveyId   = $surveyData['id'];
                   $surveyName = $surveyData['name'];
                 ?>
-                  <option value="<?=$surveyId?>" <?php if($surveyId==$_POST['survey_id']) {echo 'selected';}?>><?=$surveyName?></option>
+                  <option value="<?=$surveyId?>" <?php if($surveyId==$_POST['survey_name']) {echo 'selected';}?>><?=$surveyName?></option>
                 <?php } ?>
               </select>
             </div>
@@ -171,23 +72,43 @@ foreach($perGroups as $key => $value){
           <div class="col-md-3">
             <div class="form-group">
               <label>Start Date</label>
-              <input type="date"  name="fdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control" value="<?php echo $_POST['fdate']; ?>"/>
+              <input type="date" id="fdate" name="fdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control" value="<?php echo $_POST['fdate']; ?>"/>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label>End Date</label>
-              <input type="date"  name="sdate" class="form-control" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php echo $_POST['sdate']; ?>"/>
+              <input type="date" id="sdate" name="sdate" class="form-control" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php echo $_POST['sdate']; ?>"/>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group">
               <label>&nbsp;</label>
-              <input type="submit" name="filter" class="btn btn-primary btn-block" value="Filter"/>
+              <input type="button" name="filter" class="btn btn-primary btn-block filter" value="Filter"/>
             </div>
           </div>
         </div>
       </form>
+    </div>
+  </div>
+  <div class="box survey_type_div" style="display:none;">
+    <div class="box-body">
+        <!-- overall result div -->
+        <div class="row overallresult" style="text-align:center;margin-bottom: 20px;">
+        
+        </div>
+
+      <div class="row" style="margin-bottom: 21px;">
+        <div class="col-md-3">
+            <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+        </div>
+      </div>
     </div>
   </div>
   <a class="btn btn-xs btn-info " id="exportPDF" href="#">Export PDF</a>  
@@ -196,191 +117,47 @@ foreach($perGroups as $key => $value){
           <div class="col-md-12">
             <div class="box">
               <div class="box-header with-border">
-                <h3 class="box-title">Surveys Per Location</h3>
+                <h3 class="box-title graphTitle"></h3>
                 <div class="box-tools pull-right" style="top:-4px !important;">
                   <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                   <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
               </div>
               <div class="box-body " style="display: block;">
-                <?php 
-                if(count($finial_data_location)>0){ ?>
-                <div class="row" style="text-align:center;margin-bottom: 20px;">
-                  <div class="col-md-6">
-                     <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
-                     <div class="col-6"><strong><?=$overall_loc_response_no?></strong></div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
-                    <div class="col-6"><strong><?=round(array_sum($locSurveyScore)/count($locSurveyScore),2) ?> %</strong></div>
-                  </div>
+               <!-- loader div start -->
+                <div class="loader col-md-12" style="text-align: center;display: none;">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="150px" height="150px" viewBox="0 0 150 150" enable-background="new 0 0 150 150" xml:space="preserve">
+
+                    <g id="Layer_1">
+                        
+                            <circle opacity="0.4" fill="#FFFFFF" stroke="#1C75BC" stroke-width="2" stroke-linecap="square" stroke-linejoin="bevel" stroke-miterlimit="10" cx="75" cy="75.293" r="48.707"></circle>
+                    </g>
+                    <g id="Layer_2">
+                        <g>
+                            <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="36.2957" y1="34.8138" x2="94.5114" y2="34.8138">
+                                <stop offset="0" style="stop-color:#2484C6"></stop>
+                                <stop offset="1" style="stop-color:#2484C6;stop-opacity:0"></stop>
+                            </linearGradient>
+                            <path fill="none" stroke="url(#SVGID_1_)" stroke-width="4" stroke-linecap="round" stroke-linejoin="bevel" d="M38.296,43.227
+                                c0,0,21.86-26.035,54.216-13.336">
+                                <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 75 75" to="-360 75 75" dur=".8s" repeatCount="indefinite"></animateTransform>
+                            </path>
+                        </g>
+                    </g>
+                    </svg>
                 </div>
-                <div class="row">
-                    <div class="col-sm-8">
-                      <canvas id="locationChart"></canvas>
+                <div class="row data-notAvailable">
+                    
+                </div>
+                <div class="row data-available">
+                    <!-- loader div end  -->
+                    <div class="col-sm-8 ">
+                      <canvas id="chartData"></canvas>
                     </div>
                     <div class="col-sm-4 listing">
-                      <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col" style="text-align: left;">Location Name</th>
-                            <th scope="col" style="text-align: left;">Total Surveys</th>
-                            <th scope="col" style="text-align: left;">Average Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                          if($finial_data_location){
-                            foreach($finial_data_location AS $key => $value){ ?>
-                              <tr>
-                                <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                <td style="text-align: left;"><?php echo $value['count']; ?></td>
-                                <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
-                              </tr>
-                            <?php } ?>
-                          <?php }else{ ?>
-                            <tr>
-                              <td colspan="2">No Data Found.</td>
-                            </tr>  
-                          <?php } ?>
-                        </tbody>
-                      </table>
                     </div>
                 </div>
                 <hr style="border: 0.5px solid #e8e3e3;"/>
-                <?php }else{ ?>
-                    <div class="col-md-12">
-                      <p>No Data Found.</p>
-                    </div>
-                    <?php } ?>
-              </div>
-            </div>
-          </div>
-
-          <!-- for department survey-->
-          <div class="col-md-12">
-            <div class="box">
-              <div class="box-header with-border">
-                <h3 class="box-title">Surveys Per Department</h3>
-                <div class="box-tools pull-right" style="top:-4px !important;">
-                  <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
-              </div>
-              <div class="box-body " style="display: block;">
-               
-                <?php 
-                if(count($finial_data_department)>0){ ?>
-                  <div class="row" style="text-align:center;margin-bottom: 20px;">
-                    <div class="col-md-6">
-                      <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
-                      <div class="col-6"><strong><?=$overall_dept_response_no?></strong></div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
-                      <div class="col-6"><strong><?=round(array_sum($deptSurveyScore)/count($deptSurveyScore),2) ?> %</strong></div>
-                    </div>
-                  </div>  
-                  <div class="row">
-                    <div class="col-sm-8">
-                      <canvas id="departmentChart"></canvas>
-                    </div>
-                    <div class="col-sm-4 listing">
-                      <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col" style="text-align: left;">Department Name</th>
-                            <th scope="col" style="text-align: left;">Total Surveys</th>
-                            <th scope="col" style="text-align: left;">Average Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                          if($finial_data_department){
-                            foreach($finial_data_department AS $key => $value){ ?>
-                              <tr>
-                                <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                  <td style="text-align: left;"><?php echo $value['count']; ?></td>
-                                  <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
-                                </tr>
-                            <?php } ?>
-                          <?php }else{ ?>
-                            <tr>
-                              <td colspan="2">No Data Found.</td>
-                            </tr>  
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <hr style="border: 0.5px solid #e8e3e3;"/>
-                <?php }else{ ?>
-                  <p>No Data Dound.</p>
-                <?php } ?> 
-              </div>
-            </div>
-          </div>
-
-          <!-- for group survey-->
-          <div class="col-md-12">
-            <div class="box">
-              <div class="box-header with-border">
-                <h3 class="box-title">Surveys Per Group</h3>
-                <div class="box-tools pull-right" style="top:-4px !important;">
-                  <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
-              </div>
-
-              <div class="box-body " style="display: block;">
-                <?php 
-                if($finial_data_group){ ?>
-                  <div class="row">
-                    <div class="row" style="text-align:center;margin-bottom: 20px;">
-                      <div class="col-md-6">
-                        <div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
-                        <div class="col-6"><strong><?=$overall_dept_response_no?></strong></div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
-                        <div class="col-6"><strong><?=round(array_sum($grpSurveyScore)/count($grpSurveyScore),2) ?> %</strong></div>
-                      </div>
-                    </div> 
-                    <div class="col-sm-8">
-                      <canvas id="groupChart"></canvas>
-                    </div>
-                    <div class="col-sm-4 listing">
-                      <table class="table">
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col" style="text-align: left;">Group Name</th>
-                            <th scope="col" style="text-align: left;">Total Surveys</th>
-                            <th scope="col" style="text-align: left;">Average Score</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                          if($finial_data_group){
-                            foreach($finial_data_group AS $key => $value){ ?>
-                              <tr>
-                                  <th scope="row" style="text-align: left;"><?php echo $key; ?></th>
-                                  <td style="text-align: left;"><?php echo $value['count']; ?></td>
-                                  <td style="text-align: left;"><?php echo $value['result']; ?> %</td>
-                              </tr>
-                            <?php } ?>
-                          <?php }else{ ?>
-                            <tr>
-                              <td colspan="2">No Data Found.</td>
-                            </tr>  
-                          <?php } ?>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <hr style="border: 0.5px solid #e8e3e3;"/>
-                <?php }else { ?>
-                  <p>No Data Found.</p>
-                <?php } ?>  
               </div>
             </div>
           </div>
@@ -392,64 +169,25 @@ foreach($perGroups as $key => $value){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
 <script type="text/javascript">
 
-let best_locations  =  '<?=count($locSurveyScore)?>';
-//for location
-if(best_locations>0){
-  var locationChartCtx = document.getElementById('locationChart').getContext('2d');   
-  var locationChart = new Chart(locationChartCtx, {
+//for graph
+let locationChart;
+function mychart(label,data){
+    if (locationChart) {
+      locationChart.destroy()
+    }
+  let locationChartCtx = document.getElementById('chartData').getContext('2d');   
+      locationChart = new Chart(locationChartCtx, {
     type: 'pie',
     data: {
-      labels: <?php echo json_encode(array_keys($locSurveyScore)); ?>,
+      labels: label,
       datasets: [
           {
-            backgroundColor: [<?='"'.implode('","',generate_unique_color(count($perLocations))).'"'?>],
-            data: <?php echo json_encode(array_values($locSurveyScore)); ?>
+            backgroundColor: [<?='"'.implode('","',generate_unique_color(200)).'"'?>],
+            data: data,
           }
       ]
     }
   }); 
-}
-
-// for department
-let best_departments  =  '<?=count($perDepartments)?>';
-
-if(best_departments>0){
-  var departmentChartCtx = document.getElementById('departmentChart').getContext('2d');  
-  var departmentChart = new Chart(departmentChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($deptSurveyScore)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($deptSurveyScore))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($deptSurveyScore)); ?>
-          }
-      ]
-    }
-  });
-}
-
-// for group
-let best_groups =  '<?=count($deptSurveyScore)?>';
-
-if(best_groups>0){
-  var groupChartCtx = document.getElementById('groupChart').getContext('2d');   
-  var groupChart = new Chart(groupChartCtx, {
-    type: 'pie',
-    data: {
-      labels: <?php echo json_encode(array_keys($deptSurveyScore)); ?>,
-      datasets: [
-          {
-            backgroundColor: [
-              <?='"'.implode('","',generate_unique_color(count($deptSurveyScore))).'"'?>
-            ],
-            data: <?php echo json_encode(array_values($deptSurveyScore)); ?>
-          }
-      ]
-    }
-  });
 }
 
 </script>
@@ -459,22 +197,95 @@ if(best_groups>0){
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 <script>
-    // start export pdf 
-    const pages = document.getElementById('reportPage');
-    $('#exportPDF').click(function(){
-        html2PDF(pages, {
-            margin: [50,50,50,50],
-            //margin: [20,20],//PDF margin (in jsPDF units). Can be a single number, [vMargin, hMargin], or [top, left, bottom, right].
-            jsPDF: {
-                orientation: "p",
-                unit: "in",
-                format: 'letter',
-            },
-            html2canvas: { scale: 2 },
-            imageType: 'image/jpeg',
-            output: './pdf/<?=date('Y-m-d-H-i-s')?>.pdf'
-        });
-    });
+// start export pdf 
+  const pages = document.getElementById('reportPage');
+  $('#exportPDF').click(function(){
+      html2PDF(pages, {
+          margin: [50,50,50,50],
+          //margin: [20,20],//PDF margin (in jsPDF units). Can be a single number, [vMargin, hMargin], or [top, left, bottom, right].
+          jsPDF: {
+              orientation: "p",
+              unit: "in",
+              format: 'letter',
+          },
+          html2canvas: { scale: 2 },
+          imageType: 'image/jpeg',
+          output: './pdf/<?=date('Y-m-d-H-i-s')?>.pdf'
+      });
+  });
+// End export pdf
 
- // End export pdf
+ // add survey type div like loc dept group on survey choose
+ $(".survey_id").change(function(){
+  let survey = $('.survey_id').val();
+  if(survey){
+    $('.survey_type_div').show();
+  }else {
+    $('.survey_type_div').hide();
+  }
+ });
+
+ // choose survey type
+ $(".graph-btn").click(function(){
+
+  $('.graph-btn').removeClass('active');
+  $(this).addClass('active');
+
+  let type = $(this).data('type');
+  $('#survey_type').val(type);
+  let survey = $('.survey_id').val();
+  let fdate  = $('#fdate').val();
+  let sdate  = $('#sdate').val();
+
+  $('.graphTitle').html('SURVEY '+type.toUpperCase());
+  survey_graph(fdate,sdate,survey,type,'survey_type');
+ });
+
+ $(".filter").click(function(){
+  let survey = $('.survey_id').val();
+  let fdate  = $('#fdate').val();
+  let sdate  = $('#sdate').val();
+  let type   = $('#survey_type').val();
+  survey_graph(fdate,sdate,survey,type,'filter')
+ });
+
+ // function for ajax request
+ function survey_graph(fdate,sdate,survey,type,mode){
+  $('.loader').show();
+  $('.data-available').hide();
+    $.ajax({
+        method:"POST",
+        url:'<?=baseUrl()?>ajax/ajaxOn_survey_analytics.php',
+        data:{
+            mode:'survey_statics',
+            fdate:fdate,
+            sdate:sdate,
+            survey:survey,
+            survey_type : type,
+            mode:mode,
+        },
+        success:function(response){
+            $('.loader').hide();
+            response = JSON.parse(response);
+            $('.overallresult').html(response.overall);
+            console.log(response);
+            if(response.html == 0){
+              $('.data-available').hide();
+              $('.data-notAvailable').show();
+              $('.data-notAvailable').html('<p style="margin-left: 20px !important;">THIS SEARCH PARAMETER IS NOT AVAILABLE FOR THIS SURVEY</p>');
+              return;
+            }else {
+              $('.data-available').show();
+              $('.data-notAvailable').hide();
+              $('.listing').html(response.html);
+              const result    = response.result;
+              const locName   = Object.keys(result);
+              const avgResult = Object.values(result);
+              console.log(locName);
+              console.log(avgResult);
+              mychart(locName,avgResult);
+            }
+        }
+    })
+ }
  </script>
