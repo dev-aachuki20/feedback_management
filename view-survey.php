@@ -2,6 +2,11 @@
   <h1> View Survey</h1>
    <!-- <a href="?page=add-survey" class="btn btn-primary pull-right" style="margin-top:-25px">Add Survey</a> -->
     </section>
+  <script>
+  $(function () {
+  $('[data-toggle="popover"]').popover()
+  })
+  </script>
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
@@ -43,11 +48,23 @@
                     $row_cname = mysqli_fetch_assoc($cname);
                     record_set("dname", "select * from departments where id='".$row_get_surveys['departmentid']."'");		
                     $row_dname = mysqli_fetch_assoc($dname);
+
+                    $department_id  = $row_get_surveys['departments'];
+                    $department_ids = explode(',',$department_id);
+                    $all_deparmentName = array();
+                    foreach($department_ids as $dept){
+                      $all_deparmentName[] = getDepartment()[$dept];
+                    }
+                    $deptName = implode(',',$all_deparmentName);
                 ?>
                   <tr>
                     <td><?php echo $row_get_surveys['name'];?></td>
                     <td><?=($row_cname['name'])? $tag :'' ?><?php echo $row_cname['name'];?></td>
-                    <td><?php echo $row_dname['name'];?></td>
+                   
+                    <td>
+                      <?php if($deptName){?> 
+                        <button type="button" class="btn btn-xs bg-green popover-dept" data-container="body" data-toggle="popover" data-placement="top" data-content="<?=$deptName?>"><?= getDepartment()[$department_ids[0]] ?></button> 
+                      <?php }?></td>
                     <td><span class="label <?=($row_get_surveys['cstatus']==1)?'label-success':'label-danger'?>"><?php echo status_data($row_get_surveys['cstatus']);?></span></td>
                     <td><?php echo $row_get_surveys['survey_needed']; ?></td>
                     <td>
@@ -94,4 +111,12 @@
         "autoWidth": false
       });
     });
+
+  //   function okButtonClickHandler(){
+  //     let popupId = $(this).attr('aria-describedby');
+  //     alert(popupId);
+  //   }
+  // $('.popover-dept').click(function() {
+  //     setTimeout(okButtonClickHandler, 3000)
+  // });
   </script>

@@ -59,7 +59,8 @@
                 <option value="">select survey</option>
                 <?php 
                 // survey by user
-                $surveyByUsers = get_filter_data_by_user('surveys');
+                //$surveyByUsers = get_filter_data_by_user('surveys');
+                $surveyByUsers = get_survey_data_by_user($_GET['type']);
                 foreach($surveyByUsers as $surveyData){ 
                   $surveyId   = $surveyData['id'];
                   $surveyName = $surveyData['name'];
@@ -111,7 +112,7 @@
       </div>
     </div>
   </div>
-  <a class="btn btn-xs btn-info " id="exportPDF" href="#">Export PDF</a>  
+  <!-- <a class="btn btn-xs btn-info " id="exportPDF" href="#">Export PDF</a>   -->
     <div id="reportPage">
       <div class="row">
           <div class="col-md-12">

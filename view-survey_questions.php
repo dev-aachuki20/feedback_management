@@ -48,19 +48,17 @@
 				<?php 
 					record_set("get_questions", "select * from questions where cby='".$_SESSION['user_id']."' and surveyid='".$_REQUEST['surveyid']."'");				
 					while($row_get_questions = mysqli_fetch_assoc($get_questions))
-					{
-					
-				?>
-                  <tr>
-                    <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong><?php } ?></td>
-                    <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
-                    <td><?=($row_get_questions['cstatus']==1)? '<span class="label label-success">'.status_data($row_get_questions['cstatus']).'</span>':'<span class="label label-danger">'.status_data($row_get_questions['cstatus']).'</span>'?></td>
-                    <td>
-                    <a class="btn btn-xs btn-info" href="?page=edit-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit</a>
+					{   ?>
+              <tr>
+                <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong><?php } ?></td>
+                <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
+                <td><?=($row_get_questions['cstatus']==1)? '<span class="label label-success">'.status_data($row_get_questions['cstatus']).'</span>':'<span class="label label-danger">'.status_data($row_get_questions['cstatus']).'</span>'?></td>
+                <td>
+                <a class="btn btn-xs btn-info" href="?page=edit-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit</a>
 
-                    <a class="btn btn-xs btn-info" href="?page=editSurveyQuestion&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit Language Text</a>
-                    </td>
-                  </tr>
+                <a class="btn btn-xs btn-info" href="?page=editSurveyQuestion&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit Language Text</a>
+                </td>
+              </tr>
         <?php	} ?>
                 </tbody>
                 <tfoot>

@@ -8,20 +8,20 @@ $groupBy = '';
 //     $query = " and surveyid =".$_POST['survey'];
 //     $groupBy = 'surveyid';
 // }
-if($_POST['survey_type']=='location'){
-    $query = " and surveyid =".$_POST['survey']." and locationid in (select id from locations where cstatus=1)";  
+if($_POST['data_type']=='location'){
+    $query = " and surveyid =".$_POST['survey']." and locationid in (select id from locations)";  
     $groupBy = 'locationid';
 }
-else if($_POST['survey_type']=='group'){
-    $query = " and surveyid =".$_POST['survey']." and groupid in (select id from groups where cstatus=1)";  
+else if($_POST['data_type']=='group'){
+    $query = " and surveyid =".$_POST['survey']." and groupid in (select id from groups)";  
     $groupBy = 'group';
 }
-else if($_POST['survey_type']=='department'){
-    $query = " and surveyid =".$_POST['survey']." and departmentid in (select id from departments where cstatus=1)";
+else if($_POST['data_type']=='department'){
+    $query = " and surveyid =".$_POST['survey']." and departmentid in (select id from departments)";
     $groupBy = 'departmentid';
 }
 else {
-    $survey_allow = get_allowed_data('surveys',$_SESSION['user_id']);
+    $survey_allow = get_allowed_data('surveys',$_SESSION['user_id'],$_POST['survey_type']);
     $survey_allow_id = implode(',',array_keys($survey_allow));
     $query = " and surveyid IN (select id from surveys where id IN($survey_allow_id) and cstatus=1)";
     $groupBy = 'surveyid';
@@ -43,7 +43,7 @@ if($totalRows_get_entry){
         $surveyid   = $row_get_entry['surveyid'];
         $cby        = $row_get_entry['cby'];
         
-        if($_POST['survey_type']=='location'){
+        if($_POST['data_type']=='location'){
             $count = array();
             record_set("get_question","select * from answers where locationid=$locId and cby=$cby");
             $total_answer = 0;
@@ -53,7 +53,7 @@ if($totalRows_get_entry){
             $average_value = ($total_answer/($totalRows_get_question*100))*100;
             $survey_data[$locId][$cby] = $average_value;
         }
-        else if($_POST['survey_type']=='department'){
+        else if($_POST['data_type']=='department'){
             $count = array();
             record_set("get_question","select * from answers where departmentid=$depId and cby=$cby");
             $total_answer = 0;
@@ -63,7 +63,7 @@ if($totalRows_get_entry){
             $average_value = ($total_answer/($totalRows_get_question*100))*100;
             $survey_data[$depId][$cby] = $average_value;
         }
-        else if($_POST['survey_type']=='group'){
+        else if($_POST['data_type']=='group'){
             $count = array();
             record_set("get_question","select * from answers where groupid=$grpId and cby=$cby");
             $total_answer = 0;
@@ -94,19 +94,18 @@ if(count($survey_data)>0){
         $total=  array_sum($datasurvey)/count($datasurvey);
         $total =  round($total, 2);
         $titleName='';
-        if($_POST['survey_type']=='location'){
+        if($_POST['data_type']=='location'){
             $titleId = '';
-            $titleName = getLocation()[$key];
-
+            $titleName = getLocation('all')[$key];
         }
-        else if($_POST['survey_type']=='group'){
+        else if($_POST['data_type']=='group'){
             $titleId = '';
-            $titleName = getGroup()[$key];
+            $titleName = getGroup('all')[$key];
             
         }
-        else if($_POST['survey_type']=='department'){
+        else if($_POST['data_type']=='department'){
             $titleId = '';
-            $titleName = getDepartment()[$key];
+            $titleName = getDepartment('all')[$key];
         }
         else {
             $titleId ='Survey Id: '.$key;

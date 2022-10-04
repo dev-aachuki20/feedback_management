@@ -573,6 +573,13 @@ function user_type(){
 		'3' => 'Manager',
 	);
 }
+function survey_type(){
+	return array(
+		'1' => 'Survey',
+		'2' => 'Pulse',
+		'3' => 'Engagement',
+	);
+}
 function make_sidebar_active($page,$array){
 	if(is_array($array)){
 		if(in_array($page,$array)){

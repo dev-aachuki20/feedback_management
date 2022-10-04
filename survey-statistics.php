@@ -156,7 +156,7 @@ if(isset($_POST['filter'])){
                         <div class="row">
                             <!-- <form action="" method="POST" id="viewReportcsv"> -->
                                 <div class="col-md-3">
-                                    <input type="hidden" name="survey_type" class="survey_type" value="">
+                                    <input type="hidden" name="data_type" class="data_type" value="">
                                     <div class="form-group">
                                         <label>Start Date</label>
                                         <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
@@ -241,11 +241,11 @@ if(isset($_POST['filter'])){
 <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
 <script>
     //load graph on page load
-    ajax_to_load_graph(fdate='',sdate='',survey='',survey_type='');
+    ajax_to_load_graph(fdate='',sdate='',survey='',data_type='',survey_type='<?=$_GET['type'] ?>');
 
     $(document).on('click','.graph-btn',function(){
         let type = $(this).data('type');
-        $('.survey_type').val(type);
+        $('.data_type').val(type);
         $('.graph-btn').removeClass('active');
         $(this).addClass('active');
         ajx_report_type(type);
@@ -262,13 +262,15 @@ if(isset($_POST['filter'])){
             $('.error').show();
             return;
         }
-        let survey_type = $('.survey_type').val();
-        ajax_to_load_graph(fdate,sdate,survey,survey_type);
+        let data_type = $('.data_type').val();
+        let survey_type = '<?=$_GET['type']?>';
+
+        ajax_to_load_graph(fdate,sdate,survey,data_type,survey_type);
     })
 
 
     //ajax to load graph data
-     function ajax_to_load_graph(fdate,sdate,survey,survey_type){
+     function ajax_to_load_graph(fdate,sdate,survey,data_type,survey_type){
         $('.loader').show();
         $('.renderChart').hide();
         $.ajax({
@@ -280,6 +282,7 @@ if(isset($_POST['filter'])){
                 sdate:sdate,
                 survey:survey,
                 survey_type:survey_type,
+                data_type:data_type,
                 // group:group,
                 // location:location,
                 // department:department,
@@ -340,11 +343,13 @@ if(isset($_POST['filter'])){
     //ajax to load button
     function ajx_report_type(type){
         $(this).addClass('active');
+        let survey_type = '<?=$_GET['type']?>';
         $.ajax({
             method:"POST",
             url:'<?=baseUrl()?>ajax/common_file.php',
             data:{
                 type:type,
+                survey_type:survey_type,
                 mode:'survey_statics'
             },
             success:function(response){

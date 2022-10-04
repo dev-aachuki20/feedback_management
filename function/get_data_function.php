@@ -1,24 +1,36 @@
 <?php 
 
-function getDepartment(){
+function getDepartment($status = null){
 	$arr = array();
-	$departments_data = getaxecuteQuery_fn("select id,name from departments  where cstatus=1 order by name ASC ");
+	$filter = '';
+	if($status != 'all'){
+      $filter = "where cstatus=1";
+	}
+	$departments_data = getaxecuteQuery_fn("select id,name from departments $filter order by name ASC ");
 	foreach ($departments_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
 	return $arr;
 }
-function getLocation(){
+function getLocation($status = null){
 	$arr = array();
-	$locations_data = getaxecuteQuery_fn("select id,name from locations  where cstatus=1 order by name ASC");
+	$filter = '';
+	if($status != 'all'){
+      $filter = "where cstatus=1";
+	}
+	$locations_data = getaxecuteQuery_fn("select id,name from locations $filter order by name ASC");
 	foreach ($locations_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
 	return $arr;
 }
-function getGroup(){
+function getGroup($status = null){
 	$arr = array();
-	$groups_data = getaxecuteQuery_fn("select id,name from groups  where cstatus=1 order by name ASC");
+	$filter = '';
+	if($status != 'all'){
+      $filter = "where cstatus=1";
+	}
+	$groups_data = getaxecuteQuery_fn("select id,name from groups  $filter order by name ASC");
 	foreach ($groups_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
@@ -56,16 +68,26 @@ function getClient($id=null){
 	}
 	return $arr;
 }
- function get_allowed_data($table,$user_id){
+ function get_allowed_data($table,$user_id,$survey_type=''){
 	$arr = array();
-	
+	$sFilter = '';
+	if($table == 'surveys' and $survey_type !=''){
+		// get survey type
+		if($survey_type == 'engagement'){
+			$sFilter = " and survey_type = 3";
+		}else if($survey_type == 'pulse'){
+			$sFilter = " and survey_type = 2";
+		}else if($survey_type == 'survey'){
+			$sFilter = " and survey_type = 1";
+		}
+	}
 	if($_SESSION['user_type']==1){
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  order by name ASC ");
+		$allowed_data = getaxecuteQuery_fn("select id,name from $table  where id !=0 $sFilter order by name ASC ");
 	}
 	else if($_SESSION['user_type']==2){
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `admin_ids` LIKE '|$user_id|' order by name ASC ");
+		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `admin_ids` LIKE '|$user_id|' $sFilter order by name ASC ");
 	}else{
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `client_ids` LIKE '|$user_id|' order by name ASC ");
+		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `client_ids` LIKE '|$user_id|' $sFilter order by name ASC ");
 	}
 	foreach ($allowed_data as $val) {
 		$arr[$val['id']] = $val['name'];
@@ -89,6 +111,33 @@ function getClient($id=null){
 	  }
 	return $arr;
  }
+
+ function get_survey_data_by_user($survey_type){
+	// get survey by user access
+	if($_SESSION['user_type']==1){
+		$filter = '';
+	  }else if($_SESSION['user_type']==2){
+		//for admin
+		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%')) ";
+	  }else if($_SESSION['user_type']==3){
+		 //for manager
+		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') )";
+	  }
+	// get survey type
+	  if($survey_type == 'engagement'){
+		$sFilter = " and survey_type = 3";
+	  }else if($survey_type == 'pulse'){
+		$sFilter = " and survey_type = 2";
+	  }else if($survey_type == 'survey'){
+		$sFilter = " and survey_type = 1";
+	  }
+	  $allowed_data = getaxecuteQuery_fn("select * from surveys where id>0 and cstatus=1 $filter $sFilter order by cdate desc");
+	  $arr =array();
+	  while($row_get_data=mysqli_fetch_assoc($allowed_data)){
+	  	$arr[] =$row_get_data;
+	  }
+	return $arr;
+}
 
  function get_user_datails($id=null,$type=null){
 	 if($type == 2){

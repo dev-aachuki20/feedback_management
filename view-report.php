@@ -3,8 +3,7 @@
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_filter_data_by_user('surveys');
-
+$surveyByUsers     = get_survey_data_by_user($_GET['type']);
 ?>
 <style>
 .d-none{
@@ -148,12 +147,9 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                             <select id="surveys" name="surveys" class="form-control surveys">
                                 <option value="">Select</option>
                                 <?php
-                                    // record_set("get_surveys", "select * from surveys where cstatus=1  order by name asc"); 
-                                    // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-                                    
                                 foreach($surveyByUsers as $row_get_surveys){ ?>
                                     <option value="<?php echo $row_get_surveys['id'];?>"><?php echo $row_get_surveys['name'];?></option>
-                                <?php }?>
+                                <?php } ?>
                             </select>
                             <label for="" class="error" style="display:none ;"> This field is required</label>
                         </div>

@@ -152,7 +152,7 @@ else{
 <![endif]-->
 <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script> 
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script> 
-
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.0/jquery.validate.min.js"></script>
 <!-- Datatable CSS -->
 <link href='https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css' rel='stylesheet' type='text/css'>
 </head>

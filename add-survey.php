@@ -10,29 +10,32 @@
             "survey_needed"        => $_POST['survey_needed'],
             "css_txt"              => $_POST['css_txt'],
             "alter_email"          => $_POST['alter_email'],
-            "cstatus"              => $_POST['status'],
-            //"locationid"           => $_POST['locationid'],
-            //"groupid"              => $_POST['groupid'],
-            "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
-            "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
-           // "isSchoolAllowed"      => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
-            "locations"            => implode(",",$_POST['locationid']),
-            "groups"               => implode(",",$_POST['groupid']),
-            "departments"          => implode(",",$_POST['departments']),
+            "start_date"           => $_POST['sdate'],
+            "end_date"             => $_POST['edate'],
+            // "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
+            // "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "google_review_link"   => $_POST['google_review_link'],
             "facebook_review_link" => $_POST['facebook_review_link'],
             "other_link"           => $_POST['other_link'],
         );
 
-        $lang_col=array();
-        record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-        while($row_get_language = mysqli_fetch_assoc($get_language)){	
-            if($row_get_language['id'] !=1){
-                $lang_col["name_".$row_get_language['iso_code']] = $_POST['name_'.$row_get_language['iso_code']];
-            }
+        // avoid updating disable value
+        $new_data =  array(
+            "survey_type"   => $_POST['survey_type'],
+            "cstatus"       => $_POST['status'],
+            "confidential"  => (isset($_POST['confidential'])) ? 1 : 0,
+            "intervals"     => $_POST['interval'],
+            "groups"        => implode(",",$_POST['groupid']),
+            "locations"     => implode(",",$_POST['locationid']),
+            "departments"   => implode(",",$_POST['departments']),
+            //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
+            //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+        );
+        if($_SESSION['user_type']==1){
+            $data = array_merge($dataCol,$new_data);
+        }else {
+            $data = $dataCol;
         }
-        // merge two array
-        $data = array_merge($dataCol,$lang_col);
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
         if(!empty($updte)){
             if(isset($_POST['isStep']) && isset($_POST['numberOfStep'])){
@@ -74,9 +77,11 @@
   			"clientid"               => $_POST['clientid'],
             "adminid"                => $_POST['adminid'],
             "user_type"              => $_POST['user_type'],
-  			//"departmentid"         => (isset($_POST['departmentid']))?$_POST['departmentid']:'',
-  			//"locationid"           => (isset($_POST['locationid']))?$_POST['locationid']:'',
-  			//"groups"               => (isset($_POST['groupid']))?$_POST['groupid']:'',
+            "survey_type"            => $_POST['survey_type'],
+            "intervals"              => $_POST['interval'],
+            "start_date"             => $_POST['sdate'],
+            "end_date"               => $_POST['edate'],
+            "confidential"           => (isset($_POST['confidential'])) ? 1 : 0,
             "alter_email"            => $_POST['alter_email'],
             "isStep"                 => (isset($_POST['isStep'])) ? 1 : 0,
             "isEnableContacted"      => (isset($_POST['isEnableContacted'])) ? 1 : 0,
@@ -123,7 +128,7 @@
   	        $msg = "Surveys Added Successfully";
             alertSuccess($msg,'?page=view-survey');
             if(!empty($_POST['alter_email'])){
-                send_survey_email($_POST['alter_email'],$_POST['name'],$insert_value);
+                send_survey_email($_POST['alter_email'], $_POST['name'], $insert_value);
             }
         }else{
             $msg = "Some Error Occourd. Please try again..";
@@ -144,6 +149,28 @@ $groupByUsers      = get_filter_data_by_user('groups');
     <h1> <?=($_GET['id'])?'Edit Survey':'Add Survey'?></h1>
     <a href="?page=view-survey" class="btn btn-primary pull-right" style="margin-top:-25px">View Survey</a> 
 </section>
+<style>
+.container {
+  margin-top: 20px;
+}
+
+.panel-heading {
+  font-size: larger;
+}
+
+.alert {
+  display: none;
+}
+
+
+/**
+ * Error color for the validation plugin
+ */
+
+.error {
+  color: #e74c3c;
+}
+</style>
 <section class="content">
     <div class="box box-danger">
         <?php if(isset($_GET['msg'])){ ?>
@@ -159,7 +186,20 @@ $groupByUsers      = get_filter_data_by_user('groups');
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Survey Name</label>
+                                    <label>Survey Type *</label>
+                                    <select class="form-control" name="survey_type" id="survey_type" required>
+                                        <option value="">Select Survey Type </option>
+                                        <?php foreach(survey_type() as $key => $value) { ?>
+                                            <option value="<?=$key?>" <?=($row_get_surveys['survey_type']==$key)? 'selected' : '' ?>><?=$value?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Survey Name *</label>
                                     <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_surveys['name'];?>" />
                                 </div>
                             </div>
@@ -237,21 +277,35 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select class="form-control" name="status" <?=($_GET['id']) ? 'disabled ': ''?>>
+                                    <select class="form-control" name="status" <?=($_GET['id'] and $_SESSION['user_type']>1) ? 'disabled ': ''?>>
                                         <?php foreach(status() as $key => $value){ ?>
                                             <option <?php if($row_get_surveys['cstatus']==$key){?> selected="selected"<?php }?> value="<?php echo $key; ?>"><?php echo $value;?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
                             </div>
-                            <!-- <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="isSchoolAllowed" name="isSchoolAllowed" <?php echo ($row_get_surveys['isSchoolAllowed'] == 1) ? "checked" : ""; ?>>
-                                        <label class="form-check-label" for="isSchoolAllowed"> School Allow </label>
-                                    </div>
+                                    <label>Interval</label>
+                                    <select class="form-control" id="interval" name="interval" <?=($_GET['id']) ? 'disabled ': ''?>>
+                                        <?php foreach(service_type() as $key => $value){ ?>
+                                            <option <?php if($row_get_surveys['intervals']==$key){?> selected="selected"<?php }?> value="<?php echo $key; ?>"><?php echo $value;?></option>
+                                        <?php } ?>
+                                    </select>
                                 </div>
-                            </div> -->
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Start Date *</label>
+                                    <input type="date" class="form-control" name="sdate" id="sdate" value="<?=date('Y-m-d',strtotime($row_get_surveys['start_date']))?>" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" name="edate" id="edate" value="<?=date('Y-m-d',strtotime($row_get_surveys['end_date']))?>"/>
+                                </div>
+                            </div>
                             <div class="col-md-6 dropdwn ">
                                 <label>Group</label>
                                 <input type="checkbox"id="allgrp" class="multiselect" onchange="select_all_option('allgrp','group_id')">
@@ -309,15 +363,25 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 </select>	
                             </div>
                             <div class="col-md-6">
-                                <label for=""></label>
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
-                                        <label class="form-check-label" for="isEnableContacted"> Enable To Be Contacted </label>
+                                <div class="col-md-6">
+                                    <label for=""></label>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
+                                            <label class="form-check-label" for="isEnableContacted"> Enable To Be Contacted </label>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <label for=""></label>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="confidential" name="confidential" <?php echo ($row_get_surveys['confidential'] == 1) ? "checked" : ""; ?>>
+                                            <label class="form-check-label" for="confidencial"> Confidencial </label>
+                                        </div>
+                                    </div>
+                                </div>            
                             </div>
-                           
                             <div class="col-md-12" style="padding-top:20px;">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="isStep" name="isStep" <?php echo ($row_get_surveys['isStep'] == 1) ? "checked" : ""; ?>>
@@ -469,106 +533,22 @@ $(document).ready(function(){
       $("#stepsTitle").html(html);
       $(".step_checkbox").attr("required", true);
     });
-
     // Start js according to language
-    <?php 
-        record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-        while($row_get_language = mysqli_fetch_assoc($get_language)){	
-            if($row_get_language['id'] !=1){ ?>
 
-            //   $('#update').click(function(e){
-            //     $('#lang_<?=$row_get_language['iso_code']?>').removeAttr('disabled');
-            //   });
-            
-            // $('#lang_<?=$row_get_language['iso_code']?>').change(function() {
-            //     if($(this).is(':checked')) {
-            //         // $("#stepsTitle").html("");
-                    
-            //         var numberOfSteps = $('#numberOfStep').val();
-            //         var i;
-            //         var html = "";
-            //         var intial = 1;
-
-            //         if(numberOfSteps != "" && numberOfSteps > 0){
-            //         var intial = "<?php echo ($totalRows_get_surveys_steps > 0) ? $totalRows_get_surveys_steps+1 : 1; ?>";
-            //         }
-
-            //         if($(this).prop('checked') == true){
-                    
-            //         if($(this).val() == '<?=$row_get_language['id']?>'){
-
-            //             for(i=intial; i <= numberOfSteps; i++){
-            //             html += '<div class="col-md-12" id="lang_<?=$row_get_language['iso_code']?>"><div class="form-group"><label>Step '+i+' Title - <?=$row_get_language['name']?></label><input type="text" class="form-control" id="stepTitle'+i+'" name="stepstitle_<?=$row_get_language['iso_code']?>[]"></div></div>';
-            //             }
-
-                        
-            //             <?php 
-            //             if(!empty($_GET['id'])){
-            //             record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
-            //             if($totalRows_get_surveys_steps > 0){ 
-            //             while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
-            //                 foreach($languages as $key=>$val){
-                            
-            //                 record_set("get_lang_step", "select * from languages where id='".$val."'");				
-            //                 $row_get_lang_step = mysqli_fetch_assoc($get_lang_step);
-            //                 if($row_get_lang_step['id']!=1){
-            //             ?>
-            //             html +='<div class="col-md-12" id="lang_<?=$row_get_lang_step['iso_code']?>">'
-            //                 +'<div class="form-group">'
-            //                     +'<label>Step <?php echo $row_get_surveys_steps['step_number']; ?> - <?=$row_get_lang_step['name']?></label>'
-            //                     +'<input type="text" class="form-control" id="stepTitle<?php echo $row_get_surveys_steps['step_number']; ?>" name="stepstitle_<?=$row_get_lang_step['iso_code']?>[]" value="<?php echo $row_get_surveys_steps['step_title_'.$row_get_lang_step['iso_code']]?>">'
-            //                 +'</div>'
-            //             +'</div>';
-            //             <?php 
-            //                 }
-            //                 }
-            //             }
-            //             }
-            //         }
-            //         ?>
-
-
-            //             $('.survey-name').append('<div class="col-md-6 lang_<?=$row_get_language['iso_code']?>">'
-            //             +'<div class="form-group">'
-            //             +'<label>Survey Name - <?=$row_get_language['name']?></label>'
-            //             +'<input type="text" class="form-control" name="name_<?=$row_get_language['iso_code']?>"' +'id="name_<?=$row_get_language['iso_code']?>" value="<?php echo $row_get_surveys['name_'.$row_get_language['iso_code']]?>"/>'
-            //             +'</div>'
-            //             +'</div>');
-
-            //         }
-            //         }
-                    
-            //         <?php if(!empty($_GET['id'])){ ?>
-            //         $("#stepsTitle").html(html);
-            //         <?php }else{ ?>
-            //         $("#stepsTitle").append(html);
-            //         <?php } ?>
-            //     }
-                
-            //     if($(this).prop("checked") == false){
-            //     // console.log('hello <?php // echo $row_get_language['name']?>');
-            //         $("#stepsTitle").find('#lang_<?=$row_get_language['iso_code']?>').remove();
-            //         $('.survey-name').find('.lang_<?=$row_get_language['iso_code']?>').remove();
-            //     }
-            // });
-        
-        <?php  }  }  ?>
-  
-     
     // End js according to language
 		$('.form-control').click(function(){
 			$(this).css("border-color", "#ccc");
 		});
 		
-		$("#submit").click(function(){
-            var name = $("#name").val();
-            if(name==''){
-                document.getElementById('name').style.borderColor = "#ff0000";
-                alert('Name field is required');
-                document.getElementById('name').focus();
-                return false;
-            }
-		});
+		// $("#submit").click(function(){
+        //     var name = $("#name").val();
+        //     if(name==''){
+        //         document.getElementById('name').style.borderColor = "#ff0000";
+        //         alert('Name field is required');
+        //         document.getElementById('name').focus();
+        //         return false;
+        //     }
+		// });
 
     // $('#clientId').change(function(){
   
@@ -618,7 +598,6 @@ $(document).ready(function(){
     //         $('#group_id').removeAttr('multiple','multiple');
     //       }
     // });
-
 });
     
 //select all option for location department,group
@@ -635,15 +614,45 @@ function select_all_option(idFirst,idSecond){
 }
 //disabled form for other users
 <?php if($_GET['id']){ ?>
-    $('#survey_from input').attr('readonly', 'readonly');
-    $('#survey_from textarea').attr('readonly', 'readonly');
+    $('#survey_from input').attr('readonly','readonly');
+    $('#survey_from textarea').attr('readonly','readonly');
     <?php if($_SESSION['user_type'] == 1) { ?>
-    $('#survey_from input:checkbox').not('.multiselect').attr('disabled','true');
+    $('#interval').removeAttr('disabled');
+    $('#sdate').removeAttr('readonly');
+    $('#edate').removeAttr('readonly');   
+    $('#survey_from input:checkbox').not('.multiselect, #confidential').attr('disabled','true');
     <?php }else { ?> 
     $('#survey_from input:checkbox').attr('disabled','true');
     $('.multiple-select').attr('disabled','true');
+    $('#survey_type').attr('disabled','true');
     <?php } ?>
 <?php } ?>
 
+var $form = $("#survey_from"),
+$successMsg = $(".alert");
+$.validator.addMethod("letters", function(value, element) {
+  return this.optional(element) || value == value.match(/^[a-zA-Z\s]*$/);
+});
+$form.validate({
+  rules: {
+    name: {
+      required: true,
+    },
+    survey_type: {
+      required: true,
+    },
+    sdate: {
+      required: true,
+    },
+  },
+  messages: {
+    name        : "Please specify your Survey name ",
+    survey_type : "Please choose the survey type",
+    sdate       : "Please choose the Start Date"
+  },
 
+  submitHandler: function($form) {
+    $form.submit();
+  }
+});
 </script>

@@ -83,11 +83,11 @@ if(is_nan($avgScore)){
 }
 $overall= '';
 $overall = '<div class="col-md-6">
-<div class="col-6"><strong>Total Survey Response(Overall)</strong></div>
+<div class="col-6"><strong>Total Survey Response<br>(Overall)</strong></div>
 <div class="col-6"><strong>'.count($survey_overall).'</strong></div>
 </div>
 <div class="col-md-6">
-<div class="col-6"><strong>Average Survey Score(Overall)</strong></div>
+<div class="col-6"><strong>Average Survey Score<br>(Overall)</strong></div>
 <div class="col-6"><strong>'.$avgScore.' %</strong></div>
 </div>';
 
