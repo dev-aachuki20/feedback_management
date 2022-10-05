@@ -17,8 +17,9 @@
                 <thead>
                   <tr>
                     <th>Survey Name</th>
-                    <th>User Name	</th>
+                    <th>Survey Type	</th>
                     <th>Department</th>
+                    <th>Confidential</th>
                     <th>Status</th>
                     <th>Entry Needed</th>
                     <th>Action</th>
@@ -38,14 +39,7 @@
                     }
                   record_set("get_surveys", "select * from surveys where id>0 $filter order by cdate desc");				
                   while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){
-                    if($row_get_surveys['user_type']==2){
-                      record_set("cname", "select * from admin where id='".$row_get_surveys['adminid']."'");
-                      $tag = '<span class="label label-success blue-btn">A</span>';
-                    }else {
-                      record_set("cname", "select * from clients where id='".$row_get_surveys['clientid']."'");
-                      $tag = '<span class="label label-info blue-btn">M</span>';
-                    }
-                    $row_cname = mysqli_fetch_assoc($cname);
+                    
                     record_set("dname", "select * from departments where id='".$row_get_surveys['departmentid']."'");		
                     $row_dname = mysqli_fetch_assoc($dname);
 
@@ -59,12 +53,12 @@
                 ?>
                   <tr>
                     <td><?php echo $row_get_surveys['name'];?></td>
-                    <td><?=($row_cname['name'])? $tag :'' ?><?php echo $row_cname['name'];?></td>
-                   
+                    <td><?php if($row_get_surveys['survey_type']) { ?> <span class="label label-primary blue-btn"><?=survey_type()[$row_get_surveys['survey_type']]?></span> <?php } ?></td>
                     <td>
                       <?php if($deptName){?> 
                         <button type="button" class="btn btn-xs bg-green popover-dept" data-container="body" data-toggle="popover" data-placement="top" data-content="<?=$deptName?>"><?= getDepartment()[$department_ids[0]] ?></button> 
                       <?php }?></td>
+                    <td><span class="btn btn-xs btn-info"><?=($row_get_surveys['confidential']==1)?'YES':'NO'?></span></td>
                     <td><span class="label <?=($row_get_surveys['cstatus']==1)?'label-success':'label-danger'?>"><?php echo status_data($row_get_surveys['cstatus']);?></span></td>
                     <td><?php echo $row_get_surveys['survey_needed']; ?></td>
                     <td>
@@ -119,4 +113,5 @@
   // $('.popover-dept').click(function() {
   //     setTimeout(okButtonClickHandler, 3000)
   // });
+
   </script>

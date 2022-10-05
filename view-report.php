@@ -3,7 +3,7 @@
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_survey_data_by_user($_GET['type']);
+$surveyByUsers     = get_survey_data_by_user($_GET['type'],1);
 ?>
 <style>
 .d-none{

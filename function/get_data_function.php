@@ -112,7 +112,7 @@ function getClient($id=null){
 	return $arr;
  }
 
- function get_survey_data_by_user($survey_type){
+ function get_survey_data_by_user($survey_type,$confidential=0){
 	// get survey by user access
 	if($_SESSION['user_type']==1){
 		$filter = '';
@@ -130,6 +130,11 @@ function getClient($id=null){
 		$sFilter = " and survey_type = 2";
 	  }else if($survey_type == 'survey'){
 		$sFilter = " and survey_type = 1";
+	  }
+
+	  //get unconfidential data
+	  if($confidential == 1){
+		$sFilter .= " and confidential !=1";
 	  }
 	  $allowed_data = getaxecuteQuery_fn("select * from surveys where id>0 and cstatus=1 $filter $sFilter order by cdate desc");
 	  $arr =array();

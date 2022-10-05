@@ -113,7 +113,7 @@
                     <a href="?page=survey-statistics&type=engagement" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                 </li>
             <?php }?>
-            <li class="treeview cusul-line <?=($_GET['page']=='analytics' and $_GET['type']=='engagement') ? 'active':''?>">
+            <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='engagement') ? 'active':''?>">
                 <a href="?page=view-analytics&type=engagement" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
             </li>
         </ul>
@@ -145,7 +145,7 @@
                     <a href="?page=survey-statistics&type=pulse" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                 </li>
                 <?php }?>
-                <li class="treeview cusul-line <?=($_GET['page']=='analytics' and $_GET['type']=='pulse') ? 'active':''?>">
+                <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='pulse') ? 'active':''?>">
                     <a href="?page=view-analytics&type=pulse" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
                 </li>
             </ul>

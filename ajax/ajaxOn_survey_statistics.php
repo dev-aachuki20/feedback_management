@@ -101,7 +101,6 @@ if(count($survey_data)>0){
         else if($_POST['data_type']=='group'){
             $titleId = '';
             $titleName = getGroup('all')[$key];
-            
         }
         else if($_POST['data_type']=='department'){
             $titleId = '';

@@ -203,71 +203,6 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_surveys['name'];?>" />
                                 </div>
                             </div>
-                            <!-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>User Type</label>
-                                    <select class="form-control" name="user_type" id="user_type"  <?=($_GET['id'])? 'disabled':'' ?>>
-                                        <option value="">Select User</option>
-                                        <option value="2" <?=($row_get_surveys['user_type'] ==2)?'selected':''?>>Admin</option>
-                                        <option value="3" <?=($row_get_surveys['user_type'] ==3)?'selected':''?>>Manager</option>
-                                    </select>
-                                </div>
-                            </div> -->
-                            <div class="col-md-6" id="client-field" style="<?=($row_get_surveys['clientid']>0) ? 'display: block;':'display: none;'?>">
-                                <div class="form-group">
-                                    <label>Client Name</label>
-                                    <select class="form-control" name="clientid" id="clientId" <?=($_GET['id'])? 'disabled':'' ?>>
-                                    <option value="">Select Client</option>
-                                        <?php
-                                            record_set("get_client", "select * from clients where cby='".$_SESSION['user_id']."' and cstatus = 1" );				
-                                            while($row_get_client = mysqli_fetch_assoc($get_client)){ ?>
-                                            <option value="<?php echo $row_get_client['id'];?>" <?=($row_get_surveys['clientid'] ==$row_get_client['id'])?'selected':''?>><?php echo $row_get_client['name'];?></option>
-                                        <?php }?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6" id="admin-field" style="<?=($row_get_surveys['adminid']>0) ? 'display: block;':'display: none;'?>">
-                                <div class="form-group">
-                                    <label>Admin Name</label>
-                                    <select class="form-control" name="adminid" id="adminId" <?=($_GET['id'])? 'disabled':'' ?>>
-                                        <option value="">Select Admin</option>
-                                        <?php
-                                            record_set("get_admin", "select * from admin where cby='".$_SESSION['user_id']."' and cstatus = 1");				
-                                            while($row_get_admin = mysqli_fetch_assoc($get_admin)){ ?>
-                                            <option value="<?php echo $row_get_admin['id'];?>" <?=($row_get_surveys['adminid'] ==$row_get_admin['id'])?'selected':''?>><?php echo $row_get_admin['name'];?></option>
-                                        <?php }?>
-                                    </select>
-                                </div>
-                            </div>
-             
-                            <?php if(empty($_GET['id'])){?>
-                                <div class="col-md-3" style="display:none;">
-                                    <div class="form-group">
-                                        <label>Location</label>
-                                        <select class="form-control" name="locationid" id="locationId">
-                  	                        <?php
-                                                record_set("get_location", "select * from locations where cby='".$_SESSION['user_id']."'");				
-					                            while($row_get_location = mysqli_fetch_assoc($get_location)){	
-					                        ?>
-                                                <option value="<?php echo $row_get_location['id'];?>"><?php echo $row_get_location['name'];?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="display:none;">
-                                    <div class="form-group">
-                                        <label>Department</label>
-                                        <select class="form-control" name="departmentid">
-                  	                        <?php
-                                                record_set("get_department", "select * from departments where cby='".$_SESSION['user_id']."'");				
-					                            while($row_get_department = mysqli_fetch_assoc($get_department)){	
-				          	                ?>
-                                                <option value="<?php echo $row_get_department['id'];?>"><?php echo $row_get_department['name'];?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            <?php } ?>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Entry Needed</label>
@@ -297,13 +232,13 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Start Date *</label>
-                                    <input type="date" class="form-control" name="sdate" id="sdate" value="<?=date('Y-m-d',strtotime($row_get_surveys['start_date']))?>" required/>
+                                    <input type="date" class="form-control" name="sdate" id="sdate" value="<?=($_GET['id'] and $row_get_surveys['start_date'])?date('Y-m-d',strtotime($row_get_surveys['start_date'])):''?>" required/>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>End Date</label>
-                                    <input type="date" class="form-control" name="edate" id="edate" value="<?=date('Y-m-d',strtotime($row_get_surveys['end_date']))?>"/>
+                                    <input type="date" class="form-control" min="" name="edate" id="edate" value="<?=($_GET['id'] and $row_get_surveys['end_date'])?date('Y-m-d',strtotime($row_get_surveys['end_date'])):''?>"/>
                                 </div>
                             </div>
                             <div class="col-md-6 dropdwn ">
@@ -654,5 +589,10 @@ $form.validate({
   submitHandler: function($form) {
     $form.submit();
   }
+});
+
+$('#sdate').change(function(){
+    let sdate = $(this).val();
+    $("#edate").attr("min", sdate);
 });
 </script>
