@@ -130,47 +130,8 @@ $languages = explode(',',$row_get_survey_details['language']);
             </div>
 		      <?php } ?>
         </div>
-
         <div class="row">
-          <?php
-            foreach($languages as $key=>$val){
-              record_set("get_language", "select * from languages where id='".$val."'");				
-              $row_get_language = mysqli_fetch_assoc($get_language);
-              if($row_get_language['id']!=1){
-          ?>
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label>Question - <?=$row_get_language['name']?></label>
-                  <input type="text" class="form-control" name="question_<?=$row_get_language['iso_code']?>" value="<?php echo $row_get_questions['question_'.$row_get_language['iso_code']];?>" disabled />
-                </div>
-              </div>
-
-                <?php 
-                  record_set("get_questions_detail", "select * from questions_detail where   surveyid='".$_REQUEST['surveyid']."'  and questionid='".$_REQUEST['questionid']."'");				
-                  while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail))
-                  {
-                ?>
-                <div class="col-md-5">
-                  <div class="form-group">
-                    <label>Answer 1 - <?=$row_get_language['name']?></label>
-                    
-                    <input type="text" class="form-control" name="correct_<?=$row_get_language['iso_code']?>[]" value="<?php echo $row_get_questions_detail['description_'.$row_get_language['iso_code']];?>" disabled />
-                  </div>
-                </div>
-                <div class="col-md-1">
-                  <div class="form-group">
-                    <label>Value</label>
-                    
-                    <input type="text" class="form-control" name="correct_<?=$row_get_language['iso_code']?>[]" value="<?php echo $row_get_questions_detail['answer'];?>" disabled />
-                  </div>
-                </div>
-              <?php } ?>  
-
-          <?php } } ?> 
-        </div>  
-        
-        <div class="row">
-          <?php if(!empty($surveyid) && $questionid){ ?>
+          <?php if(!empty($surveyid) && empty($questionid)){ ?>
             <div class="col-md-12 text-right">
                 <a href="JavaScript:Void(0);" id="btnaddoption11" class="btn btn-info">Add New Option</a>
             </div>

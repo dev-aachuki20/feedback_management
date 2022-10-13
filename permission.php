@@ -4,9 +4,12 @@ if($_SESSION['user_type']==1){
     $user_permission = array('add-department','manage-department','add-location','manage-locations','view-survey','view-statistics','add-user','view-user','manage-groups','add-group','import-user','add-user','monthly-report','report','pulses','create-report','view-template','view-leagues');
 }
 if($_SESSION['user_type']==2){
-    $user_permission = array('add-department','manage-department','add-location','manage-locations','view-survey','view-statistics','add-user','view-user','manage-groups','add-group','import-user','add-user','monthly-report','report','pulses','view-leagues');
+    $user_permission = array('add-department','manage-department','add-location','manage-locations','view-survey','view-statistics','add-user','view-user','manage-groups','add-group','import-user','add-user','monthly-report','report','pulses','create-report','view-template','view-leagues');
 }
 if($_SESSION['user_type']==3){
+    $user_permission = array('add-department','manage-department','add-location','manage-locations','view-survey','view-statistics','add-user','view-user','manage-groups','add-group','import-user','add-user','monthly-report','report','pulses','view-leagues');
+}
+if($_SESSION['user_type']==4){
     $user_permission = array('view-statistics','report-statistics','view-report','monthly-report','report','pulses','view-leagues');
 }
 

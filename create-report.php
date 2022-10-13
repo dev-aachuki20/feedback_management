@@ -211,70 +211,12 @@ if(isset($_GET['viewid'])){
                     <input type="hidden" name="step_hidden" id="step_hidden" value="">
                     <input type="hidden" name="question_hidden" id="question_hidden" value="">
                     <input type="hidden" name="report_name_hidden" value="" class="report_name_hidden">
-                    <!-- assign location -->
-                    <?php if(count($locationByUsers)>0) { ?>
-                    <div class="row locationCheck">
-                        <div class="col-md-12 with-border">
-                            <h4>Assign Location</h4>
-                            <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
-                        </div>
-                        <?php 
-                        foreach($locationByUsers as $locationData){ 
-                        $locationId     = $locationData['id'];
-                        $locationName   = $locationData['name']; ?>
-                        <div class="col-md-4">
-                            <input <?=$checkDisable?> type="checkbox" id="locationids<?php echo $locationId ?>" <?=(in_array($locationId,$template_loc)) ? 'checked':''?> class="loc_checkbox" value="<?php echo $locationId; ?>" name="locationids[<?php echo $locationId; ?>]" /> 
-                            
-                            <label for="locationids<?php echo $locationId; ?>">
-                            <?php echo $locationName ?>
-                            </label>
-                        </div>
-                        <?php } ?>
-                    </div>
-                    <?php } ?>
-                    <!-- assign department -->
-                    <?php if(count($departmentByUsers)>0) { ?>
-                        <div class="row departmentCheck">        
-                            <div class="col-md-12 with-border">
-                                <h4>Assign Departments</h4>
-                                <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'dept_checkbox')" /><strong> Select All</strong><br/><br/>
-                            </div>
-                            <?php 
-                            foreach($departmentByUsers as $departmentData){ 
-                                $departmentId   = $departmentData['id'];
-                                $departmentName = $departmentData['name'];
-                                ?>
-                                <div class="col-md-4">
-                                <input <?=$checkDisable?> type="checkbox" id="departmentids<?php echo $departmentId ?>" class="dept_checkbox" <?=(in_array($departmentId,$template_dep)) ? 'checked':''?> value="<?php echo $departmentId; ?>" name="departmentids[<?php echo $departmentId; ?>]"/> 
-                                <label for="departmentids<?php echo $departmentId; ?>">
-                                <?php echo $departmentName ?>
-                                </label>
-                                </div>
-                            <?php }?>
-                        </div>
-                    <?php } ?>
                     <!-- assign group -->
-                    <?php if(count($groupByUsers)>0) { ?>
-                        <div class="row groupCheck">         
-                            <div class="col-md-12 with-border">
-                                <h4>Assign Group</h4>
-                                <input <?=$checkDisable?> type="checkbox" onclick="checked_all(this,'group_checkbox')" /><strong> Select All</strong><br/><br/>
-                            </div>
-                            <?php 
-                            foreach($groupByUsers as $groupData){ 
-                                $groupId    = $groupData['id'];
-                                $groupName  = $groupData['name'];
-                            ?>
-                                <div class="col-md-4">
-                                    <input <?=$checkDisable?> type="checkbox" id="groupids<?php echo $groupId ?>" class="group_checkbox" <?=(in_array($groupId,$template_grp)) ? 'checked':''?> value="<?php echo $groupId; ?>" name="groupids[<?php echo $groupId; ?>]" /> 
-                                    
-                                    <label for="groupids<?php echo $groupId; ?>">
-                                    <?php echo $groupName ?>
-                                    </label>
-                                </div>
-                            <?php } ?>  
-                        </div>
-                    <?php } ?>
+                    <?php include ('./assignUserCheckbox/group.php')?>   
+                    <!-- assign location -->
+                    <?php include ('./assignUserCheckbox/location.php')?>   
+                    <!-- assign department -->
+                    <?php include ('./assignUserCheckbox/department.php')?> 
                     <div class="col-md-12 pull-right filter_form">
                         <?php if($_GET['type']=='report') { ?>
                         <input type="submit" class="btn btn-success green-btn" value="Export">
@@ -431,17 +373,20 @@ if(isset($_GET['viewid'])){
     }
 
     $(document).on('change','#survey_id',function(){
+       let survey_id = $(this).val();
        $('.multiselect').prop('checked', false);
-
+       
        $('#section_id').html('<option value="" data-qid="">Select step</option>');
        $('.question').html('<option value="" data-qid="">Select question</option>');
-        get_step_ajax($(this).val());
+        get_step_ajax(survey_id);
+        ajax_for_checkbox(survey_id, 'load_group','create_report');
     })
 
     $(document).on('change','#section_id',function(){
         let survey_id = $('#survey_id').val();
         let step_id = $(this).val();
         get_question_ajax(survey_id,step_id);
+    
     })
 
 let type = '<?=$_GET['type'] ?>';
@@ -465,5 +410,26 @@ function select_all_option(idFirst,idSecond){
         $(idSecond+"> option").removeAttr("selected");
         $(idSecond).trigger("change");
     }
+}
+
+function ajax_for_checkbox(id,mode,page){
+    $.ajax({
+        type: "POST",
+        url: 'ajax/common_file.php',
+        data: {id: id,mode:mode,page:page}, 
+        success: function(response){
+            if(mode == 'load_group'){
+              $('.surveyCheck').html(response);
+              $('.locationCheck').html('');
+            }
+            if(mode == 'add_user_group_assign'){
+              $('.groupCheck').html(response);
+              $('.locationCheck').html('');
+            }
+            if(mode == 'add_user_location_assign'){
+              $('.locationCheck').html(response);
+            }
+        }
+    });
 }
 </script>

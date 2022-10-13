@@ -17,14 +17,15 @@
             </thead>
             <tbody>
               <?php 
-              if($_SESSION['user_type']==1){
+              if($_SESSION['user_type']<=2){
                 $filter = '';
-              }else if($_SESSION['user_type']==2){
-                //for admin
-                $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '|".$_SESSION['user_id']."|') ";
-              }else if($_SESSION['user_type']==3){
-                 //for manager
-                $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '|".$_SESSION['user_id']."|') ";
+              }else {
+                //for other
+                $filter = " and cby='".$_SESSION['user_id']."'";
+                $group_ids = get_assing_id_dept_loc_grp_survey('group');
+                if($group_ids){
+                  $filter .= " OR id IN ($group_ids)";
+                }
               }
                 record_set("get_groups", "select * from groups where id>0 $filter order by cdate desc");				
                 while($row_get_groups = mysqli_fetch_assoc($get_groups)){

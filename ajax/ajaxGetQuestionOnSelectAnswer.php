@@ -7,18 +7,12 @@
         $queId = $que_detail[0]; 
         $surveyid = $_POST['surveyId'];
         $parentqueid = $_POST['parentqueid'];
-        $langid = $_POST['langId'];
+        //$langid = $_POST['langId'];
         $child_answer = array();
         $response = '';
         $questionId = '';
 
-        $lang_iso='en';
-
-        record_set("get_language", "select * from languages where id='".$langid."'");				
-        $row_get_language = mysqli_fetch_assoc($get_language);
-        if($row_get_language['id'] == $langid){
-            $lang_iso = $row_get_language['iso_code'];
-        }
+        
 
         record_set("get_question_id", "select * from questions_detail where id=".$queId." and condition_yes_no='1' and condition_qid!='' ");
         $row_get_question_id = mysqli_fetch_assoc($get_question_id);
@@ -37,11 +31,11 @@
                 
                 while($row_get_question_detail = mysqli_fetch_assoc($get_question_detail)){
                     
-                   $child_answer[$row_get_question_detail['id']]= ($lang_iso == 'en')?$row_get_question_detail['description']:$row_get_question_detail['description_'.$lang_iso];     
+                   $child_answer[$row_get_question_detail['id']]= $row_get_question_detail['description'];     
                         
                 }
 
-                $question_radiobutton = ($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+                $question_radiobutton = $row_get_question['question'];
 
                 $response .='<table class="table table-hover table-bordered"><tbody><tr align="center">
                                 <td colspan="'.count($child_answer).'"><strong>'.$question_radiobutton.'</strong></td> 
@@ -61,7 +55,7 @@
         // Text Box Option
         if($row_get_question['answer_type'] == 2){
 
-            $question_textbox = ($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+            $question_textbox = $row_get_question['question'];
 
             $response .='<div class="question_container_'.$row_get_question['id'].'">
                             <h4>'.$question_textbox.'</h4>';
@@ -76,7 +70,7 @@
 
         // TextArea Option
         if($row_get_question['answer_type'] == 3){
-            $question_textarea = ($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+            $question_textarea = $row_get_question['question'];
 
             $response .='<div class="question_container_'.$row_get_question['id'].'">
                             <h4>'.$question_textarea.'</h4>';
@@ -90,7 +84,7 @@
         // Ratting Option
         if($row_get_question['answer_type'] == 4){
 
-            $quetion_rating = ($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+            $quetion_rating = $row_get_question['question'];
 
            $response .='<div class="question_container_'.$questionId.'">
                         <h4>'.$quetion_rating.'</h4>';
@@ -100,7 +94,7 @@
                     
                     while($row_get_question_detail = mysqli_fetch_assoc($get_question_detail)){
                         
-                        $child_answer[$row_get_question_detail['id']]= ($lang_iso == 'en')?$row_get_question_detail['description']:$row_get_question_detail['description_'.$lang_iso];     
+                        $child_answer[$row_get_question_detail['id']]= $row_get_question_detail['description'];     
                             
                     }
                 $response .='<table class="table table-hover table-bordered">
@@ -164,7 +158,7 @@
         // Title Option
         if($row_get_question['answer_type'] == 5){
 
-            $question_title =($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+            $question_title =$row_get_question['question'];
 
             $response .='<div class="question_container_'.$row_get_question['id'].'">
                             <h4>'.$question_title.'</h4>';
@@ -173,7 +167,7 @@
                 if($totalRows_get_questions_detail>0){
                     while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
 
-                        $response .='<h5>'.($lang_iso == 'en')?$row_get_questions_detail['description']:$row_get_questions_detail['description_'.$lang_iso].'</h5>';
+                        $response .='<h5>'.$row_get_questions_detail['description'].'</h5>';
                     }
                 }
             $response .='</div>';    
@@ -181,7 +175,7 @@
 
         // DropDown Option
         if($row_get_question['answer_type'] == 6){
-            $question_dropdown = ($lang_iso == 'en')?$row_get_question['question']:$row_get_question['question_'.$lang_iso];
+            $question_dropdown = $row_get_question['question'];
 
             $response .='<div class="question_container_'.$row_get_question['id'].'">
                         <h4>'.$question_dropdown.'</h4>';
@@ -192,7 +186,7 @@
                 record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionId."' and surveyid='".$surveyid."' and cstatus='1' ");
                 if($totalRows_get_questions_detail>0){
                     while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-                        $selectOption = ($lang_iso == 'en')?$row_get_questions_detail['description']:$row_get_questions_detail['description_'.$lang_iso];
+                        $selectOption = $row_get_questions_detail['description'];
 
                         $response .='<option value="'.$row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer'].'">'.$selectOption.'</option>';
                 

@@ -1,8 +1,8 @@
 <?php 
 if($_SESSION['user_type']==1){
-    $rePage = 'sadmin-login.php'; 
+    $rePage = 'login.php'; 
 }else if($_SESSION['user_type']==2){
-    $rePage = 'admin-login.php'; 
+    $rePage = 'login.php'; 
 }else {
     $rePage = 'login.php'; 
 }

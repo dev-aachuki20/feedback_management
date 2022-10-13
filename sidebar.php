@@ -1,17 +1,23 @@
     <!-- dashboard menu-->
     <?php 
+    $userDetails = get_user_datails($_SESSION['user_id']);
     ?>
     <li class="treeview profile-active">
-        <?php if($_SESSION['user_type']==1){ ?>
-            <!-- for super admin  -->
-            <a href="?page=add-user&t=sa&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
-        <?php }else if($_SESSION['user_type']==2){ ?>
-             <!-- for admin  -->
-            <a href="?page=add-user&t=a&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
-        <?php }else { ?>
-            <!-- for manager  -->
-            <a href="?page=add-user&t=c&id=<?=$_SESSION['user_id']?>&user=profile"><i class="fa fa-user"></i><span><?=$_SESSION['user_name']?></span></a>
-        <?php } ?>
+    <div class="app_sidebar_user">
+		<div class="user-body">
+            <?php if($userDetails['photo']) { ?>
+                <img src="upload_image/<?php echo $userDetails['photo']?>" alt="profile-user">
+           <?php } else { ?> 
+            <img src="https://laravel.spruko.com/sparic/ltr/assets/images/users/avatars/2.png" alt="profile-user">
+            <?php }?>
+			
+		</div>
+		<div class="user-info">
+			<a href="?page=add-user&id=<?=$_SESSION['user_id']?>&user=profile" class=""><span class=""><?=get_user_datails($_SESSION['user_id'])['name']?></span><br>
+			<span class="proDl"><?php if($_SESSION['user_type']==1){ echo 'DGS LEVEL';} else if($_SESSION['user_type']==2){ echo 'SUPER ADMIN';} else if($_SESSION['user_type']==3){ echo 'ADMIN';} else { echo 'MANAGER';}?></span>
+			</a>
+		</div>
+</div>
     </li>
     <li><a href="index.php"><i class="fa fa-dashboard"></i><span>DASHBOARD</span></a></li>
     <!-- Configuration menu-->
@@ -46,7 +52,7 @@
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
                     <a href="#" class="nav-link"> <i class="fa fa-list-alt"></i> <span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
-                        <?php if($_SESSION['user_type']==1) {?>
+                        <?php if($_SESSION['user_type']<=2) {?>
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>Add Survey</span></a> </li>
                         <?php } ?>    
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>View Surveys</span></a> </li>
@@ -70,7 +76,7 @@
                     </ul>
                 </li>
                 <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=monthly-report&type=survey" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<2) {?>
+                <?php if($_SESSION['user_type']<3) {?>
                     <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='survey') ? 'active':''?>">
                         <a href="?page=survey-statistics&type=survey" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                     </li>

@@ -27,15 +27,12 @@
                 </thead>
                 <tbody>
                  <?php 
-                    //for super admin
-                    if($_SESSION['user_type']==1){
+                    //for super admin and dgs
+                    if($_SESSION['user_type']<=2){
                       $filter = '';
-                    }else if($_SESSION['user_type']==2){
-                      //for admin
-                      $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
-                    }else if($_SESSION['user_type']==3){
-                        //for manager
-                      $filter = " and (cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') ";
+                    }else {
+                      //for admin and other user
+                      $filter = " and cby=".$_SESSION['user_id']."";
                     }
                   record_set("get_surveys", "select * from surveys where id>0 $filter order by cdate desc");				
                   while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){
@@ -105,13 +102,7 @@
         "autoWidth": false
       });
     });
+    
 
-  //   function okButtonClickHandler(){
-  //     let popupId = $(this).attr('aria-describedby');
-  //     alert(popupId);
-  //   }
-  // $('.popover-dept').click(function() {
-  //     setTimeout(okButtonClickHandler, 3000)
-  // });
 
   </script>

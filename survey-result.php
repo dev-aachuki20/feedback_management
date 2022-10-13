@@ -4,12 +4,12 @@ include('function/get_data_function.php');
 //Get Survey Details
 
 $surveyid = $_GET['surveyid'];
-$client_id = '';
+//$client_id = '';
 if(isset($_GET['surveyid'])){
   record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1");
   if($totalRows_get_survey > 0){
     $row_get_survey = mysqli_fetch_assoc($get_survey);
-    $client_id = $row_get_survey['clientid'];
+    //$client_id = $row_get_survey['clientid'];
   }else{
     echo 'Wrong survey ID.'; 
     exit;
@@ -92,6 +92,19 @@ record_set("get_contact_action_single", "select * from survey_contact_action whe
  
 }
 
+record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
+if($totalRows_get_survey_id > 0){ 
+  $row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
+  $survey_id = $row_get_survey_id['surveyid'];
+  $user_data = get_admin_manager_of_survey($survey_id);
+  foreach($user_data as $key => $value){
+    foreach($value as $val){
+      $uemail = $val['email'];
+      $uname  = $val['name'];
+      send_email_to_assign_user($uemail,$uname);
+    }
+  }
+}
 if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
   $user_id = $_GET['userid'];
   record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']." and cby_user_type=".$_SESSION['user_type']." and cby_user_id=".$_SESSION['user_id']."");
@@ -341,7 +354,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                    <?php ?>
                    <div class="col-md-4">
                          <div class="col-md-5" style="padding: 0px;text-align: right;"><strong>USERNAME :</strong></div>
-                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo get_user_datails($comm['cby_user_id'],$comm['cby_user_type'])['name'] ?></div>
+                         <div class="col-md-7" style="padding: 0px 5px;text-align:left;"><?php echo get_user_datails($comm['cby_user_id'])['name'] ?></div>
                    </div>
                    <div class="col-md-4">
                          <div class="col-md-7" style="padding: 0px;text-align: right;"><strong>CONTACTED ON :</strong></div>
@@ -405,28 +418,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
           <?php //} ?>
           </div>
         </div>
-    
-
-    <div class="custom_contact_action" style="text-align: center;">
-      <?php 
-      if(!empty($co_action)){
-        $client_name='';
-        record_set("get_client", "select * from clients where id='".$client_id."' and cstatus=1");
-        if($totalRows_get_client > 0){
-          $row_get_client = mysqli_fetch_assoc($get_client);
-            $client_name =  $row_get_client['name'];
-        }
-      ?>
-      
-        <?php
-         foreach($showAllComment as $key=>$item){
-          //  echo '<h3>'.ucfirst($client_name).' contacted on '.date("d/m/Y",strtotime($item['created_date'])).' | '.ucfirst($client_name).' '.$item['action'].' on '.date("d/m/Y",strtotime($item['created_date'])).' : comment : '.$item['comment'].'</h3>'; 
-         }
-        ?>
-      <?php 
-      }
-      ?>
-    </div>
     </div>
   </body>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>

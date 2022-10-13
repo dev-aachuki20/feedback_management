@@ -16,7 +16,7 @@ if(!empty($_POST['surveys'])){
     $dateflag= false;
     $query = 'SELECT * FROM answers where id !=0 ';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
-        $query .= " where cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
+        $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
         $dateflag= true;
     }
 
@@ -61,7 +61,7 @@ if(!empty($_POST['surveys'])){
 
     // for my task
     if(!empty($requestData['status'])){
-        $statusFilter = "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type";
+        $statusFilter = "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id ";
         $task_id =array();
         if($requestData['status'] == 1){
             record_set("get_assign_task", $statusFilter);
@@ -106,9 +106,11 @@ if(!empty($_POST['surveys'])){
     if($totalRows_get_recent_entry >0){
         $i=0;
         while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){
+           
             $i++;
             $nestedData=array();
             record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
+           
             $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
             $row_survey_entry = 1;
             record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
@@ -121,6 +123,7 @@ if(!empty($_POST['surveys'])){
             
             $total_result_val=0;
             record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
+           
             // if($requestData['contact']==1){
             //     if($totalRows_get_survey_result==0 || empty($totalRows_get_recent_entry)){
             //         continue;
@@ -147,6 +150,7 @@ if(!empty($_POST['surveys'])){
                 }
 
             }
+          
             // // for filter using contact
             // if($requestData['contact']!=3){
             //     if($to_bo_contacted == 1 && $requestData['contact']!=1){
@@ -170,10 +174,12 @@ if(!empty($_POST['surveys'])){
                 $label_class = 'info';
             }
             // get taskstatus
-            record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+            
+            record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id = ".$row_get_recent_entry['cby']);
             $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
             $task_status = $row_check_assign_task['task_status'];
             $param = "&status=assign";
+            
             if(empty($task_status)){
                 $task_status =1;
                 $param = "";
@@ -186,9 +192,12 @@ if(!empty($_POST['surveys'])){
             $nestedData[] =' <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid='.$row_get_recent_entry['surveyid'].'&userid='.$row_get_recent_entry['cby'].''.$param.'" target="_blank">VIEW DETAILS</a>';
 
             $data[] = $nestedData;
+         
         }
+        
     }
-}	
+}
+	
 $json_data = array(
     "draw"            => intval( $requestData['draw'] ),
     "recordsTotal"    => intval( $totalRows_get_all_data ), 

@@ -1,8 +1,8 @@
+
 <?php 
     if(!empty($_GET['id'])){
         record_set("get_surveys", "select * from surveys where id='".$_GET['id']."'");
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
-        $languages = explode(',',$row_get_surveys['language']);
     }
     if($_POST['update']){
         $dataCol = array(
@@ -31,7 +31,7 @@
             //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
-        if($_SESSION['user_type']==1){
+        if($_SESSION['user_type']<=2){
             $data = array_merge($dataCol,$new_data);
         }else {
             $data = $dataCol;
@@ -74,9 +74,9 @@
         $dataCol =  array(
   			"name"                   => $_POST['name'],
   			"survey_needed"          => $_POST['survey_needed'],
-  			"clientid"               => $_POST['clientid'],
-            "adminid"                => $_POST['adminid'],
-            "user_type"              => $_POST['user_type'],
+  			// "clientid"               => $_POST['clientid'],
+            // "adminid"                => $_POST['adminid'],
+            // "user_type"              => $_POST['user_type'],
             "survey_type"            => $_POST['survey_type'],
             "intervals"              => $_POST['interval'],
             "start_date"             => $_POST['sdate'],
@@ -99,30 +99,14 @@
             "other_link"             => $_POST['other_link'],
   		);
  	
-        $lang_col=array();
-        record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-        while($row_get_language = mysqli_fetch_assoc($get_language)){	
-            if($row_get_language['id'] !=1){
-                $lang_col["name_".$row_get_language['iso_code']] = $_POST['name_'.$row_get_language['iso_code']];
-            }
-        }
-        $data = array_merge($dataCol,$lang_col);
-        $insert_value =  dbRowInsert("surveys",$data);
+        $insert_value =  dbRowInsert("surveys",$dataCol);
 
-        if(!empty($insert_value )){	
+        if(!empty($insert_value)){	
             //Insert Survey Steps
             if(isset($_POST['isStep']) && isset($_POST['numberOfStep'])){
                 for($step = 0; $step < $_POST['numberOfStep']; $step++){
                     $step_data_col = array("survey_id" => $insert_value, "step_number" => $step+1, "step_title" => $_POST['stepstitle'][$step], 'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
-                    $lang_step_col=array();
-                    record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-                    while($row_get_language = mysqli_fetch_assoc($get_language)){	
-                        if($row_get_language['id'] !=1){
-                            $lang_step_col["step_title_".$row_get_language['iso_code']] = (isset($_POST['stepstitle_'.$row_get_language['iso_code']][$step])) ? $_POST['stepstitle_'.$row_get_language['iso_code']][$step]:'';
-                        }
-                    }
-                    $step_data = array_merge($step_data_col,$lang_step_col);
-                    $insert_steps =  dbRowInsert("surveys_steps",$step_data);
+                    $insert_steps =  dbRowInsert("surveys_steps",$step_data_col);
                 }
             }
   	        $msg = "Surveys Added Successfully";
@@ -133,17 +117,18 @@
         }else{
             $msg = "Some Error Occourd. Please try again..";
             alertdanger($msg,'?page=add-survey');
-  	       
         }
         //reDirect("?page=add-survey&msg=".$msg);		
     }
 
+
+
 // get data by user
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
-$groupByUsers      = get_filter_data_by_user('groups');
-    
+$groupByUsers      = get_filter_data_by_user('groups');  
 ?>
+
 
 <section class="content-header">
     <h1> <?=($_GET['id'])?'Edit Survey':'Add Survey'?></h1>
@@ -212,7 +197,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select class="form-control" name="status" <?=($_GET['id'] and $_SESSION['user_type']>1) ? 'disabled ': ''?>>
+                                    <select class="form-control" name="status" <?=($_GET['id'] and $_SESSION['user_type']>2) ? 'disabled ': ''?>>
                                         <?php foreach(status() as $key => $value){ ?>
                                             <option <?php if($row_get_surveys['cstatus']==$key){?> selected="selected"<?php }?> value="<?php echo $key; ?>"><?php echo $value;?></option>
                                         <?php } ?>
@@ -262,41 +247,34 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             </div>
                             <div class="col-md-6 dropdwn ">
                                 <div><label>Location</label>
-                                <input type="checkbox" id="allLoc" class="multiselect" onchange="select_all_option('allLoc','location_id')"></div>
-                                
+                                 <?php 
+
+                                 $location = $row_get_surveys['locations'];
+                                 $locationId = get_data_by_id('locations',$location);
+                                ?>
+                                <input type="checkbox" id="allLoc" class="multiselect" onchange="select_all_option('allLoc','location_id')">
+                            </div>
+
                                 <select name="locationid[]" id="location_id" class="form-control form-control-lg multiple-select" multiple=multiple>
-                                    <!-- <option value="">Please select</option> -->
-                                    <?php //if(!empty($row_get_surveys['locations'])){
-                                        $locations = explode(',',$row_get_surveys['locations']);
-                                        $selected_option_location = array();
-                                        // if($row_get_surveys['isSchoolAllowed'] == 0){
-                                            foreach($locations as $val){
-                                                $selected_option_location[] = $val;
-                                            }
-                                        //}
-                                        foreach($locationByUsers as $row_get_location) {?>
-                                        <option value="<?php echo $row_get_location['id'];?>" <?php echo (in_array($row_get_location['id'], $selected_option_location))? 'selected':''; ?>><?php echo $row_get_location['name'];?></option>
-                                    <?php }  ?>
+                                     <?php 
+                                     foreach($locationId as $key => $value){ ?>
+                                        <option value="<?=$key?>" selected><?=$value?></option>
+                                    <?php } ?>   
                                 </select>	
                             </div>
                             <div class="col-md-6 dropdwn ">
                                 <label>Department</label>
                                 <input type="checkbox"id="alldep" class="multiselect" onchange="select_all_option('alldep','departments')">
                                 <select name="departments[]" id="departments" class="form-control form-control-lg multiple-select" multiple=multiple>
-                                    <!-- <option value="">Please select</option> -->
-                                    <?php
-                                        $departments = explode(',',$row_get_surveys['departments']);
-                                        $selected_option_department = array();
-                                        //if($row_get_surveys['isSchoolAllowed'] == 0){
-                                            foreach($departments as $val){
-                                                $selected_option_department[] = $val;
-                                            }
-                                        //}
-                                        foreach($departmentByUsers as $row_get_department) {?>
-                                        <option value="<?php echo $row_get_department['id'];?>" <?php echo (in_array($row_get_department['id'], $selected_option_department))? 'selected':''; ?>><?php echo $row_get_department['name'];?></option>
-                                    <?php  } ?>
+                                <?php 
+                                  $department = $row_get_surveys['departments'];
+                                  $departmentId = get_data_by_id('departments',$department);
+                                    foreach($departmentId as $key => $value){ ?>
+                                    <option value="<?=$key?>" selected><?=$value?></option>
+                                <?php } ?> 
                                 </select>	
                             </div>
+                            
                             <div class="col-md-6">
                                 <div class="col-md-6">
                                     <label for=""></label>
@@ -390,7 +368,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <?php if(empty($_GET['id'])){ ?>
                                         <input type="Submit" class="btn btn-primary" value="Create" name="submit" id="submit" style="margin-top:24px"/>
                                     <?php }else{ 
-                                        if($_SESSION['user_type']==1){ ?>
+                                        if($_SESSION['user_type']<=2){ ?>
                                           <input type="Submit" class="btn btn-primary" value="Update" id="update" name="update" style="margin-top:24px"/>
                                         <?php } ?>
                                     <?php } ?>
@@ -404,24 +382,9 @@ $groupByUsers      = get_filter_data_by_user('groups');
         </div>
     </div>
 </section>
+
 <script type="text/javascript">
 $(document).ready(function(){
-    //check user type selcted
-    $('#user_type').change(function(){
-        let userType = $(this).val();
-        if(userType==2){
-            $('#client-field').hide();
-            $('#admin-field').show();
-            $('#clientId').val('');
-        }else if(userType==3){
-            $('#admin-field').hide();
-            $('#client-field').show();
-            $('#adminId').val('');
-        }
-    })
-
-
-
     if ($('#isStep').is(':checked')) {
       $(".whenStepAllow").show();
     } else {
@@ -440,6 +403,10 @@ $(document).ready(function(){
     $("#numberOfStep").keyup(function() {
       $("#stepsTitle").html("");
       var numberOfSteps = $(this).val();
+      if(numberOfSteps>50){
+        alert('Step size can not be greater than 50');
+        return;
+      }
       var i;
       var html = "";
       var intial = 1;
@@ -449,22 +416,6 @@ $(document).ready(function(){
       for(i=intial; i <= numberOfSteps; i++){
         html += '<div class="col-md-12"><div class="form-group"><label>Step '+i+' Title</label><input type="text" class="form-control step_checkbox" id="stepTitle'+i+'" name="stepstitle[]"></div></div>';
       }
-      <?php 
-          record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-          while($row_get_language = mysqli_fetch_assoc($get_language)){	
-            if($row_get_language['id'] !=1){
-      ?>
-            if($('#lang_<?=$row_get_language['iso_code']?>').prop('checked')==true){
-              if($('#lang_<?=$row_get_language['iso_code']?>').val() == '<?=$row_get_language['id']?>'){
-                for(i=intial; i <= numberOfSteps; i++){
-                  html += '<div class="col-md-12" id="lang_<?=$row_get_language['iso_code']?>"><div class="form-group"><label>Step '+i+' Title - <?=$row_get_language['name']?></label><input type="text" class="form-control" id="stepTitle'+i+'" name="stepstitle_<?=$row_get_language['iso_code']?>[]"></div></div>';
-                }
-              }
-            }
-      <?php 
-            } 
-          } 
-      ?>
       $("#stepsTitle").html(html);
       $(".step_checkbox").attr("required", true);
     });
@@ -474,65 +425,6 @@ $(document).ready(function(){
 		$('.form-control').click(function(){
 			$(this).css("border-color", "#ccc");
 		});
-		
-		// $("#submit").click(function(){
-        //     var name = $("#name").val();
-        //     if(name==''){
-        //         document.getElementById('name').style.borderColor = "#ff0000";
-        //         alert('Name field is required');
-        //         document.getElementById('name').focus();
-        //         return false;
-        //     }
-		// });
-
-    // $('#clientId').change(function(){
-  
-    //     var client_id = $(this).val();
-    //     $.ajax({
-    //         type: "POST",
-    //         url: 'ajax/ajaxOnSelectClientLocation.php',
-    //         data: {client_id: client_id}, 
-    //         success: function(response)
-    //         {
-    //           //  console.log(response);
-    //           if (response == '') {
-    //             $('#location_id').html('<option value="">Please select</option>');
-    //           }else{
-    //             $('#location_id').html('<option value="">Please select</option>'+response); 
-    //           }
-              
-    //         }
-    //     });
-        
-    // });  
-
-   
-    // $('#isEnableLocation').click(function(){
-    //     if($(this).prop("checked") == true){
-    //         $('#location_id').attr('multiple','multiple');
-    //       }
-    //       else if($(this).prop("checked") == false){
-    //         $('#location_id').removeAttr('multiple','multiple');
-    //       }
-    // });
-
-    // $('#isEnableDepartment').click(function(){
-    //     if($(this).prop("checked") == true){
-    //         $('#departments').attr('multiple','multiple');
-    //       }
-    //       else if($(this).prop("checked") == false){
-    //         $('#departments').removeAttr('multiple','multiple');
-    //       }
-    // });
-
-    // $('#isEnableGroup').click(function(){
-    //     if($(this).prop("checked") == true){
-    //         $('#group_id').attr('multiple','multiple');
-    //       }
-    //       else if($(this).prop("checked") == false){
-    //         $('#group_id').removeAttr('multiple','multiple');
-    //       }
-    // });
 });
     
 //select all option for location department,group
@@ -551,7 +443,7 @@ function select_all_option(idFirst,idSecond){
 <?php if($_GET['id']){ ?>
     $('#survey_from input').attr('readonly','readonly');
     $('#survey_from textarea').attr('readonly','readonly');
-    <?php if($_SESSION['user_type'] == 1) { ?>
+    <?php if($_SESSION['user_type'] <= 2) { ?>
     $('#interval').removeAttr('disabled');
     $('#sdate').removeAttr('readonly');
     $('#edate').removeAttr('readonly');   
@@ -595,4 +487,33 @@ $('#sdate').change(function(){
     let sdate = $(this).val();
     $("#edate").attr("min", sdate);
 });
+
+$(document).ready(function(){
+    $('#group_id').change(function () {
+        let group_id = $(this).val();
+        let type     = 'group';
+        load_location(group_id,type);
+    });
+    $('#location_id').change(function () {
+        let location_id = $(this).val();
+        let type     = 'location';
+        load_location(location_id,type);
+    });
+})
+function load_location(ids,mode){
+    $.ajax({
+        type: "POST",
+        url: 'ajax/common_file.php',
+        data: {id: ids,mode:mode}, 
+        success: function(response){
+            if(mode == 'group'){
+                $('#location_id').html(response);
+                $('#departments').html('');
+            }else if(mode == 'location'){
+                $('#departments').html(response);
+            }
+           
+        }
+    });
+}
 </script>

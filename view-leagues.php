@@ -1,6 +1,6 @@
 <?php 
     // survey by user
-    $surveyByUsers = get_filter_data_by_user('surveys');
+    $surveyByUsers = get_survey_data_by_user('survey');
 ?>
 <style>
     .btn-outline-secondary {

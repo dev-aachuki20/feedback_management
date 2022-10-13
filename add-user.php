@@ -7,27 +7,12 @@
 
   $coloumn_name = '';
 	if(!empty($_GET['id'])){
-    if($_GET['t']=='a'){
-      record_set("get_admin_id", "select * from admin where id='".$_GET['id']."'");
-      $coloumn_name = 'admin_ids';
-      $title = 'Admin';
-    }else if($_GET['t']=='c'){
-      record_set("get_admin_id", "select * from clients where id='".$_GET['id']."'");
-      $coloumn_name = 'client_ids';
-      $title = 'Manager';
-    }else if($_GET['t']=='sa'){
-      record_set("get_admin_id", "select * from super_admin where id='".$_GET['id']."'");
-      $title = 'Super Admin';
-      $coloumn_name = 'admin_ids';
-    }else {
+    record_set("get_user_id", "select * from manage_users where id='".$_GET['id']."'");
+    $row_get_user_id = mysqli_fetch_assoc($get_user_id);
+    if($totalRows_get_user_id == 0){
       echo 'Invalid User'; die();
     }
-    $row_get_admin_id = mysqli_fetch_assoc($get_admin_id);
   }
-// Start update
-$client_id = '';
-$admin_id  = '';
-$user_type = '';
 
 	if(!empty($_POST['update'])){
       $file_name=$_FILES['photo']['name'];
@@ -35,10 +20,8 @@ $user_type = '';
       $folder="upload_image/";
       $image_id=rand(1000,100000)."-";
       $result=upload_image1($folder,$file_name, $file_tempname,$image_id);
-      $user_type = $_POST['user_type'];
-
       if(!empty($result)){
-          unlink("upload_image/".$row_get_admin_id['photo']);	
+          unlink("upload_image/".$row_get_user_id['photo']);	
           $data = array(
               "name"      => $_POST['name'],
               //"email"     => $_POST['email'],
@@ -57,115 +40,96 @@ $user_type = '';
       if(!empty($_POST['password'])){
           $data['password']= md5($_POST['password']);
       }
-      if($user_type==1){
-        // for super admin update
-        $updte=	dbRowUpdate("super_admin", $data, "where id=".$_GET['id']);
-      }
-      if($user_type==2){
-        // for admin update
-          $updte=	dbRowUpdate("admin", $data, "where id=".$_GET['id']);
-      }else {
-        // for manager update
-          $data['locationid'] =implode(",",$_POST['locationid']);
-          $updte=	dbRowUpdate("clients", $data, "where id=".$_GET['id']);
-
-          if(isset($_POST['locationid'])){
-            $locationids .= implode('|', $_POST['locationid']); 
-          }
-      }
+      
+      $updte=	dbRowUpdate("manage_users", $data, "where id=".$_GET['id']);
       if(!empty($updte)){
           //assign user location,group,department
           $groupids =$locationids= $departmentids= $survey_type='';
-          if($_POST){
-            $surveyids .= implode('|', $_POST['surveyids']); 
-            $surveyids  = "|".$surveyids."|";
-
-            $groupids .= implode('|', $_POST['groupids']); 
-            $groupids  = "|".$groupids."|";
-
-            $departmentids .= implode('|', $_POST['departmentids']); 
-            $departmentids ="|".$departmentids."|";
-            
-            $locationids .= implode('|', $_POST['locationids']); 
-            $locationids ="|".$locationids."|";
-            $uid = $_GET['id'];
-            
-            // survey update
-            $row_data_surveys='';
-            record_set("data_surveys","select id,$coloumn_name from surveys");
-            while($row_data_surveys=mysqli_fetch_assoc($data_surveys)){
-              $manager_ids = str_replace("|".$uid."|","",$row_data_surveys[$coloumn_name]);
-              if(in_array($row_data_surveys['id'], $_POST['surveyids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              //if(strlen($manager_ids)>0){
-                $user_data_update = array(
-                  "$coloumn_name" => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate('surveys', $user_data_update, 'where id='.$row_data_surveys['id']);
-              //}
-            }
-
-            // group update
-            $row_data_group='';
-            record_set("data_group","select id,$coloumn_name from groups");
-            while($row_data_group=mysqli_fetch_assoc($data_group)){
-              $manager_ids = str_replace("|".$uid."|","",$row_data_group[$coloumn_name]);
-              if(in_array($row_data_group['id'], $_POST['groupids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              //if(strlen($manager_ids)>0){
-                $user_data_update = array(
-                  "$coloumn_name" => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate('groups', $user_data_update, 'where id='.$row_data_group['id']);
-              //}
-            }
-          
-              //location update
-              $row_data_department='';
-              record_set("data_locations","select id,$coloumn_name from locations");
-              while($row_data_locations=mysqli_fetch_assoc($data_locations)){
-                $manager_ids = str_replace("|".$uid."|","",$row_data_locations[$coloumn_name]);
-                if(in_array($row_data_locations['id'], $_POST['locationids'])){
-                  $manager_ids = $manager_ids."|".$uid."|";
-                }
-                $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-                $manager_ids = implode("|",$manager_ids);
-                $user_data_update = array(
-                  "$coloumn_name"  => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate("locations", $user_data_update, "where id=".$row_data_locations['id']);
-              }
-            
-            //Update Deprtment
-            $row_data_department='';
-            record_set("data_departments","select id,$coloumn_name from departments");
-            while($row_data_departments=mysqli_fetch_assoc($data_departments)){
-
-              $manager_ids = str_replace("|".$uid."|","",$row_data_departments[$coloumn_name]);
-              if(in_array($row_data_departments['id'], $_POST['departmentids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              $user_data_update = array(
-                "$coloumn_name"  => "|".$manager_ids."|"
+          $uid = $_GET['id'];
+          // assign group
+          if(isset($_POST['groupids'])){
+            $filter = "table_name = 'group' and user_id = $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['groupids'] as $groupId){
+              $data = array(
+                  "table_id"    => $groupId,
+                  "user_id"    => $uid,
+                  "table_name" => 'group'
               );
-              $update = dbRowUpdate("departments", $user_data_update, "where id=".$row_data_departments['id']);
+              $insert =  dbRowInsert("relation_table",$data);
+            }
+          }
+          // assign survey 
+          if(isset($_POST['surveyids'])){
+            $filter = "table_name = 'survey' and user_id =  $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['surveyids'] as $surveyId){
+              $data_sur = array(
+                  "table_id"    => $surveyId,
+                  "user_id"    =>  $uid,
+                  "table_name" => 'survey'
+              );
+              $insert =  dbRowInsert("relation_table",$data_sur);
+            }
+          }
+          // assign pulse 
+          if(isset($_POST['pulseids'])){
+            $filter = "table_name = 'pulse' and user_id =  $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['pulseids'] as $surveyId){
+              $data_sur = array(
+                  "table_id"    => $surveyId,
+                  "user_id"    =>  $uid,
+                  "table_name" => 'pulse'
+              );
+              $insert =  dbRowInsert("relation_table",$data_sur);
+            }
+          }
+          // assign engagement 
+          if(isset($_POST['engagementids'])){
+            $filter = "table_name = 'engagement' and user_id =  $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['engagementids'] as $surveyId){
+              $data_sur = array(
+                  "table_id"    => $surveyId,
+                  "user_id"    =>  $uid,
+                  "table_name" => 'engagement'
+              );
+              $insert =  dbRowInsert("relation_table",$data_sur);
+            }
+          }
+          // assign location 
+          if(isset($_POST['locationids'])){
+            $filter = "table_name = 'location' and user_id =  $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['locationids'] as $locationId){
+              $data_loc = array(
+                  "table_id"   => $locationId,
+                  "user_id"    =>  $uid,
+                  "table_name" => 'location'
+              );
+              $insert =  dbRowInsert("relation_table",$data_loc);
+            }
+          }
+           // assign department
+           if(isset($_POST['departmentids'])){
+            $filter = "table_name = 'department' and user_id = $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['departmentids'] as $departmentId){
+              $data_dept = array(
+                  "table_id"   => $departmentId,
+                  "user_id"    => $uid,
+                  "table_name" => 'department'
+              );
+              $insert =  dbRowInsert("relation_table",$data_dept,1);
             }
           }
           $msg = "User Updated Successfully";
           if(isset($_GET['user'])){
-            alertSuccess( $msg,'');
+            alertSuccess($msg,'');
           }else {
-            //alertSuccess( $msg,'?page=view-user');
+            alertSuccess( $msg,'?page=view-user');
           }
-          
       }else{
           $msg = "User Not Updated Successfully";
           if(isset($_GET['user'])){
@@ -177,10 +141,12 @@ $user_type = '';
       //reDirect("?page=view-user&msg=".$msg);
 	}	
 // get data by user
+$surveyByUsers     = get_survey_data_by_user('survey');
+$pulseByUsers      = get_survey_data_by_user('pulse');
+$engagementByUsers = get_survey_data_by_user('engagement');
 $departmentByUsers = get_filter_data_by_user('departments');
-$locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_filter_data_by_user('surveys');
+
 ?>
 
 <?php
@@ -192,7 +158,7 @@ if(!empty($_POST['submit'])){
     $image_id=rand(1000,100000)."-";
     $result=upload_image1($folder,$file_name, $file_tempname,$image_id);
     
-    record_set("checkEmail", "select * from admin where email='".$_POST['email']."'");
+    record_set("checkEmail", "select * from manage_users where email='".$_POST['email']."'");
 			
     if($totalRows_checkEmail>0){
        // alert("Email already exits");
@@ -206,107 +172,74 @@ if(!empty($_POST['submit'])){
           "email" => $_POST['email'],
           "password" => md5($_POST['password']),					
           "phone"=> $_POST['phone'],
+          "user_type" => $_POST['user_type'],
           "photo" => $result,
           "cstatus" => $_POST['status'],
           'cip'=>ipAddress(),
           'cby'=>$_SESSION['user_id'],
           'cdate'=>date("Y-m-d H:i:s")
       );
-      if($user_type==3){
-          $data['locationid'] =implode(",",$_POST['locationids']);
-          $insert_value =  dbRowInsert("clients",$data);
-      }else{
-          $insert_value =  dbRowInsert("admin",$data);
-      }
+      $insert_value =  dbRowInsert("manage_users",$data);
     
       if(!empty($insert_value )){	
           //assign user location,group,department
-          $groupids =$locationids= $departmentids= $asset_type_allowed='';
-          //assign user location,group,department
           $groupids =$locationids= $departmentids= $survey_type='';
-          if($_POST){
-            $surveyids .= implode('|', $_POST['surveyids']); 
-            $surveyids  = "|".$surveyids."|";
 
-            $groupids .= implode('|', $_POST['groupids']); 
-            $groupids  = "|".$groupids."|";
-
-            $departmentids .= implode('|', $_POST['departmentids']); 
-            $departmentids ="|".$departmentids."|";
-            
-            $locationids .= implode('|', $_POST['locationids']); 
-            $locationids ="|".$locationids."|";
-            $uid = $insert_value;
-            
-            // survey update
-            $row_data_surveys='';
-            record_set("data_surveys","select id,$coloumn_name from surveys");
-            while($row_data_surveys=mysqli_fetch_assoc($data_surveys)){
-              $manager_ids = str_replace("|".$uid."|","",$row_data_surveys[$coloumn_name]);
-              if(in_array($row_data_surveys['id'], $_POST['surveyids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              //if(strlen($manager_ids)>0){
-                $user_data_update = array(
-                  "$coloumn_name" => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate('surveys', $user_data_update, 'where id='.$row_data_surveys['id']);
-              //}
-            }
-
-            // group update
-            $row_data_group='';
-            record_set("data_group","select id,$coloumn_name from groups");
-            while($row_data_group=mysqli_fetch_assoc($data_group)){
-              $manager_ids = str_replace("|".$uid."|","",$row_data_group[$coloumn_name]);
-              if(in_array($row_data_group['id'], $_POST['groupids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              //if(strlen($manager_ids)>0){
-                $user_data_update = array(
-                  "$coloumn_name" => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate('groups', $user_data_update, 'where id='.$row_data_group['id']);
-              //}
-            }
-          
-              //location update
-              $row_data_department='';
-              record_set("data_locations","select id,$coloumn_name from locations");
-              while($row_data_locations=mysqli_fetch_assoc($data_locations)){
-                $manager_ids = str_replace("|".$uid."|","",$row_data_locations[$coloumn_name]);
-                if(in_array($row_data_locations['id'], $_POST['locationids'])){
-                  $manager_ids = $manager_ids."|".$uid."|";
-                }
-                $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-                $manager_ids = implode("|",$manager_ids);
-                $user_data_update = array(
-                  "$coloumn_name"  => "|".$manager_ids."|"
-                );
-                $update = dbRowUpdate("locations", $user_data_update, "where id=".$row_data_locations['id']);
-              }
-            
-            //Update Deprtment
-            $row_data_department='';
-            record_set("data_departments","select id,$coloumn_name from departments");
-            while($row_data_departments=mysqli_fetch_assoc($data_departments)){
-
-              $manager_ids = str_replace("|".$uid."|","",$row_data_departments[$coloumn_name]);
-              if(in_array($row_data_departments['id'], $_POST['departmentids'])){
-                $manager_ids = $manager_ids."|".$uid."|";
-              }
-              $manager_ids = (array_unique(array_filter(explode("|",$manager_ids))));
-              $manager_ids = implode("|",$manager_ids);
-              $user_data_update = array(
-                "$coloumn_name"  => "|".$manager_ids."|"
+          // assign group 
+          if(isset($_POST['groupids'])){
+            $filter = "table_name = 'group' and user_id = $insert_value";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['groupids'] as $groupId){
+              $data = array(
+                  "table_id"    => $groupId,
+                  "user_id"    => $insert_value,
+                  "table_name" => 'group'
               );
-              $update = dbRowUpdate("departments", $user_data_update, "where id=".$row_data_departments['id']);
+              $insert =  dbRowInsert("relation_table",$data);
             }
           }
+
+          // assign survey 
+          if(isset($_POST['surveyids'])){
+            $filter = "table_name = 'survey' and user_id = $insert_value";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['surveyids'] as $surveyId){
+              $data = array(
+                  "table_id"    => $surveyId,
+                  "user_id"     => $insert_value,
+                  "table_name"  => 'survey'
+              );
+              $insert =  dbRowInsert("relation_table",$data);
+            }
+          }
+
+          // assign location 
+          if(isset($_POST['locationids'])){
+            $filter = "table_name = 'location' and user_id = $insert_value";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['locationids'] as $locationId){
+              $data = array(
+                  "table_id"   => $locationId,
+                  "user_id"    => $insert_value,
+                  "table_name" => 'location'
+              );
+              $insert =  dbRowInsert("relation_table",$data);
+            }
+          }
+           // assign department
+          if(isset($_POST['departmentids'])){
+            $filter = "table_name = 'department' and user_id = $insert_value";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['departmentids'] as $departmentId){
+              $data = array(
+                  "table_id"   => $departmentId,
+                  "user_id"    => $insert_value,
+                  "table_name" => 'department'
+              );
+              $insert =  dbRowInsert("relation_table",$data);
+            }
+          }
+
           $msg = "User Added Successfully";
           alertSuccess( $msg,'?page=view-user');
       }else{
@@ -324,7 +257,7 @@ if(!empty($_POST['submit'])){
 } */
 </style>
 <section class="content-header">
-  <h1 class="title"><?=isset($_GET['id'])?'Edit':'Add'?> <?=$title?></h1>
+  <h1 class="title"><?=isset($_GET['id'])?'Edit':'Add'?> User</h1>
   <?php if(!isset($_GET['user'])) { ?>
   <a href="?page=view-user" class="btn btn-primary pull-right" style="margin-top:-25px">View Users</a> 
   <?php } ?>
@@ -344,33 +277,26 @@ if(!empty($_POST['submit'])){
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Name *</label>
-                  <input type="text" class="form-control" name="name"  id="name" value="<?php echo $row_get_admin_id['name']?>"/>
+                  <input type="text" class="form-control" name="name"  id="name" value="<?php echo $row_get_user_id['name']?>"/>
                 </div>
               </div>
               <div class="col-md-6">
-                <?php 
-                  $user_types_array=user_type();
-                  if($_GET['t']==='sa'){
-                    $type = 1;
-                  }else if($_GET['t']==='a'){
-                    $type = 2;
-                  }else {
-                    $type = 3;
-                  }
-                  
-                  ?>
+                <?php $user_types_array=user_type();?>
                 <div class="form-group">
-                  <input type="hidden" id="hidden_user_type" name="user_type" value="<?=$row_get_admin_id['user_type']?>">
+                  <input type="hidden" id="hidden_user_type" name="user_type" value="<?=$row_get_user_id['user_type']?>">
                   <label>User Type</label>
                     <select class="form-control" tabindex=7 id="user_type" <?=($_GET['id'])?'disabled':'required'?>>
                         <option value="">Select User Type</option>
                       <?php   
                         foreach($user_types_array as $key => $value){
-                          if($_SESSION['user_type']==2){
-                            $allowed_key=2;
+                          // if($_SESSION['user_type']==2){
+                          //   $allowed_key=2;
+                          // }
+                          if($key==1 and !isset($_GET['user'])){
+                            continue;
                           }
-                          if($key>=$_SESSION['user_type'] and $key!=1){ ?>
-                          <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
+                          if($key>=$_SESSION['user_type']){ ?>
+                          <option <?php if($row_get_user_id['user_type']==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                           </option>
                         <?php }
                         }
@@ -382,7 +308,7 @@ if(!empty($_POST['submit'])){
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Email</label>
-                  <input type="text" class="form-control" id="email" name="email"value="<?php echo $row_get_admin_id['email']?>" <?=($_GET['id'])?'disabled':''?>/>
+                  <input type="text" class="form-control" id="email" name="email"value="<?php echo $row_get_user_id['email']?>" <?=($_GET['id'])?'disabled':''?>/>
                 </div>
               </div>
          
@@ -408,7 +334,7 @@ if(!empty($_POST['submit'])){
 	              // record_set("get_location", "select * from locations where id='".$_SESSION['user_id']."' AND cstatus=1 order by name asc");
                 record_set("get_location", "select * from locations where cstatus=1 $filterQuery order by name asc");        
 	              while($row_get_location = mysqli_fetch_assoc($get_location)){  
-                  $locations = explode(',',$row_get_admin_id['locationid']); ?>
+                  $locations = explode(',',$row_get_user_id['locationid']); ?>
                   <option value="<?php echo $row_get_location['id'];?>" 
                   <?=(in_array($row_get_location['id'],$locations)) ? 'selected':''?>>
                     <?php echo $row_get_location['name'];?>
@@ -419,15 +345,15 @@ if(!empty($_POST['submit'])){
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Phone *</label>
-                  <input type="text" class="form-control" name="phone" id="phone" value="<?php echo $row_get_admin_id['phone']?>"/>
+                  <input type="text" class="form-control" name="phone" id="phone" value="<?php echo $row_get_user_id['phone']?>"/>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Photo</label>
                   <input type="file" class="form-control" name="photo"/>
-                  <?php if(!empty($_GET['id'])){?>
-                  <img src="upload_image/<?php echo $row_get_admin_id['photo']?>" height="50" width="50" />
+                  <?php if(!empty($_GET['id']) and !empty($row_get_user_id['photo'])){ ?>
+                  <img src="upload_image/<?php echo $row_get_user_id['photo']?>" height="50" width="50" />
                   <?php }?>
                 </div>
               </div>
@@ -437,7 +363,7 @@ if(!empty($_POST['submit'])){
                   <label>Status</label>
                   <select class="form-control" name="status">
                     <?php foreach(status() as $key=> $value){ ?>
-                      <option value="<?php echo $key; ?>" <?=($row_get_admin_id['cstatus']==$key)?'selected':''?>><?php echo $value; ?></option>
+                      <option value="<?php echo $key; ?>" <?=($row_get_user_id['cstatus']==$key)?'selected':''?>><?php echo $value; ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -446,124 +372,18 @@ if(!empty($_POST['submit'])){
             <?php if(!isset($_GET['user'])) {?>
             <div class="col-md-12 survey-assign">  
               <!-- assign survey --> 
-              <?php if(count($surveyByUsers)>0){ ?>
-                <div class="col-md-12 with-border">
-                  <h4>Assign Survey</h4>
-                  <input type="checkbox" onclick="checked_all(this,'survey_checkbox')" /><strong> Select All</strong><br/><br/>
-                </div>
-                <?php 
-                if(isset($_GET['id'])){
-                    record_set("get_survey_id", "select * from surveys where $coloumn_name like '%|".$_GET['id']."|%'");
-                    while($row_get_survey_id=mysqli_fetch_assoc($get_survey_id)){
-                      $survey_saved[] =$row_get_survey_id['id'];
-                    }
-                    }else{
-                      $survey_saved = array();
-                    }
-                foreach($surveyByUsers as $suveyData){ 
-                  $survyId    = $suveyData['id'];
-                  $survyName  = $suveyData['name'];
-                  ?>
-                  <div class="col-md-4">
-                    <input class="survey_checkbox" type="checkbox" <?=(in_array($survyId,$survey_saved) ? 'checked ':' ')?> id="surveyids<?php echo $survyId ?>" value="<?php echo $survyId; ?>" name="surveyids[<?php echo $survyId; ?>]" /> 
-                    
-                    <label for="surveyids<?php echo $survyId; ?>">
-                    <?php echo $survyName ?>
-                    </label>
-                  </div>
-                <?php } ?>   
-              <?php } ?>    
+              <?php include ('./assignUserCheckbox/survey.php')?>   
+              <!-- assign pulse --> 
+              <?php //include ('./assignUserCheckbox/pulse.php')?>  
+               <!-- assign engagement --> 
+               <?php //include ('./assignUserCheckbox/engagement.php')?>  
+               <!-- assign group -->
+                <?php include ('./assignUserCheckbox/group.php')?>   
               <!-- assign location -->
-              <?php if(count($locationByUsers)>0){ ?>
-                <div class="col-md-12 with-border">
-                  <h4>Assign Location</h4>
-                  <input type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
-                </div>
-                
-                <?php 
-                if(isset($_GET['id'])){
-                  record_set("get_location_id","select id from locations where $coloumn_name like '%|".$_GET['id']."|%'");
-                  if($totalRows_get_location_id>0){
-                    while($row_getlocation=mysqli_fetch_assoc($get_location_id)){
-                      $location_id_saved[] =$row_getlocation['id'];
-                    }
-                  }
-                }else{
-                    $location_id_saved = array();
-                }
-                foreach($locationByUsers as $locationData){ 
-                  $locationId    = $locationData['id'];
-                  $locationName  = $locationData['name'];
-                  ?>
-                  <div class="col-md-4">
-                    <input type="checkbox" <?=(in_array($locationId,$location_id_saved) ? 'checked ':' ')?> id="locationids<?php echo $locationId ?>" class="loc_checkbox" value="<?php echo $locationId; ?>" name="locationids[<?php echo $locationId; ?>]" /> 
-                    
-                    <label for="locationids<?php echo $locationId; ?>">
-                    <?php echo $locationName ?>
-                    </label>
-                  </div>
-                <?php } ?>
-              <?php } ?>  
+              <?php include ('./assignUserCheckbox/location.php')?>   
               <!-- assign department -->
-              <?php if(count($departmentByUsers)>0){ ?>
-                <div class="col-md-12 with-border">
-                  <h4>Assign Departments</h4>
-                  <input type="checkbox" onclick="checked_all(this,'dept_checkbox')" /><strong> Select All</strong><br/><br/>
-                </div>
-                <?php 
-                if(isset($_GET['id'])){
-                  record_set("get_department_id","select id from departments where $coloumn_name like '%|".$_GET['id']."|%'");
-                  if($totalRows_get_department_id>0){
-                    while($row_department_id=mysqli_fetch_assoc($get_department_id)){
-                      $department_id_saved[] =$row_department_id['id'];
-                    }
-                  }
-                }else{
-                    $department_id_saved = array();
-                }
-                foreach($departmentByUsers as $deptData){ 
-                  $deptId  = $deptData['id'];
-                  $deptName = $deptData['name']; ?>
-                  <div class="col-md-4">
-                    <input type="checkbox" <?=(in_array($deptId,$department_id_saved) ? 'checked ':' ')?> id="departmentids<?php echo $deptId ?>" class="dept_checkbox" value="<?php echo $deptId; ?>" name="departmentids[<?php echo $deptId; ?>]"/> 
-                    <label for="departmentids<?php echo $deptId; ?>">
-                    <?php echo $deptName ?>
-                    </label>
-                  </div>
-                <?php }?>
-              <?php } ?>
-              <!-- assign group -->
-              <?php if(count($groupByUsers)>0){ ?>
-                <div class="col-md-12 with-border">
-                  <h4>Assign Group</h4>
-                  <input type="checkbox" onclick="checked_all(this,'group_checkbox')" /><strong> Select All</strong><br/><br/>
-                </div>
-                <?php 
-                if(isset($_GET['id'])){
-                  record_set("get_group_id","select id from groups where $coloumn_name like '%|".$_GET['id']."|%'");
-                  if($totalRows_get_group_id>0){
-                    while($row_group_id=mysqli_fetch_assoc($get_group_id)){
-                      $group_id_saved[] =$row_group_id['id'];
-                    }
-                  }
-                }else{
-                    $group_id_saved = array();
-                }
-                foreach($groupByUsers as $groupData){ 
-                  $groupId    = $groupData['id'];
-                  $groupName  = $groupData['name'];
-                  ?>
-                  <div class="col-md-4">
-                    <input type="checkbox" <?=(in_array($groupId,$group_id_saved) ? 'checked ':' ')?> id="groupids<?php echo $groupId ?>" class="group_checkbox" value="<?php echo $groupId; ?>" name="groupids[<?php echo $groupId; ?>]" /> 
-                    
-                    <label for="groupids<?php echo $groupId; ?>">
-                    <?php echo $groupName ?>
-                    </label>
-                  </div>
-                <?php } ?>  
-              <?php } ?>
-            </div>
-
+              <?php include ('./assignUserCheckbox/department.php')?>   
+            </div>  
             <?php }?>
               <div class="col-md-12">
                 <div class="form-group">
@@ -671,13 +491,35 @@ $("#user_type").change(function(){
     $(".multiple-select").select2("destroy").select2();
     var currValue = $(this).val();
     if(currValue==3){
-        $('.title').html('Add Client');
+        //$('.title').html('Add Client');
         $('.location_field').show();
     }else {
-        $('.title').html('Add Admin');
+        //$('.title').html('Add Admin');
         $('.location_field').hide();
     }
     $('#hidden_user_type').val(currValue);
 });
 
+
+function ajax_for_checkbox(id,mode){
+    $.ajax({
+        type: "POST",
+        url: 'ajax/common_file.php',
+        data: {id: id,mode:mode}, 
+        success: function(response){
+            if(mode == 'load_group'){
+              $('.surveyCheck').html(response);
+              $('.locationCheck').html('');
+              $('.groupCheck').html('');
+            }
+            if(mode == 'add_user_group_assign'){
+              $('.groupCheck').html(response);
+              $('.locationCheck').html('');
+            }
+            if(mode == 'add_user_location_assign'){
+              $('.locationCheck').html(response);
+            }
+        }
+    });
+}
 </script>

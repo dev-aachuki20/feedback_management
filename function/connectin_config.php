@@ -8,11 +8,16 @@ $whitelist = array(
 if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){ 
 	$user ='root';          
 	$password ='';              
-	$database ='dgfm_demo';
+	//$database ='dgfm_demo';
+	$database ='dgfm_demo_new';
 }else{ 
-	$user ='dgfm_demo';          
-	$password ='KH7x.p2YSENX';              
-	$database ='dgfm_demo';
+	// $user ='dgfm_demo';          
+	// $password ='KH7x.p2YSENX';              
+	// $database ='dgfm_demo';
+	$user ='root';          
+	$password ='';              
+	//$database ='dgfm_demo';
+	$database ='dgfm_demo_new';
 }
  
 define ('DB_HOST', $server);

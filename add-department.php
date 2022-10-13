@@ -3,37 +3,32 @@ if(!empty($_GET['id'])){
 	record_set("get_departments_id", "select * from departments where id='".$_GET['id']."'");
 	$row_get_departments_id = mysqli_fetch_assoc($get_departments_id);
 }
-
-// Start update
-$client_id = '';
-$admin_id  = '';
-	if($_POST){
-		$client_id .= implode('|', $_POST['client_id']); 
-		$client_id ="|".$client_id."|";
-
-    $admin_id .= implode('|', $_POST['admin_id']); 
-		$admin_id ="|".$admin_id."|";
-	}
+//only created by and super admin can change status
+if(!empty($_GET['id'])) {
+  if((($_SESSION['user_type']<=2) OR ($row_get_departments_id['cby'] == $_SESSION['user_id'] and $row_get_departments_id['user_type']==$_SESSION['user_type']))){
+    $disabled = "";
+  }else {
+    $disabled = "disabled";
+  }
+}else {
+  $disabled = "";
+}
 
 if($_POST['update']){
     $dataCol =  array(
         "name"        => $_POST['name'],
         "email"       => $_POST['email'],
-        "cstatus"     => $_POST['status'],
-        "client_ids"  => $client_id,
-        "admin_ids"   => $admin_id
     );
-    // $lang_col=array();
-    // record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-    // while($row_get_language = mysqli_fetch_assoc($get_language)){	
-    //   if($row_get_language['id'] !=1){
-    //       $lang_col["name_".$row_get_language['iso_code']] = $_POST['name_'.$row_get_language['iso_code']];
-    //   }
-    // }
-
-    //$data = array_merge($dataCol,$lang_col);
-
-    $updte=	dbRowUpdate("departments", $dataCol, "where id=".$_GET['id']);
+    //if status is readonly than it will not update
+    $dataStatus = array(
+      "cstatus"=> $_POST['status']
+    );
+    if($disabled === 'disabled'){
+      $data = $dataCol;
+    }else {
+      $data = array_merge($dataCol,$dataStatus);
+    }
+    $updte=	dbRowUpdate("departments", $data, "where id=".$_GET['id']);
     if(!empty($updte)){
       $msg = "Department Updated Successfully";
       alertSuccess( $msg,'?page=manage-department');
@@ -41,44 +36,33 @@ if($_POST['update']){
       $msg = "Department Not Updated Successfully";
       alertdanger($msg,'?page=manage-department&id='.$_GET["id"]);
     }
-    //reDirect("?page=manage-department&id=".$_GET["id"]."&msg=".$msg);			
 	}
 //End update  
 
   //Start insert
-	if(!empty($_POST['submit'])){
+	  if(!empty($_POST['submit'])){
 			$dataCol =  array(
         "name"        => $_POST['name'],
         "email"       => $_POST['email'],
         "cstatus"     => $_POST['status'],
-        "client_ids"  => $client_id,
-        "admin_ids"   => $admin_id,
-        "user_type"   => $_SESSION["user_type"],
         'cip'         => ipAddress(),
         'cby'         => $_SESSION['user_id'],
         'cdate'       => date("Y-m-d H:i:s")
       );
-
-      // $lang_col=array();
-      // record_set("get_language", "select * from languages where cby='".$_SESSION['user_id']."'");				
-      // while($row_get_language = mysqli_fetch_assoc($get_language)){	
-      //   if($row_get_language['id'] !=1){
-      //       $lang_col["name_".$row_get_language['iso_code']] = $_POST['name_'.$row_get_language['iso_code']];
-      //   }
-      // }
-
-     // $data = array_merge($dataCol,$lang_col);
-					
-			$insert_value =  dbRowInsert("departments",$dataCol);
-	
-			if(!empty($insert_value )){	
-				$msg = "Department Added Successfully";
-        alertSuccess($msg,'?page=manage-department');
-			}else{
-				$msg = "Some Error Occourd. Please try again..";
-        alertdanger($msg,'?page=add-department');
-			}
-			//reDirect("?page=manage-department&msg=".$msg);		
+      record_set("checkEmail", "select * from departments where email='".$_POST['email']."'");
+      if($totalRows_checkEmail>0){
+      $mess = 'Email already exits';
+        alertdanger($mess,'');
+      }else {
+        $insert_value =  dbRowInsert("departments",$dataCol);
+        if(!empty($insert_value )){	
+          $msg = "Department Added Successfully";
+          alertSuccess($msg,'?page=manage-department');
+        }else{
+          $msg = "Some Error Occourd. Please try again..";
+          alertdanger($msg,'?page=add-department');
+        }
+      }
 		}
     // End Insert
 ?>
@@ -92,43 +76,17 @@ if($_POST['update']){
         <div class="row">
           <div class="col-md-4">
             <div class="form-group">
-              <label>Name</label>
+              <label>Name *</label>
               <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_departments_id['name'];?>" required/>
             </div>
           </div>
-          <!-- Start name according to language -->
-          <?php
-            record_set("get_language", "select * from languages");				
-            while($row_get_language = mysqli_fetch_assoc($get_language)){
-              if($row_get_language['iso_code'] != 'en'){ ?>
-          <!-- <div class="col-md-4">
-            <div class="form-group">
-              <label>Name - <?=$row_get_language['name']?></label>
-              <input type="text" class="form-control" name="name_<?=$row_get_language['iso_code']?>" id="name_<?=$row_get_language['iso_code']?>" value="<?php echo $row_get_departments_id['name_'.$row_get_language['iso_code']];?>"/>
-            </div>
-          </div> -->
-          <?php }
-            }
-          ?>
-          <!-- End name according to language -->
+          
           <div class="col-md-4">
             <div class="form-group">
-              <label>Email</label>
-              <input type="text" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>"/>
+              <label>Email *</label>
+              <input type="text" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>" required/>
             </div>
           </div>
-              <?php
-              //only created by and super admin can change status
-                if(!empty($_GET['id'])) {
-                  if((($_SESSION['user_type']==1) OR ($row_get_departments_id['cby'] == $_SESSION['user_id'] and $row_get_departments_id['user_type']==$_SESSION['user_type']))){
-                    $disabled = "";
-                  }else {
-                    $disabled = "disabled";
-                  }
-                }else {
-                  $disabled = "";
-                }
-              ?>
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
@@ -139,52 +97,7 @@ if($_POST['update']){
             </div>
           </div>
             <!-- assign user start --> 
-            <div class="col-md-12 with-border">
-              <h4>Assign Admins</h4>
-            </div>
-            <div class="col-md-12" style="padding: 0px;">
-              <?php
-              if(($row_get_departments_id['admin_ids'])){
-                $admin_saved = explode("|",$row_get_departments_id['admin_ids']);
-              }else{
-                $admin_saved = array();
-              }
-              foreach(getAdmin() as $key => $value){ ?>
-                <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($key,$admin_saved) ? 'checked ':' ')?> id="admin_id_<?php echo $key ?>" class="userClass" value="<?php echo $key; ?>" name="admin_id[<?php echo $key; ?>]" /> 
-                  
-                  <label for="admin_id_<?php echo $key; ?>">
-                  <?php echo $value ?>
-                  </label>
-                </div>
-              <?php } ?>
-              <div class="row">
-                <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
-              </div>
-            </div>    
-            <div class="col-md-12 with-border">
-              <h4>Assign Clients</h4>
-            </div>
-            <div class="col-md-12" style="padding: 0px;">
-              <?php
-              if(($row_get_departments_id['client_ids'])){
-                $client_saved = explode("|",$row_get_departments_id['client_ids']);
-              }else{
-                $client_saved = array();
-              }
-              foreach(getClient() as $key => $value){ ?>
-                <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($key,$client_saved) ? 'checked ':' ')?>  id="client_id_<?php echo $key ?>" class="userClass" value="<?php echo $key; ?>" name="client_id[<?php echo $key; ?>]" /> 
-                  
-                  <label for="client_id_<?php echo $key; ?>">
-                  <?php echo $value ?>
-                  </label>
-                </div>
-              <?php } ?>
-              <div class="row">
-                <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
-              </div>
-            </div>
+             <?php include ('./assign_users.php');?>
             <!-- assign user end -->    
         </div>
         <!-- End row -->

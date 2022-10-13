@@ -5,34 +5,34 @@
 </style>
 
 <?php 
-$loggedIn_user_id    = $_SESSION['user_id'];
-$loggedIn_user_type  = $_SESSION['user_type'];
-$sid                 = $_GET['id'];
-$surveyByUsers       = get_filter_data_by_user('surveys');
 
+$sid = $_GET['id'];
+// get data by user
+$surveyByUsers      = get_survey_data_by_user('survey');
+$departmentByUsers  = get_filter_data_by_user('departments');
+$locationByUsers    = get_filter_data_by_user('locations');
+$groupByUsers       = get_filter_data_by_user('groups');
 // assign task to user
 if(isset($_POST['assign'])){
     $survey_id           = $_POST['survey_id'];
     $task_id             = explode(',',$_POST['response_id_hidden']);
     $assing_to_user_id   = $_POST['assing_to_user_id'];
-    $assign_to_user_type = $_POST['user_type'];
-    $assign_by_user_type = $_SESSION['user_type'];
+    // $assign_to_user_type = $_POST['user_type'];
+    // $assign_by_user_type = $_SESSION['user_type'];
     $assign_by_user_id   = $_SESSION['user_id'];
     foreach($task_id as $tasks){
         $data = array(
             "assign_to_user_id"   => $assing_to_user_id,
-            "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
             "task_status"         => 2,
             "survey_id"           => $survey_id,
             "assign_by_user_id"   => $assign_by_user_id,
-            "assign_by_user_type" => $assign_by_user_type,
             "reassign_status"     => 1,
             "cdate"               => date("Y-m-d H:i:s")
         );
 
         // check the assign task already exists for this user or not
-        record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assign_by_user_id and assign_to_user_type = $assign_by_user_type and task_id = $tasks");
+        record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assign_by_user_id  and task_id = $tasks");
         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
        
         if($totalRows_check_assign_task > 0 ){
@@ -59,7 +59,7 @@ if(isset($_POST['assign'])){
         send_email_to_assign_user($user_name,$user_email);
     }
 
-    $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
+    $userdata   = get_user_datails($assing_to_user_id);
     $user_email = $userdata['email'];
     $user_name  = $userdata['name'];
 
@@ -136,7 +136,7 @@ if(isset($_POST['assign'])){
     if(!empty($_POST['task_status'])){
         $filter_status = ' and task_status ='.$_POST['task_status'];
     }
-    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type".$filter_status);
+    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id".$filter_status);
 
     $arr_task_id = array();
     while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -159,11 +159,7 @@ if(isset($_POST['assign'])){
 
     $query .= " and cby IN (".$task_id.") GROUP by cby";
     record_set("get_recent_entry",$query);
-// get data by user
-$departmentByUsers = get_filter_data_by_user('departments');
-$locationByUsers   = get_filter_data_by_user('locations');
-$groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_filter_data_by_user('surveys');
+
 
  $display = '';
 // if($_SESSION['user_type'] == 3){
@@ -434,7 +430,7 @@ $surveyByUsers     = get_filter_data_by_user('surveys');
                                                         $contacted ='<a class="btn btn-xs btn-info">No</a>';
                                                     } 
                                                     // get taskstatus
-                                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and assign_to_user_type =".$_SESSION['user_type']." and task_id = ".$row_get_recent_entry['cby']);
+                                                    record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id = ".$row_get_recent_entry['cby']);
                                                     $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                                     $task_status = $row_check_assign_task['task_status'];
                                                     ?>

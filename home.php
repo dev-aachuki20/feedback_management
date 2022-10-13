@@ -361,21 +361,14 @@ if(isset($_POST['selectSurvey'])){
                                 <td>Date</td>
                                 <td>Survey Name</td>
                                 <td>Survey Id</td>
-                                <!--<td>Department</td>-->
                                 <td>Respondent Number</td>
                                 <td>Result</td>
                                 <td>Contact Requested?</td>
-                                <!-- <td>Action</td> -->
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                                /*record_set("get_departments", "SELECT * FROM departments");	
-                                $departments = array();
-                                while($row_get_departments = mysqli_fetch_assoc($get_departments)){
-                                    $departments[$row_get_departments['id']] = $row_get_departments['name'];
-                                }*/
-                                record_set("get_recent_entry", "SELECT surveyid,cby,cdate FROM answers WHERE $locationRecentContact answerid=-2 AND answerval = 10  GROUP by cby order by cdate DESC");	
+                                record_set("get_recent_entry", "SELECT surveyid,cby,cdate FROM answers WHERE $locationRecentContact answerid=-2 AND answerval = 10  GROUP by cby order by cdate DESC LIMIT 10");	
                                 $i=0;
                                 
                                 while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ $i++;
@@ -389,7 +382,6 @@ if(isset($_POST['selectSurvey'])){
                                     <td><?php echo date("d-m-Y", strtotime($row_get_recent_entry['cdate'])); ?></td>
                                     <td><?php echo $row_get_survey_detail['name']; ?></td>
                                     <td><?php echo $row_get_survey_detail['id']; ?></td>
-                                    <!--<td><?php echo $departments[$row_get_survey_detail['departmentid']]; ?></td>-->
                                     <td><?php echo $row_survey_entry //ordinal($row_survey_entry); ?></td>
                                     <td>
                                         <?php
@@ -438,21 +430,8 @@ if(isset($_POST['selectSurvey'])){
                                             <a class="btn btn-xs btn-info">No</a>
                                         <?php } ?>
                                     </td>
-                                    <!-- <td>
-                                        <?php if($to_bo_contacted==2){ ?>
-                                            <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>&userid=<?php echo $row_get_recent_entry['cby'];?>&contacted=<?=$to_bo_contacted?>" target="_blank">User Response</a> &nbsp;
-                                        <?php }?>
-                                            <a class="btn btn-xs btn-info" href="survey-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>" target="_blank">Overall Result</a> &nbsp;
-                                        <?php if($_SESSION['user_type'] ==3){ ?>
-                                            <a class="btn btn-xs btn-warning" href="manager-result.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>" target="_blank">Survey Result</a> &nbsp;
-                                        <?php } ?>
-                                        <?php if($to_bo_contacted==1){ ?>
-                                            <a class="btn btn-xs btn-primary" href="export-feedback.php?surveyid=<?php echo $row_get_recent_entry['surveyid'];?>&userid=<?php echo $row_get_recent_entry['cby'];?>&aid=-2&avl=10" target="_blank">Export CSV</a>
-                                        <?php } ?>
-                                    </td> -->
                                 </tr>
                             <?php } ?>
-
                                 <tr>
                                     <td colspan="5" style="text-align: center;"><a href="?page=view-report">view all request</a></td>
                                 </tr>

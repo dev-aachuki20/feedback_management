@@ -44,13 +44,14 @@ function getSurvey(){
 	}
 	return $arr;
 }
+
 function getAdmin($id=null){
 	$arr = array();
 	$filter ='';
 	if($id !=null){
 		$filter  = " and id IN ($id)";
 	}
-	$admin_data = getaxecuteQuery_fn("select id,name from admin  where cstatus=1 $filter order by name ASC");
+	$admin_data = getaxecuteQuery_fn("select id,name from manage_users where user_type = 3 and cstatus=1 $filter order by name ASC");
 	foreach ($admin_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
@@ -62,11 +63,42 @@ function getClient($id=null){
 	if($id !=null){
 		$filter  = " and id IN ($id)";
 	}
-	$clients_data = getaxecuteQuery_fn("select id,name from clients  where cstatus=1 $filter order by name ASC");
+	$clients_data = getaxecuteQuery_fn("select id,name from manage_users where user_type = 4 and cstatus=1 $filter order by name ASC");
 	foreach ($clients_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
 	return $arr;
+}
+
+function getUsers($id=null,$user_type=null){
+	$arr = array();
+	$filter ='';
+	if($id !=null){
+		$filter  = " and id IN ($id)";
+	}
+	if($user_type){
+		$filter .= " and user_type = $user_type";
+	}
+	$clients_data = getaxecuteQuery_fn("select id,name from manage_users where cstatus=1 $filter order by name ASC");
+	foreach ($clients_data as $val) {
+		$arr[$val['id']] = $val['name'];
+	}
+	return $arr;
+}
+function get_assing_id_dept_loc_grp_survey($table_name){
+	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name = '$table_name'");
+
+	$arr_id =array();
+	while($row_get_relation_data=mysqli_fetch_assoc($relation_data)){
+	  $arr_id[] =$row_get_relation_data['table_id'];
+	}
+	
+	if($_SESSION['user_type']<=2){
+		$table_ids = '';
+	}else {
+		$table_ids = implode(',',$arr_id);
+	}
+	return $table_ids;
 }
  function get_allowed_data($table,$user_id,$survey_type=''){
 	$arr = array();
@@ -94,16 +126,67 @@ function getClient($id=null){
 	}
 	return $arr;
  }
+ // get userid by table id(location id,dept id,grp id, or survey id)
+ function get_assigned_data($table_id=null,$table){
+	$sFilter = '';
+	if($table_id){
+		$sFilter .= " and table_id =".$table_id;
+	}
+	if($table){
+		$sFilter .= " and table_name = '$table' ";
+	}
+	$allowed_data = getaxecuteQuery_fn("select * from relation_table  WHERE id != '' $sFilter ");
+	foreach ($allowed_data as $val) {
+		$arr[] = $val['user_id'];
+	}
+	return $arr;
+ } 
+
+  // get location_id,dept_id,group_id,or survey_id by user_id 
+  function get_assigned_user_data($user_id=null,$table){
+	$sFilter = '';
+	if($user_id){
+		$sFilter .= " and user_id =".$user_id;
+	}
+	if($table){
+		$sFilter .= " and table_name = '$table' ";
+	}
+	$allowed_data = getaxecuteQuery_fn("select * from relation_table  WHERE id != '' $sFilter ");
+	foreach ($allowed_data as $val) {
+		$arr[] = $val['table_id'];
+	}
+	return $arr;
+ }
  function get_filter_data_by_user($table){
-	if($_SESSION['user_type']==1){
+
+	//get assigned department location group survey
+	if($table == 'departments'){
+		$type ='department';
+	}else if($table == 'locations'){
+		$type ='location';
+	}else if($table == 'groups'){
+		$type ='group';
+	}else if($table == 'surveys'){
+		$type ='survey';
+	}
+	
+	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name = '$type'");
+	
+	$arr_id =array();
+	while($row_get_relation_data=mysqli_fetch_assoc($relation_data)){
+		$arr_id[] =$row_get_relation_data['table_id'];
+	}
+	$table_ids = implode(',',$arr_id);
+	if($_SESSION['user_type']<=2){
 		$filter = '';
-	  }else if($_SESSION['user_type']==2){
-		//for admin
-		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%')) ";
-	  }else if($_SESSION['user_type']==3){
-		 //for manager
-		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') )";
-	  }
+	}else {
+		//for other user
+		$filter = " and cby='".$_SESSION['user_id']."' ";
+		if($table_ids){
+			$filter .= " OR id IN ($table_ids)";
+		}
+	}
+	 
 	  $allowed_data = getaxecuteQuery_fn("select * from $table where id>0 and cstatus=1 $filter order by cdate desc");
 	  $arr =array();
 	  while($row_get_data=mysqli_fetch_assoc($allowed_data)){
@@ -114,15 +197,15 @@ function getClient($id=null){
 
  function get_survey_data_by_user($survey_type,$confidential=0){
 	// get survey by user access
-	if($_SESSION['user_type']==1){
+	if($_SESSION['user_type']<=2){
 		$filter = '';
-	  }else if($_SESSION['user_type']==2){
-		//for admin
-		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."') OR (`admin_ids` LIKE '%|".$_SESSION['user_id']."|%')) ";
-	  }else if($_SESSION['user_type']==3){
-		 //for manager
-		$filter = " and ((cby='".$_SESSION['user_id']."' and user_type='".$_SESSION['user_type']."')  OR (`client_ids` LIKE '%|".$_SESSION['user_id']."|%') )";
-	  }
+	}else {
+		$survey_id = get_assigned_user_data($_SESSION['user_id'],'survey');
+		if($survey_id){
+			$survey_id = implode(',',$survey_id);
+			$filter = " and id IN ($survey_id)";
+		}
+	}
 	// get survey type
 	  if($survey_type == 'engagement'){
 		$sFilter = " and survey_type = 3";
@@ -144,15 +227,10 @@ function getClient($id=null){
 	return $arr;
 }
 
- function get_user_datails($id=null,$type=null){
-	 if($type == 2){
-		$user_data = getaxecuteQuery_fn("select * from admin  where id = $id ");
-	 }else if($type == 3){
-		$user_data = getaxecuteQuery_fn("select * from clients  where id = $id");
-	 }else {
-		$user_data = getaxecuteQuery_fn("select * from super_admin  where id = $id" );
-	 }
-	 $row_get_data=mysqli_fetch_assoc($user_data);
+ function get_user_datails($id=null){
+	
+	$user_data = getaxecuteQuery_fn("select * from manage_users  where id = $id ");
+	$row_get_data=mysqli_fetch_assoc($user_data);
 
 	return $row_get_data;
 }
@@ -178,18 +256,21 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 	
 	if($status_id == 1){
 		// get assigned task id 
-		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id and assign_to_user_type =$user_type");
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id");
 		while($row_get_data=mysqli_fetch_assoc($user_data)){
 			$array[] =$row_get_data['task_id'];
 		}
 		$task_ids = implode(",",$array );
-		$user_data = getaxecuteQuery_fn("SELECT * FROM answers where cby NOT IN ($task_ids) $filter group by cby");
+		if($task_ids){
+			$filter .= " and cby NOT IN ($task_ids)";
+		}
+		$user_data = getaxecuteQuery_fn("SELECT * FROM answers where id !=0 $filter group by cby");
 
 	}else {
 		if($surevy_ids){
 			$filter = " and survey_id IN ($surevy_ids)";
 		}
-		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id $filter and assign_to_user_type =$user_type and task_status = $status_id");
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id $filter and task_status = $status_id");
 	}
 	$row = mysqli_num_rows ($user_data);
 	return $row;
@@ -215,7 +296,7 @@ function get_admin_manager_of_survey($survey_id){
 	// for admin email and name
 	foreach($admin_ids as $admin){
 		if($admin){
-			$user_details = get_user_datails($admin, 2);
+			$user_details = get_user_datails($admin);
 			$user_array[2][$i]['email']  = $user_details['email'];
 			$user_array[2][$i]['name']   = $user_details['name'];
 		}
@@ -235,4 +316,13 @@ function get_admin_manager_of_survey($survey_id){
 	return $user_array;
 }
 
+function get_data_by_id($table,$id){
+	$arr = array();
+	$user_type = '';
+	$data = getaxecuteQuery_fn("select id,name from $table where id IN($id) order by name ASC");
+	foreach ($data as $val) {
+		$arr[$val['id']] = $val['name'];
+	}
+	return $arr;
+}
 ?>

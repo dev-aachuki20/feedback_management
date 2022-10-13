@@ -1,4 +1,13 @@
 
+<?php
+
+$a1= array(
+  0 => 
+  1 => 19
+);
+
+print_r(array_values(array_filter($a1))); 
+?>
 <style>
 .container {
   margin-top: 20px;

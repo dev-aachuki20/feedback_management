@@ -7,11 +7,15 @@
 		  <?php 
 					record_set("get_surveys", "select * from surveys where id='".$_REQUEST['surveyid']."'");				
 					$row_get_surveys = mysqli_fetch_assoc($get_surveys);
-					
-					record_set("cname", "select * from clients where id='".$row_get_surveys['clientid']."'");
-  					$row_cname = mysqli_fetch_assoc($cname);
-					record_set("dname", "select * from departments where id='".$row_get_surveys['departmentid']."'");				
-					$row_dname = mysqli_fetch_assoc($dname);
+          $filter ="";
+					if($row_get_surveys['departments']){
+            $filter = "where id IN (".$row_get_surveys['departments'].")";
+          }
+					record_set("dname", "select * from departments $filter");		
+          $allDepartment = array();		
+					while($row_dname = mysqli_fetch_assoc($dname)){
+            $allDepartment[] = $row_dname['name'];
+          }
 			?>
             <div class="box-header with-border">
 			<?php
@@ -29,8 +33,10 @@
               <h3 class="box-title">SURVEY NAME - <?php echo $row_get_surveys['name']?></h3>
             </div>
             <div class="box-body">
-            <p><strong>Client Name</strong> - <?php echo $row_cname['name']?></p>
-            <p><strong>Client Department</strong> - <?php echo $row_dname['name']?></p>
+            <p><strong>Client Department</strong> - <?php foreach($allDepartment as $dept){ ?>
+              <label for="" class="btn btn-xs btn-info" style=" cursor: unset;"> <?=$dept?></label>
+            <?php }?>
+           </p>
             </div>
           </div>
           <div class="box">
@@ -46,7 +52,7 @@
                 </thead>
                 <tbody>
 				<?php 
-					record_set("get_questions", "select * from questions where cby='".$_SESSION['user_id']."' and surveyid='".$_REQUEST['surveyid']."'");				
+					record_set("get_questions", "select * from questions where cby='".$_SESSION['user_id']."' OR surveyid='".$_REQUEST['surveyid']."'");				
 					while($row_get_questions = mysqli_fetch_assoc($get_questions))
 					{   ?>
               <tr>
@@ -56,7 +62,7 @@
                 <td>
                 <a class="btn btn-xs btn-info" href="?page=edit-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit</a>
 
-                <a class="btn btn-xs btn-info" href="?page=editSurveyQuestion&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit Language Text</a>
+                <!-- <a class="btn btn-xs btn-info" href="?page=editSurveyQuestion&surveyid=<?php  //echo $_REQUEST['surveyid'];?>&questionid=<?php  //echo $row_get_questions['id'];?>">Edit Language Text</a> -->
                 </td>
               </tr>
         <?php	} ?>

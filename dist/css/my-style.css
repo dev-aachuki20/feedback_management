@@ -69,11 +69,14 @@ div.form-check {
 }
 td label{margin-bottom:0px;}
 @media screen and (max-width: 600px) {
-body{padding-top:10px;}
+body{padding-top:0;}
 .submitform{width:100%;}
 td{font-size:80% !important;padding:5px !important;}
 table, h4, .form-check{line-height:1.6;}
 h4{margin-bottom:1px;font-size:16px;}
+.main-sidebar, .left-side {
+    padding-top: 50px;
+}
 }
 
 .info-box-number {
@@ -108,11 +111,12 @@ h4{margin-bottom:1px;font-size:16px;}
     list-style: none;
     text-align: left;
 }
+.sidebar-collapse 
 .help-question a {
     color: #fff;
 }
 .profile-active {
-    background-color: var(--framework_blue);
+    background-color: #3d0064;
 }
 .skin-blue .sidebar a {
     color:var(--white) !important;
@@ -217,4 +221,126 @@ h4{margin-bottom:1px;font-size:16px;}
     background-size: contain;
     cursor: pointer;
     z-index: 999;
+}
+
+.sidebar-mini.sidebar-collapse .main-sidebar:hover{
+    width: 230px !important;
+}
+.main-header>.navbar{
+    margin-left: 0;
+}
+.skin-blue .main-header .logo{
+    background: none !important;
+    width: auto;
+    text-align: left;
+}
+.skin-blue .main-header .logo img{
+    filter: brightness(0) invert(1);
+}
+.main-header .sidebar-toggle{
+    padding: 15px 19px;
+}
+.sidebar-mini.sidebar-collapse .main-header .navbar {
+    margin-left: 0;
+}
+.sidebar-mini.sidebar-collapse .main-header .logo {
+    width: auto !important;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+    background-color: #000 !important;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .content-wrapper{
+    margin-left: 230px !important;
+}
+.sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>a>span:not(.pull-right), .sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>.treeview-menu{
+    position: inherit;
+    width: auto;
+    left: 0;
+    top: 0;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .sidebar-menu>li>a>span{
+    display: inline-block !important;
+    padding: 0;
+}
+.sidebar-mini.sidebar-collapse .sidebar-menu>li>a>.pull-right{
+    display: inline-block !important;  
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .sidebar-menu>li>.treeview-menu{
+    display: none !important;  
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .sidebar-menu>li>.treeview-menu.menu-open{
+    display: block !important;  
+}
+.sidebar-mini.sidebar-collapse .sidebar-menu>li>.treeview-menu{
+    display: none !important;  
+}
+.sidebar-footer .help-question a{
+    padding: 12px 5px 12px 15px;
+    color: #fff;
+}
+.sidebar-footer .help-question a span{
+    margin-left: 5px;
+}
+.sidebar-mini.sidebar-collapse .sidebar-footer, .sidebar-mini.sidebar-collapse .sidebar-footer .help-question{
+    width: 50px;
+}
+.sidebar-mini.sidebar-collapse .sidebar-footer span{
+    display: none !important; 
+}
+.sidebar-mini.sidebar-collapse .sidebar-footer a{
+    padding:0; 
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .sidebar-footer{
+    width: 230px;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .help-question{
+    width: 230px;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover span{
+    display: inline-block !important; 
+}
+
+.app_sidebar_user{
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #615e5e;
+    background: #222d32;
+}
+.app_sidebar_user .user-body{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.app_sidebar_user .user-body img {
+    /* border-radius: 50%; */
+    width: 100%;
+    width: 60px;
+    height: 60px;
+}
+.user-info{
+    text-align: center;
+    color: #fff;
+}
+.user-info a{
+    color: #fff !important;
+}
+.user-info span.proDl{
+    font-size: 11px;
+    color: #fff !important;
+}
+.sidebar-mini.sidebar-collapse .app_sidebar_user .user-body{
+    width: 30px;
+    height: 30px;
+}
+.sidebar-mini.sidebar-collapse .app_sidebar_user .user-info{
+    display: none;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .app_sidebar_user .user-body{
+    width: 60px;
+    height: 60px;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .app_sidebar_user .user-info{
+    display: block;
 }

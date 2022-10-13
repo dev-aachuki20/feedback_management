@@ -28,6 +28,7 @@ if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 2){
     $locationJoinWhereCondition = "and answers.locationid in (select id from locations where cstatus=1)";
   }
 }
+
 //checked logged in user type
 $loggedIn_user_id    = $_SESSION['user_id'];
 $loggedIn_user_type  = $_SESSION['user_type'];
@@ -109,16 +110,8 @@ if(isset($_REQUEST['page'])){
 else{
   $inc_page='home.php'; 
 }
+
 ?>
-<?php 
-	record_set("get_image", "select photo from admin where id='".$_SESSION['user_id']."'");
-	$row_get_image = mysqli_fetch_assoc($get_image);
-	if(!empty($row_get_image['photo'])){
-		$pimg = 'upload_image/'.$row_get_image['photo'];
-	}else{
-		$pimg = 'upload_image/survey-pngrepo-com.png';
-	}
-  ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -158,59 +151,13 @@ else{
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-<header class="main-header"> <a href="" class="logo"> <img src="<?=baseUrl()?>hats-logo-survey50.png" width="138" height="45"></a>
+<header class="main-header"> 
     <nav class="navbar navbar-static-top" role="navigation"> <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"> <span class="sr-only">Toggle navigation</span> </a>
-      <!-- <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <li class="dropdown user user-menu"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
-          
-          <img src="<?php echo $pimg; ?>" class="user-image" alt="User Image"> <span class="hidden-xs"><?php echo ucfirst($_SESSION['admin_name']); ?></span> </a>
-            <ul class="dropdown-menu">
-              <li class="user-header"> <img src="<?php echo $pimg; ?>" class="img-circle" alt="User Image">
-                <p><?php echo ucfirst($_SESSION['admin_name']);?></p>
-              </li>
-              <li class="user-footer">
-                <div class="pull-right"> <a href="?page=logout" class="btn btn-default btn-flat">Sign out</a> </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div> -->
+    <a href="" class="logo"> <img src="<?=baseUrl()?>hats-logo-survey50.png" width="138" height="45"></a>
     </nav>
   </header>
   <aside class="main-sidebar">
     <section class="sidebar">
-      <!-- <div class="user-panel">
-        <div class="pull-left image"> <img src="<?php echo $pimg; ?>" class="img-circle" alt="User Image"s> </div>
-        <div class="pull-left info">
-          <p><?php echo ucfirst($_SESSION['admin_name']);?></p>
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a> </div>
-      </div> -->
-      <!-- sidebar start -->
-      <!-- <ul class="sidebar-menu">
-        <li class="treeview profile-active"><a href="?page=add_admin&amp;id=1"><i class="fa fa-user"></i> <span>Admin</span></a></li>
-        <li><a href="index.php"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
-        <?php if($_SESSION['user_type']==1){?>
-        <li><a href="?page=view-admin"><i class="fa fa-user"></i><span>Admin</span></a></li>
-        <?php //}?>
-        
-         <?php //if($_SESSION['user_type']==1){?>
-        <li><a href="?page=view-clients"><i class="fa fa-user"></i><span>Managers</span></a></li>
-        <li><a href="?page=manage-languages"><i class="fa fa-language"></i><span>Languages</span></a></li>
-        <li><a href="?page=manage-locations"><i class="fa fa-sitemap"></i><span>Locations</span></a></li>
-        <li><a href="?page=manage-department"><i class="fa fa-sitemap"></i><span>Department</span></a></li>
-        <li><a href="?page=manage-schools"><i class="fa fa-sitemap"></i><span>Schools</span></a></li>
-        
-        <li><a href="?page=view-survey"> <i class="fa fa-comments"></i> <span>Manage Survey</span></a></li>
-        <?php }?>
-        <li><a href="?page=view-report"> <i class="fa fa-list"></i> <span>View Report</span></a></li>
-        <li><a href="?page=monthly-report"> <i class="fa fa-file-pdf-o"></i> <span>Monthly Report</span></a>
-        </li>
-        <li><a href="?page=report-statistics"> <i class="fa fa-list"></i> <span>View Report Statistics</span></a></li>
-        <li><a href="?page=view-statistics"> <i class="fa fa-list"></i> <span>View Statistics</span></a></li>
-        <li><a href="?page=logout"> <i class="fa fa-list"></i> <span>View Logout</span></a></li>
-      </ul> -->
-      <!-- sidebar end -->
       <ul class="sidebar-menu">
       <?php 
         include('permission.php');

@@ -6,19 +6,18 @@ if(isset($_POST['login'])){
   if(isset($_POST['email']) && isset($_POST['password']) !=''){
 	$uemail = $_POST['email'];
 	$upassword = $_POST['password'];
-	record_set('admin',"SELECT * FROM clients WHERE email='".$uemail."' AND password='".md5($upassword)."' AND
-	 cstatus='1'");
+	record_set('admin',"SELECT * FROM manage_users WHERE email='".$uemail."' AND password='".md5($upassword)."' AND cstatus='1'");
 	    
 		if(mysqli_num_rows($admin)>0){
 			$row_user_admin=mysqli_fetch_array($admin,MYSQLI_ASSOC);
 			foreach($row_user_admin as $key=>$val){
-        if($key !='locationid'){
+        if($key == 'user_type'){
+          $_SESSION['user_type'] =$val;
+        }else {
           $_SESSION['user_'.$key] =$val;
         }
 			}
-      
-			$_SESSION['user_type'] = 3;
-      $location =  get_filter_data_by_user('locations');
+      $location =  get_filter_data_by_user($loggedIn_user_id,'locations');
       $arr = array();
       foreach($location as $loc){
         $arr[] = $loc['id'];

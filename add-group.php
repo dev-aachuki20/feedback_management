@@ -3,26 +3,33 @@ if(!empty($_GET['id'])){
     record_set("get_groups_id", "select * from groups where id='".$_GET['id']."'");
     $row_get_groups_id = mysqli_fetch_assoc($get_groups_id);
 }
-
-$client_id = '';
-$admin_id  = '';
-if($_POST){
-  $client_id .= implode('|', $_POST['client_id']); 
-  $client_id ="|".$client_id."|";
-
-  $admin_id .= implode('|', $_POST['admin_id']); 
-  $admin_id ="|".$admin_id."|";
+//only created by and super admin can change status
+if(!empty($_GET['id'])) {
+  if((($_SESSION['user_type']<=2) OR ($row_get_departments_id['cby'] == $_SESSION['user_id'] and $row_get_departments_id['user_type']==$_SESSION['user_type']))){
+    $disabled = "";
+  }else {
+    $disabled = "disabled";
+  }
+}else {
+  $disabled = "";
 }
 // Start Update
 if($_POST['update']){
-    $data =  array(
-        "name"          => $_POST['name'],
-        "cstatus"       => $_POST['status'],
-        "location_id"   => implode(',',$_POST['locations']),
-        "client_ids"    => $client_id,
-        "admin_ids"     => $admin_id 
-    );
-
+  $dataCol =  array(
+      "name"          => $_POST['name'],
+      "location_id"   => implode(',',$_POST['locations']),
+      // "client_ids"    => $client_id,
+      // "admin_ids"     => $admin_id 
+  );
+  //if status is readonly than it will not update
+  $dataStatus = array(
+    "cstatus"=> $_POST['status']
+  );
+  if($disabled === 'disabled'){
+    $data = $dataCol;
+  }else {
+    $data = array_merge($dataCol,$dataStatus);
+  }
 	$updte=	dbRowUpdate("groups", $data, "where id=".$_GET['id']);
     if(!empty($updte)){
       $msg = "Group Updated Successfully";
@@ -42,9 +49,9 @@ if($_POST['update']){
             "cstatus"       => $_POST['status'],
             "location_id"   => implode(',',$_POST['locations']),
             'cip'           => ipAddress(),
-            "user_type"     => $_SESSION["user_type"],
-            "client_ids"    => $client_id,
-            "admin_ids"     => $admin_id,
+            //"user_type"     => $_SESSION["user_type"],
+            // "client_ids"    => $client_id,
+            // "admin_ids"     => $admin_id,
             'cby'           => $_SESSION['user_id'],
             'cdate'         => date("Y-m-d H:i:s")
         );
@@ -79,18 +86,7 @@ if($_POST['update']){
             </div>
           </div>
           <!-- End name according to languages -->
-            <?php
-              //only created by and super admin can change status
-                if(!empty($_GET['id'])) {
-                  if((($_SESSION['user_type']==1) OR ($row_get_groups_id['cby'] == $_SESSION['user_id'] and $row_get_groups_id['user_type']==$_SESSION['user_type']))){
-                    $disabled = "";
-                  }else {
-                    $disabled = "disabled";
-                  }
-                }else {
-                  $disabled = "";
-                }
-            ?>
+           
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
@@ -104,14 +100,12 @@ if($_POST['update']){
             </div>
           </div>
           <!-- add location -->
-          <?php if(count($locationByUsers)>0){ ?>     
-            <div class="">
+
+          <div class="row">
             <div class="col-md-12 with-border">
-              <h4>Location</h4>
-              <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'locCheckbox')" /><strong> Select All</strong><br/><br/>
-            </div>
-            <div class="col-md-12">
-              <?php
+                <div class="col-md-12"><h4>Location</h4></div>
+                <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'locCheckbox')" /><strong> Select All</strong><br/><br/>
+                <?php
                 $location_ids = explode(',',$row_get_groups_id['location_id']);
                 foreach($locationByUsers as $locData){
                 $locId    = $locData['id'];
@@ -125,62 +119,11 @@ if($_POST['update']){
                   </label>
                 </div>
               <?php } ?>
-              <!-- <div class="row">
-                <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
-              </div> -->
-            </div>  
-            </div> 
-          <?php } ?>        
+            </div>
+          </div>
           <!-- assign user start -->        
-            <div class="col-md-12 with-border">
-              <h4>Assign Admins</h4>
-              <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'admin_checkbox')" /><strong> Select All</strong><br/><br/>
-            </div>
-            <div class="col-md-12">
-              <?php
-              if(($row_get_groups_id['admin_ids'])){
-                  $admin_saved = explode("|",$row_get_groups_id['admin_ids']);
-              }else{
-                  $admin_saved = array();
-              }
-              foreach(getAdmin() as $key => $value){ ?>
-                <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($key,$admin_saved) ? 'checked ':' ')?> id="admin_id_<?php echo $key ?>" class="userClass admin_checkbox" value="<?php echo $key; ?>" name="admin_id[<?php echo $key; ?>]" /> 
-                  
-                  <label for="admin_id_<?php echo $key; ?>">
-                  <?php echo $value ?>
-                  </label>
-                </div>
-              <?php } ?>
-              <div class="row">
-                <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
-              </div>
-            </div>
-            <div class="col-md-12 with-border">
-              <h4>Assign Clients</h4>
-              <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'client_checkbox')" /><strong> Select All</strong><br/><br/>
-            </div>
-            <div class="col-md-12">
-              <?php
-              if(($row_get_groups_id['client_ids'])){
-                $client_saved = explode("|",$row_get_groups_id['client_ids']);
-              }else{
-                $client_saved = array();
-              }
-              foreach(getClient() as $key => $value){ ?>
-                <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($key,$client_saved) ? 'checked ':' ')?>  id="client_id_<?php echo $key ?>" class="userClass client_checkbox" value="<?php echo $key; ?>" name="client_id[<?php echo $key; ?>]" /> 
-                  
-                  <label for="client_id_<?php echo $key; ?>">
-                  <?php echo $value ?>
-                  </label>
-                </div>
-              <?php } ?>
-              <div class="row">
-                <span class="col-md-12 user_error" style="color: red;font-weight: 700;margin-left: 17px;display:none;">Please choose atleast one option either from admin or client</span>    
-              </div>
-            </div>
-            <!-- assign user end -->   
+          <?php include ('./assign_users.php');?>
+          <!-- assign user end -->   
         </div>
         <!-- End row -->
         <!-- Start submit button -->

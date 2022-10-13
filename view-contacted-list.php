@@ -3,37 +3,34 @@
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_filter_data_by_user('surveys');
+$surveyByUsers     = get_survey_data_by_user('survey',1);
 
 // assign task to user
 if(isset($_POST['assign'])){
     $survey_id           = $_POST['survey_id_hidden'];
     $task_id             = explode(',',$_POST['response_id_hidden']);
     $assing_to_user_id   = $_POST['assing_to_user_id'];
-    $assign_to_user_type = $_POST['user_type'];
     $assign_by_user_type = $_SESSION['user_type'];
     $assign_by_user_id   = $_SESSION['user_id'];
     foreach($task_id as $tasks){
         $data = array(
             "assign_to_user_id"   => $assing_to_user_id,
-            "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
             "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
-            "assign_by_user_type" => $assign_by_user_type,
             "cdate"               => date("Y-m-d H:i:s")
         );
 
          // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
+         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and task_id = $tasks and survey_id = $survey_id");
          $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
          if($totalRows_check_assign_task > 0 ){
              $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
          }else {
              $insert_value =  dbRowInsert("assign_task",$data);
          }
-        $userdata   = get_user_datails($assing_to_user_id,$assign_to_user_type);
+        $userdata   = get_user_datails($assing_to_user_id);
 
         $user_email = $userdata['email'];
         $user_name  = $userdata['name'];  
@@ -41,7 +38,6 @@ if(isset($_POST['assign'])){
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
-            "cby_user_type" =>$assign_to_user_type,
             "cby_user_id" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$user_name,
             'created_date'=>date("Y-m-d H:i:s")
@@ -64,22 +60,18 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
     $survey_id           = $_POST['survey_id_hidden'];
     $task_id             = explode(',',$_POST['response_id_hidden']);
     $assing_to_user_id   = $_SESSION['user_id'];
-    $assign_to_user_type = $_SESSION['user_type'];
-    $assign_by_user_type = $_SESSION['user_type'];
     $assign_by_user_id   = $_SESSION['user_id'];
     foreach($task_id as $tasks){
         $data = array(
             "assign_to_user_id"   => $assing_to_user_id,
-            "assign_to_user_type" => $assign_to_user_type,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
             "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
-            "assign_by_user_type" => $assign_by_user_type,
             "cdate"               => date("Y-m-d H:i:s")
         );
          // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and assign_to_user_type = $assign_to_user_type and task_id = $tasks and survey_id = $survey_id");
+         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id  and task_id = $tasks and survey_id = $survey_id");
          $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
          
          if($totalRows_check_assign_task > 0 ){
@@ -115,10 +107,12 @@ if($_SESSION['user_type'] == 4){
 
 //fetch data in table 
 if(!empty($_POST['surveys'])){
+   
     $query = 'SELECT * FROM answers where id !=0 ';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
     }
+    
     if(!empty($_POST['departmentid'])){
         if($_POST['departmentid'] == 4){
             record_set("get_all_department","select id from departments where cstatus=1");	
@@ -131,6 +125,7 @@ if(!empty($_POST['surveys'])){
             $query .= " and departmentid = '".$_POST['departmentid']."'";
         }
     }
+    
     if(!empty($_POST['locationid'])){
         if($_POST['locationid'] == 4){
             $query .= " and locationid in (select id from locations where cstatus=1)";  
@@ -138,6 +133,7 @@ if(!empty($_POST['surveys'])){
             $query .= "and locationid = '".$_POST['locationid']."'";
         }
     }
+    
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
     }
@@ -148,8 +144,9 @@ if(!empty($_POST['surveys'])){
             $query .= " and groupid = '".$_POST['groupid']."'";
         }
     }
+    
     if($loggedIn_user_type == 3){
-        record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id and assign_to_user_type = $loggedIn_user_type".$filter_status);
+        record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id ".$filter_status);
 
         $arr_task_id = array();
         while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -169,6 +166,7 @@ if(!empty($_POST['surveys'])){
 
         $query .= " and cby IN (".$task_id.")";
     }
+    
     $query .= " GROUP by cby";
     record_set("get_recent_entry",$query);
 
@@ -373,7 +371,7 @@ if(!empty($_POST['surveys'])){
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>&nbsp;</label>
-                            <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                            <input type="button" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
                         </div>
                     </div>
                 </div>
@@ -516,18 +514,20 @@ if(!empty($_POST['surveys'])){
             <div class="modal-body">
                 <div class="col-md-12">
                     <div class="form-group">
-                    <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
-                    <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
-                    <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
-                    <label>User Type</label>
-                        <select class="form-control" tabindex=7 id="user_type" name="user_type">
+                        <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
+                        <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
+                        <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
+                        <label>User Type</label>
+                        <select class="form-control " tabindex=7 id="user_type" name="user_type">
                             <option value="">Select User Type</option>
                         <?php 
                             $user_types_array=user_type();  
                             foreach($user_types_array as $key => $value){
-                            if($_SESSION['user_type']==3){
-                                $allowed_key=3;
-                            } ?>
+                            // if($_SESSION['user_type']==3){
+                            //     $allowed_key=3;
+                            // } 
+                            if($key == 1){ continue; }
+                            ?>
                             <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                             </option>
                             <?php 
@@ -591,6 +591,7 @@ if(!empty($_POST['surveys'])){
             $('.error').show();
             return;
         }else {
+            $('#viewReportcsv').submit();
             $('.error').hide();
         }
         // this is the id of the form

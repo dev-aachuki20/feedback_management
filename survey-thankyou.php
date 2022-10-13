@@ -5,17 +5,8 @@ if(!empty($_GET['surveyid'])){
 	record_set("get_surveys", "select * from surveys where id='".$_GET['surveyid']."'");
 	$row_get_surveys = mysqli_fetch_assoc($get_surveys);
 }
-
-$langid = (!empty($_GET['langid']))?$_GET['langid']:'1';
-record_set("get_language", "select * from languages where id='".$langid."'");				
-$row_get_language = mysqli_fetch_assoc($get_language);
-if(!empty($row_get_language)){
-   $thanku_message =  $row_get_language['thank_you_text'];
-}else{
-   $thanku_message =  "Thank you for completing our survey, <br>
+ $thanku_message =  "Thank you for completing our survey, <br>
  we really appreciate your feedback"; 
-}
-
 ?>
 <!DOCTYPE HTML>
 <html>
