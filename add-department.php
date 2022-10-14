@@ -28,14 +28,21 @@ if($_POST['update']){
     }else {
       $data = array_merge($dataCol,$dataStatus);
     }
-    $updte=	dbRowUpdate("departments", $data, "where id=".$_GET['id']);
-    if(!empty($updte)){
-      $msg = "Department Updated Successfully";
-      alertSuccess( $msg,'?page=manage-department');
-    }else{
-      $msg = "Department Not Updated Successfully";
-      alertdanger($msg,'?page=manage-department&id='.$_GET["id"]);
+    record_set("checkEmail", "select * from departments where id !=".$_GET['id']." and email='".$_POST['email']."'");
+    if($totalRows_checkEmail>0){
+    $mess = 'Email already exits';
+      alertdanger($mess,'');
+    }else {
+      $updte=	dbRowUpdate("departments", $data, "where id=".$_GET['id']);
+      if(!empty($updte)){
+        $msg = "Department Updated Successfully";
+        alertSuccess( $msg,'?page=manage-department');
+      }else{
+        $msg = "Department Not Updated Successfully";
+        alertdanger($msg,'?page=manage-department&id='.$_GET["id"]);
+      }
     }
+
 	}
 //End update  
 
@@ -84,7 +91,7 @@ if($_POST['update']){
           <div class="col-md-4">
             <div class="form-group">
               <label>Email *</label>
-              <input type="text" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>" required/>
+              <input type="email" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>" required/>
             </div>
           </div>
           <div class="col-md-4">

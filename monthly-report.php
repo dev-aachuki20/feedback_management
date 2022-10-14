@@ -35,14 +35,10 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
                     </div>
                     <div class="col-md-3">
                       <div class="form-group">
-                        <label> Survey</label>
+                        <label><?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
                         <select name="survey_name" class="form-control form-control-lg surveys" required>
-                        <option value="">Select Survey</option>
+                        <option value="">Select <?=$_GET['type']?></option>
                         <?php 
-                          // record_set('getSurvey','select * from surveys');
-                          // if($totalRows_getSurvey>0){				
-                          // while($row_getSurvey = mysqli_fetch_assoc($getSurvey)){
-                        
                           foreach($surveyByUsers as $row_get_surveys){ ?>
                                 <option value="<?php echo $row_get_surveys['id'];?>" <?=($_POST['groupid']==$row_get_surveys['id']) ? 'selected' :''?>><?php echo $row_get_surveys['name'];?></option>
                             <?php }?>

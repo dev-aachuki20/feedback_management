@@ -23,7 +23,11 @@ else if($_POST['data_type']=='department'){
 else {
     $survey_allow = get_allowed_data('surveys',$_SESSION['user_id'],$_POST['survey_type']);
     $survey_allow_id = implode(',',array_keys($survey_allow));
-    $query = " and surveyid IN (select id from surveys where id IN($survey_allow_id) and cstatus=1)";
+    $fdata = '';
+    if($survey_allow_id){
+        $fdata = " and id IN($survey_allow_id)";
+    }
+    $query = " and surveyid IN (select id from surveys where cstatus=1 $fdata)";
     $groupBy = 'surveyid';
 }
 

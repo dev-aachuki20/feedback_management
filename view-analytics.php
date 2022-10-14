@@ -54,9 +54,9 @@
           <input type="hidden" name="survey_type" id="survey_type" value="">
           <div class="col-md-3">
             <div class="form-group">
-              <label>Survey</label>
+            <label><?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
               <select name="survey_name" class="form-control form-control-lg survey_id" id="">
-                <option value="">select survey</option>
+                <option value="">select <?=$_GET['type']?></option>
                 <?php 
                 // survey by user
                 //$surveyByUsers = get_filter_data_by_user('surveys');

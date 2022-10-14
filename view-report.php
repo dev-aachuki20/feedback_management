@@ -143,7 +143,7 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type'],1);
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Survey</label>
+                            <label><?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
                             <select id="surveys" name="surveys" class="form-control surveys">
                                 <option value="">Select</option>
                                 <?php

@@ -1839,10 +1839,12 @@ $('#langid').change(function(){
 
 
 </script>
-
+<div style="text-align: center;">
 Powered by Datagroup Solutions
 
 <center><img  src="https://www.datagroupsolutions.com/wp-content/uploads/2020/11/Data-Group-Solutions-survey.png" alt="" width="200" height="36" /></center>
+</div>
+
 
 </body>
 

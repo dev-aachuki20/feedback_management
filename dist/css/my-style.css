@@ -252,6 +252,9 @@ h4{margin-bottom:1px;font-size:16px;}
 .sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .content-wrapper{
     margin-left: 230px !important;
 }
+.sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .main-footer{
+    margin-left: 230px !important;
+}
 .sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>a>span:not(.pull-right), .sidebar-mini.sidebar-collapse .sidebar-menu>li:hover>.treeview-menu{
     position: inherit;
     width: auto;
@@ -314,10 +317,9 @@ h4{margin-bottom:1px;font-size:16px;}
     margin: 0 auto;
 }
 .app_sidebar_user .user-body img {
-    /* border-radius: 50%; */
     width: 100%;
-    width: 60px;
     height: 60px;
+    object-fit:cover;
 }
 .user-info{
     text-align: center;
@@ -341,6 +343,19 @@ h4{margin-bottom:1px;font-size:16px;}
     width: 60px;
     height: 60px;
 }
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .app_sidebar_user .user-body img{
+    height: 60px;
+}
+.sidebar-mini.sidebar-collapse .app_sidebar_user .user-body img{
+    height: 30px;
+}
 .sidebar-mini.sidebar-collapse .main-sidebar:hover .app_sidebar_user .user-info{
     display: block;
+}
+.btnCol{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.btnCol a{
+    margin: 2px;
 }
