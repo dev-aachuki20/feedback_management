@@ -1,17 +1,14 @@
 <?php include('function/function.php'); 
 
-if(isset($_POST['login']))
-{
+if(isset($_POST['login'])){
   if(isset($_POST['email']) && isset($_POST['password']) !=''){
-	$uemail = $_POST['email'];
+	$uemail    = $_POST['email'];
 	$upassword = $_POST['password'];
-	//echo "SELECT * FROM admin WHERE email='".$uemail."' AND password='".md5($upassword)."' AND cstatus='1'"; exit;
-	record_set('superadmin',"SELECT * FROM super_admin WHERE email='".$uemail."' AND password='".md5($upassword)."' AND
-	 cstatus='1'");
+	record_set('dgsuser',"SELECT * FROM manage_users WHERE email='".$uemail."' AND password='".md5($upassword)."' AND id=1 AND cstatus='1'");
 	    
-		if(mysqli_num_rows($superadmin)>0){
-			$row_user_admin=mysqli_fetch_array($superadmin,MYSQLI_ASSOC);
-			foreach($row_user_admin as $key=>$val){
+		if(mysqli_num_rows($dgsuser)>0){
+			$row_dgs_user_admin=mysqli_fetch_array($dgsuser,MYSQLI_ASSOC);
+			foreach($row_dgs_user_admin as $key=>$val){
 				$_SESSION['user_'.$key] =$val;
 			}
 			$_SESSION['user_type'] =1;
@@ -19,15 +16,13 @@ if(isset($_POST['login']))
 			//print_r($_SESSION);
 	    	reDirect('index.php?mess='.$mess);
 		}else{
-			echo "<script> alert('email or password is not currect');</script>";
+      $msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Email or password is not correct</div>';
 	    }
 	}else{
-		echo "<script> alert('please fill the fields');</script>";
+		$msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Please fill the fields</div>';
 	}
 }
-
 ?>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -64,6 +59,7 @@ if(isset($_POST['login']))
     		<img src="upload_image/logo.png" width="200">
     	</div>
         <p class="login-box-msg">Sign in to start your session</p>
+        <?=$msg?>
         <form method="post" action="" name="myForm">
           <div class="form-group has-feedback">
             <input type="text" name="email" class="form-control" placeholder="Email">

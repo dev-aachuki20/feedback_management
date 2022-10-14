@@ -33,9 +33,9 @@
         $engagementName  = $engagementData['name'];
         ?>
         <div class="col-md-4">
-        <input class="engagement_checkbox" type="checkbox" <?=(in_array($engagementId,$engagement_saved) ? 'checked ':' ')?> id="engagementids<?php echo $engagementId ?>" value="<?php echo $engagementId; ?>" name="engagementids[<?php echo $engagementId; ?>]" /> 
+        <input class="engagement_checkbox common_survey_class" type="checkbox" <?=(in_array($engagementId,$engagement_saved) ? 'checked ':' ')?> id="surveyids<?php echo $engagementId ?>" value="<?php echo $engagementId; ?>" name="surveyids[<?php echo $engagementId; ?>]" /> 
         
-        <label for="engagementids<?php echo $engagementId; ?>">
+        <label for="surveyids<?php echo $engagementId; ?>">
         <?php echo $engagementName ?>
         </label>
         </div>
@@ -44,14 +44,16 @@
 
 <script>
 // for group load
+//var checkedEngagementArray;
 $(".engagement_checkbox").change(function(){
-    
-    $(".engagement_checkbox:checkbox:checked").each(function() {
-        checkedArray.push($(this).val());
-        
+    var checkedSurveyArray=[];
+    $(".common_survey_class:checkbox:checked").each(function() {
+        checkedSurveyArray.push($(this).val());
     });
-    var filteredArray = checkedArray.filter(e => e !== 'on')
-    ajax_for_checkbox(filteredArray,'load_group')
-   
+    // combine checked survey id and pulse id and engegament id  
+    //array_survey_pulse_engagement = array_survey_pulse.concat(checkedEngagementArray);
+    filteredArray = checkedSurveyArray.filter(e => e !== 'on')
+    console.log(filteredArray);
+    ajax_for_checkbox(filteredArray,'load_group');
 });
 </script>

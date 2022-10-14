@@ -21,13 +21,13 @@ else if($_POST['data_type']=='department'){
     $groupBy = 'departmentid';
 }
 else {
-    $survey_allow = get_allowed_data('surveys',$_SESSION['user_id'],$_POST['survey_type']);
+    $survey_allow = get_allowed_survey($_POST['survey_type'],1);
     $survey_allow_id = implode(',',array_keys($survey_allow));
-    $fdata = '';
+    $filterdata = '';
     if($survey_allow_id){
-        $fdata = " and id IN($survey_allow_id)";
+        $filterdata = " and id IN($survey_allow_id)";
     }
-    $query = " and surveyid IN (select id from surveys where cstatus=1 $fdata)";
+    $query = " and surveyid IN (select id from surveys where cstatus=1 $filterdata)";
     $groupBy = 'surveyid';
 }
 

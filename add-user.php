@@ -61,39 +61,26 @@
           }
           // assign survey 
           if(isset($_POST['surveyids'])){
-            $filter = "table_name = 'survey' and user_id =  $uid";
+            $filter = "table_name IN ('survey','pulse','engagement') and user_id =  $uid";
             dbRowDelete('relation_table', $filter);
             foreach($_POST['surveyids'] as $surveyId){
+              //get survey and check survey type
+              record_set("get_user_id", "select * from surveys where id='".$surveyId."'");
+              $row_get_user_id = mysqli_fetch_assoc($get_user_id);
+              $surveyType = $row_get_user_id['survey_type'];
+
+              $type ='';
+              if($surveyType == 1){
+                $type = 'survey';
+              }else if($surveyType == 2){
+                $type = 'pulse';
+              }else if($surveyType == 3){
+                $type = 'engagement';
+              }
               $data_sur = array(
                   "table_id"    => $surveyId,
                   "user_id"    =>  $uid,
-                  "table_name" => 'survey'
-              );
-              $insert =  dbRowInsert("relation_table",$data_sur);
-            }
-          }
-          // assign pulse 
-          if(isset($_POST['pulseids'])){
-            $filter = "table_name = 'pulse' and user_id =  $uid";
-            dbRowDelete('relation_table', $filter);
-            foreach($_POST['pulseids'] as $surveyId){
-              $data_sur = array(
-                  "table_id"    => $surveyId,
-                  "user_id"    =>  $uid,
-                  "table_name" => 'pulse'
-              );
-              $insert =  dbRowInsert("relation_table",$data_sur);
-            }
-          }
-          // assign engagement 
-          if(isset($_POST['engagementids'])){
-            $filter = "table_name = 'engagement' and user_id =  $uid";
-            dbRowDelete('relation_table', $filter);
-            foreach($_POST['engagementids'] as $surveyId){
-              $data_sur = array(
-                  "table_id"    => $surveyId,
-                  "user_id"    =>  $uid,
-                  "table_name" => 'engagement'
+                  "table_name" => $type
               );
               $insert =  dbRowInsert("relation_table",$data_sur);
             }
@@ -374,9 +361,9 @@ if(!empty($_POST['submit'])){
               <!-- assign survey --> 
               <?php include ('./assignUserCheckbox/survey.php')?>   
               <!-- assign pulse --> 
-              <?php //include ('./assignUserCheckbox/pulse.php')?>  
+              <?php include ('./assignUserCheckbox/pulse.php')?>  
                <!-- assign engagement --> 
-               <?php //include ('./assignUserCheckbox/engagement.php')?>  
+               <?php include ('./assignUserCheckbox/engagement.php')?>  
                <!-- assign group -->
                 <?php include ('./assignUserCheckbox/group.php')?>   
               <!-- assign location -->

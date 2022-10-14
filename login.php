@@ -1,16 +1,16 @@
 <?php 
 include('function/function.php'); 
 include('function/get_data_function.php');
-
+$msg = '';
 if(isset($_POST['login'])){
   if(isset($_POST['email']) && isset($_POST['password']) !=''){
 	$uemail = $_POST['email'];
 	$upassword = $_POST['password'];
-	record_set('admin',"SELECT * FROM manage_users WHERE email='".$uemail."' AND password='".md5($upassword)."' AND cstatus='1'");
+	record_set('user',"SELECT * FROM manage_users WHERE email='".$uemail."' AND password='".md5($upassword)."' AND id!=1 AND cstatus='1'");
 	    
-		if(mysqli_num_rows($admin)>0){
-			$row_user_admin=mysqli_fetch_array($admin,MYSQLI_ASSOC);
-			foreach($row_user_admin as $key=>$val){
+		if(mysqli_num_rows($user)>0){
+			$row_user_user=mysqli_fetch_array($user,MYSQLI_ASSOC);
+			foreach($row_user_user as $key=>$val){
         if($key == 'user_type'){
           $_SESSION['user_type'] =$val;
         }else {
@@ -26,10 +26,12 @@ if(isset($_POST['login'])){
 			$mess='Admin Login Successful';
 	    	reDirect('index.php?mess='.$mess);
 		}else{
-			echo "<script> alert('Email or password is not correct');</script>";
+      $msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Email or password is not correct</div>';
+			//echo "<script> alert('Email or password is not correct');</script>";
 	    }
 	}else{
-		echo "<script> alert('Please fill the fields');</script>";
+    $msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Please fill the fields</div>';
+		//echo "<script> alert('Please fill the fields');</script>";
 	}
 }
 
@@ -73,6 +75,7 @@ if(isset($_POST['login'])){
     		<img src="upload_image/logo.png" width="200">
     	</div>
         <p class="login-box-msg">Sign in to start your session</p>
+        <?=$msg?>
         <form method="post" action="" name="myForm">
           <div class="form-group has-feedback">
             <input type="text" name="email" class="form-control" placeholder="Email">

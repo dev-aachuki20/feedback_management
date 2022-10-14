@@ -151,6 +151,8 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
         }
       }
     }  
+    // send mail to super admin and admin on survey result submit
+    
 
     if($insert_contact_action){
       header("Refresh:0");

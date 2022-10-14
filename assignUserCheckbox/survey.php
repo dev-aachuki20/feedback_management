@@ -33,7 +33,7 @@
         $survyName  = $suveyData['name'];
         ?>
         <div class="col-md-4">
-        <input class="survey_checkbox" type="checkbox" <?=(in_array($survyId,$survey_saved) ? 'checked ':' ')?> id="surveyids<?php echo $survyId ?>" value="<?php echo $survyId; ?>" name="surveyids[<?php echo $survyId; ?>]" /> 
+        <input class="survey_checkbox common_survey_class" type="checkbox" <?=(in_array($survyId,$survey_saved) ? 'checked ':' ')?> id="surveyids<?php echo $survyId ?>" value="<?php echo $survyId; ?>" name="surveyids[<?php echo $survyId; ?>]" /> 
         
         <label for="surveyids<?php echo $survyId; ?>">
         <?php echo $survyName ?>
@@ -44,13 +44,14 @@
 
 <script>
 // for group load
-var checkedArray;
+
 $(".survey_checkbox").change(function(){
-    checkedArray=[];
-    $(".survey_checkbox:checkbox:checked").each(function() {
-        checkedArray.push($(this).val());
+   var checkedSurveyArray=[];
+    $(".common_survey_class:checkbox:checked").each(function() {
+        checkedSurveyArray.push($(this).val());
     });
-    var filteredArray = checkedArray.filter(e => e !== 'on')
-    ajax_for_checkbox(filteredArray,'load_group')
+    var filteredArray = checkedSurveyArray.filter(e => e !== 'on')
+    console.log(filteredArray);
+    ajax_for_checkbox(filteredArray,'load_group');
 });
 </script>

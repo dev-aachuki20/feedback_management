@@ -12,20 +12,9 @@ if(isset($_POST['mode']) and $_POST['mode']=='delete'){
 if(isset($_POST['mode']) && $_POST['mode']=='survey_statics'){
 
     if($_POST['type']!='survey'){
-      //$data = get_allowed_data('surveys',$_SESSION['id']);
+      
       // get survey name
-     // $surveyByUsers = get_filter_data_by_user('surveys');
       $surveyByUsers = get_survey_data_by_user($_POST['survey_type']);
-    
-        // if($_POST['type']=='group'){
-        //   $data = get_allowed_data('groups',$_SESSION['id']);
-        // }
-        // if($_POST['type']=='location'){
-        //   $data = get_allowed_data('locations',$_SESSION['id']);
-        // }
-        // if($_POST['type']=='department'){
-        //   $data = get_allowed_data('departments',$_SESSION['id']);
-        // }
         $html ='';
         $html ='<div class="form-group"><label> Survey</label>
             <select name="survey" class="form-control form-control-lg survey" required> <option value="">Select Survey</option>';

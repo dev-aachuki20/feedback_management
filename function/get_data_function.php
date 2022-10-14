@@ -76,7 +76,7 @@ function getUsers($id=null,$user_type=null){
 	if($id !=null){
 		$filter  = " and id IN ($id)";
 	}
-	if($user_type){
+	if($user_type and $_SESSION['user_type']>2){
 		$filter .= " and user_type = $user_type";
 	}
 	$clients_data = getaxecuteQuery_fn("select id,name from manage_users where cstatus=1 $filter order by name ASC");
@@ -85,6 +85,8 @@ function getUsers($id=null,$user_type=null){
 	}
 	return $arr;
 }
+
+// get assign location department group survey id of loging user from relation table
 function get_assing_id_dept_loc_grp_survey($table_name){
 	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name = '$table_name'");
 
@@ -100,33 +102,40 @@ function get_assing_id_dept_loc_grp_survey($table_name){
 	}
 	return $table_ids;
 }
- function get_allowed_data($table,$user_id,$survey_type=''){
+// only survey id and survey name
+ function get_allowed_survey($survey_type='',$confidential=0){
 	$arr = array();
 	$sFilter = '';
-	if($table == 'surveys' and $survey_type !=''){
-		// get survey type
-		if($survey_type == 'engagement'){
-			$sFilter = " and survey_type = 3";
-		}else if($survey_type == 'pulse'){
-			$sFilter = " and survey_type = 2";
-		}else if($survey_type == 'survey'){
-			$sFilter = " and survey_type = 1";
+	// get survey type
+	if($survey_type == 'engagement'){
+		$sFilter = " and survey_type = 3";
+	}else if($survey_type == 'pulse'){
+		$sFilter = " and survey_type = 2";
+	}else if($survey_type == 'survey'){
+		$sFilter = " and survey_type = 1";
+	}
+	// survey assign to user 
+	$user_id = $_SESSION['user_id'];
+	if($_SESSION['user_id']>2){
+		$survey_id = get_assigned_user_data($user_id,$survey_type);
+		$survey_id = implode(',',$survey_id);
+		if($survey_id){
+			$sFilter .= " and id IN ($survey_id)" ;
+		}else {
+			$sFilter .= " and id IN (0)" ;
 		}
 	}
-	if($_SESSION['user_type']==1){
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  where id !=0 $sFilter order by name ASC ");
-	}
-	else if($_SESSION['user_type']==2){
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `admin_ids` LIKE '|$user_id|' $sFilter order by name ASC ");
-	}else{
-		$allowed_data = getaxecuteQuery_fn("select id,name from $table  WHERE `client_ids` LIKE '|$user_id|' $sFilter order by name ASC ");
-	}
+	//get unconfidential data
+	if($confidential == 1){
+		$sFilter .= " and confidential !=1";
+	  }
+	$allowed_data = getaxecuteQuery_fn("select id,name from surveys  where id !=0 $sFilter order by name ASC");
 	foreach ($allowed_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
 	return $arr;
  }
- // get userid by table id(location id,dept id,grp id, or survey id)
+ // get all userid by table id(location id,dept id,grp id, or survey id)
  function get_assigned_data($table_id=null,$table){
 	$sFilter = '';
 	if($table_id){
@@ -158,7 +167,6 @@ function get_assing_id_dept_loc_grp_survey($table_name){
 	return $arr;
  }
  function get_filter_data_by_user($table){
-
 	//get assigned department location group survey
 	if($table == 'departments'){
 		$type ='department';
@@ -195,12 +203,13 @@ function get_assing_id_dept_loc_grp_survey($table_name){
 	return $arr;
  }
 
+ // get assign survey of user with details
  function get_survey_data_by_user($survey_type,$confidential=0){
 	// get survey by user access
 	if($_SESSION['user_type']<=2){
 		$filter = '';
 	}else {
-		$survey_id = get_assigned_user_data($_SESSION['user_id'],'survey');
+		$survey_id = get_assigned_user_data($_SESSION['user_id'],$survey_type);
 		if($survey_id){
 			$survey_id = implode(',',$survey_id);
 			$filter = " and id IN ($survey_id)";
@@ -312,7 +321,6 @@ function get_admin_manager_of_survey($survey_id){
 	// 	}
 	// 	$i++;
 	// }
-	
 	return $user_array;
 }
 
@@ -325,4 +333,10 @@ function get_data_by_id($table,$id){
 	}
 	return $arr;
 }
+
+// date 14-10-2022
+// if contacted is yes then only mail will send to admin and super admin
+// function send_mail_on_survey_respond_submitted(){
+	
+// }
 ?>
