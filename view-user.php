@@ -1,7 +1,7 @@
 <?php
 $userdata = array();
 if($_SESSION['user_type']>2){
-  $filterUser = " and cby=".$_SESSION['user_id'];
+  $filterUser = " and user_type >=".$_SESSION['user_type']." or cby=".$_SESSION['user_id'];
 }
 $userFilter = '';
 if(isset($_POST['user_type']) and $_POST['user_type'] !=0){

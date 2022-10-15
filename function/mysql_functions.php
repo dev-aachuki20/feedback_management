@@ -4,7 +4,8 @@ require_once("connectin_config.php");
 		define('BASE_URL', 'http://localhost/feedback_management/');
 	}
 	else{
-		define('BASE_URL', 'https://survey.datagroup.dev/');
+		//define('BASE_URL', 'https://survey.datagroup.dev/');
+			define('BASE_URL', 'https://demo.dgfm.app/');
 	} 
 date_default_timezone_set('Asia/calcutta');
 //Get Home URL

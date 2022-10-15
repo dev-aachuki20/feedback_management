@@ -98,9 +98,10 @@ if($totalRows_get_survey_id > 0){
   $survey_id = $row_get_survey_id['surveyid'];
   $user_data = get_admin_manager_of_survey($survey_id);
   foreach($user_data as $key => $value){
-    foreach($value as $val){
-      $uemail = $val['email'];
-      $uname  = $val['name'];
+    //for admin manager
+    if($value['user_type']==3 OR $value['user_type']==4){
+      $uemail = $value['email'];
+      $uname  = $value['name'];
       send_email_to_assign_user($uemail,$uname);
     }
   }
@@ -143,16 +144,26 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
         $survey_id = $row_get_survey_id['surveyid'];
         $user_data = get_admin_manager_of_survey($survey_id);
         foreach($user_data as $key => $value){
-          foreach($value as $val){
-            $uemail = $val['email'];
-            $uname  = $val['name'];
+          //for admin manager
+          if($value['user_type']==3 OR $value['user_type']==4){
+            $uemail = $value['email'];
+            $uname  = $value['name'];
             send_email_to_assign_user($uemail,$uname);
           }
         }
       }
     }  
     // send mail to super admin and admin on survey result submit
-    
+    $user_data = get_admin_manager_of_survey($_GET['surveyid']);
+    foreach($user_data as $key => $value){
+      //for super admin and admin
+      if($value['user_type']==2 OR $value['user_type']==3){
+        $uemail = $value['email'];
+        $uname  = $value['name'];
+        send_email_to_assign_user($uemail,$uname);
+        survey_result_submitted_pdf_mail($uemail,$uname);
+      }
+    }
 
     if($insert_contact_action){
       header("Refresh:0");

@@ -68,7 +68,7 @@ if(isset($_POST['login'])){
     <div class="login-box">
             
       <div class="login-logo">
-        <a href="#"><b>User</b>LOGIN</a>
+        <a href="#">LOGIN</a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
           	<div align="center">
@@ -118,6 +118,6 @@ if(isset($_POST['login'])){
       //   alert('amit');
       // })
     </script>
-<center>Powered by Datagroup Solutions<br><img  src="https://www.datagroupsolutions.com/wp-content/uploads/2020/11/Data-Group-Solutions-survey.png" alt="" width="200" height="36" /></center>
+<center>Powered by Datagroup Solutions<br><img  src="<?=getHomeUrl()?>'upload_image/Data-Group-footer.png" alt="" width="200" height="36" /></center>
 </body>
 </html>

@@ -1,9 +1,18 @@
 <?php 
 require('mysql_functions.php');
+// php mailer start
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require_once dirname(__DIR__).'/vendor/autoload.php';
+
+define('SMTP_HOST', "ssl://mail.dgam.app");
+define('SMTP_USER', "noreply@dgam.app");
+define('SMTP_PASS', "x%k*&]ulld]~");
+define('SMTP_PORT', "465");
+// end 
 $msg='';
 $active_user_id= $_SESSION['admin_id'];
-function pr($data)
-{
+function pr($data){
 	echo '<pre style="margin-left: 257px;">';
 	print_r($data);
 	echo "</pre>";
@@ -24,6 +33,39 @@ define('DEFAULT_FROM_EMAIL', 'mail@datagroup.dev');
      }
 	 return $filter_data;
  }
+
+ function sendEmailPdf($pdf=null,$pdf_name=null,$email_to,$user_name,$subject,$body){
+	$mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->SMTPDebug = 0;                      
+        $mail->isSMTP();   
+        $mail->Host       = SMTP_HOST;     
+        $mail->SMTPAuth   = true;          
+        $mail->Username   = SMTP_USER;     
+        $mail->Password   = SMTP_PASS;    
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = SMTP_PORT;    
+    
+        //Recipients
+        $mail->setFrom($email_to, $user_name);
+        $mail->addAddress($email_to, $user_name);  
+        $mail->addBCC('bcc@example.com');
+    
+        //Attachment
+        $mail->addStringAttachment($pdf, $pdf_name);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $body;
+        $mail->AltBody = strip_tags($body);
+        $mail->send();
+       // echo 'Message has been sent';
+    } catch (Exception $e) {
+       // echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
   //Get Ip address
 function ipAddress(){
     $ipaddress = '';
@@ -480,30 +522,78 @@ function send_email_to_users($name,$email,$enc_id){
 function send_email_to_assign_user($name,$email,$type='assign'){
 	$from = DEFAULT_FROM_EMAIL;
 	//$link = $_SERVER['HTTP_HOST'].'/verify_email.php?id='.$enc_id;
-	  $to ='amitpandey.his@gmail.com';
-		if($type='completed'){
-			$subject = "Task Completed";
-			$body = "Dear $name, <br><br>
-			".$_SESSION['user_name']." has changed the task status to RESOLVED-NEGATIVE <br><br>
-			Thank you !!<br>";
-		}else{
-			$subject = "Task Assigned";
-			$body = "Dear $name,
-			<br><br>
-			A new task has been assign to you.
-			<br><br>
-			Thank you !!<br>";
-		}
-	  $headers = "MIME-Version: 1.0" . "\r\n";
-	  $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	  $headers .= 'From: <'.$from.'>' . "\r\n";
-	  $success = mail($to,$subject,$body,$headers);	
-	if (!$success) {
+	$to ='amitpandey.his@gmail.com';
+	if($type='completed'){
+		$subject = "Task Completed";
+		$body = "Dear $name, <br><br>
+		".$_SESSION['user_name']." has changed the task status to RESOLVED-NEGATIVE <br><br>
+		Thank you !!<br>";
+	}else{
+		$subject = "Task Assigned";
+		$body = "Dear $name,
+		<br><br>
+		A new task has been assign to you.
+		<br><br>
+		Thank you !!<br>";
+	}
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+	$headers .= 'From: <'.$from.'>' . "\r\n";
+	$success = mail($to,$subject,$body,$headers);	
+	if (!$success){
 		echo  $errorMessage = error_get_last()['message'];
-		  }
+	}
 	else{
 	  $msg='Message sent successfully !!';
 	}
+}
+function survey_result_submitted_pdf_mail($email_to,$user_name){
+	$mpdf = new \Mpdf\Mpdf();
+	$pdf_name = 'survey-result'.date("Y-m-d-H-i-s");
+    $subject = 'Survey Response Submitted';
+    $body = " ";
+	$html = '<table width="100%" style="background-color:#dbdbdb;">
+		<tr>
+		<td><table align="center" width="690" border="">
+			<tr>
+				<td style="background-color:#fff;" width="94%">
+				<table width="100%;">
+				<tr>
+				<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+				<tr>
+				<td align="center"><h2> SURVEY RESPONSE CONTACT REQUEST</h2></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+
+				<tr>
+					<td><p style="font-size:15px;margin:10px 0;">Hello Amit ,</p> <br>
+						<p style="font-size:15px;margin:10px 0;">A Survey Response has been submitted and the respondent has requested contact </p>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+				</tr>
+				<tr>
+				<td><p style="font-size:15px;margin:10px 0;"><a style=" Green border: none;color: white;padding: 3px 18px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-contacted-list&type=survey" target="_blank">Click here </a> to view.</p></td>
+				</tr>
+				<tr>
+				<td height="20px;">&nbsp;</td>
+				</tr>
+				</table></td>
+		</tr>
+            <tr>
+            <td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+            <p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+            </td>
+            </tr>
+			</table></td>
+		</tr>
+		</table>';
+	$mpdf->WriteHTML($html);
+	$pdf = $mpdf->Output('', 'S');
+	sendEmailPdf($pdf,$pdf_name,$email_to,$user_name,$subject,$body);
 }
 function get_boostrap_bg_colors($status){
 	$status_id=boostrap_bg_colors();
@@ -635,5 +725,81 @@ function assign_task_status(){
 		"5"=> "RESOLVED-POSITIVE",
 		"6"=> "RESOLVED-NEGATIVE",
 	);
+}
+function upload_excel(){
+	set_include_path(get_include_path() . PATH_SEPARATOR . 'excel_library/Classes/');
+	include 'PHPExcel/IOFactory.php';
+	$f = 0;
+	$file_name = $_FILES['tfile']['name'];
+	$file_tempname = $_FILES['tfile']['tmp_name'];
+	$folder = "import_file/users/";
+	$image_id = date("Y-m-d-H-i-s");
+	$result = upload_image1($folder, $file_name, $file_tempname, $image_id);
+	if (!empty($result)) {
+		//$result = $row_getuserdata['photo'];	
+		$mess = 'Uploaded successfully';
+	} else {
+		//unlink("upload_image/".$row_getuserdata['photo']);
+		$mess = 'Please try again.';
+	}
+	
+	if ($mess == "Uploaded successfully") {
+		ini_set('memory_limit', '528M');
+		$inputFileName = "import_file/users/" . $result;
+		echo 'Loading file ', pathinfo($inputFileName, PATHINFO_BASENAME), ' using IOFactory to identify the format<br />';
+		$objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+
+		echo '<hr />';
+		
+		$sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+		$myArray = json_decode(json_encode($sheetData), true);
+		$i = 0;
+		$j = 0;
+		$e = 0;
+		foreach ($myArray as $arr){
+			$e++;
+			if ($e < 3) {
+				continue;
+			}
+			if($arr['A']=='' OR $arr['B']=='' OR $arr['C']==''){
+				continue;
+			}
+			$email = $arr['B'];
+			// if user type exist
+				$user_type =  strtolower(trim($arr['D']));
+				if($user_type == 'super admin'){
+					$uType = 2;
+				}else if($user_type == 'admin'){
+					$uType = 3;
+				}else if($user_type == 'manager'){
+					$uType = 4;
+				}
+			// only import super admin manager and admin
+			if($uType == 2 OR $uType == 3 OR $uType == 4){
+				$user_data = array(
+					"name"      => $arr['A'],
+					"email"     => $email,
+					"phone"     => $arr['C'],
+					"user_type" => $uType,
+					"cstatus"   => 1,
+					"cip"       => ipAddress(),
+					"cby"       => $_SESSION["user_id"],
+					"cdate"     => date("Y-m-d H:i:s")
+				);
+				$res = getaxecuteQuery_fn("select email from manage_users where email='$email' limit 1");
+				if (mysqli_num_rows($res) < 1) {
+					$i++;
+					$insert = dbRowInsert("manage_users", $user_data);
+				} else {
+					$j++;
+				}
+				$datapass = $i . '-' . $j;
+				//$mess = $mess . "<br> Fresh Data: " . $i . " Duplicate Data: " . $j;
+			}else {
+				$mess = "Please enter valid user type";
+			}
+		}
+		reDirect("?page=view-user&mess=" . $mess);
+	}
 }
 ?>

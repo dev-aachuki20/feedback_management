@@ -234,15 +234,13 @@ function get_assing_id_dept_loc_grp_survey($table_name){
 	  	$arr[] =$row_get_data;
 	  }
 	return $arr;
-}
+ }
 
  function get_user_datails($id=null){
-	
 	$user_data = getaxecuteQuery_fn("select * from manage_users  where id = $id ");
 	$row_get_data=mysqli_fetch_assoc($user_data);
-
 	return $row_get_data;
-}
+ }
 function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids=null,$department_ids=null,$loc_ids=null){
 	$user_id   = $_SESSION['user_id'];
 	$user_type = $_SESSION['user_type'];
@@ -252,17 +250,6 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 		if($surevy_ids){
 			$filter .= " and surveyid IN ($surevy_ids)";
 		}
-
-		// if($loc_ids){
-		// 	$filter .= " and locationid IN ($loc_ids)";
-		// }
-		// if($group_ids){
-		// 	$filter .= " and groupid IN ($group_ids)";
-		// }
-		// if($department_ids){
-		// 	$filter .= " and departmentid IN ($department_ids)";
-		// }
-	
 	if($status_id == 1){
 		// get assigned task id 
 		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id");
@@ -285,42 +272,22 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 	return $row;
 }
 function get_admin_manager_of_survey($survey_id){
-	$user_data   = getaxecuteQuery_fn("SELECT * from surveys where id = $survey_id");
-	$row 		 = mysqli_fetch_assoc ($user_data);
-	$manager     = $row['client_ids'];
-	$admin       = $row['admin_ids'];
-	$manager_ids = explode('|',$manager);
-	$admin_ids   = explode('|',$admin);
+	$survey_data   = getaxecuteQuery_fn("SELECT * from surveys where id = $survey_id");
+	$row 		 = mysqli_fetch_assoc ($survey_data);
+	$groupId     = $row['groups'];
 	$user_array  = array();
-	// for super admin email and name
-	$user_data = getaxecuteQuery_fn("SELECT * FROM `super_admin` where cstatus = 1");
+	// get user related to survey (by their groups)
+	$user_data = getaxecuteQuery_fn("SELECT * FROM `relation_table` WHERE `table_id` IN ($groupId) AND `table_name`= 'group' group by user_id");
 	$s = 0;
-	while($row = mysqli_fetch_assoc ($user_data)){
-		$user_details = get_user_datails($row['id']);
-		$user_array[1][$s]['email']  = $user_details['email'];
-		$user_array[1][$s]['name']   = $user_details['name'];
+	while($row_user = mysqli_fetch_assoc ($user_data)){
+		$user_details = get_user_datails($row_user['user_id']);
+		if($user_details){
+			$user_array[$s]['email']  	  = $user_details['email'];
+			$user_array[$s]['name']   	  = $user_details['name'];
+			$user_array[$s]['user_type']   = $user_details['user_type'];
+		}
 		$s++;
 	}
-	$i=0;
-	// for admin email and name
-	foreach($admin_ids as $admin){
-		if($admin){
-			$user_details = get_user_datails($admin);
-			$user_array[2][$i]['email']  = $user_details['email'];
-			$user_array[2][$i]['name']   = $user_details['name'];
-		}
-		$i++;
-	}
-	//for manager name and email
-	// $i = 0;
-	// foreach($manager_ids as $manager){
-	// 	if($manager){
-	// 		$user_details = get_user_datails($manager, 3);
-	// 		$user_array[3][$i]['email']  = $user_details['email'];
-	// 		$user_array[3][$i]['name']   = $user_details['name'];
-	// 	}
-	// 	$i++;
-	// }
 	return $user_array;
 }
 

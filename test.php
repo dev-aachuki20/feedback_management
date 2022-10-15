@@ -1,81 +1,47 @@
-
 <?php
+//Import PHPMailer classes into the global namespace
+//These must be at the top of your script, not inside a function
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 
-$a1= array(
-  0 => 
-  1 => 19
-);
+//Load Composer's autoloader
+require 'vendor/autoload.php';
 
-print_r(array_values(array_filter($a1))); 
-?>
-<style>
-.container {
-  margin-top: 20px;
-}
-.panel-heading {
-  font-size: larger;
-}
-.alert {
-  display: none;
-}
-/**
- * Error color for the validation plugin
- */
-.error {
-  color: #e74c3c;
-}
-</style>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <a href="https://jqueryvalidation.org/" target="_blank">jQuery Validation Plugin</a> demo
-    </div>
-    <div class="panel-body">
-      <div class="alert alert-success">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>Successfully submitted!</strong> The form is valid.
-      </div>
-      <form role="form" id="myForm">
-        <div class="form-group">
-          <label for="name">Name:</label>
-          <input type="text" class="form-control" id="name" name="name">
-        </div>
-        <div class="form-group">
-          <label for="email">Email address:</label>
-          <input type="email" class="form-control" id="email" name="email">
-        </div>
-        <button type="submit" class="btn btn-default">Subscribe</button>
-      </form>
-    </div>
-    <div class="panel-footer">This example is part of the article <a href="https://www.sitepoint.com/10-jquery-form-validation-plugins/" target="_blank">10 jQuery Form Validation Plugins</a> on <a href="http://sitepoint.com/" target="_blank">SitePoint</a> by <a href="https://github.com/julmot"
-        target="_blank">Julian Motz</a>.</div>
-  </div>
-</div>
-</div>
+//Create an instance; passing `true` enables exceptions
+$mail = new PHPMailer(true);
 
-<script>
-var $form = $("#myForm"),
-$successMsg = $(".alert");
-$.validator.addMethod("letters", function(value, element) {
-  return this.optional(element) || value == value.match(/^[a-zA-Z\s]*$/);
-});
-$form.validate({
-  rules: {
-    name: {
-      required: true,
-      minlength: 3,
-      letters: true
-    },
-    email: {
-      required: true,
-      email: true
-    }
-  },
-  messages: {
-    name: "Please specify your name (only letters and spaces are allowed)",
-    email: "Please specify a valid email address"
-  },
-  submitHandler: function() {
-    $successMsg.show();
-  }
-});
-</script>
+try {
+    //Server settings
+    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+    $mail->isSMTP();                                            //Send using SMTP
+    $mail->Host       = 'smtp.example.com';                     //Set the SMTP server to send through
+    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+    $mail->Username   = 'user@example.com';                     //SMTP username
+    $mail->Password   = 'secret';                               //SMTP password
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+    $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+    //Recipients
+    $mail->setFrom('from@example.com', 'Mailer');
+    $mail->addAddress('joe@example.net', 'Joe User');     //Add a recipient
+    $mail->addAddress('ellen@example.com');               //Name is optional
+    $mail->addReplyTo('info@example.com', 'Information');
+    $mail->addCC('cc@example.com');
+    $mail->addBCC('bcc@example.com');
+
+    //Attachments
+    $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
+    $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+
+    //Content
+    $mail->isHTML(true);                                  //Set email format to HTML
+    $mail->Subject = 'Here is the subject';
+    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+    $mail->send();
+    echo 'Message has been sent';
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
