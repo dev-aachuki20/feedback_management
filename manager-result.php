@@ -138,7 +138,7 @@
     </head>
     <body>
         <div id="reportPage">
-            <div align="center"><img src="upload_image/logo.png" width="200"></div>
+            <div align="center"><img src="<?=MAIN_LOGO?>" width="200"></div>
             <?php 
                 record_set("get_loc_dep", "select locationid, departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);
                 $row_get_loc_dep = mysqli_fetch_assoc($get_loc_dep);

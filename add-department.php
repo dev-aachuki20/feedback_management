@@ -77,7 +77,7 @@ if($_POST['update']){
   <h1> <?=isset($_GET['id']) ? 'View Department':'Add Department'?></h1>
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="box-body">
       <form action="" method="post" id="departmentForm" >
         <div class="row">

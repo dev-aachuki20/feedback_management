@@ -408,7 +408,7 @@ function insert_log($logtype,$logtable,$lognote,$logrefid,$logstatus,$logby,$use
 function status(){
 	return array(
 		"1"=>"Active",
-		"2" => "Deactivated"
+		"2" => "Inactive"
 	);
 }
 function status_data($status){
@@ -522,7 +522,7 @@ function send_email_to_users($name,$email,$enc_id){
 function send_email_to_assign_user($name,$email,$type='assign'){
 	$from = DEFAULT_FROM_EMAIL;
 	//$link = $_SERVER['HTTP_HOST'].'/verify_email.php?id='.$enc_id;
-	$to ='amitpandey.his@gmail.com';
+	$to =$email;
 	if($type='completed'){
 		$subject = "Task Completed";
 		$body = "Dear $name, <br><br>
@@ -549,7 +549,7 @@ function send_email_to_assign_user($name,$email,$type='assign'){
 }
 function survey_result_submitted_pdf_mail($email_to,$user_name){
 	$mpdf = new \Mpdf\Mpdf();
-	$pdf_name = 'survey-result'.date("Y-m-d-H-i-s");
+	$pdf_name = 'survey-result'.date("Y-m-d-H-i-s").".pdf";
     $subject = 'Survey Response Submitted';
     $body = " ";
 	$html = '<table width="100%" style="background-color:#dbdbdb;">
@@ -568,7 +568,7 @@ function survey_result_submitted_pdf_mail($email_to,$user_name){
 				<tr> <td height="20px;">&nbsp;</td> </tr>
 
 				<tr>
-					<td><p style="font-size:15px;margin:10px 0;">Hello Amit ,</p> <br>
+					<td><p style="font-size:15px;margin:10px 0;">Hello '.$user_name.'</p> <br>
 						<p style="font-size:15px;margin:10px 0;">A Survey Response has been submitted and the respondent has requested contact </p>
 					</td>
 				</tr>
@@ -707,11 +707,11 @@ function service_type(){
 		// '12'   => '2 times per day',
 		'24'   => 'Daily',
 		'168'  => 'Weekly',
-		'336'  => 'fortnightly',
+		'336'  => 'Fortnightly',
 		'720'  => 'Monthly',
-		'2160' => 'quarterly',
-		'4320' => '6 monthly',
-		'8640' => 'annually'
+		'2160' => 'Quarterly',
+		'4320' => '6 Monthly',
+		'8640' => 'Annually'
 
 	);
 }
@@ -742,7 +742,6 @@ function upload_excel(){
 		//unlink("upload_image/".$row_getuserdata['photo']);
 		$mess = 'Please try again.';
 	}
-	
 	if ($mess == "Uploaded successfully") {
 		ini_set('memory_limit', '528M');
 		$inputFileName = "import_file/users/" . $result;
@@ -757,6 +756,7 @@ function upload_excel(){
 		$j = 0;
 		$e = 0;
 		foreach ($myArray as $arr){
+			$rnd = rand(1000,99999);	
 			$e++;
 			if ($e < 3) {
 				continue;
@@ -777,14 +777,15 @@ function upload_excel(){
 			// only import super admin manager and admin
 			if($uType == 2 OR $uType == 3 OR $uType == 4){
 				$user_data = array(
-					"name"      => $arr['A'],
-					"email"     => $email,
-					"phone"     => $arr['C'],
-					"user_type" => $uType,
-					"cstatus"   => 1,
-					"cip"       => ipAddress(),
-					"cby"       => $_SESSION["user_id"],
-					"cdate"     => date("Y-m-d H:i:s")
+					"name"           => $arr['A'],
+					"email"          => $email,
+					"phone"          => $arr['C'],
+					"user_type"      => $uType,
+					"cstatus"   	 => 2,
+					"activation_key" => $rnd,
+					"cip"            => ipAddress(),
+					"cby"            => $_SESSION["user_id"],
+					"cdate"          => date("Y-m-d H:i:s")
 				);
 				$res = getaxecuteQuery_fn("select email from manage_users where email='$email' limit 1");
 				if (mysqli_num_rows($res) < 1) {
@@ -798,8 +799,83 @@ function upload_excel(){
 			}else {
 				$mess = "Please enter valid user type";
 			}
+			send_welcome_email($email,$arr['A'],$rnd);
 		}
 		reDirect("?page=view-user&mess=" . $mess);
 	}
+}
+function send_welcome_email($user_email, $user_name, $key){
+	$from = "noreply@dgam.app";
+	//$to = "anotheruk@gmail.com";
+	$to = $user_email;
+	//staticmail
+	//$to ='amitpandey.his@gmail.com';
+	$image = getHomeUrl() ."/upload_image/Data-Group-footer.png";
+	$subject = "DGS Activation Link for " . $user_name;
+	$link = getHomeUrl() . "/user-activation.php?email=$user_email&key=$key";
+	//$link=urlencode($link);
+	$body = "Hi $user_name <br><br>
+	Welcome to the DGS System.  <br><br>
+	Please use the below link to set your password and access your account.
+
+	.<br><br>" . $link." <br><br>
+	 '<img src=".$image." style='height:30px;''> <strong>Copyright <?php echo date(Y); ?> Data Group Solutions</strong> All rights reserved";
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+	$headers .= 'From: <' . $from . '>' . "\r\n";
+	return mail($to, $subject, $body, $headers);
+}
+function forgot_password_otp($user_email, $fkey){
+	$from = ADMIN_EMAIL;
+	$to = $user_email;
+	$subject = $fkey . "is your Password Recovery OTP";
+	$body = "Dear user,<br><br>Please enter OTP <strong>" . $fkey . "</strong> on reset password page to validate.";
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+	$headers .= 'From: <' . $from . '>' . "\r\n";
+	return mail($to, $subject, $body, $headers);
+}
+function export_csv_file($data,$type,$survey_name){
+	if($type == 'survey' or empty($type)){
+		$file_name = 'Survey_Statistics-'.date('Y-m-d-H-i-s').'.csv';
+	}else {
+		$file_name = str_replace(" ","-",$survey_name).'-'.date('Y-m-d-H-i-s').'.csv';
+	}
+	header('Content-Type: text/csv; charset=utf-8');  
+	header('Content-Disposition: attachment; filename='.$file_name);  
+	$output = fopen("php://output", "w"); 
+
+	$excel_data = array();
+	$i=0;
+	foreach($data as $key =>$datasurvey){
+		$total=  array_sum($datasurvey)/count($datasurvey);
+        $total =  round($total, 2);
+		
+		if($type == 'location'){
+			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
+		}
+		else if($type == 'group'){
+			$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
+		}
+		else if($type == 'department'){
+			$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
+		}else {
+			$excel_data[$i]['Survey_id']	= $key;
+			$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
+		}
+		$excel_data[$i]['Survey_Responses'] 	= count($datasurvey);
+		$excel_data[$i]['Average_Survey_Score'] = $total." %";
+		$i++;
+	}
+
+	// replace '_' with " " in array keys
+
+	$replacedKeys = str_replace('_', ' ', array_keys($excel_data[0]));
+
+	fputcsv($output, $replacedKeys);
+	foreach($excel_data as $csv){
+		fputcsv($output, array_values($csv));
+	}
+	fclose($output);  
 }
 ?>

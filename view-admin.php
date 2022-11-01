@@ -62,13 +62,13 @@
 
 				<?php 	}else{?>	
 
-                <span class="label label-danger">Deactive</span>
+                <span class="label label-danger">Inactive</span>
 
                 <?php }?>
 
                 </td>
 
-                <td><a class="btn btn-xs btn-info" href="?page=add_admin&id=<?php echo $row_get_admin['id']?>">Edit</a></td>
+                <td><a class="btn btn-xs btn-info btn-yellow" href="?page=add_admin&id=<?php echo $row_get_admin['id']?>">Edit</a></td>
 
               </tr>
 

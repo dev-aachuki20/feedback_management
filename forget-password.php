@@ -1,25 +1,67 @@
 <?php include('function/function.php'); 
-
-if(isset($_POST['login'])){
-  if(isset($_POST['email']) && isset($_POST['password']) !=''){
-	$uemail    = $_POST['email'];
-	$upassword = $_POST['password'];
-	record_set('dgsuser',"SELECT * FROM manage_users WHERE email='".$uemail."' AND password='".md5($upassword)."' AND id=1 AND cstatus='1'");
-	    
-		if(mysqli_num_rows($dgsuser)>0){
-			$row_dgs_user_admin=mysqli_fetch_array($dgsuser,MYSQLI_ASSOC);
-			foreach($row_dgs_user_admin as $key=>$val){
-				$_SESSION['user_'.$key] =$val;
+if(isset($_POST['recover'])){
+  if(isset($_POST['email'])){
+	$uemail = $_POST['email'];
+	record_set('admin',"SELECT id FROM  manage_users WHERE email='".$uemail."' AND cstatus='1'");   
+		if($totalRows_admin>0){
+			 $row_user_admin=mysqli_fetch_assoc($admin);
+			 $forget_key =random_code(5);
+			$user_data_update = array(
+				"forget_key" => $forget_key
+			);	
+			$update = dbRowUpdate('manage_users', $user_data_update, 'where id='.$row_user_admin['id']);
+			if($update){
+				forgot_password_otp($uemail,$forget_key);
+				reDirect('forget-password.php?action=enter-otp');
+			}else{
+				alert($msg_some_error);
 			}
-			$_SESSION['user_type'] =1;
-			$mess='Admin Login Successful';
-			//print_r($_SESSION);
-	    	reDirect('index.php?mess='.$mess);
-		}else{
-      $msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Email or password is not correct</div>';
+		}
+		else{
+			alert('Invalid email ID');
 	    }
 	}else{
-		$msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Please fill the fields</div>';
+		alert('Please fill the fields');
+	}
+}
+if(isset($_POST['otp'])){
+  if(isset($_POST['otpval'])){
+	record_set('admin',"SELECT id FROM  manage_users WHERE forget_key='".$_POST['otpval']."' AND cstatus='1'");   
+		if($totalRows_admin>0){
+			reDirect('forget-password.php?action=enter-password&otp='.$_POST['otpval']);
+		}else{
+			alert('Invalid OTP');
+	  }
+	}else{
+		alert('Please fill the fields');
+	}
+}
+if(isset($_POST['reset_password'])){
+  if(isset($_POST['password']) && isset($_POST['cpassword'])){
+	  if($_POST['password']==$_POST['cpassword']){
+		  record_set('admin',"SELECT id FROM  manage_users WHERE forget_key='".$_GET['otp']."' AND cstatus='1'");
+		  if($totalRows_admin>0){
+			  	$row_user_admin=mysqli_fetch_assoc($admin);
+				$user_data_update = array(
+					"forget_key" => '',
+					"password"=>md5($_POST['password'])
+				);	
+				$update = dbRowUpdate('manage_users', $user_data_update, 'where id='.$row_user_admin['id']);
+				if($update){
+					alert('Password changed successfully.');
+					reDirect('login.php');
+				}else{
+					alert($msg_some_error);
+				}
+		  }else{
+			  alert('Request not found or expired. Please try again.');
+		  }
+		
+	  }else{
+		  alert('Password and Confirm Password is not same.');
+	  }
+	}else{
+		alert('Please fill the fields');
 	}
 }
 ?>
@@ -159,7 +201,11 @@ if(isset($_POST['login'])){
 .login-box-body, .register-box-body{
   padding-bottom: 50px;
 }
-
+p.login-box-msg {
+    font-size: 18px;
+    color: black;
+    font-weight: 700;
+}
     </style>
 
   </head>
@@ -169,34 +215,60 @@ if(isset($_POST['login'])){
         <div align="center">
     		  <img src="<?=MAIN_LOGO?>" width="120">
     	  </div>
-        <h4 class="logheading">LOGIN</h4>
+       
         <?=$msg?>
-        <form method="post" action="" name="myForm">
+        <?php if($_GET['action']=='enter-otp'){ ?>
+          <p class="login-box-msg">Enter your OTP sent on your email.</p>
+          <form action="#" method="post">
           <div class="form-group has-feedback">
-            <span class="glyphicon glyphicon-user form-control-feedback"></span>
-            <input type="text" name="email" class="form-control" placeholder="Email">
-          </div>
-          <div class="form-group has-feedback">
-            <span class="glyphicon glyphicon-lock form-control-feedback view_password"></span>
-            <input type="password" name="password" class="form-control" placeholder="Password">
-          </div>
+            <input required type="text" name="otpval" maxlength="5" class="form-control" placeholder="OTP">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span> </div>
+          
           <div class="row">
-            <div class="col-sm-12">
-           
-            <div class="customcheck">
-              <input class="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1" required>
-              <label for="styled-checkbox-1">I agree to the</label>
-              <a class="linkText" href="./privacy-policy-pdf/DGFM Privacy Policy.pdf">Privacy Policy</a>
+            <div class="col-xs-6">
+              <a href="login.php"><strong>Login?</strong></a>
             </div>
+            <div class="col-xs-6">
+              <button type="submit" name="otp"  class="btn btn-success btn-block btn-flat">Validate OTP</button>
             </div>
-            <div class="col-xs-4">
-            <input type="submit" name="login" value="login" class="btn btn-primary btn-block btn-flat">
-            </div><!-- /.col -->
-            <div class="col-xs-8 text-right">
-             <a href="#" class="grayText">Forgot your password?</a>
-            </div><!-- /.col -->
+            
           </div>
         </form>
+        <?php }else if($_GET['action']=='enter-password'){ ?>
+          <p class="login-box-msg">Enter your new password.</p>
+          <form method="post" action="" name="myForm">
+            <div class="form-group has-feedback">
+              <input type="password" name="password" class="form-control" placeholder="Password">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span> 
+            </div>
+            <div class="form-group has-feedback">
+              <input type="password" name="cpassword" class="form-control" placeholder="Confirm Password">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span> 
+            </div>
+            <div class="row">
+              
+              <div class="col-xs-4" style="margin-top: 3px; color:#891acf;"><a style="color:#891acf;" href="./login.php"><strong>Login?</strong></a></div>
+              <div class="col-xs-8 text-right">
+              <input type="submit" name="reset_password" value="Confirm Password" class="btn btn-primary">
+              </div><!-- /.col -->
+            </div>
+          </form>
+        <?php }else{ ?>
+          <p class="login-box-msg">Enter Your Email To Reset Password.</p>
+          <form method="post" action="" name="myForm">
+            <div class="form-group has-feedback">
+              <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+              <input type="text" name="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="row">
+              
+              <div class="col-xs-4" style="margin-top: 3px; color:#891acf;"><a style="color:#891acf;" href="./login.php"><strong>Login?</strong></a></div>
+              <div class="col-xs-8 text-right">
+              <input type="submit" name="recover" value="Recover Password" class="btn btn-primary">
+              </div><!-- /.col -->
+            </div>
+          </form>
+        <?php } ?>
 
         <!-- /.social-auth-links -->
 

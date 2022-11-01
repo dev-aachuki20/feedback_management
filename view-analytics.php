@@ -44,7 +44,7 @@
 }
 </style>
 <section class="content-header">
-  <h1>ANALYTICS</h1>
+  <h1>Analytics</h1>
 </section>
 <section class="content">
   <div class="box">
@@ -56,7 +56,7 @@
             <div class="form-group">
             <label><?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
               <select name="survey_name" class="form-control form-control-lg survey_id" id="">
-                <option value="">select <?=$_GET['type']?></option>
+                <option value="">Select <?=ucfirst($_GET['type'])?></option>
                 <?php 
                 // survey by user
                 //$surveyByUsers = get_filter_data_by_user('surveys');
@@ -68,6 +68,7 @@
                   <option value="<?=$surveyId?>" <?php if($surveyId==$_POST['survey_name']) {echo 'selected';}?>><?=$surveyName?></option>
                 <?php } ?>
               </select>
+              <span class="error" style="display:none ;">Please select survey</span>
             </div>
           </div>
           <div class="col-md-3">
@@ -95,11 +96,13 @@
   <div class="box survey_type_div" style="display:none;">
     <div class="box-body">
         <!-- overall result div -->
+    
         <div class="row overallresult" style="text-align:center;margin-bottom: 20px;">
         
         </div>
 
       <div class="row" style="margin-bottom: 21px;">
+      <div class="col-md-2"><strong>Please select</strong></div>
         <div class="col-md-3">
             <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
         </div>
@@ -247,6 +250,9 @@ function mychart(label,data){
   let fdate  = $('#fdate').val();
   let sdate  = $('#sdate').val();
   let type   = $('#survey_type').val();
+
+  // check the survey is selected or not 
+  (survey) ? $('.error').hide():$('.error').show();
   survey_graph(fdate,sdate,survey,type,'filter')
  });
 
@@ -273,7 +279,12 @@ function mychart(label,data){
             if(response.html == 0){
               $('.data-available').hide();
               $('.data-notAvailable').show();
-              $('.data-notAvailable').html('<p style="margin-left: 20px !important;">THIS SEARCH PARAMETER IS NOT AVAILABLE FOR THIS SURVEY</p>');
+              if(type){
+                $('.data-notAvailable').html('<p style="margin-left: 20px !important;">THIS SEARCH PARAMETER IS NOT AVAILABLE FOR THIS SURVEY</p>');
+              }else {
+                $('.data-notAvailable').html('');
+              }
+            
               return;
             }else {
               $('.data-available').show();

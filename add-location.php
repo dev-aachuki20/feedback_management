@@ -78,7 +78,7 @@ $departmentByUsers = get_filter_data_by_user('departments');
   <h1> Add Location</h1>
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="box-body">
       <form action="" method="post" id="locationForm">
         <div class="row">

@@ -99,27 +99,58 @@ if(!empty($requestData['survey_name'])){
             if(isset($requestData['locationid']) && $requestData['locationid'] != '' && $requestData['locationid'] != 4 ){
                 $surveyFilter .= " and locationid=".$requestData['locationid'];
             }
-            record_set("survey_count","SELECT id from answers where cdate like '".date_month_qry($row_survey_detail['cdate'])."-%'  $surveyFilter group by cdate");
+            record_set("survey_count","SELECT * from answers where cdate like '".date_month_qry($row_survey_detail['cdate'])."-%'  $surveyFilter group by cdate");
+            //record_set("survey_count","SELECT * from answers where cdate like '2022-10-%' and surveyid=20 group by cdate");
 
             $nestested[] = date_formate_month($row_survey_detail['cdate']);
             $nestested[] = getSurvey()[$requestData['survey_name']];
             $nestested[] =  $totalRows_survey_count;
 
              //Average Result Score
-            record_set("average_survey_result","SELECT COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE surveyid='".$row_survey_detail['surveyid']."' AND locationid='".$row_survey_detail['locationid']."' AND cdate like '".date_month_qry($row_survey_detail['cdate'])."-%' GROUP BY cby ORDER BY cdate DESC");
-            $achieved_result_val = 0;
-            $result_score = 0;
-            if($totalRows_average_survey_result > 0){
-                while($row_average_survey_result = mysqli_fetch_assoc($average_survey_result)){
-                $achieved_result_val += floatval($row_average_survey_result['survey_val_sum'] * 100) / floatval($row_average_survey_result['survey_count'] * 100);
+            // record_set("average_survey_result","SELECT COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE surveyid='".$row_survey_detail['surveyid']."' AND locationid='".$row_survey_detail['locationid']."' AND cdate like '".date_month_qry($row_survey_detail['cdate'])."-%' GROUP BY cby ORDER BY cdate DESC");
+            // $achieved_result_val = 0;
+            // $result_score = 0;
+            // if($totalRows_average_survey_result > 0){
+            //     while($row_average_survey_result = mysqli_fetch_assoc($average_survey_result)){
+            //     $achieved_result_val += floatval($row_average_survey_result['survey_val_sum'] * 100) / floatval($row_average_survey_result['survey_count'] * 100);
+            //     }
+            //     $result_score = floatval($achieved_result_val) / intval($totalRows_average_survey_result);
+            // } 
+            $result_response = 0;
+            $result_response_value= 0;
+            $count = 0;
+            while($row_get_recent_entry = mysqli_fetch_assoc($survey_count)){
+                $total_result_val=0;
+                record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
+    
+                $achieved_result_val = 0;
+                $to_bo_contacted     = 0;
+                $i=0;
+                
+                while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                    if($result_question){
+                        if(!in_array($result_question['answer_type'],array(2,3,5))){
+                            $total_result_val = ($i+1)*100;
+                            $achieved_result_val += $row_get_survey_result['answerval'];
+                            $i++;
+                        }
+                    }
+                    if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                        $to_bo_contacted = 1;
+                    }
                 }
-                $result_score = floatval($achieved_result_val) / intval($totalRows_average_survey_result);
+                $result_response += $achieved_result_val*100/$total_result_val;
+                $count++;
             } 
-            $nestested[] = round($result_score,2).'%';
-            $nestested[] = '<a class="btn btn-xs btn-primary" href="export-pdf.php?surveyid='.$row_survey_detail['surveyid'].'&amp;month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a>';
-
-            $nestested[] = ' <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$row_survey_detail['surveyid'].'&month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a>';
             
+            $result_response_value = $result_response/$count;
+            if(is_nan($result_response_value)){
+                $result_response_value=100;
+            }
+            $nestested[] = round($result_response_value,2).'%';
+            $nestested[] = '<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$row_survey_detail['surveyid'].'&amp;month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$row_survey_detail['surveyid'].'&month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>';
+
             $data[] = $nestested;
         }
         

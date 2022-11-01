@@ -94,7 +94,7 @@ if(!empty($_POST['submit'])){
   <h1> Add Admin</h1>
   <a href="?page=view-admin" class="btn btn-primary pull-right" style="margin-top:-25px">View Admin</a> </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="row">
       <div class="col-md-12">
         <div class="box-header"><i class="fa fa-edit"></i>Input</div>

@@ -75,7 +75,7 @@ if($_POST['update']){
   <h1> Add Group</h1>
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="box-body">
       <form action="" method="post" id="groupForm">
         <div class="row">

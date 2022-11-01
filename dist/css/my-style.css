@@ -5,6 +5,7 @@ css variables
 :root {
     --framework_blue:#a020f0;
     --white: #ffffff;
+    --sidebarfirst:#56c1fe;
   }
 
 .skin-blue .wrapper, .skin-blue .main-sidebar, .skin-blue .left-side {
@@ -358,4 +359,87 @@ h4{margin-bottom:1px;font-size:16px;}
 }
 .btnCol a{
     margin: 2px;
+}
+.btn-green{
+    background-color: #00a65a !important;
+    border: unset;
+}
+.btn-yellow{
+    background-color: #ff9d00 !important;
+    border: unset;
+}
+.large-btn {
+    padding: 5px 50px;
+}
+.borderClass {
+    border-top: 1px solid #d2cfcf;
+    height: 35px;
+}
+.sidebar-menu .treeview-menu{
+    padding-left: 0;
+}
+.skin-blue .sidebar-menu>li:hover>a, .skin-blue .sidebar-menu>li.active>a{
+    border-left: 0;
+}
+.skin-blue .sidebar-menu>li:hover>a, .skin-blue .sidebar-menu>li.active>a{
+    background: var(--framework_blue) !important;
+}
+.skin-blue .sidebar-menu>li>.treeview-menu> .treeview.active> .nav-link, .skin-blue .sidebar-menu>li>.treeview-menu> .treeview> .nav-link:hover{
+    background: var(--framework_blue) !important;  
+    color: #fff !important;
+}
+.skin-blue .sidebar-menu>li>.treeview-menu> .treeview.active> .nav-link .timeline-area, .skin-blue .sidebar-menu>li>.treeview-menu> .treeview> .timeline-area .nav-link:hover{
+    color: var(--framework_blue) !important;  
+}
+.skin-blue .sidebar-menu>li>.treeview-menu> .treeview.active> .timeline-area li.active:before, .skin-blue .sidebar-menu>li>.treeview-menu> .treeview.active> .timeline-area li:hover:before{
+    background: var(--framework_blue) !important;  
+}
+.tree-menu .treeview-menu{
+  padding-left: 5px;
+}
+
+.skin-blue .sidebar-menu .treeview.tree-menu.active .treeview-menu.timeline-area .treeview.active .nav-link, .skin-blue .sidebar-menu .treeview.tree-menu.active .treeview-menu.timeline-area .treeview:hover .nav-link{
+    background: transparent !important;
+    color: var(--framework_blue) !important;
+}
+.skin-blue .sidebar-menu .treeview.tree-menu.active .treeview-menu.timeline-area .treeview.active:before, .skin-blue .sidebar-menu .treeview.tree-menu.active .treeview-menu.timeline-area .treeview:hover:before{
+    background: var(--framework_blue) !important;
+}
+.action-btn{
+    display: flex;
+}
+.action-btn a{
+    margin: 2px;
+}
+.graph-body{
+    text-align: center;
+    padding: 15px;
+    height: auto !important;
+}
+.col-md-3.graph-body #canvas-holder{
+    margin: 0 auto;
+}
+.graph-body .g-persent{
+    margin: 0 0 10px;
+    display: block;
+}
+.graph-body .total-count{
+    margin: 10px 0 0;
+    display: block;
+}
+
+.center-block .row{
+    display: flex;
+    justify-content: center;
+}
+.center-block .btn-big{ 
+    width: 100%;
+}
+
+
+@media (max-width:991px){
+    .center-block .row{
+        flex-direction: column;
+    }
+    .center-block  .btn{ margin-bottom: 10px;}
 }

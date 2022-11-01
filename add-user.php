@@ -250,10 +250,10 @@ if(!empty($_POST['submit'])){
   <?php } ?>
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="row">
       <div class="col-md-12">
-        <div class="box-header"><i class="fa fa-edit"></i>Input</div>
+        <!-- <div class="box-header"><i class="fa fa-edit"></i>Input</div> -->
         <div class="box-body">
             <?php if(isset($_GET['msg']) && !empty($_GET['msg'])){ ?>
              <div class="alert alert-danger text-denger" role="alert"><?=$_GET['msg']?></div>
@@ -331,7 +331,7 @@ if(!empty($_POST['submit'])){
               </div> -->
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Phone *</label>
+                  <label>Phone</label>
                   <input type="text" class="form-control" name="phone" id="phone" value="<?php echo $row_get_user_id['phone']?>"/>
                 </div>
               </div>
@@ -375,9 +375,9 @@ if(!empty($_POST['submit'])){
               <div class="col-md-12">
                 <div class="form-group">
                 <?php  if(empty($_GET['id'])){ ?>
-                  <input type="Submit" class="btn btn-primary" id="submit" value="Create" name="submit" style="margin-top:24px"/>
+                  <input type="Submit" class="btn btn-primary btn-green" id="submit" value="Submit" name="submit" style="margin-top:24px"/>
                   <?php }else{?>
-                <input type="Submit" class="btn btn-primary" value="Update" name="update" style="margin-top:24px"/>
+                <input type="Submit" class="btn btn-success btn-green" value="Update" name="update" style="margin-top:24px"/>
                 <?php }?>
                 <!--<span class="text-denger"><?php echo $_GET['msg']; ?></span>-->
                 </div>
@@ -396,7 +396,6 @@ $(function() {
     var validator =  $("form[name='myForm']").validate({
         rules: {
             name: "required",
-            phone: "required",
             email: {
                 required: true,
                 email: true

@@ -56,10 +56,21 @@ $data =array();
                 $count = array();
                 record_set("get_question","select * from answers where locationid=$locId and cby=$cby");
                 $total_answer = 0;
+                $i=0;
+                $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $total_answer += $row_get_question['answerval'];
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    if($result_question){
+                        if(!in_array($result_question['answer_type'],array(2,3,5))){
+                        $i++;
+                            $total_answer += $row_get_question['answerval'];
+                        }
+                    }
                 }
-                $average_value = ($total_answer/($totalRows_get_question*100))*100;
+                $average_value = ($total_answer/($i*100))*100;
+                if($total_answer==0 and $total_result_val==0){
+                    $average_value=100;
+                }
                 $survey_data[$locId][$cby] = $average_value;
             }
             else if($survey_type=='department'){
@@ -67,10 +78,21 @@ $data =array();
                 $count = array();
                 record_set("get_question","select * from answers where departmentid=$depId and cby=$cby");
                 $total_answer = 0;
+                $i=0;
+                $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $total_answer += $row_get_question['answerval'];
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    if($result_question){
+                        if(!in_array($result_question['answer_type'],array(2,3,5))){
+                        $i++;
+                            $total_answer += $row_get_question['answerval'];
+                        }
+                    }
                 }
-                $average_value = ($total_answer/($totalRows_get_question*100))*100;
+                $average_value = ($total_answer/($i*100))*100;
+                if($total_answer==0 and $total_result_val==0){
+                    $average_value=100;
+                }
                 $survey_data[$depId][$cby] = $average_value;
             }
             else if($survey_type=='group'){
@@ -78,11 +100,22 @@ $data =array();
                 $count = array();
                 record_set("get_question","select * from answers where groupid=$grpId and cby=$cby");
                 $total_answer = 0;
+                $i=0;
+                $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $total_answer += $row_get_question['answerval'];
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    if($result_question){
+                        if(!in_array($result_question['answer_type'],array(2,3,5))){
+                        $i++;
+                            $total_answer += $row_get_question['answerval'];
+                        }
+                    }
                 }
-                $average_value = ($total_answer/($totalRows_get_question*100))*100;
-                $survey_data[$grpId][$cby]['current'] = $average_value;
+                $average_value = ($total_answer/($i*100))*100;
+                if($total_answer==0 and $total_result_val==0){
+                    $average_value=100;
+                }
+                $survey_data[$grpId][$cby] = $average_value;
             }
         }
     }
@@ -165,7 +198,7 @@ if(count($current_data)>0){
     <thead>
       <tr>
         <th scope="col">'.$title.'</th>
-        <th scope="col">Number of survey</th>
+        <th scope="col">Number of Surveys</th>
         <th scope="col">Average Score</th>
       </tr>
     </thead>

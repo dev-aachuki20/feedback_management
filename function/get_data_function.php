@@ -243,9 +243,8 @@ function get_assing_id_dept_loc_grp_survey($table_name){
  }
 function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids=null,$department_ids=null,$loc_ids=null){
 	$user_id   = $_SESSION['user_id'];
-	$user_type = $_SESSION['user_type'];
+	
 	$array = array();
-
 	$filter = '';
 		if($surevy_ids){
 			$filter .= " and surveyid IN ($surevy_ids)";
@@ -300,6 +299,7 @@ function get_data_by_id($table,$id){
 	}
 	return $arr;
 }
+
 
 // date 14-10-2022
 // if contacted is yes then only mail will send to admin and super admin

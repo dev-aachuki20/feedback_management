@@ -38,7 +38,7 @@ hr{
 
 <body lang="en" class="notranslate" translate="no">
 <div class="container">
-<div align="center"><img src="upload_image/logo.png" width="200"></div>
+<div align="center"><img src="<?=MAIN_LOGO?>" width="200"></div>
 <br>
 <h2 align="center"><?php echo $thanku_message; ?><br><br></h2>
 

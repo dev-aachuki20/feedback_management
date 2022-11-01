@@ -54,7 +54,7 @@ if(isset($_POST['login'])){
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
     <!-- iCheck -->
-    <link rel="stylesheet" href="plugins/iCheck/square/blue.css">
+    <!-- <link rel="stylesheet" href="plugins/iCheck/square/blue.css"> -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -62,35 +62,152 @@ if(isset($_POST['login'])){
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style type="text/css">
+    .logheading{
+        text-align: center;
+        margin: 20px 0;
+        font-size: 28px;
+        font-weight: 600;
+        color: #000;
+    }
+    .login-box .form-group .form-control-feedback{
+      left: 0;
+      background: #a020f0;
+      color: #fff;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px 0 0 3px;
+      padding: 5px 20px;
+    }
+    .login-box .form-group .form-control{
+      padding: 10px 15px 10px 50px;
+      height: 40px;
+      border-radius: 3px;
+    }
+    .login-box form .btn-primary{
+      background: #a020f0;
+      border-color: #a020f0;
+      color: #fff;
+      text-transform: capitalize;
+      font-weight: 500;
+      transition: all 0.3s ease-in;
+    }
+    .login-box form .btn-primary:hover{
+      background: #891acf;
+      border-color: #891acf;
+    }
+    .grayText{
+      color: #707070;
+      font-size: 14px;
+      font-weight: 400;
+      text-decoration: underline;
+      margin-top: 5px;
+      display: inline-block;
+    }
+    .grayText:hover{
+      color: #a020f0;
+    }
+    .customcheck{
+      margin:0 0 15px 0;
+      position: relative;
+    }
+    .linkText{
+      display: inline-block;
+      color: #2196F3;
+      font-size: 14px;
+    }
+    .linkText:hover{
+      text-decoration: underline;
+      color: #2196F3;
+    }
+.styled-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+.styled-checkbox + label {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  color: #707070;
+  font-size: 14px;
+  font-weight: 400; 
+}
+.styled-checkbox + label:before {
+  content: "";
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: text-top;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 1px solid #ccc;
+}
+
+
+.styled-checkbox:checked + label:before {
+  background: #a020f0;
+  border: 1px solid #a020f0;
+}
+.styled-checkbox:disabled + label {
+  color: #b8b8b8;
+  cursor: auto;
+}
+.styled-checkbox:disabled + label:before {
+  box-shadow: none;
+  background: #ddd;
+}
+.styled-checkbox:checked + label:after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 9px;
+  background: white;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+  transform: rotate(45deg);
+}
+.login-box-body, .register-box-body{
+  padding-bottom: 50px;
+}
+
+    </style>
   </head>
   <body class="hold-transition login-page">
   
     <div class="login-box">
             
-      <div class="login-logo">
-        <a href="#">LOGIN</a>
-      </div><!-- /.login-logo -->
       <div class="login-box-body">
-          	<div align="center">
-    		<img src="upload_image/logo.png" width="200">
-    	</div>
-        <p class="login-box-msg">Sign in to start your session</p>
+        <div align="center">
+    		  <img src="<?=MAIN_LOGO?>" width="120">
+    	  </div>
+        <h4 class="logheading">LOGIN</h4>
         <?=$msg?>
         <form method="post" action="" name="myForm">
           <div class="form-group has-feedback">
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
             <input type="text" name="email" class="form-control" placeholder="Email">
-            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
           </div>
           <div class="form-group has-feedback">
+            <span class="glyphicon glyphicon-lock form-control-feedback view_password"></span>
             <input type="password" name="password" class="form-control" placeholder="Password">
-            <span class="glyphicon glyphicon-eye-open form-control-feedback view_password"></span>
           </div>
           <div class="row">
-            <div class="col-xs-8">
-              &nbsp;
-            </div><!-- /.col -->
+            <div class="col-sm-12">
+           
+            <div class="customcheck">
+              <input class="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1" required>
+              <label for="styled-checkbox-1">I agree to the</label>
+              <a class="linkText" href="./privacy-policy-pdf/DGFM Privacy Policy.pdf">Privacy Psolicy</a>
+            </div>
+            </div>
             <div class="col-xs-4">
-              <input type="submit" name="login" value="Sign In" class="btn btn-primary btn-block btn-flat">
+            <input type="submit" name="login" value="login" class="btn btn-primary btn-block btn-flat">
+            </div><!-- /.col -->
+            <div class="col-xs-8 text-right">
+             <a href="./forget-password.php" class="grayText">Forgot your password?</a>
             </div><!-- /.col -->
           </div>
         </form>
@@ -98,6 +215,7 @@ if(isset($_POST['login'])){
         <!-- /.social-auth-links -->
 
       </div><!-- /.login-box-body -->
+      <center style="margin-top:20px;"><img  src="<?=getHomeUrl()?>upload_image/Data-Group-footer.png" alt="" width="150" /></center>
     </div><!-- /.login-box -->
 
     <!-- jQuery 2.1.4 -->
@@ -107,17 +225,17 @@ if(isset($_POST['login'])){
     <!-- iCheck -->
     <script src="plugins/iCheck/icheck.min.js"></script>
     <script>
-      $(function () {
-        $('input').iCheck({
-          checkboxClass: 'icheckbox_square-blue',
-          radioClass: 'iradio_square-blue',
-          increaseArea: '20%' // optional
-        });
-      });
+      // $(function () {
+      //   $('input').iCheck({
+      //     checkboxClass: 'icheckbox_square-blue',
+      //     radioClass: 'iradio_square-blue',
+      //     increaseArea: '20%' // optional
+      //   });
+      // });
       // $(".view_password").click(function(){
       //   alert('amit');
       // })
     </script>
-<center>Powered by Datagroup Solutions<br><img  src="<?=getHomeUrl()?>'upload_image/Data-Group-footer.png" alt="" width="200" height="36" /></center>
+
 </body>
 </html>

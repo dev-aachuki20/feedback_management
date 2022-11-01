@@ -157,7 +157,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 }
 </style>
 <section class="content">
-    <div class="box box-danger">
+    <div class="box box-secondary">
         <?php if(isset($_GET['msg'])){ ?>
 			<div class="alert alert-success" role="alert">
 				<?php echo $_GET['msg']; ?>
@@ -165,7 +165,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 		<?php } ?>
         <div class="row">
             <div class="col-md-12">
-                <div class="box-header"><i class="fa fa-edit"></i>Input</div>
+                <!-- <div class="box-header"><i class="fa fa-edit"></i>Input</div> -->
                 <div class="box-body">
                     <form action="" method="post" enctype="multipart/form-data" id="survey_from">
                         <div class="row">
@@ -190,7 +190,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Entry Needed</label>
+                                    <label>Entry Limit</label>
                                     <input type="text" class="form-control" name="survey_needed" id="survey_needed" value="<?php echo $row_get_surveys['survey_needed'];?>"/>
                                 </div>
                             </div>
@@ -290,7 +290,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <div class="form-group">
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="confidential" name="confidential" <?php echo ($row_get_surveys['confidential'] == 1) ? "checked" : ""; ?>>
-                                            <label class="form-check-label" for="confidencial"> Confidencial </label>
+                                            <label class="form-check-label" for="confidencial"> Confidential </label>
                                         </div>
                                     </div>
                                 </div>            

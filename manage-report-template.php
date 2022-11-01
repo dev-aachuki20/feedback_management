@@ -16,6 +16,7 @@ if($_GET['type']== 'template'){
 if(isset($_POST['schedule_btn'])){
   $temp_id = $_POST['template_id'];
   $start = date('Y-m-d H:i:s', strtotime($_POST['start_date'])); 
+  $end   = date('Y-m-d H:i:s', strtotime($_POST['end_date'])); 
   $next_date =  date('Y-m-d H:i:s',strtotime('+'.$_POST['interval'] .'hour',strtotime($start))); 
 
   record_set('create_report', 'select * from create_template_report where temp_id="'.$temp_id.'"');
@@ -28,9 +29,10 @@ if(isset($_POST['schedule_btn'])){
         'keyword'            => $report_data['keyword'],
         'value'              => $report_data['value'],
         "next_schedule_date" => $next_date,
-        'survey_id'          => $_POST['survey_id'],
-        'step_id'            => $_POST['step_id'],
-        'question_id'        => $_POST['question_id'],
+        "end_date"           => $end,
+        'survey_id'          => $report_data['survey_id'],
+        'step_id'            => $report_data['step_id'],
+        'question_id'        => $report_data['question_id'],
         'cby'                => $_SESSION['user_id'],
         'created_at'         => date('Y-m-d H:i:s'),
       );
@@ -46,93 +48,93 @@ if(isset($_POST['schedule_btn'])){
   <h1><?=($_GET['type']=='template')?'VIEW TEMPLATE':'VIEW SCHEDULE'?></h1>
 </section>
 <section class="content">
-    <div class="box">
+  <div class="box">
     <div class="box-body table-responsive">
-          <?php if($_GET['type']=='template') {?>
-          <table id="example1" class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                <th>#</th>
-                <th>Report Name</th>
-                <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php
-            $i = 1;
-            while($rpt = mysqli_fetch_assoc($template)){     
+      <?php if($_GET['type']=='template') { ?>
+      <table id="example1" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+            <th>#</th>
+            <th>Report Name</th>
+            <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+        $i = 1;
+        while($rpt = mysqli_fetch_assoc($template)){     
+            $temp_id = $rpt['temp_id'];
+            ?>
+            <tr>
+              <td><?=$i?></td>
+              <td><?=$rpt['temp_name']?></td>
+              <td>
+                  <a href="?page=create-report&type=temp-details&viewid=<?=$temp_id?>">
+                    <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;">VIEW DETAILS</button>
+                  </a>
+                  <button class="btn btn-success btn-xs schedule-now green-btn" style="margin-right: 10px;padding: 0px 16px 0px 13px;" data-id="<?=$temp_id?>" data-date="<?= date('Y-m-d') ?>" >SCHEDULE NOW</button>
+                  <!-- <a href="?page=manage-report-template&delete=<?=$temp_id?>"> -->
+                      <button type="button" class="btn btn-danger btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;background-color:#e51900;" onclick="delete_data('create_template_report','<?=$temp_id?>')">DELETE</button>
+                  <!-- </a> -->
+
+              </td>
+            </tr> 
+        <?php
+        $i++;
+          }
+        ?>    
+        </tbody>
+        
+      </table>
+      <?php }else { ?> 
+      <table id="example1" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Report Name</th>
+            <th>Created By</th>
+            <th>Frequency</th>
+            <th>Start Date</th>
+            <th>Next Due Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php $i = 1;
+          while($rpt = mysqli_fetch_assoc($template)){     
                 $temp_id = $rpt['temp_id'];
-                ?>
-                <tr>
-                  <td><?=$i?></td>
-                  <td><?=$rpt['temp_name']?></td>
-                  <td>
-                      <a href="?page=create-report&type=temp-details&viewid=<?=$temp_id?>">
-                        <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;">VIEW DETAILS</button>
-                      </a>
-                      <button class="btn btn-success btn-xs schedule-now green-btn" style="margin-right: 10px;padding: 0px 16px 0px 13px;" data-id="<?=$temp_id?>" data-date="<?= date('Y-m-d') ?>" >SCHEDULE NOW</button>
-                      <!-- <a href="?page=manage-report-template&delete=<?=$temp_id?>"> -->
-                          <button type="button" class="btn btn-danger btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;background-color:#e51900;" onclick="delete_data('create_template_report','<?=$temp_id?>')">DELETE</button>
-                      <!-- </a> -->
-
-                  </td>
-                </tr> 
-            <?php
-            $i++;
-              }
-            ?>    
-            </tbody>
-            
-          </table>
-          <?php }else { ?> 
-          <table id="example1" class="table table-bordered table-hover">
-            <thead>
+                // $days = $rpt['frequency']/24;
+              ?>
               <tr>
-                <th>#</th>
-                <th>Report Name</th>
-                <th>Created By</th>
-                <th>Frequency</th>
-                <th>Start Date</th>
-                <th>Next Due Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php $i = 1;
-              while($rpt = mysqli_fetch_assoc($template)){     
-                    $temp_id = $rpt['temp_id'];
-                    // $days = $rpt['frequency']/24;
-                  ?>
-                  <tr>
-                    <td><?=$i?></td>
-                    <td><?=$rpt['temp_name']?></td>
-                    <td><?=get_user_datails($rpt['cby'])['name']?></td>
-                    <td><?=ucfirst(service_type()[$rpt['frequency']])?></td>
-                    <td><?=date('d-m-Y', strtotime($rpt['schedule_date']))?></td>
-                    <td><?=date('d-m-Y ', strtotime($rpt['next_schedule_date']))?></td>
-                    <td>
-                        <a href="?page=create-report&type=schedule-details&viewid=<?=$temp_id?>">
-                          <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;">VIEW DETAILS</button>
-                        </a>
-                        <!-- <a href="?page=manage-report-template&delete=<?=$temp_id?>"> -->
-                            <button type="button" class="btn btn-danger btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;background-color:#e51900;" onclick="delete_data('schedule_report','<?=$temp_id?>')">DELETE</button>
-                        <!-- </a> -->
+                <td><?=$i?></td>
+                <td><?=$rpt['temp_name']?></td>
+                <td><?=get_user_datails($rpt['cby'])['name']?></td>
+                <td><?=ucfirst(service_type()[$rpt['frequency']])?></td>
+                <td><?=date('d-m-Y', strtotime($rpt['schedule_date']))?></td>
+                <td><?=date('d-m-Y ', strtotime($rpt['next_schedule_date']))?></td>
+                <td>
+                    <a href="?page=create-report&type=schedule-details&viewid=<?=$temp_id?>">
+                      <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;">VIEW DETAILS</button>
+                    </a>
+                    <!-- <a href="?page=manage-report-template&delete=<?=$temp_id?>"> -->
+                        <button type="button" class="btn btn-danger btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;background-color:#e51900;" onclick="delete_data('schedule_report','<?=$temp_id?>')">DELETE</button>
+                    <!-- </a> -->
 
-                    </td>
-                  </tr> 
-              <?php
-              $i++;
-              } ?>    
-            </tbody>
-          </table>
-          <?php } ?>
-        </div>
+                </td>
+              </tr> 
+          <?php
+          $i++;
+          } ?>    
+        </tbody>
+      </table>
+      <?php } ?>
     </div>
+  </div>
 </section>
 
 <div class="modal" id="schedule_popup">
   <div class="modal-dialog" role="document">
-      <div class="modal-content" style="height:200px ;">
+      <div class="modal-content" style="height:240px ;">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel"> </h5>
           <button type="button" class="close closes" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
@@ -145,6 +147,12 @@ if(isset($_POST['schedule_btn'])){
                 <label for="staticEmail" class="col-sm-4 col-form-label">Start Date</label>
                 <div class="col-sm-8">
                   <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="staticEmail" class="col-sm-4 col-form-label">End Date</label>
+                <div class="col-sm-8">
+                  <input type="date"  class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
                 </div>
               </div>
               <div class="form-group row">

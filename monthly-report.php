@@ -6,7 +6,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($_GET['type']);
 ?>
 <section class="content-header">
-  <h1>Monthly Report</h1>
+  <h1>Survey Results</h1>
 </section>
 <section class="content">
   <div class="row">
@@ -136,8 +136,7 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
                 <th>SURVEY NAME</th>               
                 <th>TOTAL SURVEY</th>               
                 <th>AVERAGE RESULT SCORE</th>
-                <th>VIEW PDF</th>
-                <th>DOWNLOAD CSV</th>                
+                <th>ACTION</th>
               </tr>
             </thead>
           </table>

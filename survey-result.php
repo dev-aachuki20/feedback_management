@@ -32,7 +32,6 @@ $i = 0;
     if($row_get_contact_action['action'] == 1){
       $showAllComment[$i]['action']='UNASSIGNED';
       $showAllComment[$i]['status']=$row_get_contact_action['action'];
-
     }
     if($row_get_contact_action['action'] == 2){
       $showAllComment[$i]['action']='ASSIGNED';
@@ -58,8 +57,7 @@ $i = 0;
     $showAllComment[$i]['comment']=$row_get_contact_action['comment'];
     $showAllComment[$i]['created_date']=$row_get_contact_action['created_date'];
 
-    $showAllComment[$i]['cby_user_type']=$row_get_contact_action['cby_user_type'];
-    $showAllComment[$i]['cby_user_id']=$row_get_contact_action['cby_user_id'];
+    $showAllComment[$i]['cby_user_id']=$row_get_contact_action['cby'];
     $i++;
   }
 }
@@ -93,24 +91,17 @@ record_set("get_contact_action_single", "select * from survey_contact_action whe
 }
 
 record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
-if($totalRows_get_survey_id > 0){ 
+if($totalRows_get_survey_id > 0){
   $row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
   $survey_id = $row_get_survey_id['surveyid'];
-  $user_data = get_admin_manager_of_survey($survey_id);
-  foreach($user_data as $key => $value){
-    //for admin manager
-    if($value['user_type']==3 OR $value['user_type']==4){
-      $uemail = $value['email'];
-      $uname  = $value['name'];
-      send_email_to_assign_user($uemail,$uname);
-    }
-  }
 }
 if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
+
   $user_id = $_GET['userid'];
-  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']." and cby_user_type=".$_SESSION['user_type']." and cby_user_id=".$_SESSION['user_id']."");
+  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."  and cby=".$_SESSION['user_id']."");
  
   if($totalRows_total_contact > 0){
+      
     $data_contact_action_update = array(
       "action"=> $_POST['contact_action'],
       "comment"=> $_POST['comment'],
@@ -118,26 +109,8 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
     );
     $whereCondition = 'user_id='.$user_id.' and action='.$_POST['contact_action'];
     $update_contact_action =  dbRowUpdate("survey_contact_action",$data_contact_action_update,$whereCondition);
-    if($update_contact_action){
-      header("Refresh:0");
-    }
-  }else{
-    $data_contact_action = array(
-      "user_id"=> $_GET['userid'],
-      "action"=> $_POST['contact_action'],
-      "cby_user_type" =>$_SESSION['user_type'],
-      "cby_user_id" =>$_SESSION['user_id'],
-      "comment"=> $_POST['comment'],
-      'created_date'=>date("Y-m-d H:i:s")
-    );
-    $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-    $data =array(
-      'task_status' => $_POST['contact_action'],
-    );
-    $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and assign_to_user_type =". $_SESSION['user_type']." and task_id=".$_GET['userid']);
-
     // send mail if status change to Resolve-negative
-    if($_POST['contact_action'] == 6){
+    if($_POST['contact_action'] == 5 OR $_POST['contact_action'] == 6){
       record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
       if($totalRows_get_survey_id > 0){ 
         $row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
@@ -160,7 +133,54 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
       if($value['user_type']==2 OR $value['user_type']==3){
         $uemail = $value['email'];
         $uname  = $value['name'];
-        send_email_to_assign_user($uemail,$uname);
+        survey_result_submitted_pdf_mail($uemail,$uname);
+      }
+    }
+    if($update_contact_action){
+
+      header("Refresh:0");
+    }
+  }else{
+
+    $data_contact_action = array(
+      "user_id"=> $_GET['userid'],
+      "action"=> $_POST['contact_action'],
+      "cby" =>$_SESSION['user_id'],
+      "comment"=> $_POST['comment'],
+      'created_date'=>date("Y-m-d H:i:s")
+    );
+   
+    $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+    $data =array(
+      'task_status' => $_POST['contact_action'],
+    );
+  
+    $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and task_id=".$_GET['userid']);
+   
+    // send mail if status change to Resolve-negative
+    if($_POST['contact_action'] == 5 OR $_POST['contact_action'] == 6){
+      record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
+      if($totalRows_get_survey_id > 0){ 
+        $row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
+        $survey_id = $row_get_survey_id['surveyid'];
+        $user_data = get_admin_manager_of_survey($survey_id);
+        foreach($user_data as $key => $value){
+          //for admin manager
+          if($value['user_type']==3 OR $value['user_type']==4){
+            $uemail = $value['email'];
+            $uname  = $value['name'];
+            send_email_to_assign_user($uemail,$uname);
+          }
+        }
+      }
+    }  
+    // send mail to super admin and admin on survey result submit
+    $user_data = get_admin_manager_of_survey($_GET['surveyid']);
+    foreach($user_data as $key => $value){
+      //for super admin and admin
+      if($value['user_type']==2 OR $value['user_type']==3){
+        $uemail = 'amitpandey.his@gmail.com';
+        $uname  = $value['name'];
         survey_result_submitted_pdf_mail($uemail,$uname);
       }
     }
@@ -227,7 +247,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   <body>
 
   <div id="reportPage">
-    <div align="center"><img src="upload_image/logo.png" width="200"></div>
+    <div align="center"><img src="<?=MAIN_LOGO?>" width="200"></div>
     <h2 align="center" style="margin:20px;"> <?= $row_get_survey['name']; ?> </h2>
     <?php 
     record_set("get_loc_dep", "select locationid, departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);

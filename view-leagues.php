@@ -1,6 +1,6 @@
 <?php 
     // survey by user
-    $surveyByUsers = get_survey_data_by_user('survey');
+    $surveyByUsers = get_survey_data_by_user($_GET['type']);
 ?>
 <style>
     .btn-outline-secondary {
@@ -33,7 +33,7 @@
     }
 </style>
 <section class="content-header">
-  <h1>League Table</h1>
+  <h1>League Tables</h1>
 </section>
 <section class="content">
     <div class="box">
@@ -61,8 +61,8 @@
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="form-group"><label> Survey</label>
-                                    <select name="survey" class="form-control form-control-lg survey" required> <option value="">Select Survey</option>
+                                <div class="form-group"><label> <?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
+                                    <select name="survey" class="form-control form-control-lg survey" required> <option value="">Select <?=ucfirst($_GET['type'])?></option>
                                     <?php foreach($surveyByUsers as $surveyData){
                                         $surveyId = $surveyData['id'];
                                         $surveyName = $surveyData['name']; ?>
@@ -81,14 +81,16 @@
                         </div>
                         <hr style="border: 2px solid #6c757d36;">
                         <div class="row" style="margin-bottom: 21px;">
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+                            <div class="col-md-12" style="margin-left:10% ;">
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -134,7 +136,6 @@
 <script>
     ajax_league_table();
     function ajax_league_table(fdate,sdate,type,survey){
-        
         $.ajax({
             method:"POST",
             url:'<?=baseUrl()?>ajax/view-league-data.php',

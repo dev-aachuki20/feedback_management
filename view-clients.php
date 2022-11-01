@@ -6,7 +6,7 @@
 
 <section class="content">
 
-  <div class="box box-danger">
+  <div class="box box-secondary">
 
         <div class="box-body">
 
@@ -59,13 +59,13 @@
 
 				<?php 	}else{?>	
 
-                <span class="label label-danger">Deactive</span>
+                <span class="label label-danger">Inactive</span>
 
                 <?php }?>
 
                 </td>
 
-                <td><a class="btn btn-xs btn-info" href="?page=add-clients&id=<?php echo $row_get_clients['id']; ?>">Edit</a></td>
+                <td><a class="btn btn-xs btn-info btn-yellow" href="?page=add-clients&id=<?php echo $row_get_clients['id']; ?>">Edit</a></td>
 
               </tr>
 

@@ -57,7 +57,7 @@ if(!empty($_GET['location']) and $_GET['location']!=4){
      $location_name ="All";
 }
 $message = 
-'<div align="center"><img src="upload_image/logo.png" width="200"></div>
+'<div align="center"><img src="'.MAIN_LOGO.'" width="200"></div>
 
   <table width="100%">
       <thead>

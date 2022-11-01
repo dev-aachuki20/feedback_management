@@ -28,6 +28,7 @@
     $loc_ids     = implode(',',$assign_location);
     $grp_ids     = implode(',',$assign_group);
     $surveys_ids = implode(',',$assign_survey);
+
 ?>
 <style>
     .d-none{
@@ -35,13 +36,13 @@
     }
 </style>
 <section class="content-header">
-  <h1>Report</h1>
+  <h1>Contact Outcomes</h1>
 </section>
 <section class="content">
     <!-- top box container start-->
     <div class="row">
         <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&req=assigned&task_status=1" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=assigned&task_status=1" target="_blank"> 
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-blue"><i class="fa-solid fa-bars"></i></span>
@@ -57,7 +58,7 @@
             </div>
         </a> 
    
-        <a class="" href="index.php?page=survey-manage&req=assigned&task_status=2" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=assigned&task_status=2" target="_blank"> 
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-orange"><i class="fa-solid fa-list-check"></i></span>
@@ -70,7 +71,7 @@
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=in progress&task_status=3" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=in progress&task_status=3" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-aqua"><i class="fa-solid fa-spinner"></i></span>
@@ -83,10 +84,10 @@
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=void&task_status=4" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=void&task_status=4" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-gray"><i class="fa-sharp fa-solid fa-bars-progress"></i></span>
+                    <span class="info-box-icon bg-gray"><i class="fa-solid fa-trash"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">VOID</span>
                        
@@ -97,10 +98,10 @@
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&req=resolved negative&task_status=6" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=resolved negative&task_status=6" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-black"><<i class="fa-brands fa-resolving"></i></span>
+                    <span class="info-box-icon bg-red"><i class="fa-solid fa-circle-xmark"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">RESOLVED NEGATIVE</span>
                         
@@ -111,7 +112,7 @@
                 <!-- /.info-box -->
             </div>
         </a> 
-        <a class="" href="index.php?page=survey-manage&req=resolved postive&task_status=5" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=resolved postive&task_status=5" target="_blank">
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>

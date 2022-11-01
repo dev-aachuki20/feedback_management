@@ -17,9 +17,9 @@
 			<span class="proDl"><?php if($_SESSION['user_type']==1){ echo 'DGS LEVEL';} else if($_SESSION['user_type']==2){ echo 'SUPER ADMIN';} else if($_SESSION['user_type']==3){ echo 'ADMIN';} else { echo 'MANAGER';}?></span>
 			</a>
 		</div>
-</div>
+    </div>
     </li>
-    <li><a href="index.php"><i class="fa fa-dashboard"></i><span>DASHBOARD</span></a></li>
+    <li><a href="index.php"><i class="fa fa-solid fa-house-chimney"></i><span>DASHBOARD</span></a></li>
     <!-- Configuration menu-->
     <?php if(count(array_intersect($configuration,$user_permission))>0) { ?>
         <li class="treeview <?=make_sidebar_active($_GET['page'],$configuration )?>">
@@ -65,18 +65,27 @@
      <!-- Surveys menu-->
     <?php if(count(array_intersect($surveysMenu,$user_permission))>0) { ?> 
         <li class="treeview <?php if(in_array($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics','view-leagues','view-contacted-list')) and $_GET['type']=='survey') { echo 'active';}?>">
-            <a href="#"><i class="fa fa-poll"></i><span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i> </a>
+            <a href="#"><i class="fa fa-light fa-comment-dots"></i><span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu ">
-                <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes','view-leagues','view-contacted-list'))?>">
+                <?php if($_SESSION['user_type'] <3) {?>
+                    <li class="treeview ">
+                        <a href="?page=#" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+                    </li>
+
+                    <li class="treeview ">
+                        <a href="?page=#" class="nav-link"> <i class="fa fa-address-book"></i> <span>CONTACT US</span> </a> 
+                    </li>
+                <?php }?>
+                <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-report','survey-outcomes','view-leagues','view-contacted-list'))?>">
                     <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>RESPONSES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
                     <ul class="treeview-menu timeline-area child">
                         <li class="treeview cusul-line <?=($_GET['page']=='view-report' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=view-report&type=survey" class="nav-link"> <i class=""></i> <span>Individual</span></a> </li>
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-contacted-list')?>"><a href="?page=view-contacted-list&type=survey" class="nav-link"> <i class=""></i> <span>Contacts</span></a> </li>
+                        <li class="treeview cusul-line <?=($_GET['page']=='view-contacted-list' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=view-contacted-list&type=survey" class="nav-link"> <i class=""></i> <span>Contacts</span></a> </li>
                         <li class="treeview cusul-line <?=($_GET['page']=='survey-outcomes' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=survey-outcomes&type=survey" class="nav-link"> <i class=""></i> <span>Outcomes</span></a> </li>
                     </ul>
                 </li>
                 <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=monthly-report&type=survey" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<3) {?>
+                <?php if($_SESSION['user_type']<4) {?>
                     <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='survey') ? 'active':''?>">
                         <a href="?page=survey-statistics&type=survey" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                     </li>
@@ -85,68 +94,37 @@
                     <a href="?page=view-analytics&type=survey" class="nav-link "> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
                 </li>
                 <li class="treeview  cusul-line <?=make_sidebar_active($_GET['page'],'view-leagues')?>">
-                    <a href="?page=view-leagues&type=survey" class="nav-link "> <i class="fa fa-bar-chart"></i> <span>LEAGUE TABLES</span> </a> 
+                    <a href="?page=view-leagues&type=survey" class="nav-link "> <i class="fa fa-light fa-table-list"></i> <span>LEAGUE TABLES</span> </a> 
                 </li>
             </ul>
         </li>
     <?php } ?>
-    <!-- Engagement -->
-    <li class="treeview <?php if(in_array($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics')) and $_GET['type']=='engagement') { echo 'active';}?>">
-        <a href="#"><i class="fa fa-list-alt"></i> <span>ENGAGEMENT</span> <i class="fa fa-angle-left pull-right"></i> </a>
-        <ul class="treeview-menu ">
-            <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes','view-leagues','view-contacted-list'))?>">
-                <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>RESPONSES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
-                <ul class="treeview-menu timeline-area child">
-                    
-                    <li class="treeview cusul-line <?=($_GET['page']=='view-report' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=view-report&type=engagement" class="nav-link"> <i class=""></i> <span>Individual</span></a> </li>
-                    <li class="treeview cusul-line <?=($_GET['page']=='survey-outcomes' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=survey-outcomes&type=engagement" class="nav-link"> <i class=""></i> <span>Outcomes</span></a> </li>
-                </ul>
-            </li>  
-            <?php if($_SESSION['user_type'] <3) { ?>
-            <li class="treeview ">
-                <a href="?page=#" class="nav-link"> <i class="fa fa-info"></i> <span>ABOUT</span> </a> 
-            </li>
-
-            <li class="treeview ">
-                <a href="?page=#" class="nav-link"> <i class="fa fa-address-book"></i> <span>CONTACT</span> </a> 
-            </li>
-            <?php }?>
-
-            <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=monthly-report&type=engagement" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-
-            <?php if($_SESSION['user_type']<2) {?>
-                <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='engagement') ? 'active':''?>">
-                    <a href="?page=survey-statistics&type=engagement" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
-                </li>
-            <?php }?>
-            <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='engagement') ? 'active':''?>">
-                <a href="?page=view-analytics&type=engagement" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
-            </li>
-        </ul>
-    </li>
-     <!-- pulses -->
-     <?php if(count(array_intersect($pulsesMenu,$user_permission))>0) {?> 
-        <li class="treeview <?php if(in_array($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics')) and $_GET['type']=='pulse') { echo 'active';}?>">
-            <a href="#"><i class="fa fa-list-alt"></i> <span>PULSES</span> <i class="fa fa-angle-left pull-right"></i> </a>
+    <!-- pulses -->
+    <?php if(count(array_intersect($pulsesMenu,$user_permission))>0) {?> 
+        <li class="treeview <?php if(in_array($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics','view-contacted-list','view-leagues')) and $_GET['type']=='pulse') { echo 'active';}?>">
+            <a href="#"><i class="fa fa-light fa-file-circle-question"></i> <span>PULSES</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu">
-                <li class="treeview <?=make_sidebar_active($_GET['page'],array('monthly-report','view-report','survey-outcomes','view-leagues','view-contacted-list'))?>">
+                <?php if($_SESSION['user_type'] <3) {?>
+                    <li class="treeview ">
+                        <a href="?page=#" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+                    </li>
+
+                    <li class="treeview ">
+                        <a href="?page=#" class="nav-link"> <i class="fa fa-address-book"></i> <span>CONTACT US</span> </a> 
+                    </li>
+                <?php }?>
+                <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-report','survey-outcomes','view-contacted-list'))?>">
                     <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>RESPONSES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
                     <ul class="treeview-menu timeline-area child">
                         <li class="treeview cusul-line <?=($_GET['page']=='view-report' and $_GET['type']=='pulse') ? 'active':''?>"><a href="?page=view-report&type=pulse" class="nav-link"> <i class=""></i> <span>Individual</span></a> </li>
+                        <li class="treeview cusul-line <?=($_GET['page']=='view-contacted-list' and $_GET['type']=='pulse') ? 'active':''?>"><a href="?page=view-contacted-list&type=pulse" class="nav-link"> <i class=""></i> <span>Contacts</span></a> </li>
+
                         <li class="treeview cusul-line <?=($_GET['page']=='survey-outcomes' and $_GET['type']=='pulse') ? 'active':''?>"><a href="?page=survey-outcomes&type=pulse" class="nav-link"> <i class=""></i> <span>Outcomes</span></a> </li>
                     </ul>
                 </li>  
-                <?php if($_SESSION['user_type'] <3) {?>
-                <li class="treeview ">
-                    <a href="?page=#" class="nav-link"> <i class="fa fa-info"></i> <span>ABOUT</span> </a> 
-                </li>
-
-                <li class="treeview ">
-                    <a href="?page=#" class="nav-link"> <i class="fa fa-address-book"></i> <span>CONTACT</span> </a> 
-                </li>
-                <?php }?>
+                
                 <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='pulse') ? 'active':''?>"><a href="?page=monthly-report&type=pulse" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<2) {?>
+                <?php if($_SESSION['user_type']<4) {?>
                 <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='pulse') ? 'active':''?>">
                     <a href="?page=survey-statistics&type=pulse" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                 </li>
@@ -154,15 +132,55 @@
                 <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='pulse') ? 'active':''?>">
                     <a href="?page=view-analytics&type=pulse" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
                 </li>
+                <li class="treeview  cusul-line <?=make_sidebar_active($_GET['page'],'view-leagues')?>">
+                    <a href="?page=view-leagues&type=pulse" class="nav-link "> <i class="fa fa-light fa-table-list"></i> <span>LEAGUE TABLES</span> </a> 
+                </li>
             </ul>
         </li>
     <?php } ?>
+    <!-- Engagement -->
+    <li class="treeview <?php if(in_array($_GET['page'],array('monthly-report','view-report','view-statistics','report-statistics','view-analytics','survey-outcomes','survey-statistics','view-contacted-list','view-leagues')) and $_GET['type']=='engagement') { echo 'active';}?>">
+        <a href="#"><i class="fa fa-light fa-clipboard-question"></i> <span>ENGAGEMENT</span> <i class="fa fa-angle-left pull-right"></i> </a>
+        <ul class="treeview-menu ">
+        <?php if($_SESSION['user_type'] <3) { ?>
+            <li class="treeview ">
+                <a href="?page=#" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+            </li>
 
+            <li class="treeview ">
+                <a href="?page=#" class="nav-link"> <i class="fa fa-address-book"></i> <span>CONTACT US</span> </a> 
+            </li>
+            <?php }?>
+            <li class="treeview <?=make_sidebar_active($_GET['page'],array('view-report','survey-outcomes','view-contacted-list'))?>">
+                <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>RESPONSES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
+                <ul class="treeview-menu timeline-area child">
+                    
+                    <li class="treeview cusul-line <?=($_GET['page']=='view-report' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=view-report&type=engagement" class="nav-link"> <i class=""></i> <span>Individual</span></a> </li>
+                    <li class="treeview cusul-line  <?=($_GET['page']=='view-contacted-list' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=view-contacted-list&type=engagement" class="nav-link"> <i class=""></i> <span>Contacts</span></a> </li>
+
+                    <li class="treeview cusul-line <?=($_GET['page']=='survey-outcomes' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=survey-outcomes&type=engagement" class="nav-link"> <i class=""></i> <span>Outcomes</span></a> </li>
+                </ul>
+            </li>  
+            <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=monthly-report&type=engagement" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
+
+            <?php if($_SESSION['user_type']<4) {?>
+                <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='engagement') ? 'active':''?>">
+                    <a href="?page=survey-statistics&type=engagement" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
+                </li>
+            <?php }?>
+            <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='engagement') ? 'active':''?>">
+                <a href="?page=view-analytics&type=engagement" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
+            </li>
+            <li class="treeview  cusul-line <?=make_sidebar_active($_GET['page'],'view-leagues')?>">
+                <a href="?page=view-leagues&type=engagement" class="nav-link "> <i class="fa fa-light fa-table-list"></i> <span>LEAGUE TABLES</span> </a> 
+            </li>
+        </ul>
+    </li>
 
      <!-- Reports menu-->
     <?php if(count(array_intersect($reportMenu,$user_permission))>0) {?> 
-        <li class="treeview  <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
-            <a href="#"><i class="fa fa-list-alt"></i> <span>REPORTS</span> <i class="fa fa-angle-left pull-right"></i> </a>
+        <li class="treeview tree-menu <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
+            <a href="#"><i class="fa fa-light fa-folder"></i> <span>REPORTS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu timeline-area <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['type'],'report')?>">
                     <a href="?page=create-report&type=report" class="nav-link"> <i class=""></i> <span>CREATE REPORT</span> </a> 
@@ -186,8 +204,8 @@
     <?php } ?>
      <!-- Users menu-->
     <?php if(count(array_intersect($userMenu,$user_permission))>0) {?>     
-        <li class="treeview <?=(in_array($_GET['page'],array('add-user','import-users','view-user')) && !isset($_GET['user'])) ? 'active':''?>">
-            <a href="#"><i class="fa fa-list-alt"></i> <span>USERS</span> <i class="fa fa-angle-left pull-right"></i> </a>
+        <li class="treeview tree-menu <?=(in_array($_GET['page'],array('add-user','import-users','view-user')) && !isset($_GET['user'])) ? 'active':''?>">
+            <a href="#"><i class="fa fa-solid fa-users"></i> <span>USERS</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu timeline-area">
                 <li class="treeview cusul-line <?=($_GET['page']=='add-user' and !($_GET['user'])) ? 'active':'' ?>">
                     <a href="?page=add-user" class="nav-link"> <i class=""></i> <span>ADD USER</span> </a> 

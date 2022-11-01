@@ -1,10 +1,10 @@
 
 <section class="content-header">
-  <h1> View Departments</h1>
+<h1> View Departments</h1>
 </section>
 <section class="content">
   <!-- Start Department Table-->
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="row">
       <div class="col-md-12">
         <div class="box-body">
@@ -37,11 +37,11 @@
                   <?php  if($row_get_departments['cstatus']==1){ ?>		
                       <span class="label label-success">Active</span>
                   <?php 	}else{?>	
-                      <span class="label label-danger">Deactive</span>
+                      <span class="label label-danger">Inactive</span>
                   <?php }?>
                 </td>
                 <td>
-                  <a class="btn btn-xs btn-info" href="?page=add-department&id=<?php echo $row_get_departments['id'];?>">Edit</a>
+                  <a class="btn btn-xs btn-info btn-yellow" href="?page=add-department&id=<?php echo $row_get_departments['id'];?>">Edit</a>
                 </td>
               </tr>
              <?php } ?>

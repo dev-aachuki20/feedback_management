@@ -16,8 +16,8 @@ if(isset($_POST['mode']) && $_POST['mode']=='survey_statics'){
       // get survey name
       $surveyByUsers = get_survey_data_by_user($_POST['survey_type']);
         $html ='';
-        $html ='<div class="form-group"><label> Survey</label>
-            <select name="survey" class="form-control form-control-lg survey" required> <option value="">Select Survey</option>';
+        $html ='<div class="form-group"><label>'.ucfirst($_POST['survey_type']).'</label>
+            <select name="survey" class="form-control form-control-lg survey" required> <option value="">Select '.ucfirst($_POST['survey_type']).'</option>';
             foreach($surveyByUsers as $surveyData){
               $surveyId = $surveyData['id'];
               $surveyName = $surveyData['name'];

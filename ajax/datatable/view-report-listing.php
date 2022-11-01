@@ -107,7 +107,10 @@ if(!empty($_POST['surveys'])){
                 if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
                     $to_bo_contacted = 1;
                 }
-
+            }
+            $result_response = $achieved_result_val*100/$total_result_val;
+            if($achieved_result_val==0 and $total_result_val==0){
+                $result_response=100;
             }
             // for filter using contact
             if($requestData['contact']!=3){
@@ -118,12 +121,7 @@ if(!empty($_POST['surveys'])){
                     continue;
                 }
             }
-            
-            $result_response = $achieved_result_val*100/$total_result_val;
-            if($achieved_result_val==0 and $total_result_val==0){
-                $result_response=100;
-            }
-            
+
             $label_class = 'success';
             if($result_response<50){
                 $label_class = 'danger';

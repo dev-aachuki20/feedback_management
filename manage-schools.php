@@ -72,7 +72,7 @@ if($_POST['update']){
   <h1> Add School</h1>
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="box-body">
       <form action="" method="post" enctype="multipart/form-data">
         <div class="row">
@@ -143,7 +143,7 @@ if($_POST['update']){
     </div>
   </div>
   <!-- Start school table -->
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="row">
       <div class="col-md-12">
       <div class="box-header with-border">
@@ -177,11 +177,11 @@ if($_POST['update']){
                   <?php if($row_get_schools['cstatus']==1){ ?>		
                           <span class="label label-success">Active</span>
                   <?php }else{?>	
-                        <span class="label label-danger">Deactive</span>
+                        <span class="label label-danger">Inactive</span>
                   <?php }?>
                 </td>
                 <td>
-                  <a class="btn btn-xs btn-info" href="?page=manage-schools&id=<?php echo $row_get_schools['id'];?>">Edit</a>
+                  <a class="btn btn-xs btn-info btn-yellow" href="?page=manage-schools&id=<?php echo $row_get_schools['id'];?>">Edit</a>
                 </td>
               </tr>
             <?php }?>

@@ -630,7 +630,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 
     	<div align="center">
-    		<img src="upload_image/logo.png" width="200">
+    		<img src="<?=MAIN_LOGO?>" width="200">
     	</div>
 		<h2 align="center">
 

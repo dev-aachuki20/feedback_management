@@ -34,7 +34,7 @@ $languages = explode(',',$row_get_survey_details['language']);
   <a href="?page=view-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>" class="btn btn-primary pull-right" style="margin-top:-25px">View Survey Questions</a> 
 </section>
 <section class="content">
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="box-header"><i class="fa fa-edit"></i>Input</div>
     <form action="" method="post" enctype="multipart/form-data">
       <div class="box-body">

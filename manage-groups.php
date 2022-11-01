@@ -3,7 +3,7 @@
 </section>
 <section class="content">
   <!-- Start location table -->
-  <div class="box box-danger">
+  <div class="box box-secondary">
     <div class="row">
       <div class="col-md-12">
         <div class="box-body">
@@ -38,11 +38,11 @@
                       ?>		
                         <span class="label label-success">Active</span>
                       <?php 	}else{?>	
-                        <span class="label label-danger">Deactivated</span>
+                        <span class="label label-danger">Inactive</span>
                       <?php }?>
                   </td>
                   <td>
-                    <a class="btn btn-xs btn-info" href="?page=add-group&id=<?php echo $row_get_groups['id'];?>">Edit</a>
+                    <a class="btn btn-xs btn-info btn-yellow" href="?page=add-group&id=<?php echo $row_get_groups['id'];?>">Edit</a>
                   </td>
                 </tr>
               <?php }?>

@@ -9,10 +9,10 @@ $assigned = get_assign_task_count_by_status(2);
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_survey_data_by_user('survey');
+$surveyByUsers     = get_survey_data_by_user($_GET['type']);
 $sid               = $_GET['id'];
     $query = 'SELECT * FROM answers where id !=0';
-    if($loggedIn_user_type > 1){
+    if($loggedIn_user_type > 2){
         $assign_survey = array();
         foreach($surveyByUsers as $survey){
             $assign_survey[] = $survey['id'];
@@ -36,7 +36,9 @@ $sid               = $_GET['id'];
     }
     if($_GET['task_status']==1){
         $query .= " and cby NOT IN (".$task_id.") GROUP by cby";
-    }else{
+    }else if($_GET['req']=='contact request'){
+        $query .= " GROUP by cby";
+    }else {
         $query .= " and cby IN (".$task_id.") GROUP by cby";
     }
     record_set("get_recent_entry",$query);
@@ -89,18 +91,8 @@ $sid               = $_GET['id'];
                                     record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
                                     
                                     $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-                                    ?>
-                                    <tr>
-                                        <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
-
-                                        <td><?=getSurvey()[$row_get_recent_entry['surveyid']]?></td>
-                                        <td><?=getGroup()[$row_get_recent_entry['groupid']]?></td>
-                                        <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
-                                        <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
-                                        
-                                        <td><?=$row_survey_entry?></td>
-                                        <?php
-                                        $total_result_val=0;
+                                    
+                                    $total_result_val=0;
                                         record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
                                         $achieved_result_val = 0;
                                         $to_bo_contacted     = 0;
@@ -114,7 +106,7 @@ $sid               = $_GET['id'];
                                                         $i++;
                                                     }
                                                 }
-                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                if($row_get_survey_result['answerid'] == -2 &&  $row_get_survey_result['answerval'] == 10){
                                                     $to_bo_contacted = 1;
                                                 }
                                 
@@ -135,16 +127,32 @@ $sid               = $_GET['id'];
                                         if($to_bo_contacted==1){ 
                                             $contacted='<a class="btn btn-xs btn-success">Yes</a>';
                                         }else{ 
+                                            //show only contacted us data 
+                                            if($_GET['req'] == 'contact request'){
+                                                continue;
+                                            }
+                                            // end 
                                             $contacted ='<a class="btn btn-xs btn-info">No</a>';
                                         } 
+                                       
                                         // get taskstatus
                                         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id = ".$row_get_recent_entry['cby']);
+
                                         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                         $task_status = $row_check_assign_task['task_status'];
-                                        if($_GET['task_status']==1){
+                                        if($_GET['task_status']==1 || empty($task_status)){
                                             $task_status = 1;
                                         }
-                                        ?>
+                                    ?>
+                                    <tr>
+                                        <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
+
+                                        <td><?=getSurvey()[$row_get_recent_entry['surveyid']]?></td>
+                                        <td><?=getGroup()[$row_get_recent_entry['groupid']]?></td>
+                                        <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
+                                        <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
+                                        
+                                        <td><?=$row_survey_entry?></td>
                                         <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
                                         <td><?=$contacted ?></td>
                                         <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>

@@ -39,55 +39,102 @@ if($totalRows_get_entry){
             $count = array();
             record_set("get_question","select * from answers where locationid=$locId and cby=$cby");
             $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
             while($row_get_question= mysqli_fetch_assoc($get_question)){
-                $total_answer += $row_get_question['answerval'];
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
             }
-            $average_value = ($total_answer/($totalRows_get_question*100))*100;
+            $average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
             $survey_data[$locId][$cby] = $average_value;
         }
         else if($_POST['survey_type']=='department'){
             $count = array();
             record_set("get_question","select * from answers where departmentid=$depId and cby=$cby");
             $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
             while($row_get_question= mysqli_fetch_assoc($get_question)){
-                $total_answer += $row_get_question['answerval'];
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
             }
-            $average_value = ($total_answer/($totalRows_get_question*100))*100;
+            $average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
             $survey_data[$depId][$cby] = $average_value;
         }
         else if($_POST['survey_type']=='group'){
             $count = array();
             record_set("get_question","select * from answers where groupid=$grpId and cby=$cby");
             $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
             while($row_get_question= mysqli_fetch_assoc($get_question)){
-                $total_answer += $row_get_question['answerval'];
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
             }
-            $average_value = ($total_answer/($totalRows_get_question*100))*100;
+            $average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
             $survey_data[$grpId][$cby] = $average_value;
         }
         
         record_set("get_question_overall","select * from answers where surveyid=$surveyid and cby=$cby");
-        $total_answer_overall = 0;
-        while($row_get_question_overall= mysqli_fetch_assoc($get_question_overall)){
-            $total_answer_overall += $row_get_question_overall['answerval'];
+        $total_answer = 0;
+        $i=0;
+        $total_result_val = 0;
+        while($row_get_question= mysqli_fetch_assoc($get_question_overall)){
+            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+            if($result_question){
+                if(!in_array($result_question['answer_type'],array(2,3,5))){
+                    $i++;
+                    $total_answer += $row_get_question['answerval'];
+                }
+            }
         }
-        $average_value_overall = ($total_answer_overall/($totalRows_get_question_overall*100))*100;
+        $average_value = ($total_answer/($i*100))*100;
         $overallCount++;
-        $survey_overall[$overallCount] += $average_value_overall;
+        $survey_overall[$overallCount] += $average_value;
     }
 }
 $avgScore = round(array_sum($survey_overall)/count($survey_overall),2);
 
 if(is_nan($avgScore)){
-    $avgScore = 0 ;
+    if(count($survey_overall)>0){
+        $avgScore = 100 ;
+    }else {
+        $avgScore = 0 ;
+    }
+   
 }
+
 $overall= '';
-$overall = '<div class="col-md-6">
-<div class="col-6"><strong>Total Survey Response<br>(Overall)</strong></div>
+$overall = '<h3>'.strtoupper(getSurvey()[$surveyid]).'</h3><div class="col-md-6">
+<div class="col-6"><strong>Total Survey Responses</strong></div>
 <div class="col-6"><strong>'.count($survey_overall).'</strong></div>
 </div>
 <div class="col-md-6">
-<div class="col-6"><strong>Average Survey Score<br>(Overall)</strong></div>
+<div class="col-6"><strong>Average Survey Score</strong></div>
 <div class="col-6"><strong>'.$avgScore.' %</strong></div>
 </div>';
 
