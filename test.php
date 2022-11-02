@@ -1,3 +1,15 @@
+<?php
+error_reporting(E_ALL);
+$length = '8';
+$string = rand(10,100);
+$original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
+$original_string = implode("", $original_string);
+$string1=  substr(str_shuffle($original_string), 0, $length);
+$randomCode = $string1.$string;  
+echo $randomCode;
+die();
+?>
+
 <div id="demo">
   <div class="border-bottom px-5 pt-5 pb-4" id="block1">
     <h3>What is Lorem Ipsum?</h3>

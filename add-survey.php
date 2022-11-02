@@ -70,7 +70,15 @@
        // reDirect("?page=add-survey&id=".$_GET["id"]."&msg=".$msg);			
     }
 
-    if(!empty($_POST['submit'])){			
+    if(!empty($_POST['submit'])){
+        //get qrcode
+        $length = '8';
+        $string = rand(10,100);
+        $original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
+        $original_string = implode("", $original_string);
+        $string1=  substr(str_shuffle($original_string), 0, $length);
+        $randomCode = $string1.$string;  
+       	
         $dataCol =  array(
   			"name"                   => $_POST['name'],
   			"survey_needed"          => $_POST['survey_needed'],
@@ -81,6 +89,7 @@
             "intervals"              => $_POST['interval'],
             "start_date"             => $_POST['sdate'],
             "end_date"               => $_POST['edate'],
+            "qrcode"                 => $randomCode,
             "confidential"           => (isset($_POST['confidential'])) ? 1 : 0,
             "alter_email"            => $_POST['alter_email'],
             "isStep"                 => (isset($_POST['isStep'])) ? 1 : 0,
@@ -190,7 +199,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Entry Limit</label>
+                                    <label>Response Limit</label>
                                     <input type="text" class="form-control" name="survey_needed" id="survey_needed" value="<?php echo $row_get_surveys['survey_needed'];?>"/>
                                 </div>
                             </div>

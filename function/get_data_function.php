@@ -213,6 +213,8 @@ function get_assing_id_dept_loc_grp_survey($table_name){
 		if($survey_id){
 			$survey_id = implode(',',$survey_id);
 			$filter = " and id IN ($survey_id)";
+		}else {
+			$filter = " and id IN (0)";
 		}
 	}
 	// get survey type
@@ -248,6 +250,8 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 	$filter = '';
 		if($surevy_ids){
 			$filter .= " and surveyid IN ($surevy_ids)";
+		}else {
+			$filter .= " and surveyid IN (0)";
 		}
 	if($status_id == 1){
 		// get assigned task id 

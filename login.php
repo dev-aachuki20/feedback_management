@@ -200,7 +200,7 @@ if(isset($_POST['login'])){
             <div class="customcheck">
               <input class="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1" required>
               <label for="styled-checkbox-1">I agree to the</label>
-              <a class="linkText" href="./privacy-policy-pdf/DGFM Privacy Policy.pdf">Privacy Psolicy</a>
+              <a class="linkText" href="./privacy-policy-pdf/DGFM Privacy Policy.pdf">Privacy Policy</a>
             </div>
             </div>
             <div class="col-xs-4">

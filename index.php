@@ -33,6 +33,14 @@ if(isset($_SESSION['user_type']) && $_SESSION['user_type'] == 2){
 $loggedIn_user_id    = $_SESSION['user_id'];
 $loggedIn_user_type  = $_SESSION['user_type'];
 
+//survey type id 
+if($_GET['type'] == 'survey'){
+  $survey_type_id = 1;
+}else if($_GET['type'] == 'pulse'){
+  $survey_type_id = 2;
+}else if($_GET['type'] == 'engagement') {
+  $survey_type_id = 3;
+}
 if(isset($_REQUEST['page'])){
 	$page_heading = ucwords(str_replace("-"," ",$_REQUEST['page']));
 	if($_REQUEST['page']=='logout'){
@@ -110,7 +118,6 @@ if(isset($_REQUEST['page'])){
 else{
   $inc_page='home.php'; 
 }
-
 ?>
 <!DOCTYPE html>
 <html>

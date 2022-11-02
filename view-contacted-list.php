@@ -23,6 +23,7 @@ if(isset($_POST['assign'])){
             "assign_to_user_id"   => $assing_to_user_id,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
+            "survey_type"         => $survey_type_id,
             "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
             "cdate"               => date("Y-m-d H:i:s")
@@ -66,12 +67,13 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
     $survey_id           = $_POST['survey_id_hidden'];
     $task_id             = explode(',',$_POST['response_id_hidden']);
     $assing_to_user_id   = $_SESSION['user_id'];
-    $assign_by_user_id   = $_SESSION['user_id'];
+
     foreach($task_id as $tasks){
         $data = array(
             "assign_to_user_id"   => $assing_to_user_id,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
+            "survey_type"         => $survey_id,
             "task_status"         => 2,
             "assign_by_user_id"   => $assign_by_user_id,
             "cdate"               => date("Y-m-d H:i:s")
@@ -167,7 +169,11 @@ if(!empty($_POST['surveys'])){
             foreach($surveyByUsers as $survey){
                 $assign_survey[] = $survey['id'];
             }
-            $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+            if($assign_survey){
+                $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+            }else {
+                $query .= " and surveyid IN (0)";
+            }
         }
 
         $query .= " and cby IN (".$task_id.")";
@@ -206,7 +212,12 @@ if(!empty($_POST['surveys'])){
                                 $reqCount =0; 
                                 $filtr = '';
                                 if($_SESSION['user_type']>2){
-                                    $filtr = " and surveyid IN ($surveys_ids )";
+                                    if($surveys_ids){
+                                        $filtr = " and surveyid IN ($surveys_ids )";
+                                    }else {
+                                        $filtr = " and surveyid IN (0)";
+                                    }
+                                    
                                 }
                                 record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition $filtr GROUP BY cby");
                                 while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
@@ -366,6 +377,7 @@ if(!empty($_POST['surveys'])){
                         <div>
                             <form method="get">
                                 <input type="hidden" name="page" value="view-my-assign-task">
+                                <input type="hidden" name="type" value="<?=$_GET['type']?>">
                                 <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
                                     <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Tasks</button>
                             

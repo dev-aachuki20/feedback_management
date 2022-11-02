@@ -17,7 +17,11 @@ $sid               = $_GET['id'];
         foreach($surveyByUsers as $survey){
             $assign_survey[] = $survey['id'];
         }
-        $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        if($assign_survey){
+            $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        }else {
+            $query .= " and surveyid IN (0)";
+        }
     }
 
     $filter_status = '';

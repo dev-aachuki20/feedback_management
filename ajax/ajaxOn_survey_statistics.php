@@ -22,6 +22,9 @@ else {
     $filterdata = '';
     if($survey_allow_id){
         $filterdata = " and id IN($survey_allow_id)";
+    }else{
+        // if no survey is allowed
+        $filterdata = " and id IN(0)";
     }
     $query = " and surveyid IN (select id from surveys where cstatus=1 $filterdata)";
     $groupBy = 'surveyid';

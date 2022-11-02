@@ -24,3 +24,4 @@ $userMenu = array('view-users','add-user','import-users');
 
 $reportMenu = array('create-report','view-template','report','manage-report-template');
 $pulsesMenu = array('pulses');
+?>

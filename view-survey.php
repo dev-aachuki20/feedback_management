@@ -16,12 +16,13 @@
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
+                    <th>Survey ID</th>
                     <th>Survey Name</th>
                     <th>Survey Type	</th>
-                    <th>Department</th>
+                    <!-- <th>Department</th> -->
                     <th>Confidential</th>
                     <th>Status</th>
-                    <th>Entry Needed</th>
+                    <!-- <th>Entry Needed</th> -->
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -44,32 +45,45 @@
                     
                   record_set("get_surveys", "select * from surveys where id>0 $filter order by cdate desc");				
                   while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){
-                    
                     record_set("dname", "select * from departments where id='".$row_get_surveys['departmentid']."'");		
                     $row_dname = mysqli_fetch_assoc($dname);
 
                     $department_id  = $row_get_surveys['departments'];
-                    $department_ids = explode(',',$department_id);
-                    $all_deparmentName = array();
-                    foreach($department_ids as $dept){
-                      $all_deparmentName[] = getDepartment()[$dept];
+                    if($row_get_surveys['survey_type'] == 1){
+                      $btnClass = 'purple-btn';
+                    }else if($row_get_surveys['survey_type'] == 2){
+                      $btnClass = 'sky-blue-btn';
+                    }else {
+                      $btnClass = 'dark-blue-btn';
                     }
-                    $deptName = implode(',',$all_deparmentName);
-                ?>
+                    // $department_ids = explode(',',$department_id);
+                    // $all_deparmentName = array();
+                    // foreach($department_ids as $dept){
+                    //   $all_deparmentName[] = getDepartment()[$dept];
+                    // }
+                    // $deptName = implode(',',$all_deparmentName);
+                    ?>
                   <tr>
+                    <td><?php echo $row_get_surveys['id'];?></td>
                     <td><?php echo $row_get_surveys['name'];?></td>
-                    <td><?php if($row_get_surveys['survey_type']) { ?> <span class="label label-primary blue-btn"><?=survey_type()[$row_get_surveys['survey_type']]?></span> <?php } ?></td>
-                    <td>
-                      <?php if($deptName){?> 
+                    <td><?php if($row_get_surveys['survey_type']) { ?> <span class="label label-primary <?=$btnClass?>"><?=survey_type()[$row_get_surveys['survey_type']]?></span> <?php } ?></td>
+                    <!-- <td>
+                      <?php //if($deptName){?> 
                         <button type="button" class="btn btn-xs bg-green popover-dept" data-container="body" data-toggle="popover" data-placement="top" data-content="<?=$deptName?>"><?= getDepartment()[$department_ids[0]] ?></button> 
-                      <?php }?></td>
-                    <td><span class="btn btn-xs btn-info"><?=($row_get_surveys['confidential']==1)?'YES':'NO'?></span></td>
+                      <?php //}?></td> -->
+                    <td>
+                      <?php if($row_get_surveys['confidential']==1) {
+                        echo '<span class="btn btn-xs bg-green">Yes</span>';
+                      }else {
+                        echo '<span class="btn btn-xs btn-danger">No</span>';
+                      }?>
                     <td><span class="label <?=($row_get_surveys['cstatus']==1)?'label-success':'label-danger'?>"><?php echo status_data($row_get_surveys['cstatus']);?></span></td>
-                    <td><?php echo $row_get_surveys['survey_needed']; ?></td>
+                    <!-- <td><?php //echo $row_get_surveys['survey_needed']; ?></td> -->
                     <td>
                       <div class="btnCol">
                     	<a class="btn btn-xs btn-danger" href="?page=add-survey&id=<?php echo $row_get_surveys['id'];?>">Edit</a>
                       <a class="btn btn-xs btn-primary" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>
+                      <a class="btn btn-xs btn-info addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">View Qr</a>
                       <a class="btn btn-xs btn-info" href="survey-form.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">View</a>
 						          <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">Result</a>
                       <a class="btn btn-xs bg-black" href="export-result.php?surveyid=<?php echo $row_get_surveys['id'];?>&name=<?php echo $row_get_surveys['name'];?>" target="_blank">Export CSV</a>
@@ -79,27 +93,56 @@
                   </tr>
                 <?php }?>
                 </tbody>
-                <tfoot>
+                <!-- <tfoot>
                   <tr>
+                    <th>Survey Id</th>
                     <th>Survey Name</th>
-                    <th>Survey Type		</th>
-                    <th>Department</th>
+                    <th>Survey Type</th>
+                    <th>Department</th> 
                     <th>Confidential</th>
                     <th>Status</th>
-                    <th>Entry Needed</th>
+                    <th>Entry Needed</th> 
                     <th>Action</th>
                   </tr>
-                </tfoot>
+                </tfoot> -->
               </table>
             </div>
           </div>
         </div>
       </div>
     </section>
+ <!-- Qr code modal -->
+ <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div id="print">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel"><strong>Qr Code: </strong><span class="qrcode"></span></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+				<center>
+          <div id='qrImage'>
+
+          </div>
+        </center>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="printId" >Print</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
   <script src="plugins/datatables/jquery.dataTables.min.js"></script> 
   <script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
+  <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
+
   <script type="text/javascript">
     $(function () {
       $("#example1").DataTable({"paging": true,"ordering": false});
@@ -113,7 +156,16 @@
         "autoWidth": false
       });
     });
-    
 
+  $("#printId").on('click',function () {
+    //document.title='My new title';
+    $("#print").print();
+  });
 
+  $(".addQrcode").on('click',function(){
+    let qrCode = $(this).data("qr");
+    $('.qrcode').html(qrCode);
+    let imageUrl = '<img alt='+qrCode+' src=qrcode.php?text=<?=getHomeUrl()?>survey-form.php?qrcode='+qrCode+'>';
+    $("#qrImage").html(imageUrl);
+  })
   </script>

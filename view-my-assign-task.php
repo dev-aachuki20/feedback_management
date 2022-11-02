@@ -7,8 +7,9 @@
 <?php 
 
 $sid = $_GET['id'];
+$type = $_GET['type'];
 // get data by user
-$surveyByUsers      = get_survey_data_by_user('survey');
+$surveyByUsers      = get_survey_data_by_user($_GET['type'],1);
 $departmentByUsers  = get_filter_data_by_user('departments');
 $locationByUsers    = get_filter_data_by_user('locations');
 $groupByUsers       = get_filter_data_by_user('groups');
@@ -26,6 +27,7 @@ if(isset($_POST['assign'])){
             "task_id"             => $tasks,
             "task_status"         => 2,
             "survey_id"           => $survey_id,
+            "survey_type"         => $survey_type_id,
             "assign_by_user_id"   => $assign_by_user_id,
             "reassign_status"     => 1,
             "cdate"               => date("Y-m-d H:i:s")
@@ -136,7 +138,7 @@ if(isset($_POST['assign'])){
     if(!empty($_POST['task_status'])){
         $filter_status = ' and task_status ='.$_POST['task_status'];
     }
-    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id".$filter_status);
+    record_set("get_assign_task", "SELECT * FROM assign_task where survey_type=$survey_type_id and assign_to_user_id = $loggedIn_user_id".$filter_status);
 
     $arr_task_id = array();
     while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -146,15 +148,16 @@ if(isset($_POST['assign'])){
     if(empty($task_id)){
         $task_id = '0';
     }
-    if($loggedIn_user_type > 1){
+    if($loggedIn_user_type > 2){
         $assign_survey = array();
         foreach($surveyByUsers as $survey){
             $assign_survey[] = $survey['id'];
         }
         if($assign_survey){
             $query .= " and surveyid IN (".implode(',',$assign_survey).")";
+        }else {
+            $query .= " and surveyid IN (0)";
         }
-       
     }
 
     $query .= " and cby IN (".$task_id.") GROUP by cby";
@@ -300,7 +303,7 @@ if(isset($_POST['assign'])){
                     <div class="box-body">
                         <div>
                             <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
-                                <a href="?page=view-contacted-list">
+                                <a href="?page=view-contacted-list&type=<?=$type?>">
                                 <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">Back</button>
                                 </a>
                             </div>

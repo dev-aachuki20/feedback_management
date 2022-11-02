@@ -5,7 +5,6 @@ $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($page_type,1);
-
 // get asssign ids only
 $assign_department = array();
 foreach($departmentByUsers as $department){
@@ -53,7 +52,12 @@ $surveys_ids = implode(',',$assign_survey);
                                 $reqCount =0; 
                                 $filtr = '';
                                 if($_SESSION['user_type']>2){
-                                    $filtr = " and surveyid IN ($surveys_ids )";
+                                    if($surveys_ids){
+                                        $filtr = " and surveyid IN ($surveys_ids)";
+                                    }else {
+                                        $filtr = " and surveyid IN (0)";
+                                    }
+                                    
                                 }
                                 record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition $filtr GROUP BY cby");
                                 while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){

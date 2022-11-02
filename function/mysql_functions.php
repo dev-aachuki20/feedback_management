@@ -235,4 +235,4 @@ function getallrow_fn($sql){
 			// 	} 
 			}).then(function() { window.location.href = "<?=$url?>";});
 		</script>
-	<?php } 
+	<?php } ?>

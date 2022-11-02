@@ -16,7 +16,7 @@ $loggedIn_user_type  = $_SESSION['user_type'];
 $sid                 = $_GET['id'];
 
     $query = 'SELECT * FROM answers where id !=0';
-    if($loggedIn_user_type > 1){
+    if($loggedIn_user_type > 2){
         $assign_survey = array();
         foreach($surveyByUsers as $survey){
             $assign_survey[] = $survey['id'];

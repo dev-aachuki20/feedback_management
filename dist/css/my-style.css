@@ -368,6 +368,18 @@ h4{margin-bottom:1px;font-size:16px;}
     background-color: #ff9d00 !important;
     border: unset;
 }
+.purple-btn{
+    background-color: var(--framework_blue) !important;
+    border-color: unset;
+}
+.dark-blue-btn{
+    background-color: #0000ff !important;
+    border-color: unset;
+}
+.sky-blue-btn{
+    background-color: #00a1ff !important;
+    border-color: unset;
+}
 .large-btn {
     padding: 5px 50px;
 }
