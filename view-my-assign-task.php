@@ -442,7 +442,7 @@ if(isset($_POST['assign'])){
                                                     <!-- <td><?=$contacted ?></td> -->
 
                                                     <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
-                                                    <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?>&status=assign" target="_blank">VIEW DETAILS</a></td>
+                                                    <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>&status=assign" target="_blank">VIEW DETAILS</a></td>
                                             </tr>  
                                       <?php }
                                     }

@@ -128,7 +128,7 @@ if(isset($_GET['viewid'])){
     $departmentByUsers = get_filter_data_by_user('departments');
     $locationByUsers   = get_filter_data_by_user('locations');
     $groupByUsers      = get_filter_data_by_user('groups');
-    $surveyByUsers     = get_filter_data_by_user('surveys');
+    $surveyByUsers     = get_survey_data_by_user('survey');
 }
 ?>
 
@@ -217,7 +217,7 @@ if(isset($_GET['viewid'])){
                     <?php include ('./assignUserCheckbox/location.php')?>   
                     <!-- assign department -->
                     <?php include ('./assignUserCheckbox/department.php')?> 
-                    <div class="col-md-12 pull-right filter_form">
+                    <div class="col-md-12 pull-right filter_form export-btn" style="display:none;">
                         <?php if($_GET['type']=='report') { ?>
                         <input type="submit" class="btn btn-success green-btn" value="Export">
                         <?php }else { ?>
@@ -321,6 +321,7 @@ if(isset($_GET['viewid'])){
                 $('.checkboxForm').show();
                 $('.loader').hide();
             }, 1000);
+            $('.export-btn').show();
         })
     })
     function get_step_ajax(survey_id){

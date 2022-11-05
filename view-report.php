@@ -173,7 +173,7 @@ $surveys_ids = implode(',',$assign_survey);
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Location</label>
-                            <select name="locationid" id="locationid" class="form-control form-control-lg locationid">
+                            <select name="locationid" id="locationid" class="form-control form-control-lg locationid ">
                                 <option value="">Select</option>
                                 <?php
                                     // record_set("get_location", "select * from locations where cstatus=1 $locationDropDownCondition order by name asc");        

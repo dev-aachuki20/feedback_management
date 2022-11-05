@@ -118,29 +118,29 @@ if(isset($_POST['selectSurvey'])){
     if($_SESSION['user_type']==4){
      //for first box
         $titleFirst = 'CONTACT REQUESTS';
-        $urlFirst   = 'view-report';
+        $urlFirst   = 'view-report&type=survey';
      //for second box
         $titleSecond = 'IN PROGRESS';
-        $urlSecond   = 'survey-manage&req=in progress&testact=1';
+        $urlSecond   = 'survey-manage&type=survey&req=in progress&testact=1';
      //for second box
         $titleThird = 'VOID';
-        $urlThird   = 'survey-manage&req=void&testact=2';
+        $urlThird   = 'survey-manage&type=survey&req=void&testact=2';
      //for second box
         $titleFourth = 'RESOLVED';
-        $urlFourth   = 'survey-manage&req=resolved&testact=3';
+        $urlFourth   = 'survey-manage&type=survey&req=resolved&testact=3';
     }else {
      //for first box
         $titleFirst = 'CONTACT REQUESTS';
-        $urlFirst   = 'view-report';
+        $urlFirst   = 'view-report&type=survey';
      //for second box
         $titleSecond = 'OVERALL RESPONSES';
-        $urlSecond   = 'monthly-report';
+        $urlSecond   = 'monthly-report&type=survey';
      //for second box
         $titleThird = 'CREATE REPORT';
         $urlThird   = 'create-report&type=report';
      //for second box
         $titleFourth = 'STATISTICS';
-        $urlFourth   = 'view-statistics';
+        $urlFourth   = 'survey-statistics&type=survey';
     }
 
     // get survey name
@@ -310,7 +310,7 @@ if(isset($_POST['selectSurvey'])){
                                         // record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");				
                                         // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
                                         foreach($surveyByUsers as $row_get_surveys){ ?>
-                                        <option value="<?=$row_get_surveys['id']?>"><?=$row_get_surveys['name']?></option>
+                                        <option value="<?=$row_get_surveys['id']?>" <?=($_POST['selectSurvey']==$row_get_surveys['id']) ? 'selected':''?>><?=$row_get_surveys['name']?></option>
                                         <?php }?>
                                     </select>
                                 </div>

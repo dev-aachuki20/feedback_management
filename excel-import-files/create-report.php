@@ -61,7 +61,7 @@
         $question_data = array();	
         while($row_get_step = mysqli_fetch_assoc($get_result)){
             $get_answer_result =  mysqli_query($conn,"SELECT * FROM `answers` WHERE `questionid` =". $row_get_step['id']."$filterData");
-            // echo "SELECT * FROM `answers` WHERE `questionid` =". $row_get_step['id']."$filterData"; die();
+             //echo "SELECT * FROM `answers` WHERE `questionid` =". $row_get_step['id']."$filterData"; die();
             if(mysqli_num_rows($get_answer_result)>0){
                 $i=0;
                 while($row_get_answer = mysqli_fetch_assoc($get_answer_result)){
@@ -69,11 +69,11 @@
                     $question_data[$row_get_step['id']]['surveyid'] = $row_get_answer['surveyid'];
                     $question_data[$row_get_step['id']]['step_id'] = $row_get_step['survey_step_id'];
 
-                    $question_data[$row_get_step['id']]['location'] = $row_get_answer['locationid'];
-                    $question_data[$row_get_step['id']]['department'] = $row_get_answer['departmentid'];
-                    $question_data[$row_get_step['id']]['group'] = $row_get_answer['groupid'];
                     $question_data[$row_get_step['id']]['answertext'][$i]['ans'] = $row_get_answer['answertext'];
                     $question_data[$row_get_step['id']]['answertext'][$i]['ansid'] = $row_get_answer['answerid'];
+                    $question_data[$row_get_step['id']]['answertext'][$i]['location'] = $row_get_answer['locationid'];
+                    $question_data[$row_get_step['id']]['answertext'][$i]['department'] = $row_get_answer['departmentid'];
+                    $question_data[$row_get_step['id']]['answertext'][$i]['group'] = $row_get_answer['groupid'];
                     $i++;
                 }
             }
@@ -102,32 +102,7 @@
             $get_survey_name =  mysqli_query($conn,"SELECT * FROM `surveys` WHERE `id` =". $ques['surveyid']);
             $row_get_survey_name = mysqli_fetch_assoc($get_survey_name);
 
-            //get location
-            if(!empty($ques['location'])){
-                $get_location_name =  mysqli_query($conn,"SELECT * FROM `locations` WHERE `id` =". $ques['location']);
-                $row_get_location_name = mysqli_fetch_assoc($get_location_name);
-                $locationName = $row_get_location_name['name'];
-            }else {
-                $locationName = 'N/A';
-            }
-
-            //get department
-            if(!empty($ques['department'])){
-                $get_department_name =  mysqli_query($conn,"SELECT * FROM `departments` WHERE `id` =". $ques['department']);
-                $row_get_department_name = mysqli_fetch_assoc($get_department_name);
-                $departmentName = $row_get_department_name['name'];
-            }else {
-                $departmentName = 'N/A';
-            }
            
-            //get group
-            if(!empty($ques['group'])){
-                $get_group_name =  mysqli_query($conn,"SELECT * FROM `groups` WHERE `id` =". $ques['group']);
-                $row_get_group_name = mysqli_fetch_assoc($get_group_name);
-                $groupName = $row_get_group_name['name'];
-            }else {
-                $groupName = 'N/A';
-            }
 
             $surveyName     = $row_get_survey_name['name'];
             $stepName       = $row_get_step_name['step_title'];
@@ -140,6 +115,32 @@
                 }else {
                     $answer_value = $answer['ans'];
                 }
+                 //get location
+            if(!empty($answer['location'])){
+                $get_location_name =  mysqli_query($conn,"SELECT * FROM `locations` WHERE `id` =". $answer['location']);
+                $row_get_location_name = mysqli_fetch_assoc($get_location_name);
+                $locationName = $row_get_location_name['name'];
+            }else {
+                $locationName = 'N/A';
+            }
+
+            //get department
+            if(!empty($answer['department'])){
+                $get_department_name =  mysqli_query($conn,"SELECT * FROM `departments` WHERE `id` =". $answer['department']);
+                $row_get_department_name = mysqli_fetch_assoc($get_department_name);
+                $departmentName = $row_get_department_name['name'];
+            }else {
+                $departmentName = 'N/A';
+            }
+           
+            //get group
+            if(!empty($answer['group'])){
+                $get_group_name =  mysqli_query($conn,"SELECT * FROM `groups` WHERE `id` =". $answer['group']);
+                $row_get_group_name = mysqli_fetch_assoc($get_group_name);
+                $groupName = $row_get_group_name['name'];
+            }else {
+                $groupName = 'N/A';
+            }
                 $objSheet->getCell('A'.$i)->setValue(trim($stepName));
                 $objSheet->getCell('B'.$i)->setValue($surveyName);
                 $objSheet->getCell('C'.$i)->setValue($questionName);
