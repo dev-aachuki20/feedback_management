@@ -396,7 +396,7 @@ if(isset($_POST['selectSurvey'])){
                                         <?php
                                             record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
                                             
-                                            $total_result_val = $totalRows_get_survey_result*100;
+                                            $total_result_val = 0;
                                             $achieved_result_val = 0;
                                             $to_bo_contacted = 0;
                                             $i=0;
