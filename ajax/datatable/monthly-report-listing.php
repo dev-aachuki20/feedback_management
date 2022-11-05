@@ -136,7 +136,7 @@ if(!empty($requestData['survey_name'])){
                             $i++;
                         }
                     }
-                    if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                    if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                         $to_bo_contacted = 1;
                     }
                 }

@@ -64,7 +64,7 @@
                     <span class="info-box-icon bg-orange"><i class="fa-solid fa-list-check"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">ASSIGNED</span>
-                        <span class="info-box-number"><?=(get_assign_task_count_by_status(2,$surveys_ids,$dep_ids,$grp_ids,$loc_ids))?get_assign_task_count_by_status(2,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):'0' ?></span>
+                        <span class="info-box-number"><?=(get_assign_task_count_by_status(2,$surveys_ids,$dep_ids,$grp_ids,$loc_ids))?get_assign_task_count_by_status(2,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):'0'?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -118,7 +118,7 @@
                     <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">RESOLVED POSITIVE</span>
-                        <span class="info-box-number"><?=(get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids))?get_assign_task_count_by_status(6,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):'0'?></span>
+                        <span class="info-box-number"><?=(get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids))?get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):'0'?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>

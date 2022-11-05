@@ -88,20 +88,13 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			</div>
 		<?php } ?>
 
-		
 		<form action="" method="post" enctype="multipart/form-data">
 			<!-- Start Language tab panel -->
-			<?php 
-			?>
 			<div class="box-body">
 				<div class="row">
 					<!-- Start Survey Steps Section -->
-					
 					<?php 
-					
-					
 					if($row_get_survey_details['isStep'] == 1){ ?>
-						
 						<div class="col-md-6">
 							<div class="form-group">
 								<label>Survey Steps</label>

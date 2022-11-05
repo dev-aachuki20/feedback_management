@@ -50,13 +50,12 @@ if(isset($_POST['assign'])){
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
-            "cby_user_type" =>$assign_to_user_type,
-            "cby_user_id" =>$assing_to_user_id,
+            "cby" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$user_name,
             'created_date'=>date("Y-m-d H:i:s")
         );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
 
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action,2);
         // send mail to user assigned task
         send_email_to_assign_user($user_name,$user_email);
     }
@@ -129,9 +128,9 @@ if(isset($_POST['assign'])){
     }
     if(!empty($_POST['contacted'])){
         if($_POST['contacted']==1){
-            $que= " and  answerid =-2 and answerval=10";
+            $que= " and  answerid =-2 and answerval=100";
         }else {
-            $que= " and  answerid != -2 and answerval != 10";
+            $que= " and  answerid != -2 and answerval != 100";
         }
     }
     $filter_status = '';
@@ -353,7 +352,7 @@ if(isset($_POST['assign'])){
                                                         $i++;
                                                     }
                                                 }
-                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                                     $to_bo_contacted = 1;
                                                 }
                                             }
@@ -406,7 +405,7 @@ if(isset($_POST['assign'])){
                                                                     $i++;
                                                                 }
                                                             }
-                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                                                 $to_bo_contacted = 1;
                                                             }
                                             

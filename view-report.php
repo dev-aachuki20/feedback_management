@@ -5,6 +5,7 @@ $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($page_type,1);
+
 // get asssign ids only
 $assign_department = array();
 foreach($departmentByUsers as $department){
@@ -51,15 +52,14 @@ $surveys_ids = implode(',',$assign_survey);
                             <?php 
                                 $reqCount =0; 
                                 $filtr = '';
-                                if($_SESSION['user_type']>2){
+                                //if($_SESSION['user_type']>2){
                                     if($surveys_ids){
                                         $filtr = " and surveyid IN ($surveys_ids)";
                                     }else {
                                         $filtr = " and surveyid IN (0)";
                                     }
-                                    
-                                }
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition $filtr GROUP BY cby");
+                                //}
+                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition $filtr GROUP BY cby");
                                 while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                     // record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                     // if($totalRows_get_action == 0){
@@ -86,7 +86,7 @@ $surveys_ids = implode(',',$assign_survey);
                     <div class="info-box-content">
                         <span class="info-box-text">In Progress</span>
                         
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
+                        <span class="info-box-number"><?=(get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids) ? get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -99,7 +99,7 @@ $surveys_ids = implode(',',$assign_survey);
                     <span class="info-box-icon bg-gray"><i class="fa-solid fa-trash"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Void</span>
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
+                        <span class="info-box-number"><?=(get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -112,7 +112,7 @@ $surveys_ids = implode(',',$assign_survey);
                     <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Resolved</span>
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
+                        <span class="info-box-number"><?=(get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>

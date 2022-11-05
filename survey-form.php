@@ -3,12 +3,13 @@ include('function/function.php');
 require __DIR__ . '/translation/vendor/autoload.php';
 
 use Google\Cloud\Translate\V2\TranslateClient;
+
 if(isset($_GET['qrcode'])){
 	record_set("get_survey_id", "select * from surveys where qrcode='".$_GET['qrcode']."' and cstatus=1 ");
 	$row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
 	$surveyid=$row_get_survey_id['id'];
 }else{
-	echo 'Invalid User'; die();
+	$surveyid=$_GET['surveyid'];
 }
 //$surveyid=$_GET['surveyid'];
 
@@ -176,7 +177,7 @@ if(isset($_POST['submit'])){
 
 			"answertext" => $contact,
 
-			"answerval" => 10,
+			"answerval" => 100,
 
 			"cstatus" => "1",
 

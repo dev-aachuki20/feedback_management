@@ -152,7 +152,7 @@
                 $row_get_location = mysqli_fetch_assoc($get_location);
 
                 //School
-                record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='10' and cstatus=1");
+                record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='100' and cstatus=1");
             ?>
             <div class="row notforpdf" style="text-align: center;">
                 <div class="col-md-12">

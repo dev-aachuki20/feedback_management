@@ -6,7 +6,7 @@
         $groupByUsers = get_filter_data_by_user('groups'); ?>
         <div class="col-md-12 with-border">
           <h4>Assign Group</h4>
-          <input type="checkbox" class="group_checkbox" /><strong> Select All</strong><br/><br/>
+          <input type="checkbox" class="group_checkbox_all" /><strong> Select All</strong><br/><br/>
         </div>
         <?php
         $group_id = get_assigned_user_data($_GET['id'],'group');
@@ -29,16 +29,23 @@
           }
         ///end
         }
-        
-          $groupid_array_explode = implode(',',$groupid_array);
-          $groupName = get_data_by_id('groups',$groupid_array_explode);
+          //if($_SESSION['user_type']>2){
+            $groupid = get_assigned_user_data($_SESSION['user_id'],'group');
+            //$groupid_array = array_intersect($groupid_array,$groupid);
+            $groupid_array_explode = implode(',',$groupid_array);
+            $groupName = get_data_by_id('groups',$groupid_array_explode);
+          // }else {
+          //   $groupName = getGroup();
+          // }
+          
+          
           foreach($groupName as $key => $value){ 
           $groupId    = $key;
           $groupName  = $value;
           ?>
           <div class="col-md-4">
-              <input type="checkbox" <?=(in_array($groupId,$group_id_saved) ? 'checked ':' ')?> id="locationids<?php echo $groupId ?>" class="loc_checkbox" value="<?php echo $groupId; ?>" name="locationids[<?php echo $groupId; ?>]" /> 
-              <label for="locationids<?php echo $groupId; ?>">
+              <input type="checkbox" <?=(in_array($groupId,$group_id_saved) ? 'checked ':' ')?> id="groupids<?php echo $groupId ?>" class="group_checkbox" value="<?php echo $groupId; ?>" name="groupids[<?php echo $groupId; ?>]" /> 
+              <label for="groupids<?php echo $groupId; ?>">
               <?php echo $groupName ?>
               </label>
           </div>

@@ -70,13 +70,10 @@ function getClient($id=null){
 	return $arr;
 }
 
-function getUsers($id=null,$user_type=null){
+function getUsers($user_type=null){
 	$arr = array();
 	$filter ='';
-	if($id !=null){
-		$filter  = " and id IN ($id)";
-	}
-	if($user_type and $_SESSION['user_type']>2){
+	if($user_type !=null){
 		$filter .= " and user_type = $user_type";
 	}
 	$clients_data = getaxecuteQuery_fn("select id,name from manage_users where cstatus=1 $filter order by name ASC");
@@ -87,8 +84,11 @@ function getUsers($id=null,$user_type=null){
 }
 
 // get assign location department group survey id of loging user from relation table
-function get_assing_id_dept_loc_grp_survey($table_name){
-	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name = '$table_name'");
+function get_assing_id_dept_loc_grp_survey($table_name=null){
+	if($table_name == null){
+		$table_name = "survey','engagement','pulse";
+	}
+	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name IN ('$table_name')");
 
 	$arr_id =array();
 	while($row_get_relation_data=mysqli_fetch_assoc($relation_data)){
@@ -245,7 +245,11 @@ function get_assing_id_dept_loc_grp_survey($table_name){
  }
 function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids=null,$department_ids=null,$loc_ids=null){
 	$user_id   = $_SESSION['user_id'];
-	
+	$user_type = $_SESSION['user_type'];
+	$queryFilter = '';
+	if($user_type>2){
+		$queryFilter =" and assign_to_user_id = $user_id";
+	}
 	$array = array();
 	$filter = '';
 		if($surevy_ids){
@@ -255,7 +259,7 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 		}
 	if($status_id == 1){
 		// get assigned task id 
-		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id");
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where id !='' $queryFilter");
 		while($row_get_data=mysqli_fetch_assoc($user_data)){
 			$array[] =$row_get_data['task_id'];
 		}
@@ -269,7 +273,7 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 		if($surevy_ids){
 			$filter = " and survey_id IN ($surevy_ids)";
 		}
-		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where assign_to_user_id = $user_id $filter and task_status = $status_id");
+		$user_data = getaxecuteQuery_fn("SELECT * FROM assign_task where task_status = $status_id $queryFilter $filter");
 	}
 	$row = mysqli_num_rows ($user_data);
 	return $row;

@@ -45,7 +45,7 @@ if(isset($_POST['assign'])){
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
-            "cby_user_id" =>$assing_to_user_id,
+            "cby" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$user_name,
             'created_date'=>date("Y-m-d H:i:s")
         );
@@ -56,11 +56,11 @@ if(isset($_POST['assign'])){
 
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report');
+        alertSuccess( $msg,'?page=view-report&type='.$_GET['type']);
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report');
+        alertdanger( $msg,'?page=view-report&type='.$_GET['type']);
 }
 //self assign task
 if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){
@@ -73,9 +73,9 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
             "assign_to_user_id"   => $assing_to_user_id,
             "task_id"             => $tasks,
             "survey_id"           => $survey_id,
-            "survey_type"         => $survey_id,
+            "survey_type"         => $survey_type_id,
             "task_status"         => 2,
-            "assign_by_user_id"   => $assign_by_user_id,
+            "assign_by_user_id"   => $assing_to_user_id,
             "cdate"               => date("Y-m-d H:i:s")
         );
          // check the assign task already exists for this user or not
@@ -91,8 +91,7 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
-            "cby_user_type" =>$assign_to_user_type,
-            "cby_user_id" =>$assing_to_user_id,
+            "cby" =>$assing_to_user_id,
             "comment"=> 'response assigned to '.$_SESSION['user_name'],
             'created_date'=>date("Y-m-d H:i:s")
         );
@@ -100,11 +99,11 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
     }
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-my-assign-task');
+        alertSuccess( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-my-assign-task');
+        alertdanger( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
 }
 
 //disable checkbox and assign button for manager
@@ -211,15 +210,15 @@ if(!empty($_POST['surveys'])){
                             <?php 
                                 $reqCount =0; 
                                 $filtr = '';
-                                if($_SESSION['user_type']>2){
+                                //if($_SESSION['user_type']>2){
                                     if($surveys_ids){
                                         $filtr = " and surveyid IN ($surveys_ids )";
                                     }else {
                                         $filtr = " and surveyid IN (0)";
                                     }
                                     
-                                }
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition $filtr GROUP BY cby");
+                                //}
+                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition $filtr GROUP BY cby");
                                 while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                     // record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                     // if($totalRows_get_action == 0){
@@ -227,9 +226,6 @@ if(!empty($_POST['surveys'])){
                                     // }
                                      ++$reqCount;
                                 }
-                                
-                            ?>
-                            <?php 
                                 echo $reqCount;
                             ?>
                         </span>
@@ -426,7 +422,7 @@ if(!empty($_POST['surveys'])){
                                                         $i++;
                                                     }
                                                 }
-                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                                     $to_bo_contacted = 1;
                                                 }
                                             }

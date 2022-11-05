@@ -10,7 +10,7 @@
           
             $response = '';
             while($row_get_add_question = mysqli_fetch_assoc($get_add_question)){
-                record_set("get_question", "select * from questions_detail where surveyid='".$surveyid."' and condition_qid='".$row_get_add_question['id']."'",2);
+                record_set("get_question", "select * from questions_detail where surveyid='".$surveyid."' and condition_qid='".$row_get_add_question['id']."'");
                 // $row_get_question = mysqli_fetch_assoc($get_question);
                 // print_r(' '.$row_get_question['questionid'].' ');
                 if($totalRows_get_question == 0){

@@ -83,7 +83,7 @@
                 $to_bo_contacted = 0;
                 while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
                 $achieved_result_val += $row_get_survey_result['answerval'];
-                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                     $to_bo_contacted = 1;
                 }
                 }

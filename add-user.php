@@ -271,7 +271,7 @@ if(!empty($_POST['submit'])){
                 <?php $user_types_array=user_type();?>
                 <div class="form-group">
                   <input type="hidden" id="hidden_user_type" name="user_type" value="<?=$row_get_user_id['user_type']?>">
-                  <label>User Type</label>
+                  <label>User Type *</label>
                     <select class="form-control" tabindex=7 id="user_type" <?=($_GET['id'])?'disabled':'required'?>>
                         <option value="">Select User Type</option>
                       <?php   
@@ -294,7 +294,7 @@ if(!empty($_POST['submit'])){
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Email</label>
+                  <label>Email *</label>
                   <input type="text" class="form-control" id="email" name="email"value="<?php echo $row_get_user_id['email']?>" <?=($_GET['id'])?'disabled':''?>/>
                 </div>
               </div>
@@ -408,7 +408,7 @@ $(function() {
         // Make sure the form is submitted to the destination defined
         // in the "action" attribute of the form when valid
         submitHandler: function(form) {
-        form.submit();
+          form.submit();
         }
     });
 

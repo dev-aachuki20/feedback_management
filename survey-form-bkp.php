@@ -66,7 +66,7 @@ foreach($questionid as $value){
 				$row_question_val = mysqli_fetch_assoc($question_val);
 				$answerval = $row_question_val['answer'];
 			}else{
-				$answerval = 10;
+				$answerval = 100;
 			}
 			$data =  array(
 					//"questionid"=> $questionid,
@@ -91,7 +91,7 @@ foreach($questionid as $value){
 				$row_question_val = mysqli_fetch_assoc($question_val);
 				$answerval = $row_question_val['answer'];
 			}else{
-				$answerval = 10;
+				$answerval = 100;
 			}
 		$data =  array(
 				"locationid"=> $locationid,

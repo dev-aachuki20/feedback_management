@@ -1,5 +1,10 @@
 <div class="col-md-12 locationCheck" style="padding:0px;">
     <?php 
+    $deptidByGroup_explode = implode(',',$deptid_array);
+    $departmentName = get_data_by_id('departments',$deptidByGroup_explode);
+    // if($_SESSION['user_type']<3){
+    //     $departmentName = getDepartment();
+    // }
     if(isset($_GET['id'])){ ?>
     <div class="col-md-12 with-border">
         <h4>Assign Departments</h4>
@@ -17,10 +22,6 @@
     while($row_get_department_id=mysqli_fetch_assoc($get_department_id)){
         $department_id_saved[] = $row_get_department_id['id'];
     }
-    
-    $deptidByGroup_explode = implode(',',$deptid_array);
-    $departmentName = get_data_by_id('departments',$deptidByGroup_explode);
-
     foreach($departmentName as $key => $value){ 
     $deptId  = $key;
     $deptName = $value; ?>

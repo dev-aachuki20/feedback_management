@@ -6,12 +6,6 @@
     <?php 
     if(isset($_GET['id'])){ 
         $location_id = get_assigned_user_data($_GET['id'],'location');
-        if(count($location_id)>0){ ?>
-            <div class="col-md-12 with-border">
-                <h4>Assign Location</h4>
-                <input type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
-            </div>
-        <?php }
         $location_id = implode(',',$location_id);
         if($location_id){
             $filterSurvey = " where id IN($location_id)";
@@ -20,6 +14,14 @@
         }
         record_set("get_location_id", "select * from locations $filterSurvey");
         $deptid_array= array();
+
+        //if(count($location_id)>0){ ?>
+            <div class="col-md-12 with-border">
+                <h4>Assign Location</h4>
+                <input type="checkbox" onclick="checked_all(this,'loc_checkbox')" /><strong> Select All</strong><br/><br/>
+            </div>
+        <?php //}
+    
         while($row_get_location_id=mysqli_fetch_assoc($get_location_id)){
         $location_id_saved[] =$row_get_location_id['id'];
         // get location assign to given group
@@ -32,11 +34,17 @@
             }
         ///end
         }
-        if(empty($locationid_array)){
+        if(empty($locationid_array) and !isset($_GET['id'])){
             $locationid_array = array_keys(getLocation());
         }
+    
         $locationid_array_explode = implode(',',$locationid_array);
+        
         $locationName = get_data_by_id('locations',$locationid_array_explode);
+        
+        // if($_SESSION['user_type']<3){
+        //     $locationName = getLocation();
+        // }
         foreach( $locationName as $key => $value){ 
         $locationId    = $key;
         $locationName  = $value;

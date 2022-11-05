@@ -28,7 +28,16 @@ $sid               = $_GET['id'];
     if(!empty($_GET['task_status']) and $_GET['task_status']!=1){
         $filter_status = ' and task_status ='.$_GET['task_status'];
     }
-    record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id ".$filter_status);
+    $qFilter = '';
+    if($_SESSION['user_type'] >2){
+        $qFilter = " and assign_to_user_id = $loggedIn_user_id ";
+        // if($ids){
+        //     $qFilter = "and id IN (".implode(',',$ids).")"; 
+        // }else {
+        //     $qFilter = "and id IN (0)"; 
+        // }
+    }
+    record_set("get_assign_task", "SELECT * FROM assign_task where id !='' $qFilter ".$filter_status);
 
     $arr_task_id = array();
     while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
@@ -37,6 +46,12 @@ $sid               = $_GET['id'];
     $task_id = implode(",",$arr_task_id);
     if(empty($task_id)){
         $task_id = '0';
+    }
+    if($_SESSION['user_type']<3){
+        $survey_ids = get_survey_data_by_user($_GET['type']);
+        // get only ids
+        $ids = array_column($survey_ids , 'id');
+        $query .= " and surveyid IN (".implode(',',$ids).")";
     }
     if($_GET['task_status']==1){
         $query .= " and cby NOT IN (".$task_id.") GROUP by cby";
@@ -64,7 +79,7 @@ $sid               = $_GET['id'];
                     <div class="box-body">
                         <div>
                             <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
-                                <a href="?page=survey-outcomes">
+                                <a href="?page=survey-outcomes&type=<?=$_GET['type']?>">
                                 <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">Back</button>
                                 </a>
                         
@@ -110,14 +125,12 @@ $sid               = $_GET['id'];
                                                         $i++;
                                                     }
                                                 }
-                                                if($row_get_survey_result['answerid'] == -2 &&  $row_get_survey_result['answerval'] == 10){
+                                                if($row_get_survey_result['answerid'] == -2 &&  $row_get_survey_result['answerval'] == 100){
                                                     $to_bo_contacted = 1;
                                                 }
-                                
                                         }
                                         $result_response = $achieved_result_val*100/$total_result_val;
 
-                                        
                                         if($achieved_result_val==0 and $total_result_val==0){
                                             $result_response=100;
                                         }
@@ -140,7 +153,11 @@ $sid               = $_GET['id'];
                                         } 
                                        
                                         // get taskstatus
-                                        record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id = ".$row_get_recent_entry['cby']);
+                                        $fData  = '';
+                                        if($_SESSION['user_type']>2){
+                                            $fData = " and assign_to_user_id = ".$_SESSION['user_id'];
+                                        }
+                                        record_set("check_assign_task", "SELECT * FROM assign_task where  task_id = ".$row_get_recent_entry['cby']."$fData");
 
                                         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                         $task_status = $row_check_assign_task['task_status'];
@@ -157,7 +174,7 @@ $sid               = $_GET['id'];
                                         <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
                                         
                                         <td><?=$row_survey_entry?></td>
-                                        <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>'%</label></td>
+                                        <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?> %</label></td>
                                         <td><?=$contacted ?></td>
                                         <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                         <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'] ?> <?=($_GET['task_status']!=1)?'&status=assign':''?>" target="_blank">VIEW DETAILS</a></td>

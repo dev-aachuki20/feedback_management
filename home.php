@@ -200,7 +200,7 @@ if(isset($_POST['selectSurvey'])){
                         <span class="info-box-number">
                             <?php 
                                 $reqCount =0; 
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
+                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
                                 while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                     record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                     if($totalRows_get_action == 0){
@@ -226,7 +226,7 @@ if(isset($_POST['selectSurvey'])){
                         <span class="info-box-text">Total In Progress</span>
                         <?php 
                             $progressCount = 0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
+                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
                             while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                 record_set("get_progress_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                 $row_get_progress_action = mysqli_fetch_assoc($get_progress_action);
@@ -250,7 +250,7 @@ if(isset($_POST['selectSurvey'])){
                         <span class="info-box-text">Total Void</span>
                         <?php 
                             $voidCount = 0;  
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
+                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
                             while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                 record_set("get_void_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                 $row_get_void_action = mysqli_fetch_assoc($get_void_action);
@@ -274,7 +274,7 @@ if(isset($_POST['selectSurvey'])){
                         <span class="info-box-text">Total Resolved</span>
                         <?php 
                             $totalResolved=0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 10 $locationQueryAndCondition GROUP BY cby");
+                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
                             while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
                                 record_set("get_resolved_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
                                 $row_get_resolved_action = mysqli_fetch_assoc($get_resolved_action);
@@ -368,7 +368,16 @@ if(isset($_POST['selectSurvey'])){
                         </thead>
                         <tbody>
                             <?php
-                                record_set("get_recent_entry", "SELECT surveyid,cby,cdate FROM answers WHERE $locationRecentContact answerid=-2 AND answerval = 10  GROUP by cby order by cdate DESC LIMIT 10");	
+                            $filter = '';
+                            if($_SESSION['user_type']>2){
+                                $assignSurvey = get_assing_id_dept_loc_grp_survey();
+                                if($assignSurvey){
+                                    $filter = "and surveyid IN($assignSurvey)";
+                                }else {
+                                    $filter = "and surveyid IN(0)";
+                                }
+                            }
+                                record_set("get_recent_entry", "SELECT surveyid,cby,cdate FROM answers WHERE $locationRecentContact answerid=-2 AND answerval = 100 $filter GROUP by cby order by cdate DESC LIMIT 10");	
                                 $i=0;
                                 
                                 while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ $i++;
@@ -402,7 +411,7 @@ if(isset($_POST['selectSurvey'])){
                                                         if(!in_array($result_question['answer_type'],array(2,3,5))){
                                                             $total_result_val = ($i+1)*100;
                                                             $achieved_result_val += $row_get_survey_result['answerval'];
-                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                                                 $to_bo_contacted = 1;
                                                             }
                                                             $i++;

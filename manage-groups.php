@@ -86,7 +86,6 @@
       });
       
     $('#submit').click(function(){
-        
         var name = $("#name").val();
         if(name==''){
           document.getElementById('name').style.borderColor = "#ff0000";	

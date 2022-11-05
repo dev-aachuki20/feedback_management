@@ -53,9 +53,9 @@ if(!empty($_POST['surveys'])){
 
     // if(!empty($requestData['contact'])){
     //     if($requestData['contact']==1){
-    //         $que= " and  answerid =-2 and answerval=10";
+    //         $que= " and  answerid =-2 and answerval=100";
     //     }else {
-    //         $que= " and  answerid != -2 and answerval != 10";
+    //         $que= " and  answerid != -2 and answerval != 100";
     //     }
     // }
 
@@ -145,7 +145,7 @@ if(!empty($_POST['surveys'])){
                         $i++;
                     }
                 }
-                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
+                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                     $to_bo_contacted = 1;
                 }
 

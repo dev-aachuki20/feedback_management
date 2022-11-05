@@ -43,19 +43,21 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
   $user_id = implode(',',$user_id);
   //$html = '<span style="color:red;">No user Available</span>';
   $title ='';
+
   if($user_type == 2){
     //superadmin
-    $userData = getUsers('',2);
+    $userData = getUsers(2);
     $title = "Super Admin";
   }else if($user_type == 3){
     //admin
     $title = "Admin";
-    $userData = getUsers($user_id,3);
+    $userData = getUsers(3);
   }else if($user_type == 4){
     //manger
     $title = "Manger";
-    $userData = getUsers($user_id,4);
+    $userData = getUsers(4);
   } 
+ 
   $html = '<div class="form-group">
   <label>'.$title .'</label>
   <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id">
@@ -134,23 +136,28 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'load_group'){
     <h4>Assign Group</h4>
     <input type="checkbox" class="group_checkbox_all" /><strong> Select All</strong><br/><br/>
   </div>';
+  // get group id of relative to survey
   while($row_get_groups  = mysqli_fetch_assoc($groups_data)){
       $group_id          = $row_get_groups['groups'];
       $group_id_explode  = explode(',',$group_id);
-      
       foreach($group_id_explode as $grp){
         if($grp){
           $groupId[$grp] = $grp;
         }
-       
       }
   }
-  if(count($groupId)>0){
+  if(count($groupId)>0 ){
       foreach($groupId as $grp_data){
-        $html .='<div class="col-md-4">
-        <input type="checkbox"  id="groupids'.$grp_data.'" class="group_checkbox" value="'.$grp_data.'" name="groupids['.$grp_data.']" /> 
-        <label for="groupids'.$grp_data.'">'.getGroup()[$grp_data].' </label>
-      </div>';
+        // check assign group for admin and below level
+        // if($_SESSION['user_type']>2){
+        //   $group_id_assign = get_assigned_user_data($_SESSION['user_id'],'group');
+        // }
+        //if($_SESSION['user_type']<3 || in_array($grp_data, $group_id_assign)){
+          $html .='<div class="col-md-4">
+          <input type="checkbox"  id="groupids'.$grp_data.'" class="group_checkbox" value="'.$grp_data.'" name="groupids['.$grp_data.']" /> 
+          <label for="groupids'.$grp_data.'">'.getGroup()[$grp_data].' </label>
+        </div>';
+        //}
       }
   }else {
     $data = getLocation();

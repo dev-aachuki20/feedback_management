@@ -10,17 +10,17 @@ while($row_get_survey_details = mysqli_fetch_assoc($get_question)){
             "answer" =>$updated_answer
         );
         $updte=	dbRowUpdate("questions_detail", $data, "where id=".$row_get_survey_details['id']);
-        //if($updte){
-            // record_set("get_answers", "SELECT * FROM `answers` WHERE answerid =".$row_get_survey_details['id']);	
-            // while($row_get_answers = mysqli_fetch_assoc($get_answers)){
-            //     $answervalss = $row_get_answers['answerval'];
-            //     $updated_answer = $answervalss*10;
-            //     $data = array(
-            //         "answerval" =>$updated_answer
-            //     );
-            //     $updte=	dbRowUpdate("answers", $data, "where answerid=".$row_get_survey_details['id'],1);echo '<br>';
-            // }			
-        //}	
+        if($updte){
+            record_set("get_answers", "SELECT * FROM `answers` WHERE answerid =".$row_get_survey_details['id']);	
+            while($row_get_answers = mysqli_fetch_assoc($get_answers)){
+                $answervalss = $row_get_answers['answerval'];
+                $updated_answer = $answervalss*10;
+                $data = array(
+                    "answerval" =>$updated_answer
+                );
+                $updte=	dbRowUpdate("answers", $data, "where answerid=".$row_get_survey_details['id'],1);echo '<br>';
+            }			
+        }	
 }
 
 record_set("get_answer", "select * from answers where answerval <11 order by id desc");				

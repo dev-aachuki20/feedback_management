@@ -7,13 +7,17 @@
     if($_POST['update']){
         $dataCol = array(
             "name"                 => $_POST['name'],
+            "survey_type"          => $_POST['survey_type'],
             "survey_needed"        => $_POST['survey_needed'],
+            "cstatus"              => $_POST['status'],
+            "confidential"         => (isset($_POST['confidential'])) ? 1 : 0,
+            "intervals"            => $_POST['interval'],
             "css_txt"              => $_POST['css_txt'],
             "alter_email"          => $_POST['alter_email'],
             "start_date"           => $_POST['sdate'],
             "end_date"             => $_POST['edate'],
-            // "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
-            // "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+             "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
+             "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "google_review_link"   => $_POST['google_review_link'],
             "facebook_review_link" => $_POST['facebook_review_link'],
             "other_link"           => $_POST['other_link'],
@@ -21,45 +25,31 @@
 
         // avoid updating disable value
         $new_data =  array(
-            "survey_type"   => $_POST['survey_type'],
-            "cstatus"       => $_POST['status'],
-            "confidential"  => (isset($_POST['confidential'])) ? 1 : 0,
-            "intervals"     => $_POST['interval'],
             "groups"        => implode(",",$_POST['groupid']),
             "locations"     => implode(",",$_POST['locationid']),
             "departments"   => implode(",",$_POST['departments']),
             //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
-        if($_SESSION['user_type']<=2){
+        if($_SESSION['user_type']==1){
             $data = array_merge($dataCol,$new_data);
-        }else {
-            $data = $dataCol;
+        }else if($_SESSION['user_type']==2) {
+            $data = $new_data;
         }
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
         if(!empty($updte)){
             if(isset($_POST['isStep']) && isset($_POST['numberOfStep'])){
                 for($step = 0; $step < $_POST['numberOfStep']; $step++){
                     record_set("get_old_steps", "select * from surveys_steps where survey_id='".$_GET['id']."' and step_number='".intval($step+1)."'");
-            
-                    $lang_step_col=array();
-                    record_set("get_lang", "select * from languages where cby='".$_SESSION['user_id']."'");				
-                    while($row_get_lang = mysqli_fetch_assoc($get_lang)){	
-                    if($row_get_lang['id'] !=1){
-                        $lang_step_col["step_title_".$row_get_lang['iso_code']] = (isset($_POST['stepstitle_'.$row_get_lang['iso_code']][$step])) ? $_POST['stepstitle_'.$row_get_lang['iso_code']][$step]:'';
+                    if($totalRows_get_old_steps > 0){   
+                        $step_data = array("step_title" => $_POST['stepstitle'][$step]);
+                       
+                        $updte_steps= dbRowUpdate("surveys_steps", $step_data, "where survey_id=".$_GET['id']." and step_number=".intval($step+1));
+                    }else{
+                        $step_data = array("survey_id" => $_GET['id'], "step_number" => $step+1, "step_title" => $_POST['stepstitle'][$step],'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
+                        $insert_steps =  dbRowInsert("surveys_steps",$step_data);
                     }
                 }
-
-                if($totalRows_get_old_steps > 0){   
-                    $step_data_col = array("step_title" => $_POST['stepstitle'][$step]);
-                    $step_data = array_merge($step_data_col,$lang_step_col);
-                    $updte_steps= dbRowUpdate("surveys_steps", $step_data, "where survey_id=".$_GET['id']." and step_number=".intval($step+1));
-                }else{
-                    $step_data_col = array("survey_id" => $_GET['id'], "step_number" => $step+1, "step_title" => $_POST['stepstitle'][$step],'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
-                    $step_data = array_merge($step_data_col,$lang_step_col);
-                    $insert_steps =  dbRowInsert("surveys_steps",$step_data);
-                }
-            }
         }
             $msg = "Survey Updated Successfully";  
             alertSuccess($msg,'?page=view-survey');
@@ -216,7 +206,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Interval</label>
-                                    <select class="form-control" id="interval" name="interval" <?=($_GET['id']) ? 'disabled ': ''?>>
+                                    <select class="form-control" id="interval" name="interval">
                                         <?php foreach(service_type() as $key => $value){ ?>
                                             <option <?php if($row_get_surveys['intervals']==$key){?> selected="selected"<?php }?> value="<?php echo $key; ?>"><?php echo $value;?></option>
                                         <?php } ?>
@@ -449,20 +439,13 @@ function select_all_option(idFirst,idSecond){
     }
 }
 //disabled form for other users
-<?php if($_GET['id']){ ?>
-    $('#survey_from input').attr('readonly','readonly');
-    $('#survey_from textarea').attr('readonly','readonly');
-    <?php if($_SESSION['user_type'] <= 2) { ?>
-    $('#interval').removeAttr('disabled');
-    $('#sdate').removeAttr('readonly');
-    $('#edate').removeAttr('readonly');   
-    $('#survey_from input:checkbox').not('.multiselect, #confidential').attr('disabled','true');
-    <?php }else { ?> 
-    $('#survey_from input:checkbox').attr('disabled','true');
-    $('.multiple-select').attr('disabled','true');
-    $('#survey_type').attr('disabled','true');
-    <?php } ?>
-<?php } ?>
+<?php if($_GET['id'] and $_SESSION['user_type'] >1){ ?>
+    $("#survey_from :input").prop("disabled", true);
+    <?php if($_GET['id'] and $_SESSION['user_type'] ==2){ ?>
+        $(".multiple-select").prop("disabled", false);
+        $(".multiselect").prop("disabled", false);
+        $("#survey_from :submit").prop("disabled", false);
+<?php } } ?>
 
 var $form = $("#survey_from"),
 $successMsg = $(".alert");

@@ -1,3 +1,6 @@
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.css">
 <?php 
 include('function/function.php');
 include('function/get_data_function.php');
@@ -149,14 +152,22 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
       "comment"=> $_POST['comment'],
       'created_date'=>date("Y-m-d H:i:s")
     );
-   
-    $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
     $data =array(
       'task_status' => $_POST['contact_action'],
     );
-  
-    $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and task_id=".$_GET['userid']);
-   
+    record_set("total_assign_task", "select * from assign_task where assign_to_user_id =".$_SESSION['user_id']." and task_id=".$_GET['userid']);
+    if($totalRows_total_assign_task > 0){ 
+      $insert_value=	dbRowUpdate("assign_task", $data, "where assign_to_user_id =".$_SESSION['user_id']." and task_id=".$_GET['userid']);
+      if($insert_value>0){
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+      }
+    }
+    else {
+      $mess = "Sorry! Only assign user Can take task";
+      alertdanger($mess,'');
+    }
+
+
     // send mail if status change to Resolve-negative
     if($_POST['contact_action'] == 5 OR $_POST['contact_action'] == 6){
       record_set("get_survey_id", "select surveyid from answers where cby='".$_GET['userid']."'");
@@ -262,7 +273,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
     $row_get_location = mysqli_fetch_assoc($get_location);
 
      //School
-     record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='10' and cstatus=1");
+     record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='100' and cstatus=1");
     ?>
     <div class="container">
       <table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
@@ -421,6 +432,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                                continue;
                              }
                             ?>
+                            
                             <option value="<?=$key?>" <?=($comm['status'] == $key) ? 'selected' : '' ?>><?=$value?></option>
                           <?php } ?>
                         </select>
