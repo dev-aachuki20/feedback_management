@@ -197,9 +197,9 @@ if(count($current_data)>0){
     $html ='<table id="datatable1" class="table table-bordered">
     <thead>
       <tr>
-        <th scope="col">'.$title.'</th>
-        <th scope="col">Number of Surveys</th>
-        <th scope="col">Average Score</th>
+        <th scope="col" style="text-align:center;">'.$title.'</th>
+        <th scope="col" style="text-align:center;">Number of Surveys</th>
+        <th scope="col" style="text-align:center;">Average Score</th>
       </tr>
     </thead>
     <tbody>';
@@ -232,8 +232,8 @@ if(count($current_data)>0){
             
         $html .='<tr>
             <td>'.$titleName.'</td>
-            <td >'.$datasurvey['count'].'</td>
-            <td>'.$total.' %</td>
+            <td style="text-align:center;">'.$datasurvey['count'].'</td>
+            <td style="text-align:center;">'.$total.' %</td>
         </tr>';
         }
     $html .='</tbody></table>';

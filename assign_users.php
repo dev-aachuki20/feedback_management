@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="col-md-12 with-border">
-        <div class="col-md-12"> <h4>Assign Clients</h4> </div>
+        <div class="col-md-12"> <h4>Assign Managers</h4> </div>
         <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'clientCheckbox')" /><strong> Select All</strong><br/><br/>
         <?php
             if(($row_get_departments_id['client_ids'])){

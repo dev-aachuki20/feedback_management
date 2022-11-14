@@ -297,8 +297,8 @@ if(isset($_POST['selectSurvey'])){
         <!-- start -->
         <div class="col-md-12">
           <div class="box">
-              <div class="box-header with-border">
-                <h3 class="box-title">Latest Surveys</h3>
+                <div class="box-header with-border">
+                    <h3 class="box-title">Latest Surveys</h3>
                     <form method="post" id="selectSurveyForm">
                         <div class="row">
                             <div class="col-md-3">

@@ -1,5 +1,5 @@
 <section class="content-header">
-  <h1> View Locations</h1>
+  <h1> VIEW LOCATIONS</h1>
 </section>
 <section class="content">
   <!-- Start location table -->

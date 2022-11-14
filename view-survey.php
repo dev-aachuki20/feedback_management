@@ -1,5 +1,5 @@
 <section class="content-header">
-  <h1> View Survey</h1>
+  <h1> VIEW SURVEYS</h1>
    <!-- <a href="?page=add-survey" class="btn btn-primary pull-right" style="margin-top:-25px">Add Survey</a> -->
     </section>
   <script>
@@ -16,7 +16,7 @@
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>Survey ID</th>
+                    <th style="width: 30px !important; padding:0px">Survey ID</th>
                     <th>Survey Name</th>
                     <th>Survey Type	</th>
                     <!-- <th>Department</th> -->
@@ -64,7 +64,7 @@
                     // $deptName = implode(',',$all_deparmentName);
                     ?>
                   <tr>
-                    <td><?php echo $row_get_surveys['id'];?></td>
+                    <td style="width: 30px !important; padding:0px"><?php echo $row_get_surveys['id'];?></td>
                     <td><?php echo $row_get_surveys['name'];?></td>
                     <td><?php if($row_get_surveys['survey_type']) { ?> <span class="label label-primary <?=$btnClass?>"><?=survey_type()[$row_get_surveys['survey_type']]?></span> <?php } ?></td>
                     <!-- <td>
@@ -81,12 +81,12 @@
                     <!-- <td><?php //echo $row_get_surveys['survey_needed']; ?></td> -->
                     <td>
                       <div class="btnCol">
-                    	<a class="btn btn-xs btn-danger" href="?page=add-survey&id=<?php echo $row_get_surveys['id'];?>">Edit</a>
-                      <a class="btn btn-xs btn-info addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">View Qr</a>
+                    	<a class="btn btn-xs btn-danger btn-yellow" href="?page=add-survey&id=<?php echo $row_get_surveys['id'];?>">Edit</a>
+                      <a class="btn btn-xs btn-primary addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">View QR</a>
                       <?php if($_SESSION['user_type']==1) {?>
-                        <a class="btn btn-xs btn-primary" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>
+                        <a class="btn btn-xs btn-info" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>
 
-                        <a class="btn btn-xs btn-info" href="survey-form.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">View</a>
+                        <a class="btn btn-xs btn-primary" href="survey-form.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">View</a>
 
                         <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">Result</a>
 

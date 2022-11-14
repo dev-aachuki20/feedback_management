@@ -5,7 +5,7 @@
   }
 ?>
 <section class="content-header">
-  <h1> Import Users</h1>
+  <h1> IMPORT USERS</h1>
 </section>
 <section class="content">
   <!-- Start Department Table-->

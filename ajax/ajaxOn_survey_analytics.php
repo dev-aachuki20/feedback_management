@@ -129,7 +129,7 @@ if(is_nan($avgScore)){
 }
 
 $overall= '';
-$overall = '<h3>'.strtoupper(getSurvey()[$surveyid]).'</h3><div class="col-md-6">
+$overall = '<div class="col-md-12"><div class="col-md-2"></div><div class="col-md-9"><h4>'.strtoupper(getSurvey()[$surveyid]).'</h4></div><div class="col-md-6">
 <div class="col-6"><strong>Total Survey Responses</strong></div>
 <div class="col-6"><strong>'.count($survey_overall).'</strong></div>
 </div>
@@ -145,9 +145,9 @@ if(count($survey_data)>0){
     $html ='<table class="table">
     <thead class="thead-dark">
     <tr>
-        <th scope="col" style="text-align: left;">Location Name</th>
-        <th scope="col" style="text-align: left;">Total Surveys</th>
-        <th scope="col" style="text-align: left;">Average Score</th>
+        <th scope="col" style="text-align: center;">Location Name</th>
+        <th scope="col" style="text-align: center;">Total Surveys</th>
+        <th scope="col" style="text-align: center;">Average Score</th>
     </tr>
     </thead>
     <tbody>';
@@ -169,9 +169,9 @@ array_multisort($key_values, SORT_DESC, $current_data);
         $graph_data[$titleName] = $total;
        $html.= '
             <tr>
-                <td style="text-align: left;">'.$titleName.'</td>
-                <td style="text-align: left;">'.count($datasurvey).'</td>
-                <td style="text-align: left;">'.$total.' %</td>
+                <td style="text-align: center;">'.$titleName.'</td>
+                <td style="text-align: center;">'.count($datasurvey).'</td>
+                <td style="text-align: center;">'.$total.' %</td>
             </tr>';
         $i++; 
     }

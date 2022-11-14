@@ -244,7 +244,7 @@ if(!empty($_POST['submit'])){
 } */
 </style>
 <section class="content-header">
-  <h1 class="title"><?=isset($_GET['id'])?'Edit':'Add'?> User</h1>
+  <h1 class="title"><?=isset($_GET['id'])?'EDIT':'ADD'?> USER</h1>
   <?php if(!isset($_GET['user'])) { ?>
   <a href="?page=view-user" class="btn btn-primary pull-right" style="margin-top:-25px">View Users</a> 
   <?php } ?>

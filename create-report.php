@@ -133,7 +133,7 @@ if(isset($_GET['viewid'])){
 ?>
 
 <section class="content-header">
-  <h1><?=($_GET['type']=='report')? 'Create Report':'Create Template' ?></h1>
+  <h1><?=($_GET['type']=='report')? 'CREATE REPORT':'CREATE TEMPLATE' ?></h1>
 </section>
 <section class="content">
     <div class="box">

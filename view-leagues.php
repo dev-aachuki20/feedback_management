@@ -33,7 +33,7 @@
     }
 </style>
 <section class="content-header">
-  <h1>League Tables</h1>
+  <h1>LEAGUE TABLES</h1>
 </section>
 <section class="content">
     <div class="box">
@@ -120,7 +120,10 @@
                                     </div>
                                 </div>
                                 <!-- loader div end  -->
-                                <div class="col-md-12 renderTable">
+                                <div class="col-md-12">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-7 renderTable">
+                                    </div>
                                 </div>
                             </div>
                         </div>

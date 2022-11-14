@@ -157,7 +157,10 @@ $sid               = $_GET['id'];
                                         if($_SESSION['user_type']>2){
                                             $fData = " and assign_to_user_id = ".$_SESSION['user_id'];
                                         }
-                                        record_set("check_assign_task", "SELECT * FROM assign_task where  task_id = ".$row_get_recent_entry['cby']."$fData");
+                                        if(isset($_GET['task_status'])){
+                                            $fData .= " and task_status =".$_GET['task_status'];
+                                        }
+                                        record_set("check_assign_task", "SELECT * FROM assign_task where task_id = ".$row_get_recent_entry['cby']."$fData");
 
                                         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                         $task_status = $row_check_assign_task['task_status'];

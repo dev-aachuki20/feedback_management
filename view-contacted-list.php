@@ -194,7 +194,7 @@ if(!empty($_POST['surveys'])){
 }
 </style>
 <section class="content-header">
-  <h1>Contact Requests</h1>
+  <h1>CONTACT REQUESTS </h1>
 </section>
 <section class="content">
     <!-- top box container start-->
@@ -203,7 +203,7 @@ if(!empty($_POST['surveys'])){
         <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=contact request&aid=-2&avl=10" target="_blank"> 
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="ion ion-ios-gear-outline"></i></span>
+                    <span class="info-box-icon bg-red"><i class="fa-solid fa-image-portrait"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Contact Requests</span>
                         <span class="info-box-number">

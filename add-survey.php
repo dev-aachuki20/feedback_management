@@ -13,6 +13,7 @@
             "confidential"         => (isset($_POST['confidential'])) ? 1 : 0,
             "intervals"            => $_POST['interval'],
             "css_txt"              => $_POST['css_txt'],
+            //"send_by"              => $_POST['send_by'],
             "alter_email"          => $_POST['alter_email'],
             "start_date"           => $_POST['sdate'],
             "end_date"             => $_POST['edate'],
@@ -89,7 +90,8 @@
   			"cstatus"                => $_POST['status'],
   			"cip"                    => ipAddress(),
             "cby"                    => $_SESSION['user_id'],
-            "groups"                => implode(",",$_POST['groupid']),
+            "send_by"                => $_POST['send_by'],
+            "groups"                 => implode(",",$_POST['groupid']),
             "locations"              => implode(",",$_POST['locationid']),
             "departments"            => implode(",",$_POST['departments']),
   			"cdate"                  => date("Y-m-d H:i:s"),
@@ -130,7 +132,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 
 
 <section class="content-header">
-    <h1> <?=($_GET['id'])?'Edit Survey':'Add Survey'?></h1>
+    <h1> <?=($_GET['id'])?'EDIT SURVEY':'ADD SURVEY'?></h1>
     <a href="?page=view-survey" class="btn btn-primary pull-right" style="margin-top:-25px">View Survey</a> 
 </section>
 <style>
@@ -325,6 +327,15 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <?php  } } ?>
                             <div id="stepsTitle" class="whenStepAllow">
                             </div>
+                            <div class="col-md-12">
+                                <p style="margin:15px 5px 20px 0px !important"><strong>Seen By</strong></p>
+                                <div class="col-md-1" style="padding-left: 0px;">
+                                    <input type="radio" id="send_by" class="send_by" name="send_by" value="1" <?=($row_get_surveys['send_by']==1)?'checked':''?>>  <strong> Text</strong>
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="radio"id="send_by" name="send_by" class="send_by" value="2" <?=($row_get_surveys['send_by']==2)?'checked':''?>> <strong> Email</strong>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Alert Email (comma sepration for multiple email)</label>
@@ -508,4 +519,8 @@ function load_location(ids,mode){
         }
     });
 }
+$('.send_by').change(function(){
+    $('.send_by').prop('checked', false);
+    $(this).prop('checked', true);
+})
 </script>

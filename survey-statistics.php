@@ -26,7 +26,7 @@
 </style>
 
 <section class="content-header">
-  <h1>Statistics</h1>
+  <h1>STATISTICS</h1>
 </section>
 <section class="content">
     <div class="box">

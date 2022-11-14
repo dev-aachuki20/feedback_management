@@ -6,7 +6,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($_GET['type']);
 ?>
 <section class="content-header">
-  <h1>Survey Results</h1>
+  <h1>RESULTS</h1>
 </section>
 <section class="content">
   <div class="row">

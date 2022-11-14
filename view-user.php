@@ -13,7 +13,7 @@ while($row_get_users = mysqli_fetch_assoc($get_users)){
 }
 ?>
 <section class="content-header">
-  <h1> View Users</h1>
+  <h1> VIEW USERS</h1>
   <!-- <a href="?page=add-clients" class="btn btn-primary pull-right" style="margin-top:-25px">Add Clients</a>  -->
 </section>
 <section class="content">

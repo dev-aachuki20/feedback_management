@@ -75,7 +75,7 @@ if($_POST['update']){
 $departmentByUsers = get_filter_data_by_user('departments'); 
 ?>
 <section class="content-header">
-  <h1> Add Location</h1>
+  <h1><?=isset($_GET['id']) ? 'EDIT LOCATION':'ADD LOCATION'?></h1>
 </section>
 <section class="content">
   <div class="box box-secondary">

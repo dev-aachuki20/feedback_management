@@ -44,7 +44,7 @@
 }
 </style>
 <section class="content-header">
-  <h1>Analytics</h1>
+  <h1>ANALYTICS</h1>
 </section>
 <section class="content">
   <div class="box">

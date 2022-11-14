@@ -36,13 +36,13 @@
     }
 </style>
 <section class="content-header">
-  <h1>Contact Outcomes</h1>
+  <h1>CONTACT OUTCOMES</h1>
 </section>
 <section class="content">
     <!-- top box container start-->
     <div class="row">
         <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=assigned&task_status=1" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&type=<?=$_GET['type']?>&req=unassigned&task_status=1" target="_blank"> 
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-blue"><i class="fa-solid fa-bars"></i></span>

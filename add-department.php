@@ -74,7 +74,7 @@ if($_POST['update']){
     // End Insert
 ?>
 <section class="content-header">
-  <h1> <?=isset($_GET['id']) ? 'View Department':'Add Department'?></h1>
+  <h1> <?=isset($_GET['id']) ? 'EDIT DEPARTMENT':'ADD DEPARTMENT'?></h1>
 </section>
 <section class="content">
   <div class="box box-secondary">

@@ -1,6 +1,6 @@
 
 <section class="content-header">
-<h1> View Departments</h1>
+<h1> VIEW DEPARTMENTS</h1>
 </section>
 <section class="content">
   <!-- Start Department Table-->

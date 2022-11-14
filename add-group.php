@@ -72,7 +72,7 @@ if($_POST['update']){
   $locationByUsers = get_filter_data_by_user('locations');
 ?>
 <section class="content-header">
-  <h1> Add Group</h1>
+  <h1> <?=isset($_GET['id']) ? 'EDIT GROUP':'ADD GROUP'?></h1>
 </section>
 <section class="content">
   <div class="box box-secondary">

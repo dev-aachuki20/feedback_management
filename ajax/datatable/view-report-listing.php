@@ -132,9 +132,9 @@ if(!empty($_POST['surveys'])){
             
             $nestedData[] = '<label class="label label-'.$label_class.'">'.round($result_response,2).'%</label>';
             if($to_bo_contacted==1){ 
-                $nestedData[] ='<a class="btn btn-xs btn-success">Yes</a>';
+                $nestedData[] ='<a class="btn btn-xs bg-green">Yes</a>';
             }else{ 
-                $nestedData[] ='<a class="btn btn-xs btn-info">No</a>';
+                $nestedData[] ='<a class="btn btn-xs btn-danger">No</a>';
             } 
             $nestedData[] =' <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid='.$row_get_recent_entry['surveyid'].'&userid='.$row_get_recent_entry['cby'].'" target="_blank">VIEW DETAILS</a>';
 

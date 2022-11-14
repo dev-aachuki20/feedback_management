@@ -126,6 +126,15 @@ h4{margin-bottom:1px;font-size:16px;}
 /* .sidebar-menu a {
     padding: 12px 5px 12px 15px !important;
 } */
+.skin-blue .sidebar-menu>li>.treeview-menu{
+    background: transparent !important;
+}
+.skin-blue .sidebar-menu>li>.treeview-menu .treeview-menu.timeline-area{
+    background: #2c3b41;
+}
+.skin-blue .sidebar-menu .treeview.tree-menu .treeview-menu{
+    background: #2c3b41 !important;  
+}
 .skin-blue .sidebar-menu>li>.treeview-menu>li>a {
     padding: 12px 5px 12px 23px;
 }

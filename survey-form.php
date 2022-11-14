@@ -15,7 +15,7 @@ if(isset($_GET['qrcode'])){
 
 //Get Survey Record
 if(isset($surveyid)){
-	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1 ");	
+	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1");	
 	if($totalRows_get_survey>0){
 		$row_get_survey = mysqli_fetch_assoc($get_survey);
 		record_set("max_survey_id", "SELECT max(id) as maxid FROM answers");
