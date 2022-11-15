@@ -102,16 +102,16 @@
         </div>
 
       <div class="row" style="margin-bottom: 21px;">
-      <div class="col-md-2"><strong>Please select</strong></div>
-        <div class="col-md-3">
-            <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
-        </div>
-        <div class="col-md-3">
-            <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
-        </div>
-        <div class="col-md-3">
-            <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
-        </div>
+        <div class="col-md-2" style="text-align:center ;"><strong>Please select</strong></div>
+          <div class="col-md-3">
+              <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
+          </div>
+          <div class="col-md-3">
+              <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
+          </div>
+          <div class="col-md-3">
+              <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+          </div>
       </div>
     </div>
   </div>

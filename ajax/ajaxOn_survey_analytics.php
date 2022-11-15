@@ -129,13 +129,18 @@ if(is_nan($avgScore)){
 }
 
 $overall= '';
-$overall = '<div class="col-md-12"><div class="col-md-2"></div><div class="col-md-9"><h4>'.strtoupper(getSurvey()[$surveyid]).'</h4></div><div class="col-md-6">
-<div class="col-6"><strong>Total Survey Responses</strong></div>
-<div class="col-6"><strong>'.count($survey_overall).'</strong></div>
-</div>
-<div class="col-md-6">
-<div class="col-6"><strong>Average Survey Score</strong></div>
-<div class="col-6"><strong>'.$avgScore.' %</strong></div>
+$overall = '
+<div class="row" style="margin-bottom: 21px;">
+<div class="col-md-12"><div class="col-md-2"></div><div class="col-md-9"><h4>'.strtoupper(getSurvey()[$surveyid]).'</h4></div>
+    <div class="col-md-2"> </div>
+    <div class="col-md-3">
+        <strong>Total Survey Responses <br>'.count($survey_overall).'</strong>
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-3">
+       <strong>Average Survey Score <br> '.$avgScore.' %</strong> 
+    </div>
+    
 </div>';
 
 $html ='';

@@ -18,10 +18,10 @@ if($_SESSION['user_type']==4){
 
 $configuration = array('add-department','manage-department','add-location','manage-locations','add-group','manage-groups','view-survey','add-survey');
 
-$surveysMenu = array('view-report','monthly-report','view-statistics','report-statistics','add-group','manage-groups','view-survey','view-analytics','survey-outcomes','view-leagues');
+$surveysMenu = array('view-report','monthly-report','view-statistics','report-statistics','add-group','manage-groups','view-survey','view-analytics','survey-outcomes','view-leagues','about','contact-us','view-surveys');
 
 $userMenu = array('view-users','add-user','import-users');
 
 $reportMenu = array('create-report','view-template','report','manage-report-template');
-$pulsesMenu = array('pulses');
+$pulsesMenu = array('pulses','about','contact-us','view-pulses');
 ?>

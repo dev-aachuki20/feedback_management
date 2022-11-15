@@ -5,6 +5,17 @@ $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($_GET['type']);
 ?>
+<style>
+  table tr td:nth-child(3) {
+    text-align: center;
+  }
+  table tr td:nth-child(4) {
+    text-align: center;
+  }
+  table tr td:nth-child(5) {
+    text-align: center;
+  }
+</style>
 <section class="content-header">
   <h1>RESULTS</h1>
 </section>
@@ -128,13 +139,26 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
     <div class="col-lg-12">
       <div class="box">
         <!-- <div class="box-header"><h3><?php echo $row_getSurveyname['name']?> monthly report</h3></div> -->
-        <div class="box-body">        
+        <div class="box-body">  
+          <div class="col-md-12" style="padding: 0px;">
+          <div class="col-md-3" style="padding: 0px;">
+              <div class="form-group">
+                  <label>Interval</label>
+                  <select name="groupid" id="interval" class="form-control form-control-lg interval">
+                      <?php foreach(service_type() as $key => $value){ ?>
+                          <option value="<?php echo $key;?>" <?=($_POST['interval']==$value) ? 'selected' :''?>><?php echo $value;?></option>
+                      <?php }?>
+                  </select>
+              </div>
+          </div>
+          </div>      
           <table id="datatable-ajax" class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>DATE</th>
                 <th>SURVEY NAME</th>               
-                <th>TOTAL SURVEY</th>               
+                <th>TOTAL SURVEY</th>   
+                <th>CONTACTED REQUESTED</th>              
                 <th>AVERAGE RESULT SCORE</th>
                 <th>ACTION</th>
               </tr>
@@ -146,6 +170,22 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
   </div>
 </section>
 <script>
+  // filter data using interval
+  $(document).on('change','.interval',function(){
+      // destroy datatable
+      $("#datatable-ajax").dataTable().fnDestroy()
+      let start_data    = $('.start_data').val();
+      let end_date      = $('.end_date').val();
+      let surveys       = $('.surveys').val();
+      let location      = $('.location').val();
+      let group         = $('.group').val();
+      let departmentid  = $('.department').val();
+      let current_loc_id = '<?=$_GET['locationid']?>'
+      let filterByInterval = $(this).val();
+      // this is the id of the form
+      ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id,filterByInterval);
+  });
+
    $(document).on('click','.search',function(){
         // destroy datatable
         $("#datatable-ajax").dataTable().fnDestroy()
@@ -159,7 +199,7 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
         // this is the id of the form
         ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id);
     });
-    function ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id){
+    function ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id,filterByInterval=null){
         var dataTable = $('#datatable-ajax').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -175,6 +215,7 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
                     locationid:location, 
                     departmentid:departmentid,
                     curr_loc_id:current_loc_id,
+                    interval:filterByInterval,
                 },
                 error: function(){  
                     // $(".datatable-ajax-error").html("");
