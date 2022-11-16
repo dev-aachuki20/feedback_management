@@ -135,7 +135,7 @@ if(!empty($requestData['survey_name'])){
         $nestested = array();
         $query = "SELECT answers.surveyid as surveyid,answers.cby as cby,answers.locationid,surveys.name,answers.cdate FROM `answers` INNER JOIN surveys ON answers.surveyid=surveys.id where answers.surveyid!=0 $filterQuery and answers.cdate between '".$date['start']."' and '".$date['end']."' group by answers.cby";
 
-        record_set("survey_detail",$query,1);
+        record_set("survey_detail",$query);
 
         if( !empty($requestData['search']['value']) ) {   // if there is a search parameter,   $requestData['search']['value'] contains search parameter
             $query.=" AND ( DATE(answers.cdate) LIKE '".$requestData['search']['value']."%' ";    
