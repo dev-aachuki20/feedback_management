@@ -656,6 +656,7 @@ function date_formate_cdate($string){
 	$string=date("Y-m-d H:i:s",strtotime($string));
 	return $string;
 }
+
 function user_type(){
 	return array(
 		'1' => 'DGS',

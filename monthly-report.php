@@ -1,9 +1,9 @@
 <?php 
-// get data by user
-$departmentByUsers = get_filter_data_by_user('departments');
-$locationByUsers   = get_filter_data_by_user('locations');
-$groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_survey_data_by_user($_GET['type']);
+  // get data by user
+  $departmentByUsers = get_filter_data_by_user('departments');
+  $locationByUsers   = get_filter_data_by_user('locations');
+  $groupByUsers      = get_filter_data_by_user('groups');
+  $surveyByUsers     = get_survey_data_by_user($_GET['type']);
 ?>
 <style>
   table tr td:nth-child(3) {
@@ -195,9 +195,10 @@ $surveyByUsers     = get_survey_data_by_user($_GET['type']);
         let location      = $('.location').val();
         let group         = $('.group').val();
         let departmentid  = $('.department').val();
+        let filterByInterval = $('#interval').val();
         let current_loc_id = '<?=$_GET['locationid']?>'
         // this is the id of the form
-        ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id);
+        ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id,filterByInterval);
     });
     function ajax_request(start_data,end_date,location,surveys,group,departmentid,current_loc_id,filterByInterval=null){
         var dataTable = $('#datatable-ajax').DataTable( {

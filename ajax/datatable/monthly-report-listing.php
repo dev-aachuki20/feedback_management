@@ -75,58 +75,91 @@ if(!empty($requestData['survey_name'])){
     }else{
       $filterQuery .= $locationJoinCondition;
     }
-    $query = "SELECT answers.surveyid,answers.locationid,surveys.name,answers.cdate FROM `answers` INNER JOIN surveys ON answers.surveyid=surveys.id where answers.surveyid!=0 $filterQuery group by YEAR(answers.cdate), MONTH(answers.cdate)";
-    record_set("survey_detail",$query);
-
-    if( !empty($requestData['search']['value']) ) {   // if there is a search parameter, $requestData['search']['value'] contains search parameter
-        $query.=" AND ( DATE(answers.cdate) LIKE '".$requestData['search']['value']."%' ";    
-        $query.="  )";
+    record_set("survey_date",'select DATE(cdate) as cdate from answers group by DATE(cdate) order by cdate');
+    $date_array =array();
+    $a = 0;
+    while($row_get_survey_date = mysqli_fetch_assoc($survey_date)){
+        if($a ==0){
+            $startDate = $row_get_survey_date['cdate'];
+        }else {
+            $startDate =  $end;
+        }
+        //echo $end.':'.date("Y-m-d"); echo '<br>';
+        if($end >= date("Y-m-d")){
+            break;
+        }
+        $date_array[$a]['start']= $startDate;
+        
+        if($requestData['interval'] ==24){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+1 days"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==168){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+7 days"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==336){
+            $end = date("Y-m-d",strtotime($startDate."+14 days"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==720){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+1 month"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==2160){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+3 month"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==4320){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+6 month"));
+            $date_array[$a]['end']=  $end;
+        }
+        else if($requestData['interval'] ==8640){
+            //echo 'startdate'.$startDate; echo '<br>';
+            $end = date("Y-m-d",strtotime($startDate."+1 years"));
+            $date_array[$a]['end']=  $end;
+        }else {
+            $end = date("Y-m-d",strtotime($startDate."+1 days"));
+            $date_array[$a]['end']=  $end;
+        }
+        $a++;
     }
    
-    $query.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+    $data =array();
+    foreach($date_array as $date){
+        $nestested = array();
+        $query = "SELECT answers.surveyid as surveyid,answers.cby as cby,answers.locationid,surveys.name,answers.cdate FROM `answers` INNER JOIN surveys ON answers.surveyid=surveys.id where answers.surveyid!=0 $filterQuery and answers.cdate between '".$date['start']."' and '".$date['end']."' group by answers.cby";
+
+        record_set("survey_detail",$query,1);
+
+        if( !empty($requestData['search']['value']) ) {   // if there is a search parameter,   $requestData['search']['value'] contains search parameter
+            $query.=" AND ( DATE(answers.cdate) LIKE '".$requestData['search']['value']."%' ";    
+            $query.="  )";
+        }
     
-    //$query.=" ORDER BY cdate DESC   LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
-    record_set("get_recent_entry",$query);
+        $query.=" ORDER BY ". $columns[$requestData['order'][0]['column']]."   ".$requestData['order'][0]['dir']."  LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+        
+        //$query.=" ORDER BY cdate DESC   LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+        record_set("get_recent_entry",$query);
+        $nestested[] = $date['start'];
+        $nestested[]=getSurvey()[$requestData['survey_name']];
+        if($totalRows_get_recent_entry>0){
+            
+            while($row_survey_detail = mysqli_fetch_assoc($get_recent_entry)){
+                record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_survey_detail['surveyid']."' and cby='".$row_survey_detail['cby']."'");
 
-    $data = array();
-    if($totalRows_survey_detail>0){
-        while($row_survey_detail = mysqli_fetch_assoc($get_recent_entry)){
-            $nestested = array();
-            $surveyFilter = '';
-            if($requestData['survey_name'] != 0){
-                $surveyFilter = " and surveyid=".$requestData['survey_name'];
-            }
-            if(isset($requestData['locationid']) && $requestData['locationid'] != '' && $requestData['locationid'] != 4 ){
-                $surveyFilter .= " and locationid=".$requestData['locationid'];
-            }
-            record_set("survey_count","SELECT * from answers where cdate like '".date_month_qry($row_survey_detail['cdate'])."-%'  $surveyFilter group by cdate");
-            //record_set("survey_count","SELECT * from answers where cdate like '2022-10-%' and surveyid=20 group by cdate");
-
-            $nestested[] = date_formate_month($row_survey_detail['cdate']);
-            $nestested[] = getSurvey()[$requestData['survey_name']];
-            $nestested[] =  $totalRows_survey_count;
-
-             //Average Result Score
-            // record_set("average_survey_result","SELECT COUNT(answerval) AS survey_count, SUM(answerval) AS survey_val_sum FROM answers WHERE surveyid='".$row_survey_detail['surveyid']."' AND locationid='".$row_survey_detail['locationid']."' AND cdate like '".date_month_qry($row_survey_detail['cdate'])."-%' GROUP BY cby ORDER BY cdate DESC");
-            // $achieved_result_val = 0;
-            // $result_score = 0;
-            // if($totalRows_average_survey_result > 0){
-            //     while($row_average_survey_result = mysqli_fetch_assoc($average_survey_result)){
-            //     $achieved_result_val += floatval($row_average_survey_result['survey_val_sum'] * 100) / floatval($row_average_survey_result['survey_count'] * 100);
-            //     }
-            //     $result_score = floatval($achieved_result_val) / intval($totalRows_average_survey_result);
-            // } 
-            $result_response = 0;
-            $result_response_value= 0;
-            $count = 0;
-            while($row_get_recent_entry = mysqli_fetch_assoc($survey_count)){
                 $total_result_val=0;
-                record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
-    
                 $achieved_result_val = 0;
                 $to_bo_contacted     = 0;
                 $i=0;
-                
+                $contactedCount = 0;
+                $count= 0;
+                $result_response = 0;
                 while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
                 $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
                     if($result_question){
@@ -138,35 +171,37 @@ if(!empty($requestData['survey_name'])){
                     }
                     if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                         $to_bo_contacted = 1;
+                        $contactedCount++;
                     }
                 }
+                //echo $achieved_result_val.' : '.$total_result_val;
                 $result_response += $achieved_result_val*100/$total_result_val;
                 $count++;
-            } 
+            }
             
             $result_response_value = $result_response/$count;
             if(is_nan($result_response_value)){
                 $result_response_value=100;
             }
+
+            $nestested[] = $count;
+            $nestested[] = $contactedCount;
             $nestested[] = round($result_response_value,2).'%';
             $nestested[] = '<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$row_survey_detail['surveyid'].'&amp;month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$row_survey_detail['surveyid'].'&month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>';
 
             $data[] = $nestested;
         }
-        
     }
 }
 
 // $keys = array_column($data, '2');
-
 // array_multisort($keys, SORT_DESC, $data);
-
 // print_r($data);
 // die();
 $json_data = array(
     "draw"            => intval( $requestData['draw'] ),
-    "recordsTotal"    => intval( $totalRows_survey_detail ), 
-    "recordsFiltered" => intval( $totalRows_survey_detail ), 
+    "recordsTotal"    => intval( count($data) ), 
+    "recordsFiltered" => intval( count($data) ), 
     "data"            => $data  
 );
 echo json_encode($json_data ); die();

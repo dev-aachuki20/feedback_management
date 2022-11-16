@@ -28,24 +28,24 @@
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-department','manage-department'))?>">
                     <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>DEPARTMENTS</span> <i class="fa fa-angle-left pull-right"></i> </a> 
                     <ul class="treeview-menu timeline-area child">
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-department')?>"><a href="?page=add-department" class="nav-link"> <i class=""></i> <span>Add Department</span></a> </li>
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-department')?>"><a href="?page=manage-department" class="nav-link"> <i class=""></i> <span>View Departments</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-department')?>"><a href="?page=add-department" class="nav-link"> <i class=""></i> <span>ADD DEPARTMENT</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-department')?>"><a href="?page=manage-department" class="nav-link"> <i class=""></i> <span>VIEW DEPARTMENTS</span></a> </li>
                     </ul>
                 </li>
 
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-location','manage-locations'))?>">
                     <a href="#" class="nav-link"> <i class="fa fa-map-marker-alt"></i> <span>LOCATIONS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child ">
-                        <li class="treeview cusul-line  <?=make_sidebar_active($_GET['page'],'add-location')?>"><a href="?page=add-location" class="nav-link"> <i class=""></i> <span>Add Location</span></a> </li>
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-locations')?>"><a href="?page=manage-locations" class="nav-link"> <i class=""></i> <span>View Locations</span></a> </li>
+                        <li class="treeview cusul-line  <?=make_sidebar_active($_GET['page'],'add-location')?>"><a href="?page=add-location" class="nav-link"> <i class=""></i> <span>ADD LOCATION</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-locations')?>"><a href="?page=manage-locations" class="nav-link"> <i class=""></i> <span>VIEW LOCATIONS</span></a> </li>
                     </ul>
                 </li>
 
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-group','manage-groups'))?>">
                     <a href="#" class="nav-link"> <i class="fa fa-layer-group"></i> <span>GROUPS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child">
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-group')?>"><a href="?page=add-group" class="nav-link"> <i class=""></i> <span>Add Group</span></a> </li>
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-groups')?>"><a href="?page=manage-groups" class="nav-link"> <i class=""></i> <span>View Groups</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-group')?>"><a href="?page=add-group" class="nav-link"> <i class=""></i> <span>ADD GROUP</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-groups')?>"><a href="?page=manage-groups" class="nav-link"> <i class=""></i> <span>VIEW GROUPS</span></a> </li>
                     </ul>
                 </li>
 
@@ -53,9 +53,9 @@
                     <a href="#" class="nav-link"> <i class="fa fa-list-alt"></i> <span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
                         <?php if($_SESSION['user_type']<=2) {?>
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>Add Survey</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>ADD SURVEY</span></a> </li>
                         <?php } ?>    
-                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>View Surveys</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'view-survey')?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>VIEW SURVEYS</span></a> </li>
                         
                     </ul>
                 </li>

@@ -1,5 +1,5 @@
 <?php 
-//logo
+//set logo
 define('ADMIN_EMAIL', 'system@dgam.app');
 define('MAIN_LOGO', 'upload_image/logo.png');
 define('FOOTER_LOGO', 'image/dgs-logo-3.png');

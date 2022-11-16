@@ -328,7 +328,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div id="stepsTitle" class="whenStepAllow">
                             </div>
                             <div class="col-md-12">
-                                <p style="margin:15px 5px 20px 0px !important"><strong>Seen By</strong></p>
+                                <p style="margin:15px 5px 20px 0px !important"><strong>Send By</strong></p>
                                 <div class="col-md-1" style="padding-left: 0px;">
                                     <input type="radio" id="send_by" class="send_by" name="send_by" value="1" <?=($row_get_surveys['send_by']==1)?'checked':''?>>  <strong> Text</strong>
                                 </div>
