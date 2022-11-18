@@ -75,15 +75,13 @@ if(!empty($requestData['survey_name'])){
     }else{
       $filterQuery .= $locationJoinCondition;
     }
-    record_set("survey_date",'select DATE(cdate) as cdate from answers group by DATE(cdate) order by cdate');
+    $f ="LIMIT ".$requestData['start']." ,".$requestData['length']."   ";
+    record_set("survey_date",'select DATE(cdate) as cdate from answers group by DATE(cdate) order by cdate ');
+    $row_get_survey_date = mysqli_fetch_assoc($survey_date);
     $date_array =array();
     $a = 0;
-    while($row_get_survey_date = mysqli_fetch_assoc($survey_date)){
-        if($a ==0){
-            $startDate = $row_get_survey_date['cdate'];
-        }else {
-            $startDate =  $end;
-        }
+    $startDate = $row_get_survey_date['cdate'];
+    while($end <= date("Y-m-d")){
         //echo $end.':'.date("Y-m-d"); echo '<br>';
         if($end >= date("Y-m-d")){
             break;
@@ -127,9 +125,9 @@ if(!empty($requestData['survey_name'])){
             $end = date("Y-m-d",strtotime($startDate."+1 days"));
             $date_array[$a]['end']=  $end;
         }
+        $startDate =  $end;
         $a++;
     }
-   
     $data =array();
     foreach($date_array as $date){
         $nestested = array();
@@ -187,7 +185,7 @@ if(!empty($requestData['survey_name'])){
             $nestested[] = $count;
             $nestested[] = $contactedCount;
             $nestested[] = round($result_response_value,2).'%';
-            $nestested[] = '<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$row_survey_detail['surveyid'].'&amp;month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$row_survey_detail['surveyid'].'&month='.date_month_qry($row_survey_detail['cdate']).'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>';
+            $nestested[] = '<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$row_survey_detail['surveyid'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>';
 
             $data[] = $nestested;
         }

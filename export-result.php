@@ -2,8 +2,11 @@
 $filename = $_GET["name"].date(" Y-m-d-H-i-s").".xls"; // File Name
 
 $surveyid=$_GET['surveyid'];
-if($_REQUEST['month']){
-	$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
+// if($_REQUEST['month']){
+// 	$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
+// }
+if($_REQUEST['start'] and $_REQUEST['end']){
+	$ans_filter_query .= " and cdate between '".$_REQUEST['start']."' and '".$_REQUEST['end']."'";
 }
 if(!empty($_REQUEST['location']) and $_REQUEST['location']!=4){
 	$ans_filter_query .= " and locationid = ".$_REQUEST['location'];
@@ -48,17 +51,18 @@ if($totalRows_getdata>0){
 			if($row_contact_query['answerid']==-2){
 				$data = json_decode($row_contact_query['answertext']);
 				foreach($data as $key =>$value){
+				
 					if($key =='first_name'){
-						$row_excel_data[$i]['First Name'] = $value;
+						$row_excel_data[$i]['First Name'] = ($value)?$value:'N/A';
 					}
 					if($key =='last_name'){
-						$row_excel_data[$i]['Last Name'] = $value;
+						$row_excel_data[$i]['Last Name'] = ($value)?$value:'N/A';
 					}
 					if($key =='phone_number'){
-						$row_excel_data[$i]['Phone Number'] = $value;
+						$row_excel_data[$i]['Phone Number'] = ($value)?$value:'N/A';
 					}
 					if($key =='to_be_contact_mail'){
-						$row_excel_data[$i]['Email'] = $value;
+						$row_excel_data[$i]['Email'] = ($value)?$value:'N/A';
 					}
 				}
 			}else if($row_contact_query['answerid']==-3){

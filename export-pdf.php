@@ -16,8 +16,11 @@ $ans_filter_query='';
 if($_REQUEST['userid']){
 	$ans_filter_query .= " and cby='".$_REQUEST['userid']."' ";
 }
-if($_REQUEST['month']){
-	$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
+// if($_REQUEST['month']){
+// 	$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
+// }
+if($_REQUEST['start'] and $_REQUEST['end']){
+	$ans_filter_query .= " and cdate between '".$_REQUEST['start']."' and '".$_REQUEST['end']."'";
 }
 if(!empty($_REQUEST['location']) && $_REQUEST['location']!=4){
 	$ans_filter_query .= " and locationid = ".$_REQUEST['location'];
@@ -58,7 +61,6 @@ if(!empty($_GET['location']) and $_GET['location']!=4){
 }
 $message = 
 '<div align="center"><img src="'.MAIN_LOGO.'" width="200"></div>
-
   <table width="100%">
       <thead>
         <tr>
@@ -73,7 +75,8 @@ $message =
         <td style="width:30%;"><span>'.$row_get_department['name'].'</span></td></tr>
       </tbody>
   </table>';
-
+// echo '<pre>';
+// print_r($questions); die();
   foreach($survey_steps AS $key => $value) { 
       $message .= '<div class="container" style="page-break-after: always;height: 500px;">
         <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
@@ -89,7 +92,8 @@ $message =
             record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'");	
             if($totalRows_get_questions_detail>0){
               while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-                $questions_array[$row_get_questions_detail['id']] = $row_get_questions_detail['description'];
+                $questions_array[$row_get_questions_detail['id']][] = $row_get_questions_detail['description'];
+                $questions_array[$row_get_questions_detail['id']][] = $row_get_questions_detail['answer'];
               }
             }
             record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$questionid."'");	
@@ -112,6 +116,7 @@ $message =
           }
         
           if($answer_type==1 || $answer_type==4 || $answer_type==6){
+          
             if($answer_type==1){
               //get Child Questions
               $get_child_questions = "select * from questions where parendit='".$questionid."' and cstatus='1'";
@@ -130,11 +135,17 @@ $message =
                       $table_display_data = array();
                       foreach($questions_array as $key=>$val){
                         $clr_loop++;
-                        $total_ans = count($answers_array);
-                        $percentage = (100/$total_ans)*$counts[$key];
-                        $table_display_data[$val]['percantage']=$percentage;
-                        $table_display_data[$val]['count']=$counts[$key];
+                        $ansId = array_keys($counts)[0];
+                        if($key ==$ansId ){
+                          $percentage = $questions_array[$key][1] ;
+                        }else {
+                          $percentage = 0;
+                        }
+                        // //$percentage = ($total_ans*$total_num)/$total_num;
+                        $table_display_data[$val[0]]['percantage']=$percentage;
+                        $table_display_data[$val[0]]['count']=$counts[$key];
                       } 
+                      
                       $message .= '
                     </td>
                   </tr>
@@ -244,7 +255,7 @@ $message =
 //$message .= '</table>';
 
 //echo $message; exit;
-
+//die();
 // Include autoloader 
 require_once 'dompdf/autoload.inc.php'; 
 // Reference the Dompdf namespace 

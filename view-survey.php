@@ -93,7 +93,8 @@
                         <?php } ?>
                         <a class="btn btn-xs btn-primary addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">View QR</a>
 
-                        <a class="btn btn-xs bg-green" href="?page=preview-survey&id=<?php echo $row_get_surveys['id'];?>" >Preview</a>
+                        <!-- <a class="btn btn-xs bg-green" href="?page=preview-survey&id=<?php //echo $row_get_surveys['id'];?>" >Preview</a> -->
+                        <a class="btn btn-xs bg-green addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">Preview</a>
 
                         <?php if($_SESSION['user_type']==1 and !isset($_GET['type'])) {?>
                           <a class="btn btn-xs btn-info" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>

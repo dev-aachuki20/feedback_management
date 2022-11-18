@@ -14,13 +14,13 @@ for($i = 0; $i < 29; $i++) {
     
     $filterQuery = " and cdate like '".date("Y-m-d", strtotime($days))."%' ";
 }
-
-if(isset($_POST['selectSurvey'])){
-   $id =  $_POST['selectSurvey'];
-  }
-  if($id>0){
-    $filterSurvey = "where id= $id";
- }
+$filterSurvey = '';
+if(isset($_POST['survey_type']) and $_POST['survey_type']>0){
+    $filterSurvey .= " and survey_type=".$_POST['survey_type'];
+}
+if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
+    $filterSurvey .= " and id=".$_POST['selectSurvey'];
+}
  
  $interval = $_POST['interval'];
  if($interval==2){
@@ -51,20 +51,23 @@ if(isset($_POST['selectSurvey'])){
   $ykeys = "";
   $labels = "";
 
-  record_set("GetDetails", "select id,name from surveys  $filterSurvey ".$filter_query);
+  record_set("GetDetails", "select id,name from surveys where id !=0 $filterSurvey ".$filter_query);
   while($row_GetDetails = mysqli_fetch_assoc($GetDetails)){ 
       $clients_array[$row_GetDetails['id']] = $row_GetDetails['name'];
       $ykeys .= "'item".$row_GetDetails['id']."', ";
       $labels .= "'".$row_GetDetails['name']."', ";
   }
+
   //print_r($clients_array);
   //get date range
   $final_chart_array = array();
+    $a = 0;
+    $tableData = array();
   foreach($days30 as $key=> $value){
     $days = $value;
     //check we aren't on jan
     if($interval==2){
-        $secondInterval = date("d M Y", strtotime($days . "-1 months"));
+        $secondInterval = date("d M Y", strtotime($days . "-7 days"));
         $firstInterval   = $days;
     }else if($interval==3){
         $secondInterval = date("d M Y", strtotime($days . "-1 months"));
@@ -83,7 +86,7 @@ if(isset($_POST['selectSurvey'])){
 
       $arra_txt = "";
       $arra_txt .= "{y: '".date("Y-m-d", strtotime($days))."', ";
-        
+    
       foreach($clients_array as $clientkey =>$client){
         if($interval==1){
             $filter = "and cdate like '".date("Y-m-d", strtotime($days))."%'";
@@ -100,18 +103,34 @@ if(isset($_POST['selectSurvey'])){
             $filter = " and cdate like '".date("Y-m-d", strtotime($days))."%'";
         }
           record_set("Getcollectedamnt", "SELECT DISTINCT cby FROM answers where surveyid='".$clientkey."' $filter $locationQueryAndCondition");
+        
+         $a=0;
+          while($row_get_recent_entry = mysqli_fetch_assoc($Getcollectedamnt)){ 
+
+            if($totalRows_Getcollectedamnt>0){
+                // echo '<pre>';
+                // print_r($row_get_recent_entry);   echo '</pre>';
+                $tableData[$firstInterval]['cby'][$clientkey][] = $row_get_recent_entry['cby'];
+                //$tableData[$firstInterval]['surveyid'][$a]= $clientkey ;
+                $tableData[$firstInterval]['start_date'] = date("d-m-Y", strtotime($firstInterval));
+                $tableData[$firstInterval]['end_date'] = date("d-m-Y", strtotime($secondInterval));
+                $a++;
+            }
+          }
+          $a++;
           $row_survey_entry = $totalRows_Getcollectedamnt;
           $tamount = 0;
           if(!empty($row_survey_entry)){
               $tamount = $row_survey_entry;
           }
           $arra_txt .= "item".$clientkey.": ".$tamount.", ";
+
+         
       }
       $arra_txt .= "},";
       
       $final_chart_array[$days]=$arra_txt;
   }
-  
     $final_chart_array_item = implode(" ",$final_chart_array);
     
     //for dashboard top boxs
@@ -145,6 +164,9 @@ if(isset($_POST['selectSurvey'])){
 
     // get survey name
     $surveyByUsers = get_filter_data_by_user('surveys');
+    // echo '<pre>';
+    // print_r($tableData);
+    // echo '</pre>';
 ?>
     <!-- Dashboard Counter new-->
     
@@ -190,107 +212,6 @@ if(isset($_POST['selectSurvey'])){
         </div>
     </div>
     <!-- Dashboard Counter old-->
-    <!-- <div class="row">
-        <a class="" href="index.php?page=survey-manage&req=contact request&aid=-2&avl=10" target="_blank"> 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="ion ion-ios-gear-outline"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Contact <br/>Request</span>
-                        <span class="info-box-number">
-                            <?php 
-                                $reqCount =0; 
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
-                                while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                    record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                    if($totalRows_get_action == 0){
-                                        ++$reqCount;
-                                    }
-                                }
-                            ?>
-                            <?php 
-                                echo $reqCount;
-                            ?>
-                        </span>
-                    </div>
-                
-                </div>
-            </div>
-        </a> 
-   
-        <a class="" href="index.php?page=survey-manage&req=in progress&testact=1" target="_blank"> 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-orange"><i class="ion ion-ios-gear-outline"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total In Progress</span>
-                        <?php 
-                            $progressCount = 0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_progress_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_progress_action = mysqli_fetch_assoc($get_progress_action);
-                                if($row_get_progress_action['max(action)'] == 1){
-                                    ++$progressCount;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $progressCount; ?></span>
-                    </div>
-                  
-                </div>
-               
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&req=void&testact=2" target="_blank">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Void</span>
-                        <?php 
-                            $voidCount = 0;  
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_void_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_void_action = mysqli_fetch_assoc($get_void_action);
-                                if($row_get_void_action['max(action)'] == 2){
-                                    ++$voidCount;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $voidCount; ?></span>
-                    </div>
-                  
-                </div>
-           
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&req=resolved&testact=3" target="_blank">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Resolved</span>
-                        <?php 
-                            $totalResolved=0;
-                            record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition GROUP BY cby");
-                            while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                record_set("get_resolved_action", "select max(action) from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                $row_get_resolved_action = mysqli_fetch_assoc($get_resolved_action);
-                                if($row_get_resolved_action['max(action)'] == 3){
-                                    ++$totalResolved;
-                                }
-                            }
-                        ?>
-                        <span class="info-box-number"><?php echo $totalResolved; ?></span>
-                    </div>
-                   
-                </div>
-            
-            </div>
-        </a>  
-    </div> -->
 
     <!-- Charts  -->
     <div class="row">
@@ -303,8 +224,23 @@ if(isset($_POST['selectSurvey'])){
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Select Survey Type</label>
+                                    <select class="form-control" name="survey_type" id="survey_type">
+                                        <option value=''>All Survey</option>
+                                        <?php 
+                                        // record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");				
+                                        // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                        foreach(survey_type() as $key => $value){ ?>
+                                        <option value="<?=$key?>" <?=($_POST['survey_type']==$key) ? 'selected':''?>><?=$value?></option>
+                                        <?php }?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <label for="exampleFormControlSelect1">Select Survey</label>
-                                    <select class="form-control" name="selectSurvey" onchange="this.form.submit()">
+                                    <select class="form-control" name="selectSurvey" id="selectSurvey">
                                         <option value=''>All Survey</option>
                                         <?php 
                                         // record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");				
@@ -319,13 +255,16 @@ if(isset($_POST['selectSurvey'])){
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="exampleFormControlSelect1">Interval</label>
-                                    <select class="form-control" id="exampleFormControlSelect1"  name="interval" onchange="this.form.submit()">
+                                    <select class="form-control" id="exampleFormControlSelect1"  name="interval">
                                         <option value="1" <?php if(isset($interval) && $interval==1){ echo 'selected' ;}?>>Daily</option>
                                         <option value="2"  <?php if(isset($interval) && $interval==2){ echo 'selected' ;}?>>Weekly</option>
                                         <option value="3"  <?php if(isset($interval) && $interval==3){ echo 'selected' ;}?>>Monthly</option>
                                         <option value="4"  <?php if(isset($interval) && $interval==4){ echo 'selected' ;}?>>Annually </option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary" name="filter" style="margin-top: 25px;" onclick="this.form.submit()">Filter</button>
                             </div>
                     </form>
                 </div>
@@ -351,13 +290,11 @@ if(isset($_POST['selectSurvey'])){
     <div class="row">
         <div class="col-lg-12">
             <div class="box">
-                <div class="box-header text-left">
-                    LATEST RESPONSES
-                </div>
+                <div class="box-header text-left"> LATEST RESPONSES </div>
                 <div class="box-body">
                     <table id="examples" class="table table-bordered table-striped">
                         <thead>
-                            <tr >
+                            <tr>
                                 <td>Date</td>
                                 <td>Survey Name</td>
                                 <td>Survey Id</td>
@@ -367,83 +304,69 @@ if(isset($_POST['selectSurvey'])){
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $filter = '';
-                            if($_SESSION['user_type']>2){
-                                $assignSurvey = get_assing_id_dept_loc_grp_survey();
-                                if($assignSurvey){
-                                    $filter = "and surveyid IN($assignSurvey)";
-                                }else {
-                                    $filter = "and surveyid IN(0)";
-                                }
-                            }
-                                record_set("get_recent_entry", "SELECT surveyid,cby,cdate FROM answers WHERE $locationRecentContact answerid=-2 AND answerval = 100 $filter GROUP by cby order by cdate DESC LIMIT 10");	
-                                $i=0;
-                                
-                                while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ $i++;
-                                    record_set("get_survey_detail", "SELECT id,name FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
-                                    $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
-                                    $row_survey_entry = 1;
-                                    record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
-                                    $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-                                ?>
-                                <tr class="">
-                                    <td><?php echo date("d-m-Y", strtotime($row_get_recent_entry['cdate'])); ?></td>
-                                    <td><?php echo $row_get_survey_detail['name']; ?></td>
-                                    <td><?php echo $row_get_survey_detail['id']; ?></td>
-                                    <td><?php echo $row_survey_entry //ordinal($row_survey_entry); ?></td>
-                                    <td>
-                                        <?php
-                                            record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
-                                            
-                                            $total_result_val = 0;
-                                            $achieved_result_val = 0;
-                                            $to_bo_contacted = 0;
-                                            $i=0;
-                                            while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                                
-                                                // $achieved_result_val += $row_get_survey_result['answerval'];
-                                                // if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 10){
-                                                //     $to_bo_contacted = 1;
-                                                // }
-                                                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
-                                                    if($result_question){
-                                                        if(!in_array($result_question['answer_type'],array(2,3,5))){
-                                                            $total_result_val = ($i+1)*100;
-                                                            $achieved_result_val += $row_get_survey_result['answerval'];
-                                                            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
-                                                                $to_bo_contacted = 1;
-                                                            }
-                                                            $i++;
-                                                        }
+                            
+                            <?php $cou = 0; foreach($tableData as $key => $value){ 
+                                foreach($value['cby'] as $sid => $createdBy){ 
+                                    $result_response = 0;
+                                    $responseNo = 0;
+                                    foreach($createdBy as $cby){
+                                        record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where cby='".$cby."'");
+                                        $total_result_val = 0;
+                                        $achieved_result_val = 0;
+                                        $to_bo_contacted = 0;
+                                        $i=0;
+                                        
+                                        while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                            if($result_question){
+                                                if(!in_array($result_question['answer_type'],array(2,3,5))){
+                                                    $total_result_val = ($i+1)*100;
+                                                    $achieved_result_val += $row_get_survey_result['answerval'];
+                                                    if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+                                                        $to_bo_contacted = 1;
                                                     }
-                                            }
-                                            $result_response = $achieved_result_val*100/$total_result_val;
-                                            if($achieved_result_val==0 and $total_result_val==0){
-                                                $result_response=100;
-                                            }
-                                            $label_class = 'success';
-                                            if($result_response<50){
-                                                $label_class = 'danger';
-                                            }else 
-                                                if($result_response<75){
-                                                    $label_class = 'info';
+                                                    $i++;
                                                 }
-                                        ?>
-                                        <label class="label label-<?php echo $label_class; ?>"><?php echo round($result_response,2); ?>%</label>
-                                    </td>
-                                    <td>
-                                        <?php if($to_bo_contacted==1){ ?>
-                                            <a class="btn btn-xs btn-success">Yes</a>
-                                        <?php }else{ ?>
-                                            <a class="btn btn-xs btn-info">No</a>
-                                        <?php } ?>
-                                    </td>
-                                </tr>
-                            <?php } ?>
-                                <tr>
-                                    <td colspan="5" style="text-align: center;"><a href="?page=view-report">view all request</a></td>
-                                </tr>
+                                            }
+                                        }
+                                        $responseNo++;
+                                        $result_response += $achieved_result_val*100/$total_result_val;
+                                    } 
+                                       $result_response =  $result_response/$responseNo;
+                                        if($achieved_result_val==0 and $total_result_val==0){
+                                        $result_response=100;
+                                        }
+                                        $label_class = 'success';
+                                        if($result_response<50){
+                                        $label_class = 'danger';
+                                        }else 
+                                        if($result_response<75){
+                                        $label_class = 'info';
+                                        } 
+                                    ?>
+                                        <tr>
+                                            <td><?=$key?></td>
+                                            <td><?=getSurvey()[$sid]?></td>
+                                            <td><?=$sid?></td>
+                                            <td><?=count($createdBy)?></td>
+                                            <td><label class="label label-<?php echo $label_class; ?>"><?php echo round($result_response,2); ?>%</label></td>
+                                            <td>
+                                                <?php if($to_bo_contacted==1){ ?>
+                                                <a class="btn btn-xs btn-success">Yes</a>
+                                                <?php }else{ ?>
+                                                <a class="btn btn-xs btn-info">No</a>
+                                                <?php } ?>
+                                            </td>
+                                        </tr>
+                                <?php 
+                                 $cou ++;
+                                 if($cou == 10) break;
+                                }
+                                if($cou == 10) break;
+                            }?>
+                            <tr>
+                                <td colspan="5" style="text-align: center;"><a href="?page=view-report">view all request</a></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -459,6 +382,10 @@ if(isset($_POST['selectSurvey'])){
     /* Morris.js Charts */
     // Sales chart
     $(window).on('load', function() {
+        // load survey name
+        let survey_type = $('#survey_type').val();
+        survey_load(survey_type);
+        // make seleted after load
         var Data = [<?php echo $final_chart_array_item;?>];
         var yKeys = [<?php echo $ykeys; ?>];
         var labels = [<?php echo $labels; ?>];
@@ -489,4 +416,26 @@ if(isset($_POST['selectSurvey'])){
             
     //     });
     // });
+    $("#survey_type").on('change', function() {
+       let survey_type = $(this).val();
+       survey_load(survey_type);
+    });
+    function survey_load(survey_type){
+        $.ajax({
+            type: "POST",
+            url: './ajax/common_file.php',
+            data: {survey_type: survey_type,mode:'dashboard'}, 
+            success: function(response){
+                response = JSON.parse(response);
+                $('#selectSurvey').html(response);
+            }
+        });
+    }
+    const myTimeout = setTimeout(myStopFunction, 2000);
+
+    function myStopFunction() {
+        $('#selectSurvey option[value=<?=$_POST['selectSurvey']?>]').attr('selected','selected');
+    }
+
+    
 </script>

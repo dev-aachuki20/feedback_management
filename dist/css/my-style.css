@@ -240,12 +240,15 @@ h4{margin-bottom:1px;font-size:16px;}
     margin-left: 0;
 }
 .skin-blue .main-header .logo{
-    background: none !important;
+    background: #fff !important;
     width: auto;
-    text-align: left;
+    text-align: center;
+    width: 230px;
 }
 .skin-blue .main-header .logo img{
-    filter: brightness(0) invert(1);
+    /* filter: brightness(0) invert(1); */
+    width: 120px;
+    height: auto;
 }
 .main-header .sidebar-toggle{
     padding: 15px 19px;
@@ -254,7 +257,7 @@ h4{margin-bottom:1px;font-size:16px;}
     margin-left: 0;
 }
 .sidebar-mini.sidebar-collapse .main-header .logo {
-    width: auto !important;
+    width: 230px !important;
 }
 .skin-blue .main-header .navbar .sidebar-toggle:hover {
     background-color: #000 !important;

@@ -281,6 +281,7 @@ if(!empty($_POST['surveys'])){
     <div class="box box-default">
         <form action="" method="POST" id="viewReportcsv">
             <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
+            <input type="hidden" name="cby" value="" id="createdBy">
             <div class="box-header">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <h3 class="box-title">Search</h3>
@@ -374,12 +375,14 @@ if(!empty($_POST['surveys'])){
                             <form method="get">
                                 <input type="hidden" name="page" value="view-my-assign-task">
                                 <input type="hidden" name="type" value="<?=$_GET['type']?>">
-                                <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
+                                <div class="col-md-1" style="text-align: left;padding: 0;margin: 5px;">
                                     <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Tasks</button>
                             
                                 </div>
+                                <!-- <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
+                                    <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
+                                </div> -->
                             </form>
-                            
                         </div>
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
@@ -396,6 +399,7 @@ if(!empty($_POST['surveys'])){
                             </thead>
                              <tbody>
                                 <?php 
+                                    $cby_array = array();
                                     if($totalRows_get_recent_entry >0){
                                         $i=0;
                                         while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ 
@@ -456,12 +460,11 @@ if(!empty($_POST['surveys'])){
 
                                                 <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>" target="_blank">VIEW DETAILS</a></td>
                                             </tr>  
-                                      <?php }
+                                      <?php $cby_array[] = $row_get_recent_entry['cby']; }
                                     }
+                                    $cby_csv = json_encode($cby_array);
                                 ?>
-                               
                              </tbody>                
-
                             <?php if($_SESSION['user_type'] != 4){ ?>
                             <tfoot>
                                 <tr>
@@ -486,7 +489,6 @@ if(!empty($_POST['surveys'])){
             </div>
         </div>
     </div>
-   
 </section>
 <!-- Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -545,7 +547,8 @@ if(!empty($_POST['surveys'])){
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 <script>
     $(document).on('click','#exportascsv',function(){
-        $('#viewReportcsv').attr('action', 'export-report-table.php');
+        $('#createdBy').val(<?=$cby_csv?>);
+        $('#viewReportcsv').attr('action', 'export-responses.php');
         $('#viewReportcsv').submit();
         $('#viewReportcsv').attr('action', '');
     })
