@@ -66,21 +66,21 @@
         
         record_set("get_recent_entry",$query);	
         // get all question of survey
-        record_set("get_all_question","SELECT * FROM `questions` WHERE `surveyid` =".$data['surveys']);	
+        record_set("get_all_question","SELECT * FROM `questions` WHERE `surveyid` =".$data['surveys']." order by id");	
         $allQuestions = array();
         while($row_get_all_question = mysqli_fetch_assoc($get_all_question)){ 
-            $allQuestions[] = $row_get_all_question['question'];
+            $allQuestions[$row_get_all_question['id']] = $row_get_all_question['question'];
         }
+        $filename = "members-data_" . date('Y-m-d') . ".csv"; 
         if($totalRows_get_recent_entry >0){
             $i=0;
             $delimiter = ","; 
-            $filename = "members-data_" . date('Y-m-d') . ".csv"; 
- 
             // Create a file pointer 
             $f = fopen('php://memory', 'w'); 
             
             // Set column headers 
             $fields = array('Survey Id','Survey Name','Date','Response Number', 'Result', 'First Name', 'Last Name','Email','Phone Number'); 
+            $fields = array_merge($fields,$allQuestions);
             fputcsv($f, $fields, $delimiter); 
             while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ 
                 $i++;
@@ -91,10 +91,12 @@
                 record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
                 $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
 
-                record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
+                record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."' order by questionid");
                 $achieved_result_val = 0;
                 $to_bo_contacted     = 0;
                 $i=0;
+                $allAnswers = array();
+                $contactedDetails = array('','','','');
                 while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
                 $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
                     if($result_question){
@@ -108,10 +110,16 @@
                         $to_bo_contacted = 1;
                         $contactedDetails = json_decode($row_get_survey_result['answertext'],1);
                     }
+
+                    foreach($allQuestions as $key => $value){
+                        if($key == $row_get_survey_result['questionid']){
+                            $allAnswers[] = $row_get_survey_result['answertext'];
+                        }
+                    }
                 }
                 // for showing only contacted yes data
                 if($to_bo_contacted == 0){
-                    continue;
+                   // continue;
                 }
                 $result_response = $achieved_result_val*100/$total_result_val;
                 if($achieved_result_val==0 and $total_result_val==0){
@@ -124,31 +132,30 @@
                 ON questions.id = questions_detail.questionid
                 WHERE questions_detail.surveyid=".$row_get_recent_entry['surveyid']);
                     
-                    array_merge($lineData,$contactedDetails);
-                
+               // $answerDetails = array_merge($lineData,$contactedDetails);
+               //$allAnswers
                 // while($row_get_question_detail = mysqli_fetch_assoc($get_question_detail)){
                    
                 // }
                 // Output each row of the data, format line as csv and write to file pointer
                 $lineData_new = array($row_get_survey_detail['id'],$row_get_survey_detail['name'],$date,ordinal($row_survey_entry), $result_response); 
-                $lineData_new =  array_merge($lineData_new, $contactedDetails);
+               
+                $lineData_new =  array_merge($lineData_new, array_values($contactedDetails));
                 $final_data =  array_merge($lineData_new, $lineData);
-                echo '<pre>';
-                print_r($final_data);
-                fputcsv($f, $final_data, $delimiter); 
-                    
+                $final_data =  array_merge($final_data, $allAnswers);
+                fputcsv($f, $final_data, $delimiter);
             }
 
             // Move back to beginning of file 
-            // fseek($f, 0); 
-                
-            // // Set headers to download file rather than displayed 
-            // header('Content-Type: text/csv'); 
-            // header('Content-Disposition: attachment; filename="' . $filename . '";'); 
-    
-            // //output all remaining data on a file pointer 
-            // fpassthru($f); 
-
-            // exit; 
         }
+        fseek($f, 0); 
+
+        // Set headers to download file rather than displayed 
+        header('Content-Type: text/csv'); 
+        header('Content-Disposition: attachment; filename="' . $filename . '";'); 
+
+        //output all remaining data on a file pointer 
+        fpassthru($f); 
+
+        exit; 
 ?>

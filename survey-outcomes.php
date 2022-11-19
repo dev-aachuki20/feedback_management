@@ -131,6 +131,7 @@
     <div class="box box-default">
         <form action="" method="POST" id="viewReportcsv">
             <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
+            <input type="hidden" name="cby" value="" id="createdBy">
             <div class="box-header">
                 <i class="fa fa-search" aria-hidden="true"></i>
                 <h3 class="box-title"> Search</h3>
@@ -235,6 +236,9 @@
     </div>
     <div class="row">
         <div class="col-lg-12" id="dataforpdf">
+            <div class="col-md-3" style="text-align: left;padding: 0;margin: 12px;z-index: 99;">
+                <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
+            </div>
             <div class="box">
                 <div class="box-header"></div>
                     <div class="box-body">
@@ -265,7 +269,12 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 <script>
     $(document).on('click','#exportascsv',function(){
-        $('#viewReportcsv').attr('action', 'export-report-table.php');
+        let survey_name = $('.surveys').val();
+        if(survey_name ==''){
+            alert('Please Select Survey to Export Data');
+            return false;
+        }
+        $('#viewReportcsv').attr('action', 'export-responses.php');
         $('#viewReportcsv').submit();
         $('#viewReportcsv').attr('action', '');
     })
@@ -298,7 +307,8 @@
             "sPagingType": 'simple',
             "ajax":{
                 url :"<?=baseUrl()?>ajax/datatable/view-survey-outcomes.php", 
-                type: "post",  
+                type: "post", 
+                dataType: "json",
                 data: { 
                     fdate: start_data,
                     sdate:end_date,

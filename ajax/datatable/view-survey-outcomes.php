@@ -190,7 +190,6 @@ if(!empty($_POST['surveys'])){
             
 
             $nestedData[] =' <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid='.$row_get_recent_entry['surveyid'].'&userid='.$row_get_recent_entry['cby'].''.$param.'" target="_blank">VIEW DETAILS</a>';
-
             $data[] = $nestedData;
          
         }
@@ -202,6 +201,7 @@ $json_data = array(
     "draw"            => intval( $requestData['draw'] ),
     "recordsTotal"    => intval( $totalRows_get_all_data ), 
     "recordsFiltered" => intval( $totalRows_get_all_data ), 
-    "data"            => $data  
+    "data"            => $data,  
+   
 );
 echo json_encode($json_data);  die();

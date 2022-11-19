@@ -160,7 +160,7 @@ else{
 <div class="wrapper">
 <header class="main-header"> 
     <nav class="navbar navbar-static-top" role="navigation">
-    <a href="" class="logo"> <img src="<?=baseUrl()?>hats-logo-survey50.png" width="138" height="45"></a>
+    <a href="" class="logo"> <img src="<?=baseUrl().MAIN_LOGO?>" width="138" height="45"></a>
     <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"> <span class="sr-only">Toggle navigation</span> </a>
     </nav>
   </header>

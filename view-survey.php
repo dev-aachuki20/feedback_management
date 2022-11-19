@@ -91,10 +91,10 @@
                         <?php if(!isset($_GET['type'])) { ?>
                         <a class="btn btn-xs btn-danger btn-yellow" href="?page=add-survey&id=<?php echo $row_get_surveys['id'];?>">Edit</a>
                         <?php } ?>
-                        <a class="btn btn-xs btn-primary addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">View QR</a>
+                        <a class="btn btn-xs btn-primary addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>" data-id="<?php echo $row_get_surveys['id'];?>">View QR</a>
 
                         <!-- <a class="btn btn-xs bg-green" href="?page=preview-survey&id=<?php //echo $row_get_surveys['id'];?>" >Preview</a> -->
-                        <a class="btn btn-xs bg-green addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>">Preview</a>
+                        <a class="btn btn-xs bg-green addQrcode"  href="#" data-toggle="modal" data-target="#exampleModal" data-qr="<?php echo $row_get_surveys['qrcode'];?>" data-id="<?php echo $row_get_surveys['id'];?>">Preview</a>
 
                         <?php if($_SESSION['user_type']==1 and !isset($_GET['type'])) {?>
                           <a class="btn btn-xs btn-info" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>
@@ -124,7 +124,8 @@
     <div class="modal-content">
       <div id="print">
         <div class="modal-header">
-          <h4 class="modal-title" id="exampleModalLabel"><strong>Qr Code: </strong><span class="qrcode"></span></h4>
+          <h4 class="modal-title" id="exampleModalLabel"><strong>Survey ID: </strong><span class="surveyId"></span></h4>
+          <h4 class="modal-title" id="exampleModalLabel"><strong>Survey Name: </strong><span class="surveyName"></span></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -170,8 +171,12 @@
   });
 
   $(".addQrcode").on('click',function(){
+    let allSurvey = jQuery.parseJSON('<?=json_encode(getSurvey())?>');
     let qrCode = $(this).data("qr");
-    $('.qrcode').html(qrCode);
+    let surveyId = $(this).data("id");
+    
+    $('.surveyId').html(surveyId);
+    $('.surveyName').html(allSurvey[surveyId]);
     let imageUrl = '<img alt='+qrCode+' src=qrcode.php?text=<?=getHomeUrl()?>survey-form.php?qrcode='+qrCode+'>';
     $("#qrImage").html(imageUrl);
   })

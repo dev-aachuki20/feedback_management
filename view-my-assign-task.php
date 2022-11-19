@@ -1,7 +1,7 @@
 <style>
-.col-md-3 {
+/* .col-md-3 {
     height: 80px;
-}
+} */
 </style>
 
 <?php 
@@ -185,7 +185,8 @@ if(isset($_POST['assign'])){
         </div>
         
         <div class="box-body">
-            <form action="" method="post">
+            <form action="" method="POST" id="viewReportcsv">
+                <input type="hidden" name="cby" value="" id="createdBy">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
@@ -290,7 +291,6 @@ if(isset($_POST['assign'])){
                                 <input type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
                             </div>
                         </div>
-                    
                 </div>
             </form>    
         </div>
@@ -301,10 +301,13 @@ if(isset($_POST['assign'])){
                 <div class="box-header"></div>
                     <div class="box-body">
                         <div>
-                            <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
+                            <div class="col-md-1" style="text-align: left;padding: 0;margin-left: 10px;">
                                 <a href="?page=view-contacted-list&type=<?=$type?>">
-                                <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">Back</button>
+                                <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;margin-bottom: 20px;">Back</button>
                                 </a>
+                            </div>
+                            <div class="col-md-3" style="text-align: left;padding: 0;margin-bottom: 10px;margin-left: -20px; margin-bottom: 20px;">
+                              <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
                             </div>
                         </div>
                         
@@ -326,6 +329,7 @@ if(isset($_POST['assign'])){
                             </thead>
                             <tbody>
                                 <?php 
+                                    $cby_array = array();
                                     if($totalRows_get_recent_entry >0){
                                         $i=0;
                                         while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ 
@@ -443,11 +447,13 @@ if(isset($_POST['assign'])){
 
                                                     <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                                     <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>&status=assign" target="_blank">VIEW DETAILS</a></td>
-                                            </tr>  
-                                      <?php }
+                                            </tr>
+
+                                      <?php  
+                                        $cby_array[] = $row_get_recent_entry['cby'];
+                                      }
                                     }
                                 ?>
-                               
                              </tbody>            
                             <tfoot style="<?=$display?>">
                                 <tr >
@@ -529,8 +535,21 @@ if(isset($_POST['assign'])){
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
-
 <script>
+    // download csv
+    $(document).on('click','#exportascsv',function(){
+        let survey_name = $('.surveys').val();
+        if(survey_name ==''){
+            alert('Please Select Survey to Export Data');
+            return false;
+        }
+       // $('#createdBy').val(<?=json_encode($cby_array)?>);
+        $('#createdBy').val(<?=$task_id?>);
+        $('#viewReportcsv').attr('action', 'export-responses.php');
+        $('#viewReportcsv').submit();
+        $('#viewReportcsv').attr('action', '');
+    })
+
     $(document).on('change','.assignSurveyCheckbox',function(){
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');

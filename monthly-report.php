@@ -87,45 +87,52 @@ if(!empty($requestData['survey_name'])){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+1 days"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'daily';
         }
         else if($requestData['interval'] ==168){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+7 days"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'weekly';
         }
         else if($requestData['interval'] ==336){
             $end = date("Y-m-d",strtotime($startDate."+14 days"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'fornightly';
         }
         else if($requestData['interval'] ==720){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+1 month"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'monthly';
         }
         else if($requestData['interval'] ==2160){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+3 month"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'quarterly';
         }
         else if($requestData['interval'] ==4320){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+6 month"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'half_yearly';
         }
         else if($requestData['interval'] ==8640){
             //echo 'startdate'.$startDate; echo '<br>';
             $end = date("Y-m-d",strtotime($startDate."+1 years"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'yearly';
         }else {
             $end = date("Y-m-d",strtotime($startDate."+1 days"));
             $date_array[$a]['end']=  $end;
+            $date_array[$a]['type']=  'daily';
         }
         $startDate =  $end;
         $a++;
     }
     
 }
-
 ?>
 <style>
   table tr td:nth-child(3) {
@@ -158,18 +165,6 @@ if(!empty($requestData['survey_name'])){
             <div class="box-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Start Date</label>
-                            <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>End Date</label>
-                            <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
                       <div class="form-group">
                         <label><?=($_GET['type']) ? ucfirst($_GET['type']) : 'Survey'?></label>
                         <select name="survey_name" class="form-control form-control-lg surveys" required>
@@ -181,9 +176,7 @@ if(!empty($requestData['survey_name'])){
                         </select>
                         <span class="error" style="display:none">This Field required</span>
                       </div>
-                      
                     </div>
-
                     <!-- filter by group -->
                     <div class="col-md-3">
                         <div class="form-group">
@@ -241,7 +234,34 @@ if(!empty($requestData['survey_name'])){
                             </select>
                         </div>
                     </div>
-                    <input type="hidden" name="interval" value="" id="interval_hidden">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" name="fdate" class="form-control start_data" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" name="sdate" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3" style="padding: 0px;">
+                      <div class="col-md-2">
+                        <label></label>
+                        <label style="margin-top: 70%;">OR</label>
+                      </div>
+                      <div class="col-md-10">
+                        <div class="form-group">
+                          <label>Interval</label>
+                          <select name="interval" id="interval" class="form-control form-control-lg interval">
+                              <?php foreach(service_type() as $key => $value){ ?>
+                                  <option value="<?php echo $key;?>" <?=($_POST['interval']==$key) ? 'selected' :''?>><?php echo $value;?></option>
+                              <?php }?>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>&nbsp;</label>
@@ -269,7 +289,7 @@ if(!empty($requestData['survey_name'])){
         <!-- <div class="box-header"><h3><?php echo $row_getSurveyname['name']?> monthly report</h3></div> -->
         <div class="box-body">  
           <div class="col-md-12" style="padding: 0px;">
-          <div class="col-md-3" style="padding: 0px;">
+          <!-- <div class="col-md-3" style="padding: 0px;">
               <div class="form-group">
                   <label>Interval</label>
                   <select name="groupid" id="interval" class="form-control form-control-lg interval">
@@ -278,7 +298,7 @@ if(!empty($requestData['survey_name'])){
                       <?php }?>
                   </select>
               </div>
-          </div>
+          </div> -->
           </div>      
           <table id="example1" class="table table-bordered table-striped">
             <thead>
@@ -299,9 +319,17 @@ if(!empty($requestData['survey_name'])){
                   record_set("survey_detail",$query);
                   
                   //record_set("get_recent_entry",$query);
+                  //$new_date = date('jS F Y', strtotime('2013-03-15'));
+                  if($date['type']=='fornightly' || $date['type']=='quarterly' || $date['type']=='half_yearly' || $date['type']=='yearly'){
+                    $new_date = date('jS M Y', strtotime($date['start'])).' - '.date('jS M Y', strtotime($date['end']));
+                  }else if($date['type']=='monthly') {
+                    $new_date = date('M Y', strtotime($date['start']));
+                  }else {
+                    $new_date = date('jS M Y', strtotime($date['start']));
+                  }
                   if($totalRows_survey_detail>0){?>
                     <tr>
-                      <td><?=$date['start']?></td>
+                      <td><?=$new_date?></td>
                       <td><?=getSurvey()[$requestData['survey_name']]?></td>
                       <?php
                         $total_result_val=0;
@@ -357,26 +385,26 @@ if(!empty($requestData['survey_name'])){
 <script>
   // filter data using interval
   $(document).on('change','#interval',function(){
-    let interval = $(this).val();
-    let surveys = $('.surveys').val();
-    $('.error').hide();
-    if(surveys == ''){
-      $('.error').show();
-      return false;
-    }
-    $('#interval_hidden').val(interval);
-    $('#viewReportcsv').submit();
+    // let interval = $(this).val();
+    // let surveys = $('.surveys').val();
+    // $('.error').hide();
+    // if(surveys == ''){
+    //   $('.error').show();
+    //   return false;
+    // }
+    // $('#interval_hidden').val(interval);
+    // $('#viewReportcsv').submit();
   });
 
    $(document).on('click','.searchsdsd',function(){
-    let interval = $('#interval').val();
+    //let interval = $('#interval').val();
     let surveys = $('.surveys').val();
     $('.error').hide();
     if(surveys == ''){
       $('.error').show();
       return false;
     }
-    $('#interval_hidden').val(interval);
+    //$('#interval_hidden').val(interval);
        $('#viewReportcsv').submit();
     });
  
@@ -386,6 +414,6 @@ if(!empty($requestData['survey_name'])){
 <script src="plugins/datatables/dataTables.bootstrap.min.js"></script> 
 <script>
     $(function () {
-      $("#example1").DataTable({"ordering": false});
+      $("#example1").DataTable({"ordering": true});
     });
 </script>

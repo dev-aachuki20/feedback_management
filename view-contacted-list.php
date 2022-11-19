@@ -379,9 +379,9 @@ if(!empty($_POST['surveys'])){
                                     <button type="submit" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;">My Tasks</button>
                             
                                 </div>
-                                <!-- <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
+                                <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
                                     <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
-                                </div> -->
+                                </div>
                             </form>
                         </div>
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
@@ -460,7 +460,8 @@ if(!empty($_POST['surveys'])){
 
                                                 <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>" target="_blank">VIEW DETAILS</a></td>
                                             </tr>  
-                                      <?php $cby_array[] = $row_get_recent_entry['cby']; }
+                                      <?php $cby_array[] = $row_get_recent_entry['cby'];
+                                       }
                                     }
                                     $cby_csv = json_encode($cby_array);
                                 ?>
@@ -547,6 +548,11 @@ if(!empty($_POST['surveys'])){
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 <script>
     $(document).on('click','#exportascsv',function(){
+        let survey_name = $('.surveys').val();
+        if(survey_name ==''){
+            alert('Please Select Survey to Export Data');
+            return false;
+        }
         $('#createdBy').val(<?=$cby_csv?>);
         $('#viewReportcsv').attr('action', 'export-responses.php');
         $('#viewReportcsv').submit();
