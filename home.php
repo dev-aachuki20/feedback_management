@@ -90,17 +90,22 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
       foreach($clients_array as $clientkey =>$client){
         if($interval==1){
             $filter = "and cdate like '".date("Y-m-d", strtotime($days))."%'";
+            $date_type=  'daily';
         }else if($interval==2){
             //interval by week
             $filter = " and cdate BETWEEN '".date("Y-m-d", strtotime($secondInterval))."' AND '".date("Y-m-d", strtotime($firstInterval))."'";
+            $date_type=  'weekly';
         }else if($interval==3){
             //interval by monthly
             $filter = " and MONTH(cdate) = '".date("m", strtotime($secondInterval))."' ";
+            $date_type=  'monthly';
         }else if($interval==4){
             //interval by yearly
             $filter = " and YEAR(cdate) = '".date("Y", strtotime($secondInterval))."' ";
+            $date_type=  'yearly';
         }else {
             $filter = " and cdate like '".date("Y-m-d", strtotime($days))."%'";
+            $date_type =  'daily';
         }
           record_set("Getcollectedamnt", "SELECT DISTINCT cby FROM answers where surveyid='".$clientkey."' $filter $locationQueryAndCondition");
         
@@ -305,7 +310,8 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                         </thead>
                         <tbody>
                             
-                            <?php $cou = 0; foreach($tableData as $key => $value){ 
+                            <?php 
+                            $cou = 0; foreach($tableData as $key => $value){ 
                                 foreach($value['cby'] as $sid => $createdBy){ 
                                     $result_response = 0;
                                     $responseNo = 0;
@@ -342,10 +348,17 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                                         }else 
                                         if($result_response<75){
                                         $label_class = 'info';
-                                        } 
+                                        }
+                                    if($date_type=='fornightly' || $date_type=='quarterly' || $date_type=='half_yearly' || $date_type=='yearly'){
+                                        $new_date = date('jS M Y', strtotime($value['end_date'])).' - '.date('jS M Y', strtotime($value['start_date']));
+                                    }else if($date_type=='monthly') {
+                                        $new_date = date('M Y', strtotime($value['end_date']));
+                                    }else {
+                                        $new_date = date('jS M Y', strtotime($value['end_date']));
+                                    } 
                                     ?>
                                         <tr>
-                                            <td><?=$key?></td>
+                                            <td><?=$new_date?></td>
                                             <td><?=getSurvey()[$sid]?></td>
                                             <td><?=$sid?></td>
                                             <td><?=count($createdBy)?></td>

@@ -1,7 +1,7 @@
 <?php 
 //set logo
 define('ADMIN_EMAIL', 'system@dgam.app');
-define('MAIN_LOGO', 'upload_image/dgs-logo.jpg');
+define('MAIN_LOGO', 'upload_image/dgs-logo-2.jpg');
 define('FOOTER_LOGO', 'image/dgs-logo-3.png');
 
 require_once("connectin_config.php");

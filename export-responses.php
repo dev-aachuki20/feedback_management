@@ -7,7 +7,12 @@
         $dateflag= false;
         $where ='';
         if($data['cby']){
-            $where = " and cby IN(".$data['cby'].")";
+            if($data['cby'] ==-4){
+                $where = " and cby IN(0)";
+            }else {
+                 $where = " and cby IN(".$data['cby'].")";
+            }
+           
         }
         $query = 'SELECT * FROM answers where id !=0 '.$where;
         if(!empty($data['fdate']) && !empty($data['sdate'])){  
@@ -125,6 +130,7 @@
                 if($achieved_result_val==0 and $total_result_val==0){
                     $result_response=100;
                 }
+                $result_response = round($result_response,2).'%';
                 $date = date("d-m-Y", strtotime($row_get_recent_entry['cdate']));
                 $lineData = array();
                 record_set("get_question_detail", "SELECT questions_detail.answer,questions.question as ques FROM questions_detail 
@@ -138,7 +144,7 @@
                    
                 // }
                 // Output each row of the data, format line as csv and write to file pointer
-                $lineData_new = array($row_get_survey_detail['id'],$row_get_survey_detail['name'],$date,ordinal($row_survey_entry), $result_response); 
+                $lineData_new = array($row_get_survey_detail['id'],$row_get_survey_detail['name'],$date,$row_survey_entry, $result_response); 
                
                 $lineData_new =  array_merge($lineData_new, array_values($contactedDetails));
                 $final_data =  array_merge($lineData_new, $lineData);

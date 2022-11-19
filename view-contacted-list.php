@@ -463,7 +463,7 @@ if(!empty($_POST['surveys'])){
                                       <?php $cby_array[] = $row_get_recent_entry['cby'];
                                        }
                                     }
-                                    $cby_csv = json_encode($cby_array);
+                                   $cby_csv = (count($cby_array)>0)?json_encode($cby_array):'-4';
                                 ?>
                              </tbody>                
                             <?php if($_SESSION['user_type'] != 4){ ?>
