@@ -1,4 +1,33 @@
 
+<?php
+// submit modal to schedule report
+if(isset($_POST['schedule_btn'])){
+    $start = $_POST['start_date'];
+    $next_date =  date('Y-m-d H:i:s',strtotime('+'.$_POST['interval'] .'hour',strtotime($start)));
+
+    $filter  = array('start_date_hidden'=>$_POST['start_date_hidden'],'end_date_hidden'=>$_POST['end_date_hidden'],'survey_hidden'=>$_POST['survey_hidden'],'data_type_hidden'=>$_POST['data_type_hidden']);
+
+    $dataCol =  array(
+        "temp_name"         => $_POST['report_name'],
+        "filter"            => json_encode($filter),
+        'schedule_date'     => $start,
+        'intervals'         => $_POST['interval'],
+        'next_schedule_date'=> $next_date,
+        'end_date'          => $_POST['end_date'],
+        'cby'               => $_SESSION['user_id'],
+        'created_at'        => date("Y-m-d H:i:s")
+    );
+    $insert_value =  dbRowInsert("schedule_report_new",$dataCol);
+    if( $insert_value){
+        $msg = "Report Created Successfully";
+        alertSuccess($msg,'');
+    }else {
+        $msg = "Sorry! Report Not Created";
+        alertdanger($msg,'');
+    }
+    
+}
+?>
 <style>
     .btn-outline-secondary {
         color: #6c757d;
@@ -22,7 +51,9 @@
 .chartjs-render-monitor{
     width:100% !important;
 }
-
+.large-btn{
+    padding: 5px !important;
+}
 </style>
 
 <section class="content-header">
@@ -56,7 +87,7 @@
                     <div class="row">
                         <!-- <form action="" method="POST" id="viewReportcsv"> -->
                             <div class="col-md-3">
-                                <input type="hidden" name="data_type" class="data_type" value="">
+                                <input type="hidden" name="data_type" class="data_type" value="survey">
                                 <div class="form-group">
                                     <label>Start Date</label>
                                     <input type="date" name="fdate" class="form-control start_data" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
@@ -80,25 +111,28 @@
                         <!-- </form>     -->
                     </div>
                     <div class="row" style="text-align: center;">
-                        <div class="col-md-3">
-                            <button type="button" class="btn btn-success btn-big btn-green large-btn">Schedule</button>
+                        <div class="col-md-2 custum-btn">
+                            <button type="button" class="btn btn-success btn-big btn-green large-btn schedule_btn" data-type="schedule">SCHEDULE NOW</button>
                         </div>
-                        <div class="col-md-6">
-                        <form action="" id="document_form" method="post">
-                            <input type="hidden" name="survey" id="survey_id" value="">
-                            <input type="hidden" name="sdate"  id="start_date" value="">
-                            <input type="hidden" name="edate"  id="end_date" value="">
-                            <input type="hidden" name="data_type" id="survey_data_type" value="">
-                            <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
-                            <div class="row">
-                            <div class="col-md-6">
-                                <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">View Pdf</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">Download CSV</button>
-                            </div>
-                            </div>
-                        </form>
+                        <div class="col-md-2 custum-btn">
+                            <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
+                        </div>
+                        <div class="col-md-4">
+                            <form action="" id="document_form" method="post">
+                                <input type="hidden" name="survey" id="survey_id" value="">
+                                <input type="hidden" name="sdate"  id="start_date" value="">
+                                <input type="hidden" name="edate"  id="end_date" value="">
+                                <input type="hidden" name="data_type" id="survey_data_type" value="">
+                                <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
+                                <div class="row">
+                                <div class="col-md-6 custum-btn">
+                                    <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">VIEW PDF</button>
+                                </div>
+                                <div class="col-md-6 custum-btn">
+                                    <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">DOWNLOAD CSV</button>
+                                </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     </div>
@@ -173,6 +207,62 @@
         </div>
     </div>
 </section>
+<!-- schedule report modal -->
+<div class="modal" id="schedule_statistics_popup">
+  <div class="modal-dialog" role="document">
+        <div class="modal-content" style="height:300px ;">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"> </h5>
+            <button type="button" class="close closes" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+            </div>
+            <div class="modal-body">
+            <div class="form-group">
+                <form class="second_form" method="post">
+                    <input type="hidden" name="start_date_hidden" id="start_date_hidden" value="">
+                    <input type="hidden" name="end_date_hidden" id="end_date_hidden" value="">
+                    <input type="hidden" name="survey_hidden" id="survey_hidden" value="">
+                    <input type="hidden" name="data_type_hidden" id="data_type_hidden" value="">
+                    <div class="form-group row">
+                        <input type="hidden" name="template_id" value="" class="template_id">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">Report Name</label>
+                        <div class="col-sm-8">
+                            <input type="text"  class="form-control" id="report_name" name="report_name" placeholder="Report Name" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <input type="hidden" name="template_id" value="" class="template_id">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">Start Date</label>
+                        <div class="col-sm-8">
+                            <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">End Date</label>
+                        <div class="col-sm-8">
+                            <input type="date"  class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">Interval</label>
+                        <div class="col-sm-8">
+                        <select class="form-control" id="interval" name="interval" required>
+                            <?php foreach(service_type() as $key => $value) { ?>
+                                <option value="<?php echo $key; ?>" ><?=$value?></option>
+                            <?php } ?>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <button type="submit"class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
+                        <button type="button"class="btn btn-danger closes" style="background-color:#ff1c00 !important;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+  </div>
+</div>
+
 
 <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.js"></script>
 <script src="https://unpkg.com/chartjs-gauge@0.2.0/dist/chartjs-gauge.js"></script>
@@ -226,10 +316,10 @@ $(document).on('click','.search',function(){
             $('.renderChart').show();
             //console.log(response.result);
             let results = response.result;
-            console.log(results);
             let classid = 1;
             $.each(results, function( k, v ) {
-                let value_result = results[k];
+                let value_result = results[k]['data'];
+                //console.log(value_result);
                 let i=0;
                 let sum = 0;
                     $.each(value_result, function( a, b ) {
@@ -287,6 +377,7 @@ function ajx_report_type(type){
 * chart js start
 */
 function mychart(val,classes,color){
+    console.log(val);
     var ctx = document.getElementById(classes).getContext("2d");
     var  values = 0.01 * val;
     var chart = new Chart(ctx, {
@@ -333,9 +424,11 @@ function mychart(val,classes,color){
         }
     });
 }
-
+//close modal on click
+$(".closes").click(function() {
+    $('#schedule_statistics_popup').hide();
+});
 $(document).on('click', '.large-btn', function(){
-    
         let sdate           = $('.start_data').val();
         let edate           = $('.end_date').val();
         let data_type       = $('.data_type').val();
@@ -347,12 +440,17 @@ $(document).on('click', '.large-btn', function(){
         $('#start_date').val(edate);
         $('#end_date').val(edate);
         $('#survey_data_type').val(data_type);
-    
         if(document_type == 'pdf'){
             export_pdf(sdate,edate,data_type,survey);
         }else if(document_type == 'csv'){
             $('#document_form').attr('action','./ajax/ajaxOn_survey_statistics.php?export=csv&data_type='+data_type);
             $('#document_form').submit();
+        }else if(document_type == 'schedule'){
+            // $("#start_date_hidden").val(sdate);
+            // $("#end_date_hidden").val(edate);
+            // $("#data_type_hidden").val(data_type);
+            // $("#survey_hidden").val(survey);
+            // $('#schedule_statistics_popup').show();
         }
     });
 
@@ -391,15 +489,17 @@ function export_pdf(sdate,edate,data_type ='',survey){
     // let width = box.offsetWidth;
     // let height = box.offsetHeight;
     // $(".col-md-3").css("width", "300");
+    $('.col-md-3').attr('class', 'col-md-4');
     html2pdf(element,{
-        margin:10,
+        margin:5,
         filename:file_name,
         image:{type:'jpeg',quality:0.98},
         html2canvas:{scale:2,logging:true,dpi:192,letterRendering:true},
-        jsPDF:{unit:'mm',format:'a3',orientation:'portrait'}
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     })
     //$(".chartjs-render-monitor").css("width", "233");
-
+    $('.col-md-4').attr('class', 'col-md-3');
     $('.pdf-head').hide();
 }
 </script>

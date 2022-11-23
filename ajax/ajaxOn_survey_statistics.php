@@ -39,6 +39,7 @@ $total_survey = $row_total_survey['totalCount'];
 record_set("get_entry",$querys.$query." GROUP by cby");
 if($totalRows_get_entry){
     $survey_data = array();
+    $to_bo_contacted = 0;
     while($row_get_entry = mysqli_fetch_assoc($get_entry)){
         $locId      = $row_get_entry['locationid'];
         $depId      = $row_get_entry['departmentid'];
@@ -60,12 +61,18 @@ if($totalRows_get_entry){
                         $total_answer += $row_get_question['answerval'];
                     }
                 }
+                if($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100){
+                    //$to_bo_contacted += 1;
+                    $survey_data[$locId]['contact'] += 1;
+                }
+
             }
             $average_value = ($total_answer/($i*100))*100;
             if($total_answer==0 and $total_result_val==0){
                 $average_value=100;
             }
-            $survey_data[$locId][$cby] = $average_value;
+            $survey_data[$locId]['data'][$cby] = $average_value;
+            
         }
         else if($_POST['data_type']=='department'){
             $count = array();
@@ -73,6 +80,7 @@ if($totalRows_get_entry){
             $total_answer = 0;
             $i=0;
             $total_result_val = 0;
+            $to_bo_contacted     = 0;
             while($row_get_question= mysqli_fetch_assoc($get_question)){
                 $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
                 if($result_question){
@@ -81,12 +89,15 @@ if($totalRows_get_entry){
                         $total_answer += $row_get_question['answerval'];
                     }
                 }
+                if($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100){
+                    $survey_data[$depId]['contact'] += 1;
+                }
             }
             $average_value = ($total_answer/($i*100))*100;
             if($total_answer==0 and $total_result_val==0){
                 $average_value=100;
             }
-            $survey_data[$depId][$cby] = $average_value;
+            $survey_data[$depId]['data'][$cby] = $average_value;
         }
         else if($_POST['data_type']=='group'){
             $count = array();
@@ -102,28 +113,55 @@ if($totalRows_get_entry){
                         $total_answer += $row_get_question['answerval'];
                     }
                 }
+                if($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100){
+                    //$to_bo_contacted += 1;
+                    $survey_data[$grpId]['contact'] += 1;
+                }
             }
             $average_value = ($total_answer/($i*100))*100;
             if($total_answer==0 and $total_result_val==0){
                 $average_value=100;
             }
-            $survey_data[$grpId][$cby] = $average_value;
+            $survey_data[$grpId]['data'][$cby] = $average_value;
         }
         else {
             $count = array();
             record_set("get_question","select * from answers where surveyid=$surveyid and cby=$cby");
+
             $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
             while($row_get_question= mysqli_fetch_assoc($get_question)){
-                $total_answer += $row_get_question['answerval'];
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
+                if($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100){
+                    //$to_bo_contacted += 1;
+                    $survey_data[$surveyid]['contact'] += 1;
+                }
             }
-            $average_value = ($total_answer/($totalRows_get_question*100))*100;
-            $survey_data[$surveyid][$cby] = $average_value;
+            //$average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
+            //echo $total_answer.' - '.
+            $average_value = ($total_answer/($i*100))*100;
+            if(is_nan($average_value)){
+                $average_value = 100;
+            }
+            $survey_data[$surveyid]['data'][$cby] = $average_value;
         }
     }
 }
 $html ='';
 $i=1;
-
+// echo '<pre>';
+// print_r($survey_data);
+// die();
 ksort($survey_data);
 //export csv in survey static
 if(isset($_GET['export']) and $_GET['export']=='csv'){
@@ -132,7 +170,7 @@ if(isset($_GET['export']) and $_GET['export']=='csv'){
 }
 if(count($survey_data)>0){
     foreach($survey_data as $key =>$datasurvey){ 
-        $total=  array_sum($datasurvey)/count($datasurvey);
+        $total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
         $total =  round($total, 2);
         $titleName='';
         if($_POST['data_type']=='location'){
@@ -149,27 +187,32 @@ if(count($survey_data)>0){
         }
         else {
             $titleId ='Survey ID: '.$key;
-            $titleName ='Survey Name: '.getSurvey()[$key];
+            $titleName = getSurvey()[$key];
         }
-      
+        if($datasurvey['contact']){
+            $contacted = $datasurvey['contact'];
+        }else {
+            $contacted =0;
+        }
        $html.= '<div class="col-md-3"> 
-       <div class="graph-body">  
-            <p style="font-size: 14px;font-weight: 700;text-align:center;height: 40px;">'.$titleName.'</p>  
-            <p style="font-size: 14px;font-weight: 700;text-align:center">'.$titleId.'</p>     
-            <div id="canvas-holder">
-                <span class="g-persent"><strong>'.$total.' %</strong></span>
-                <canvas id="chart_'.$i.'"></canvas>
-                <div class="row" style="text-align:center;margin-top: -24px;">
-                    <div class="col-md-4"><span class="poor" style="font-size: 12px;margin-left: 10px;"><strong>POOR</strong></span></div>
-                    <div class="col-md-4"></div>
-                    <div class="col-md-4"><span class="poor" style="font-size: 12px;margin-right: 10px;"><strong>GOOD</strong></span></div>
+        <div class="graph-body">  
+                <p style="font-size: 14px;font-weight: 700;text-align:center;height: 40px;">'.$titleName.'</p>  
+                <p style="font-size: 14px;font-weight: 700;text-align:center">'.$titleId.'</p>     
+                <div id="canvas-holder">
+                    <span class="g-persent" style="font-size:18px;margin-left: 15px;"><strong>'.$total.' %</strong></span>
+                    <canvas id="chart_'.$i.'"></canvas>
+                        <div class="row" style="text-align:center;">
+                            <div class="col-md-12"><span class="total-count"><strong>TOTAL SURVEYS:'.count($datasurvey['data']).'</strong></span></div>
+                        </div>
+                        <div class="row" style="text-align:center;">
+                            <div class="col-md-12"><span class="total-count"><strong>CONTACT REQUESTS: '.($contacted).'</strong></span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="row" style="text-align:center;">
-                    <div class="col-md-12"><span class="total-count"><strong>TOTAL:'.count($datasurvey).'</strong></span></div>
-                </div>
-                </div>
-            </div>
-        </div>';
+            </div>';
+            if($i%6==0){
+                $html .='<div class="html2pdf__page-break"></div>';
+            }
         $i++; 
     }
 }else {

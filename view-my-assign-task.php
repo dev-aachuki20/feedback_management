@@ -307,7 +307,7 @@ if(isset($_POST['assign'])){
                                 </a>
                             </div>
                             <div class="col-md-3" style="text-align: left;padding: 0;margin-bottom: 10px;margin-left: -20px; margin-bottom: 20px;">
-                              <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
+                              <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export CSV</button>
                             </div>
                         </div>
                         

@@ -380,7 +380,7 @@ if(!empty($_POST['surveys'])){
                             
                                 </div>
                                 <div class="col-md-3" style="text-align: left;padding: 0;margin: 5px;">
-                                    <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export Csv</button>
+                                    <button type="button" class="btn btn-success"  style="background-color: #00a65a !important;border-color: #008d4c;" id="exportascsv">Export CSV</button>
                                 </div>
                             </form>
                         </div>

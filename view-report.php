@@ -219,9 +219,7 @@ $surveys_ids = implode(',',$assign_survey);
                         </div>
                     </div>
                 </div>
-                
             </div>
-                
             <!-- <div>
                 <button type="button" class="btn btn-success" id="exportascsv" style="margin-bottom: 20px;">Export CSV</button>
             </div> -->
