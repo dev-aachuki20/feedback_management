@@ -54,6 +54,9 @@ if(isset($_POST['schedule_btn'])){
 .large-btn{
     padding: 5px !important;
 }
+p {
+    margin: 0px !important;
+}
 </style>
 
 <section class="content-header">
@@ -115,9 +118,11 @@ if(isset($_POST['schedule_btn'])){
                             <button type="button" class="btn btn-success btn-big btn-green large-btn schedule_btn" data-type="schedule">SCHEDULE NOW</button>
                         </div>
                         <div class="col-md-2 custum-btn">
-                            <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
+                            <a href="?page=view-schedule-report&type=<?=$_GET['type']?>">
+                                <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
+                            </a>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4"style="width: 33.33333333%" >
                             <form action="" id="document_form" method="post">
                                 <input type="hidden" name="survey" id="survey_id" value="">
                                 <input type="hidden" name="sdate"  id="start_date" value="">
@@ -446,11 +451,11 @@ $(document).on('click', '.large-btn', function(){
             $('#document_form').attr('action','./ajax/ajaxOn_survey_statistics.php?export=csv&data_type='+data_type);
             $('#document_form').submit();
         }else if(document_type == 'schedule'){
-            // $("#start_date_hidden").val(sdate);
-            // $("#end_date_hidden").val(edate);
-            // $("#data_type_hidden").val(data_type);
-            // $("#survey_hidden").val(survey);
-            // $('#schedule_statistics_popup').show();
+            $("#start_date_hidden").val(sdate);
+            $("#end_date_hidden").val(edate);
+            $("#data_type_hidden").val(data_type);
+            $("#survey_hidden").val(survey);
+            $('#schedule_statistics_popup').show();
         }
     });
 
@@ -485,11 +490,12 @@ function export_pdf(sdate,edate,data_type ='',survey){
     // draw html in pdf
     let element = document.getElementById('element');
     //$(".chartjs-render-monitor").css("width", "180");
-    // let box = document.querySelector('.pdf-div');
+    let box = document.querySelector('.chartjs-render-monitor');
     // let width = box.offsetWidth;
-    // let height = box.offsetHeight;
+    let height = box.offsetHeight;
     // $(".col-md-3").css("width", "300");
     $('.col-md-3').attr('class', 'col-md-4');
+    $(".chartjs-render-monitor").css("height", "90")
     html2pdf(element,{
         margin:5,
         filename:file_name,
@@ -498,7 +504,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
         jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     })
-    //$(".chartjs-render-monitor").css("width", "233");
+    $(".chartjs-render-monitor").css("height", height);
     $('.col-md-4').attr('class', 'col-md-3');
     $('.pdf-head').hide();
 }

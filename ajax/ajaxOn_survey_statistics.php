@@ -196,8 +196,8 @@ if(count($survey_data)>0){
         }
        $html.= '<div class="col-md-3"> 
         <div class="graph-body">  
-                <p style="font-size: 14px;font-weight: 700;text-align:center;height: 40px;">'.$titleName.'</p>  
-                <p style="font-size: 14px;font-weight: 700;text-align:center">'.$titleId.'</p>     
+                <p style="font-size: 14px;font-weight: 700;text-align:center;height: 60px;">'.ucwords($titleName).'</p>  
+                <p style="font-size: 14px;font-weight: 700;text-align:center">'.ucwords($titleId).'</p>     
                 <div id="canvas-holder">
                     <span class="g-persent" style="font-size:18px;margin-left: 15px;"><strong>'.$total.' %</strong></span>
                     <canvas id="chart_'.$i.'"></canvas>

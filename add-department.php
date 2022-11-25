@@ -17,7 +17,7 @@ if(!empty($_GET['id'])) {
 if($_POST['update']){
     $dataCol =  array(
         "name"        => $_POST['name'],
-        "email"       => $_POST['email'],
+        // "email"       => $_POST['email'],
     );
     //if status is readonly than it will not update
     $dataStatus = array(
@@ -28,11 +28,6 @@ if($_POST['update']){
     }else {
       $data = array_merge($dataCol,$dataStatus);
     }
-    record_set("checkEmail", "select * from departments where id !=".$_GET['id']." and email='".$_POST['email']."'");
-    if($totalRows_checkEmail>0){
-    $mess = 'Email already exits';
-      alertdanger($mess,'');
-    }else {
       $updte=	dbRowUpdate("departments", $data, "where id=".$_GET['id']);
       if(!empty($updte)){
         $msg = "Department Updated Successfully";
@@ -41,7 +36,6 @@ if($_POST['update']){
         $msg = "Department Not Updated Successfully";
         alertdanger($msg,'?page=manage-department&id='.$_GET["id"]);
       }
-    }
 
 	}
 //End update  
@@ -50,17 +44,12 @@ if($_POST['update']){
 	  if(!empty($_POST['submit'])){
 			$dataCol =  array(
         "name"        => $_POST['name'],
-        "email"       => $_POST['email'],
+        //"email"       => $_POST['email'],
         "cstatus"     => $_POST['status'],
         'cip'         => ipAddress(),
         'cby'         => $_SESSION['user_id'],
         'cdate'       => date("Y-m-d H:i:s")
       );
-      record_set("checkEmail", "select * from departments where email='".$_POST['email']."'");
-      if($totalRows_checkEmail>0){
-      $mess = 'Email already exits';
-        alertdanger($mess,'');
-      }else {
         $insert_value =  dbRowInsert("departments",$dataCol);
         if(!empty($insert_value )){	
           $msg = "Department Added Successfully";
@@ -69,7 +58,6 @@ if($_POST['update']){
           $msg = "Some Error Occourd. Please try again..";
           alertdanger($msg,'?page=add-department');
         }
-      }
 		}
     // End Insert
 ?>
@@ -88,12 +76,12 @@ if($_POST['update']){
             </div>
           </div>
           
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <div class="form-group">
               <label>Email *</label>
               <input type="email" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>" required/>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
