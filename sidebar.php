@@ -190,6 +190,11 @@
     <?php if(count(array_intersect($reportMenu,$user_permission))>0) {?> 
         <li class="treeview tree-menu <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
             <a href="#"><i class="fa fa-light fa-folder"></i> <span>REPORTS</span> <i class="fa fa-angle-left pull-right"></i> </a>
+            <?php
+            //Task : Reports(62385754), Document Id : 3520827858 
+            $new_report_section = false;
+            if($new_report_section): 
+            ?>
             <ul class="treeview-menu timeline-area <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['type'],'report')?>">
                     <a href="?page=create-report&type=report" class="nav-link"> <i class=""></i> <span>CREATE REPORT</span> </a> 
@@ -204,10 +209,16 @@
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['type'],'schedule')?>">
                     <a href="?page=manage-report-template&type=schedule" class="nav-link"> <i class=""></i> <span>VIEW SCHEDULE</span> </a> 
                 </li>
+            </ul>
+            <?php endif ?>
+            <ul class="treeview-menu timeline-area <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
+                <li class="treeview cusul-line <?=($_GET['page']=='list-report-templates') ? 'active':''?>">
+                    <a href="?page=list-report-templates" class="nav-link"> <i class=""></i> <span>VIEW TEMPLATES</span> </a> 
+                </li>
 
-                <!-- <li class="treeview cusul-line">
-                    <a href="?page=#" class="nav-link"> <i class=""></i> <span>VIEW SCHEDULE</span> </a> 
-                </li> -->
+                <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'list-scheduled-templates')?>">
+                    <a href="?page=list-scheduled-templates" class="nav-link"> <i class=""></i> <span>VIEW SCHEDULE</span> </a> 
+                </li>
             </ul>
         </li>
     <?php } ?>

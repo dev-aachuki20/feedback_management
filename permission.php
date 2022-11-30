@@ -22,6 +22,6 @@ $surveysMenu = array('view-report','monthly-report','view-statistics','report-st
 
 $userMenu = array('view-users','add-user','import-users');
 
-$reportMenu = array('create-report','view-template','report','manage-report-template');
+$reportMenu = array('create-report','view-template','report','manage-report-template', 'list-report-templates');
 $pulsesMenu = array('pulses','about','contact-us','view-pulses');
 ?>

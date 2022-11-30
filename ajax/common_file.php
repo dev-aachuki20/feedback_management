@@ -245,4 +245,43 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
   }
   echo  json_encode($html); die();
 }
+
+if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
+  $field = $_POST['field'];
+  $filter = $_POST['filter'];
+  if($field && ($field == 'survey' || $field == 'pulse' || $field == 'engagement')){ 
+    $data = get_allowed_survey($field);
+  }else{
+    $data = get_filter_data_by_user($field.'s');
+  }
+  echo json_encode($data); die();
+}
+
+if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
+  $field = $_POST['field'];
+  $filter = $_POST['filter'];
+  if($field && ($field == 'survey' || $field == 'pulse' || $field == 'engagement')){ 
+    $data = get_allowed_survey($field);
+  }else{
+    $data = get_filter_data_by_user($field.'s');
+  }
+  echo json_encode($data); die();
+}
+
+if(isset($_POST['mode']) and $_POST['mode']=='fetch_scheduled_template_details'){
+  $sch_id = $_POST['sch_id'];
+  record_set('scheduled_report_template', 'SELECT rt.name, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id WHERE srt.id= "'.$sch_id.'"');
+  $row_data = mysqli_fetch_assoc($scheduled_report_template);
+  $filter = json_decode($row_data['filter'], true);
+  $filter_values = implode(",", $filter['field_value']);
+  if($filter['field'] == 'survey' || $filter['field'] == 'pulse' || $filter['field'] == 'engagement'){ 
+    $data = getaxecuteQuery_fn("select id,name from surveys where id IN ($filter_values)");
+  }else{
+    $data = getaxecuteQuery_fn("select id,name from ".$filter['field'].'s'." where id IN ($filter_values)");
+  }
+  foreach ($data as $val) {
+    $arr[$val['id']] = $val['name'];
+  }
+  echo json_encode($arr); die();
+}
 ?>
