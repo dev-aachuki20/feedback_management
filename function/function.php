@@ -206,9 +206,9 @@ function upload_multiple_image($folder_path,$image_id,$j)
 }
 function check_login(){
 	if(empty($_SESSION['user_id'])){
-		   reDirect("login.php");			
-		}
-	}		
+		reDirect("login.php");			
+	}
+}		
 function forgot_password($user_email,$password){
 	$from = DEFAULT_FROM_EMAIL;
 	$to =$user_email;
@@ -879,4 +879,31 @@ function export_csv_file($data,$type,$survey_name){
 	}
 	fclose($output);  
 }
+// different in two date 
+function check_differenceDate($date1, $date2, $type="gt"){
+    $curr_date = new DateTime($date1);
+	$next_date = new DateTime($date2);
+    // printr($curr_date,0);
+    // printr($next_date,1);
+    
+    $flg = false;
+
+    // greater than dates
+    if($type == 'gt'){ if($curr_date > $next_date){  $flg = true; } }
+
+    // Less than dates
+    else if($type == 'lt'){ if($curr_date < $next_date){  $flg = true; } }
+
+    // equal dates
+    else if($type == 'eq'){ if($curr_date == $next_date){  $flg = true; } }
+
+    // less than or equal
+    else if($type == 'lte'){ if($curr_date <= $next_date){  $flg = true; } }
+
+    // greater than or equal
+    else if($type == 'gte'){ if($curr_date >= $next_date){  $flg = true; } }
+
+    return $flg;
+}
+
 ?>

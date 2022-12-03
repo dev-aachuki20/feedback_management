@@ -249,25 +249,39 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
 if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
   $field = $_POST['field'];
   $filter = $_POST['filter'];
-  if($field && ($field == 'survey' || $field == 'pulse' || $field == 'engagement')){ 
-    $data = get_allowed_survey($field);
-  }else{
-    $data = get_filter_data_by_user($field.'s');
-  }
-  echo json_encode($data); die();
+  $survey_data = get_allowed_survey(strtolower(survey_type()[$filter]));
+
+  $html = '<label id="label_survey_field" for="survey_field" class="col-sm-4 col-form-label">'.strtoupper(survey_type()[$filter]).'</label>
+  <div class="col-sm-8">
+      <select id="template_survey" name="survey" class="form-control form-control-lg multiple-select" required >';
+       
+        foreach($survey_data as $key => $value){
+          $html .= '<option value="'.$key.'">'.$value.'</option>';
+        }
+  $html .= '</select></div>';
+  // else{
+  //   $data = get_filter_data_by_user($field.'s');
+  // }
+  echo json_encode($html); die();
 }
 
-if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
-  $field = $_POST['field'];
-  $filter = $_POST['filter'];
-  if($field && ($field == 'survey' || $field == 'pulse' || $field == 'engagement')){ 
-    $data = get_allowed_survey($field);
-  }else{
-    $data = get_filter_data_by_user($field.'s');
-  }
-  echo json_encode($data); die();
+if(isset($_POST['mode']) and $_POST['mode']=='fetch_filter_data'){
+    $html ='';
+   $field = $_POST['template_type'].'s';
+   $survey_details = get_survey_detail($_POST['survey_id']);
+   $data_id = $survey_details[$field];
+   $data = get_data_by_id($field,$data_id);
+    $html = '<label id="label_survey_field" for="survey_field" class="col-sm-4 col-form-label">'.strtoupper($field).'</label>
+      <label id="label_template_field" for="template_field" class="col-sm-4 col-form-label"></label>
+        <div class="col-sm-8">
+          <select id="template_field" name="template_field[]" class="form-control form-control-lg " required>';
+          foreach($data as $key => $value){
+            $html .= '<option value="'.$key.'">'.$value.'</option>';
+          }
+      $html .='</select>
+  </div>';
+  echo json_encode($html); die();
 }
-
 if(isset($_POST['mode']) and $_POST['mode']=='fetch_scheduled_template_details'){
   $sch_id = $_POST['sch_id'];
   record_set('scheduled_report_template', 'SELECT rt.name, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id WHERE srt.id= "'.$sch_id.'"');

@@ -1,6 +1,6 @@
 <?php
 
-    require('../function/connectin_config.php');
+    require('../function/function.php');
     require('../function/get_data_function.php');
     include('../permission.php');
 

@@ -77,13 +77,12 @@ if(isset($_POST['schedule_btn'])){
             <td><?= ++$i; ?></td>
             <td><?= $report_template['name']; ?></td>
             <td>
-              <button class="btn btn-sm btn-primary">VIEW PDF</button>
-
+              <!-- <button class="btn btn-sm btn-primary">VIEW PDF</button>
               <form action="./ajax/ajaxOn_survey_statistics.php?export=csv&data_type=<?= $report_template['fields'] ?>" method="post" style="display: inline-block;">
                 <input type="hidden" name="data_type" value="<?= $report_template['fields'] ?>">
                 <input type="hidden" name="survey_type" value="<?= $report_template['fields'] ?>">
                 <button type="submit" class="btn btn-sm btn-green">DOWNLOAD CSV</button>
-              </form>
+              </form> -->
 
               <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>);">SCHEDULE</button>
             </td>
@@ -103,52 +102,51 @@ if(isset($_POST['schedule_btn'])){
 <!-- schedule report modal -->
 <div class="modal" id="schedule_report_templates">
   <div class="modal-dialog">
-        <div class="modal-content" style="height:300px ;">
+        <div class="modal-content" style="height:360px ;">
             <div class="modal-header">
               <h5 id="sch_modal_title" class="modal-title"> </h5>
               <button type="button" class="close closes" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
             </div>
             <div class="modal-body">
-            <div class="form-group">
-                <form class="second_form" method="post">
-                    <input type="hidden" id="sch_template_id" name="sch_template_id" value="">
-                    <input type="hidden" id="sch_template_field_name" name="sch_template_field_name" value="">
-                    <div class="form-group row">
-                        <label id="label_template_field" for="template_field" class="col-sm-4 col-form-label"></label>
-                        <div class="col-sm-8">
-                            <select id="template_field" name="template_field[]" class="form-control form-control-lg multiple-select" multiple=multiple>
+              <div class="form-group">
+                  <form class="second_form" method="post">
+                      <input type="hidden" id="sch_template_id" name="sch_template_id" value="">
+                      <input type="hidden" id="sch_template_field_name" name="sch_template_field_name" value="">
+                      <input type="hidden" id="template_filter" name="template_filter" value="">
+                      <div class="form-group row survey">
+                         
+                      </div>
+                      <div class="form-group row filter_data">
+                      </div>
+                      <div class="form-group row">
+                          <label for="start_date" class="col-sm-4 col-form-label">Start Date</label>
+                          <div class="col-sm-8">
+                              <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="end_date" class="col-sm-4 col-form-label">End Date</label>
+                          <div class="col-sm-8">
+                              <input type="date"  class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="interval" class="col-sm-4 col-form-label">Interval</label>
+                          <div class="col-sm-8">
+                          <select class="form-control" id="interval" name="interval" required>
+                              <?php foreach(service_type() as $key => $value) { ?>
+                                  <option value="<?php echo $key; ?>" ><?=$value?></option>
+                              <?php } ?>
+                          </select>
+                          </div>
+                      </div>
+                      <div class="pull-right">
+                          <button type="submit"class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
+                          <button type="button" class="btn btn-danger closes" data-dismiss="modal" aria-label="Close" style="background-color:#ff1c00 !important;"> Cancel</button>
 
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="start_date" class="col-sm-4 col-form-label">Start Date</label>
-                        <div class="col-sm-8">
-                            <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="end_date" class="col-sm-4 col-form-label">End Date</label>
-                        <div class="col-sm-8">
-                            <input type="date"  class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="interval" class="col-sm-4 col-form-label">Interval</label>
-                        <div class="col-sm-8">
-                        <select class="form-control" id="interval" name="interval" required>
-                            <?php foreach(service_type() as $key => $value) { ?>
-                                <option value="<?php echo $key; ?>" ><?=$value?></option>
-                            <?php } ?>
-                        </select>
-                        </div>
-                    </div>
-                    <div class="pull-right">
-                        <button type="submit"class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
-                        <button type="button"class="btn btn-danger closes" style="background-color:#ff1c00 !important;">Cancel</button>
-                    </div>
-                </form>
-            </div>
+                      </div>
+                  </form>
+              </div>
             </div>
         </div>
   </div>
@@ -174,10 +172,12 @@ $("#survey_type").on('change', function(){
 });
 
 function scheduleTemplate(template_id, template_name, template_field, template_filter){
-  $(".multiple-select").empty().trigger('change');
+  //$(".multiple-select").empty().trigger('change');
   $("#sch_modal_title").html(template_name);
   $("#sch_template_id").val(template_id);
   $("#sch_template_field_name").val(template_field);
+  $("#template_filter").val(template_filter);
+
   $("#label_template_field").text(template_field.toUpperCase());
   $.ajax({
     url: "ajax/common_file.php",
@@ -188,21 +188,43 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
       field : template_field,
     },
     success: function(result){
-      $(".multiple-select").append(new Option('Select option', ''));
-      var options = JSON.parse(result);
+      var result = JSON.parse(result)
+      $('.survey').html(result);
       if(template_field == 'survey' || template_field == 'pulse' || template_field == 'engagement'){
-        Object.keys(options).forEach(function(key) {
-          var option = new Option(options[key], key, false, false);
-          $(".multiple-select").append(option).trigger('change.select2');
-        });
+        $('.multiple-select').val(null).prop('multiple', true).attr('name', 'survey[]').select2({placeholder: "Select",allowClear: true});
       }else{
-        for(var i=0; i<options.length; i++){
-          var option = new Option(options[i].name, options[i].id, false, false);
-          $(".multiple-select").append(option).trigger('change.select2');
-        }
+        $('.multiple-select').attr('name', 'survey');
       }
     }
   })
+  $('.filter_data').html('');
   $('#schedule_report_templates').modal('show');
 }
+
+//onchange survey
+$(document).on('change','#template_survey',function(){
+  let survey_id = $(this).val();
+  let template_type= $('#sch_template_field_name').val();
+  let template_filter= $('#template_filter').val();
+  if((template_type != 'survey') && (template_type != 'pulse') && (template_type != 'engagement')){
+    $.ajax({
+      url: "ajax/common_file.php",
+      type : 'POST',
+      data : {
+        mode : 'fetch_filter_data',
+        survey_id : survey_id,
+        template_type : template_type,
+        template_filter:template_filter
+      },
+      success: function(result){
+        var result = JSON.parse(result)
+        console.log(result);
+        $('.filter_data').html(result);
+        $('#template_field').val(null).prop('multiple', true).attr('name', 'survey[]').select2({placeholder: "Select",allowClear: true});
+      }
+    })
+  }
+
+})
+
 </script>

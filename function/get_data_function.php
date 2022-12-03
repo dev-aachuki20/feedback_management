@@ -233,7 +233,7 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 	  $allowed_data = getaxecuteQuery_fn("select * from surveys where id>0 and cstatus=1 $filter $sFilter order by cdate desc");
 	  $arr =array();
 	  while($row_get_data=mysqli_fetch_assoc($allowed_data)){
-	  	$arr[] =$row_get_data;
+	  	$arr[] = $row_get_data;
 	  }
 	return $arr;
  }
@@ -308,6 +308,11 @@ function get_data_by_id($table,$id){
 	return $arr;
 }
 
+function get_survey_detail($id){
+	$survey_data = getaxecuteQuery_fn("select * from surveys  where id IN ($id)");
+	$row_get_data=mysqli_fetch_assoc($survey_data);
+	return $row_get_data;
+}
 
 // date 14-10-2022
 // if contacted is yes then only mail will send to admin and super admin

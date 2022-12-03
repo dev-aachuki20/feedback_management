@@ -5,7 +5,7 @@ if(isset($_POST['schedule_btn'])){
     $start = $_POST['start_date'];
     $next_date =  date('Y-m-d H:i:s',strtotime('+'.$_POST['interval'] .'hour',strtotime($start)));
 
-    $filter  = array('start_date_hidden'=>$_POST['start_date_hidden'],'end_date_hidden'=>$_POST['end_date_hidden'],'survey_hidden'=>$_POST['survey_hidden'],'data_type_hidden'=>$_POST['data_type_hidden']);
+    $filter  = array('survey_hidden'=>$_POST['survey_hidden'],'data_type_hidden'=>$_POST['data_type_hidden']);
 
     $dataCol =  array(
         "temp_name"         => $_POST['report_name'],
@@ -223,8 +223,8 @@ p {
             <div class="modal-body">
             <div class="form-group">
                 <form class="second_form" method="post">
-                    <input type="hidden" name="start_date_hidden" id="start_date_hidden" value="">
-                    <input type="hidden" name="end_date_hidden" id="end_date_hidden" value="">
+                    <!-- <input type="hidden" name="start_date_hidden" id="start_date_hidden" value="">
+                    <input type="hidden" name="end_date_hidden" id="end_date_hidden" value=""> -->
                     <input type="hidden" name="survey_hidden" id="survey_hidden" value="">
                     <input type="hidden" name="data_type_hidden" id="data_type_hidden" value="">
                     <div class="form-group row">
@@ -451,8 +451,8 @@ $(document).on('click', '.large-btn', function(){
             $('#document_form').attr('action','./ajax/ajaxOn_survey_statistics.php?export=csv&data_type='+data_type);
             $('#document_form').submit();
         }else if(document_type == 'schedule'){
-            $("#start_date_hidden").val(sdate);
-            $("#end_date_hidden").val(edate);
+            // $("#start_date_hidden").val(sdate);
+            // $("#end_date_hidden").val(edate);
             $("#data_type_hidden").val(data_type);
             $("#survey_hidden").val(survey);
             $('#schedule_statistics_popup').show();
