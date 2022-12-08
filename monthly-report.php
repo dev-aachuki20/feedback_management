@@ -233,7 +233,7 @@ if(!empty($requestData['survey_name'])){
                           foreach($locationByUsers as $locationData){ 
                             $locationId     = $locationData['id'];
                             $locationName   = $locationData['name'];?>
-                            <option value="<?php echo $locationId;?>"><?php echo $locationName;?></option>
+                            <option value="<?php echo $locationId;?>" <?=($_POST['locationid']==$locationId) ? 'selected' :''?>><?php echo $locationName;?></option>
                         <?php }?>
                         </select>
                       </div>
@@ -252,7 +252,7 @@ if(!empty($requestData['survey_name'])){
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Department</label>
-                            <select name="departmentid" id="departmentid" class="form-control form-control-lg department">
+                            <select name="departmentid" id="departmentid" class="form-control form-control-lg department" >
                                 <option value="">Select</option>
                                 <?php
                                     // record_set("get_department", "select * from departments where cstatus=1");        
@@ -260,7 +260,7 @@ if(!empty($requestData['survey_name'])){
                                   foreach($departmentByUsers as $departmentData){ 
                                     $departmentId     = $departmentData['id'];
                                     $departmentName   = $departmentData['name'];?>
-                                      <option value="<?php echo $departmentId;?>"><?php echo $departmentName;?></option>
+                                      <option value="<?php echo $departmentId;?>" <?=($_POST['departmentid']==$departmentId) ? 'selected' :''?>><?php echo $departmentName;?></option>
                                 <?php }?>
                             </select>
                         </div>

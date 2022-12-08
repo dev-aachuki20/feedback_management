@@ -849,7 +849,7 @@ function export_csv_file($data,$type,$survey_name){
 	$excel_data = array();
 	$i=0;
 	foreach($data as $key =>$datasurvey){
-		$total=  array_sum($datasurvey)/count($datasurvey);
+		$total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
         $total =  round($total, 2);
 		
 		if($type == 'location'){
@@ -879,6 +879,39 @@ function export_csv_file($data,$type,$survey_name){
 	}
 	fclose($output);  
 }
+function download_csv_folder($data,$type,$dir){
+	$i=0;
+	foreach($data as $key =>$datasurvey){
+		$total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
+        $total =  round($total, 2);
+		
+		if($type == 'location'){
+			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
+		}
+		else if($type == 'group'){
+			$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
+		}
+		else if($type == 'department'){
+			$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
+		}else {
+			$excel_data[$i]['Survey_id']	= $key;
+			$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
+		}
+		$excel_data[$i]['Survey_Responses'] 	= count($datasurvey);
+		$excel_data[$i]['Average_Survey_Score'] = $total." %";
+		$i++;
+	}
+	$csv_header = str_replace('_', ' ', array_keys($excel_data[0]));
+	$csv_data = implode(',',$csv_header);
+
+	foreach($excel_data as $data){
+	  $csv_data .= "\n".implode(',',array_values($data));
+	}
+	$csv_handler = fopen ("$dir",'w');
+	fwrite ($csv_handler,$csv_data);
+	fclose ($csv_handler);
+
+}
 // different in two date 
 function check_differenceDate($date1, $date2, $type="gt"){
     $curr_date = new DateTime($date1);
@@ -905,5 +938,49 @@ function check_differenceDate($date1, $date2, $type="gt"){
 
     return $flg;
 }
+function create_mpdf($html='',$file_name='',$output){
+	$mpdf = new \Mpdf\Mpdf();
+	$mpdf->WriteHTML($html);
+	return $mpdf->Output($file_name,$output);
+}
 
+function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $replyto, $bcc, $subject, $message){    
+    $uid = md5(uniqid(time()));
+    $mime_boundary = "==Multipart_Boundary_x{$uid}x"; 
+
+    $header = "From: ".$from_name." <".$from_mail.">\r\n";
+    $header .= "Bcc: ".$bcc."\r\n";
+    $header .= "Reply-To: ".$replyto."\r\n";
+    $header .= "MIME-Version: 1.0\r\n";
+    $header .= "Content-Type: multipart/mixed; boundary=\"".$mime_boundary."\"\r\n\r\n";
+    $header .= "This is a multi-part message in MIME format.\r\n";
+    $header .= "--".$mime_boundary."\r\n";
+    $header .= "Content-type:text/html; charset=iso-8859-1\r\n";
+    $header .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+    $header .= nl2br($message)."\r\n\r\n";
+    $header .= "--".$mime_boundary."\r\n";
+
+    foreach($filename as $k=>$v){
+        $file = $path.$v;
+        $file_size = filesize($file);
+        $handle = fopen($file, "r");
+        $content = fread($handle, $file_size);
+        fclose($handle);
+        $content = chunk_split(base64_encode($content));
+
+        $header .= "Content-Type: application/octet-stream; name=\"".$v."\"\r\n"; // use different content types here
+        $header .= "Content-Transfer-Encoding: base64\r\n";
+        $header .= "Content-Disposition: attachment; filename=\"".$v."\"\r\n\r\n";
+        $header .= $content."\r\n\r\n";
+        $header .= "--".$mime_boundary."--"."\r\n";
+    } 
+
+    if (mail($mailto, $subject, "", $header)) {
+        //echo "mail send ... OK"; // or use booleans here
+        return true;
+    } else {
+        //echo "mail send ... ERROR!";
+        return false;
+    }
+}
 ?>

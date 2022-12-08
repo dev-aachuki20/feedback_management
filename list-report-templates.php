@@ -15,7 +15,7 @@ if(isset($_POST['schedule_btn'])){
     $end = $_POST['end_date'];
     $interval = $_POST['interval'];
     $next_date =  date('Y-m-d H:i:s',strtotime('+'.$_POST['interval'] .'hour',strtotime($start)));
-    $filter  = array("field" => $template_field_name, "field_value" => $_POST['template_field']);
+    $filter  = array("field" => $template_field_name, "survey_id" => $_POST['survey'],"field_value" => $_POST['template_field']);
 
     $dataCol =  array(
       "temp_id"         => $template_id,
@@ -35,7 +35,6 @@ if(isset($_POST['schedule_btn'])){
         $msg = "Sorry! Report Not Schedule";
         alertdanger($msg,'');
     }
-    
 }
 ?>
 <section class="content-header">
@@ -84,7 +83,7 @@ if(isset($_POST['schedule_btn'])){
                 <button type="submit" class="btn btn-sm btn-green">DOWNLOAD CSV</button>
               </form> -->
 
-              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>);">SCHEDULE</button>
+              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>);">SCHEDULE</button>
             </td>
           </tr>
         <?php } ?>
@@ -171,7 +170,7 @@ $("#survey_type").on('change', function(){
   window.location = window.location.href.split('&')[0] + "&type=" + this.value
 });
 
-function scheduleTemplate(template_id, template_name, template_field, template_filter){
+function scheduleTemplate(template_id, template_name, template_field, template_filter,report_type){
   //$(".multiple-select").empty().trigger('change');
   $("#sch_modal_title").html(template_name);
   $("#sch_template_id").val(template_id);
@@ -190,7 +189,7 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
     success: function(result){
       var result = JSON.parse(result)
       $('.survey').html(result);
-      if(template_field == 'survey' || template_field == 'pulse' || template_field == 'engagement'){
+      if((template_field == 'survey' || template_field == 'pulse' || template_field == 'engagement') && report_type == 1){
         $('.multiple-select').val(null).prop('multiple', true).attr('name', 'survey[]').select2({placeholder: "Select",allowClear: true});
       }else{
         $('.multiple-select').attr('name', 'survey');
@@ -220,7 +219,7 @@ $(document).on('change','#template_survey',function(){
         var result = JSON.parse(result)
         console.log(result);
         $('.filter_data').html(result);
-        $('#template_field').val(null).prop('multiple', true).attr('name', 'survey[]').select2({placeholder: "Select",allowClear: true});
+        $('#template_field').val(null).prop('multiple', true).attr('name', 'template_field[]').select2({placeholder: "Select",allowClear: true});
       }
     })
   }

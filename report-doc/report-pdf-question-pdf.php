@@ -1,8 +1,17 @@
 <?php 
-include('function/function.php');
-$surveyid=$_GET['surveyid'];
-if(isset($_GET['surveyid'])){
-	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1 ");	
+include('../function/function.php');
+$report_id = $_GET['report_id'];
+record_set("get_scheduled_report","select * from scheduled_report_templates where id =".$report_id);
+
+$row_get_report= mysqli_fetch_assoc($get_scheduled_report);
+$filter = json_decode($row_get_report['filter'],1);
+
+$data_type = $filter['field'];
+$surveyid   = $filter['survey_id'];
+$field_value = implode(',',$filter['field_value']);
+
+if(isset($surveyid)){
+	record_set("get_survey", "select * from surveys where id IN ($surveyid) and cstatus=1");	
 	if($totalRows_get_survey>0){
 		$row_get_survey = mysqli_fetch_assoc($get_survey);
 	}else{
@@ -13,17 +22,14 @@ if(isset($_GET['surveyid'])){
 }
 
 $ans_filter_query='';
-if($_REQUEST['userid']){
-	$ans_filter_query .= " and cby='".$_REQUEST['userid']."' ";
+if($data_type=='location' && $field_value !=''){
+	$ans_filter_query .= " and locationid IN($field_value)";
 }
-// if($_REQUEST['month']){
-// 	$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
-// }
-if($_REQUEST['start'] and $_REQUEST['end']){
-	$ans_filter_query .= " and cdate between '".$_REQUEST['start']."' and '".$_REQUEST['end']."'";
+if($data_type=='department' && $field_value !=''){
+	$ans_filter_query .= " and departmentid IN($field_value)";
 }
-if(!empty($_REQUEST['location']) && $_REQUEST['location']!=4){
-	$ans_filter_query .= " and locationid = ".$_REQUEST['location'];
+if($data_type=='group' && $field_value !=''){
+	$ans_filter_query .= " and groupid IN($field_value)";
 }
 //Survey Steps 
 $survey_steps = array();
@@ -54,34 +60,16 @@ $row_get_department = mysqli_fetch_assoc($get_department);
 //Location
 record_set("get_location", "select name from locations where id = '".$row_get_loc_dep['locationid']."'");
 $row_get_location = mysqli_fetch_assoc($get_location);
-if(!empty($_GET['location']) and $_GET['location']!=4){
-     $location_name =$row_get_location['name'];
-}else{
-     $location_name ="All";
-}
-$message = '<table width="100%">
-      <thead>
-        <tr>
-          <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;">
-          <img src="'.MAIN_LOGO.'" width="200">
-          </td>
-        </tr>
-      </thead>
-      <tbody style="border-top:1px solid black;border-bottom:1px solid black;">
-        <tr style="">
-          <td colspan="4" style="text-align:center;font-size:20px;"><span>'.$row_get_survey['name'].'</span></td>
-         
-        </tr>
-      </tbody>
-  </table>';
-  // <tr style="">
-  //   <td style="width:10%;"><span>Location :</span></td>
-  //   <td style="width:40%;"><span>'.$location_name.'</span></td>
-  //   <td style="width:20%;text-align:right;"><span>Department :</span></td>
-  //   <td style="width:30%;"><span>'.$row_get_department['name'].'</span></td>
-  // </tr>
-// echo '<pre>';
-// print_r($questions); die();
+
+$message = '<div align="center">
+  <img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></div>
+    <table width="100%">
+        <thead>
+          <tr>
+            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">'.$row_get_survey['name'].' </h2></td>
+          </tr>
+        </thead>
+    </table>';
   foreach($survey_steps AS $key => $value) { 
       $message .= '<div class="container" style="page-break-after: always;height: 500px;">
         <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
@@ -257,24 +245,5 @@ $message = '<table width="100%">
         } 
       $message .='</div>';
   }
-//$message .= '</table>';
-
-//echo $message; exit;
-//die();
-// Include autoloader 
-require_once 'dompdf/autoload.inc.php'; 
-// Reference the Dompdf namespace 
-use Dompdf\Dompdf; 
-// Instantiate and use the dompdf class 
-$dompdf = new Dompdf();
-$dompdf->loadHtml($message); 
-$dompdf->setPaper('A4', 'PORTRAIT'); 
-// Render the HTML as PDF 
-$dompdf->render(); 
-/*// save pdf in folder
-$pdf = $dompdf->output();
-$file_location = "upload/trans_docs/".'Quotation'.$_GET['eid'].".pdf";
-file_put_contents($file_location,$pdf);*/
-// Output the generated PDF to Browser 
-$dompdf->stream($_GET['name'], array("Attachment"=>0));
+  create_mpdf($message,'report.pdf','I');
 ?>

@@ -4,7 +4,7 @@ include('../function/get_data_function.php');
 
 // delete data
 if(isset($_POST['mode']) and $_POST['mode']=='delete'){
-    $delete =  dbRowDelete($_POST['db_table_name'], "temp_id='".$_POST['deleteid']."'");
+    $delete =  dbRowDelete($_POST['db_table_name'], "id='".$_POST['deleteid']."'");
     echo $delete; die();
 }
 
@@ -253,8 +253,7 @@ if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
 
   $html = '<label id="label_survey_field" for="survey_field" class="col-sm-4 col-form-label">'.strtoupper(survey_type()[$filter]).'</label>
   <div class="col-sm-8">
-      <select id="template_survey" name="survey" class="form-control form-control-lg multiple-select" required >';
-       
+      <select id="template_survey" name="template_field[]" class="form-control form-control-lg multiple-select" required >';
         foreach($survey_data as $key => $value){
           $html .= '<option value="'.$key.'">'.$value.'</option>';
         }
@@ -272,7 +271,6 @@ if(isset($_POST['mode']) and $_POST['mode']=='fetch_filter_data'){
    $data_id = $survey_details[$field];
    $data = get_data_by_id($field,$data_id);
     $html = '<label id="label_survey_field" for="survey_field" class="col-sm-4 col-form-label">'.strtoupper($field).'</label>
-      <label id="label_template_field" for="template_field" class="col-sm-4 col-form-label"></label>
         <div class="col-sm-8">
           <select id="template_field" name="template_field[]" class="form-control form-control-lg " required>';
           foreach($data as $key => $value){
@@ -288,8 +286,9 @@ if(isset($_POST['mode']) and $_POST['mode']=='fetch_scheduled_template_details')
   $row_data = mysqli_fetch_assoc($scheduled_report_template);
   $filter = json_decode($row_data['filter'], true);
   $filter_values = implode(",", $filter['field_value']);
+  $filter_survey = implode(",", $filter['survey']);
   if($filter['field'] == 'survey' || $filter['field'] == 'pulse' || $filter['field'] == 'engagement'){ 
-    $data = getaxecuteQuery_fn("select id,name from surveys where id IN ($filter_values)");
+    $data = getaxecuteQuery_fn("select id,name from surveys where id IN ($filter_survey)");
   }else{
     $data = getaxecuteQuery_fn("select id,name from ".$filter['field'].'s'." where id IN ($filter_values)");
   }

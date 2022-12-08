@@ -1,5 +1,5 @@
 <?php
-record_set('scheduled_report_templates', 'SELECT rt.name, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id ORDER BY srt.created_at DESC');
+record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id ORDER BY srt.created_at DESC');
 ?>
 
 <section class="content-header">
@@ -32,14 +32,28 @@ record_set('scheduled_report_templates', 'SELECT rt.name, srt.* FROM report_temp
             <td><?=date('d-m-Y', strtotime($scheduled_report_template['start_date']))?></td>
             <td><?=date('d-m-Y ', strtotime($scheduled_report_template['next_date']))?></td>
             <td>
-                <button class="btn btn-primary blue-btn btn-xs">VIEW PDF</button>
-
-                <form action="./ajax/ajaxOn_survey_statistics.php?export=csv&data_type=<?= $report_template['fields'] ?>" method="post" style="display: inline-block;">
-                  <input type="hidden" name="data_type" value="<?= $report_template['fields'] ?>">
-                  <input type="hidden" name="survey_type" value="<?= $report_template['fields'] ?>">
-                  <button type="submit" class="btn btn-primary blue-btn btn-xs btn-green">DOWNLOAD CSV</button>
+              <?php if($scheduled_report_template['report_type']==1){ ?> 
+                <a href="report-doc/report-pdf.php?report_id=<?=$scheduled_report_template['id']?>">
+                  <button class="btn btn-primary blue-btn btn-xs">VIEW PDF</button>
+                </a>
+                <a href="report-doc/report-pdf.php?export=csv&report_id=<?=$scheduled_report_template['id']?>">
+                  <button type="button" class="btn btn-primary blue-btn btn-xs btn-green">DOWNLOAD CSV</button>
+                </a>
+                <form action="./ajax/ajaxOn_survey_statistics.php?export=csv&data_type=<?= $report_template['fields'] ?>" method="post" style="display: inline-block;" id="report-form">
+                  <!-- <button type="submit" class="btn btn-primary blue-btn btn-xs btn-green">DOWNLOAD CSV</button> -->
                 </form>
-                <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;" onclick="scheduled_details(<?=$scheduled_report_template['id']?>, '<?=$scheduled_report_template['name']?>')">VIEW DETAILS</button>
+              <?php } else { ?>
+                <a href="report-doc/report-pdf-question-pdf.php?report_id=<?=$scheduled_report_template['id']?>">
+                  <button class="btn btn-primary blue-btn btn-xs">VIEW PDF</button>
+                </a>
+                <a href="report-doc/report-question-csv.php?export=csv&report_id=<?=$scheduled_report_template['id']?>">
+                  <button type="submit" class="btn btn-primary blue-btn btn-xs btn-green">DOWNLOAD CSV</button>
+                </a>
+                <!-- <form action="./ajax/ajaxOn_survey_statistics.php?export=csv&data_type=<?= $report_template['fields'] ?>" method="post" style="display: inline-block;" id="report-form">
+                  <button type="submit" class="btn btn-primary blue-btn btn-xs btn-green">DOWNLOAD CSV</button>
+                </form> -->
+              <?php }?>
+                <!-- <button class="btn btn-primary blue-btn btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;" onclick="scheduled_details(<?=$scheduled_report_template['id']?>, '<?=$scheduled_report_template['name']?>')">VIEW DETAILS</button> -->
                 <button type="button" class="btn btn-danger btn-xs" style="margin-right: 10px;padding: 0px 16px 0px 13px;background-color:#e51900;" onclick="delete_data('scheduled_report_templates','<?=$scheduled_report_template['id']?>')">DELETE</button>
             </td>
           </tr>  
@@ -101,4 +115,17 @@ function scheduled_details(sch_id, temp_name){
   })
   $('#scheduled_template_details').modal('show');
 }
+$('.report-document').click(function(){
+  // let doc_type = $(this).val();
+  // let report_type = $(this).data('id');
+  // if(doc_type == 'pdf' && report_type==1){
+  //   $('#report-form').attr('action', './report-doc/report-pdf.php'); 
+  //   $('#report-form').submit();
+  // }else if(doc_type == 'pdf' && report_type==2){
+  //   $('#report-form').attr('action', './report-doc/report-pdf-question.php'); 
+  //   $('#report-form').submit();
+  // }
+
+  
+})
 </script>

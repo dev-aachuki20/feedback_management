@@ -2,12 +2,12 @@
 require('../../function/function.php');
 require('../../function/get_data_function.php');
 include('../../permission.php');
+require_once dirname(__DIR__, 2). '/vendor/autoload.php';
+$mpdf = new \Mpdf\Mpdf();
+
 record_set("get_report","select * from schedule_report_new ORDER BY created_at DESC;
 ");
 while($row_get_report= mysqli_fetch_assoc($get_report)){
-    require_once dirname(__DIR__, 2). '/vendor/autoload.php';
-    $mpdf = new \Mpdf\Mpdf();
-    
     $current_date   = date('Y-m-d', time());
     $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_schedule_date']));
@@ -376,9 +376,9 @@ while($row_get_report= mysqli_fetch_assoc($get_report)){
                                         </div>';
                                     }
                                 $counter++;
-                            if($counter % 6==0){
-                                $html .='<pagebreak>';
-                            }
+                                if($counter % 6==0){
+                                    $html .='<pagebreak>';
+                                }
                             }
                         }
                     $html .= '</div>
