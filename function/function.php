@@ -944,43 +944,40 @@ function create_mpdf($html='',$file_name='',$output){
 	return $mpdf->Output($file_name,$output);
 }
 
-function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $replyto, $bcc, $subject, $message){    
-    $uid = md5(uniqid(time()));
-    $mime_boundary = "==Multipart_Boundary_x{$uid}x"; 
+function mail_attachment($path, $to, $from_mail, $from_name,$subject,$message){    
+	$from = stripslashes('dgfm')."<".stripslashes('dgs@gmail.com').">";
+	// generate a random string to be used as the boundary marker
+	$mime_boundary="==Multipart_Boundary_x".md5(mt_rand())."x";
 
-    $header = "From: ".$from_name." <".$from_mail.">\r\n";
-    $header .= "Bcc: ".$bcc."\r\n";
-    $header .= "Reply-To: ".$replyto."\r\n";
-    $header .= "MIME-Version: 1.0\r\n";
-    $header .= "Content-Type: multipart/mixed; boundary=\"".$mime_boundary."\"\r\n\r\n";
-    $header .= "This is a multi-part message in MIME format.\r\n";
-    $header .= "--".$mime_boundary."\r\n";
-    $header .= "Content-type:text/html; charset=iso-8859-1\r\n";
-    $header .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-    $header .= nl2br($message)."\r\n\r\n";
-    $header .= "--".$mime_boundary."\r\n";
-
-    foreach($filename as $k=>$v){
-        $file = $path.$v;
-        $file_size = filesize($file);
-        $handle = fopen($file, "r");
-        $content = fread($handle, $file_size);
-        fclose($handle);
-        $content = chunk_split(base64_encode($content));
-
-        $header .= "Content-Type: application/octet-stream; name=\"".$v."\"\r\n"; // use different content types here
-        $header .= "Content-Transfer-Encoding: base64\r\n";
-        $header .= "Content-Disposition: attachment; filename=\"".$v."\"\r\n\r\n";
-        $header .= $content."\r\n\r\n";
-        $header .= "--".$mime_boundary."--"."\r\n";
-    } 
-
-    if (mail($mailto, $subject, "", $header)) {
-        //echo "mail send ... OK"; // or use booleans here
-        return true;
-    } else {
-        //echo "mail send ... ERROR!";
-        return false;
-    }
-}
+	// now we'll build the message headers
+	$headers = "From: $from\r\n" ."MIME-Version: 1.0\r\n" ."Content-Type: multipart/mixed;\r\n" ." boundary=\"{$mime_boundary}\"";
+ 
+	$message = "This is a multi-part message in MIME format.\n\n" ."--{$mime_boundary}\n" ."Content-Type: text/plain; charset=\"iso-8859-1\"\n" ."Content-Transfer-Encoding: 7bit\n\n" .$message . "\n\n";
+	   
+	for($i=0;$i<count($path);$i++){
+		 // open the file for a binary read
+		 $temp_name = $path[$i];
+		 $file = fopen($temp_name,'rb');
+		 
+		 $file_name = basename($temp_name);
+		 $file_type = mime_content_type($temp_name);
+		 // read the file content into a variable
+		 $data = fread($file,filesize($temp_name));
+		 
+		 // close the file
+		 fclose($file);
+		 
+		 // now we encode it and split it into acceptable length lines
+		 $data = chunk_split(base64_encode($data));
+		 
+		 $message .= "--{$mime_boundary}\n" ."Content-Type: {'application/pdf'};\n" ." name=\"{$file_name}\"\n" ."Content-Disposition: attachment;\n" ." filename=\"{$fileatt_name}\"\n" ."Content-Transfer-Encoding: base64\n\n" .
+		 $data . "\n\n";
+	
+	} 
+	   
+	// here's our closing mime boundary that indicates the last of the message
+	$message.="--{$mime_boundary}--\n";
+	// now we just send the message
+	return @mail($to, $subject, $message, $headers);
+ }
 ?>

@@ -159,6 +159,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     ksort($survey_data);
     //export csv in survey static
     if(isset($_GET['export']) and $_GET['export']=='csv'){
+        die('exit');
         $survey_name = getSurvey()[$survey_id];
         $dir = 'document/survey-report-question-'.$row_get_report['id'].'.csv';
         download_csv_folder($survey_data,$data_type,$dir); continue;
@@ -378,90 +379,22 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $mpdf->WriteHTML($html);
     $mpdf->Output('document/survey-report-question-'.$row_get_report['id'].'.pdf', 'F');
     
+  //send mail
+    $user_details = get_user_datails($row_get_report['cby']);
+    $path = array('document/survey-report-question-'.$row_get_report['id'].'.csv','document/survey-report-question-'.$row_get_report['id'].'.pdf');
+    //$to = "amitpandey.his@gmail.com";
+    $to = $user_details['email'];
+    $from = "admin@gmail.com"; 
+    $subject ="My subject"; 
+    $name = $user_details['name'];
+    $message = 'Hello '.$name.' you have schedule report';
     
-    //send mail
-    
-    //send mail
-    // we'll begin by assigning the To address and message subject
-   $to="amitpandey.his@gmail.com";
-   $subject="E-mail with attachment";
+    $mail = mail_attachment($path,$to,$from,$name,$subject,$message);
+    if($mail){
+        foreach($path as $key => $value){
+            unlink($value);
+        }
+    }
 
-   // get the sender's name and email address
-   // we'll just plug them a variable to be used later
-   $from = stripslashes('dgfm')."<".stripslashes('dgs@gmail.com').">";
-
-   // generate a random string to be used as the boundary marker
-   $mime_boundary="==Multipart_Boundary_x".md5(mt_rand())."x";
-
-   // now we'll build the message headers
-   $headers = "From: $from\r\n" .
-   "MIME-Version: 1.0\r\n" .
-      "Content-Type: multipart/mixed;\r\n" .
-      " boundary=\"{$mime_boundary}\"";
-
-   // here, we'll start the message body.
-   // this is the text that will be displayed
-   // in the e-mail
-   $message="This is an example";
-
-   $message .= "Name: fds Message Posted:dfdsfs";
-
-   // next, we'll build the invisible portion of the message body
-   // note that we insert two dashes in front of the MIME boundary 
-   // when we use it
-   $message = "This is a multi-part message in MIME format.\n\n" .
-      "--{$mime_boundary}\n" .
-      "Content-Type: text/plain; charset=\"iso-8859-1\"\n" .
-      "Content-Transfer-Encoding: 7bit\n\n" .
-    $message . "\n\n";
-    
-    
-    $tmp_name_1 = './document/survey-report-question-'.$row_get_report['id'].'.pdf';
-
-    $file = fopen($tmp_name_1,'rb');
-    $name = 'survey-report-question-'.$row_get_report['id'].'.pdf';
-    $data = fread($file,filesize($tmp_name_1));
-    // close the file
-    fclose($file);
-    
-    // now we encode it and split it into acceptable length lines
-    $data = chunk_split(base64_encode($data));
-    $message .= "--{$mime_boundary}\n" .
-    "Content-Type: {'application/pdf'};\n" .
-    " name=\"{$name}\"\n" .
-    "Content-Disposition: attachment;\n" .
-    " filename=\"{$fileatt_name}\"\n" .
-    "Content-Transfer-Encoding: base64\n\n" .
-    $data . "\n\n";
-      
-    $tmp_name = './document/survey-report-question-'.$row_get_report['id'].'.csv';
-    $file = fopen($tmp_name,'rb');
-    $name = 'survey-report-question-'.$row_get_report['id'].'.csv';
-    $data = fread($file,filesize($tmp_name));
-    // close the file
-    fclose($file);
-    
-    // now we encode it and split it into acceptable length lines
-    $data = chunk_split(base64_encode($data));
-    $message .= "--{$mime_boundary}\n" .
-    "Content-Type: {'text/csv'};\n" .
-    " name=\"{$name}\"\n" .
-    "Content-Disposition: attachment;\n" .
-    " filename=\"{$fileatt_name}\"\n" .
-    "Content-Transfer-Encoding: base64\n\n" .
-    $data . "\n\n";
-    
-    
-   // here's our closing mime boundary that indicates the last of the message
-   $message.="--{$mime_boundary}--\n";
-   // now we just send the message
-   
-   if (@mail($to, $subject, $message, $headers)){
-             unlink('./document/survey-report-question-'.$row_get_report['id'].'.csv'); 
-             unlink('./document/survey-report-question-'.$row_get_report['id'].'.pdf'); 
-          echo "Message Sent";
-   }else{
-          echo "Failed to send";
-   }
 }
 ?>
