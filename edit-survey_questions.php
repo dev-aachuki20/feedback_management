@@ -104,20 +104,22 @@ $languages = explode(',',$row_get_survey_details['language']);
           <div class="col-md-12">
             <div class="form-group">
               <label>Question</label>
-              <input type="text" class="form-control" name="question" value="<?php echo $row_get_questions['question'];?>" disabled />
+              <input type="text" class="form-control" name="question" value="<?php echo $row_get_questions['question'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?>/>
             </div>
           </div>
 
         </div>
         <div class="row" id="options">
           <?php 
-            record_set("get_questions_detail", "select * from questions_detail where   surveyid='".$_REQUEST['surveyid']."'  and questionid='".$_REQUEST['questionid']."'");				
+            record_set("get_questions_detail", "select * from questions_detail where   surveyid='".$_REQUEST['surveyid']."'  and questionid='".$_REQUEST['questionid']."'");	
+            $i=0;			
             while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail))
             {
+              $i++;
           ?>
             <div class="col-md-5">
               <div class="form-group">
-                <label>Answer 1</label>
+                <label>Answer <?=$i?></label>
                 <input type="text" class="form-control" name="correct[]" value="<?php echo $row_get_questions_detail['description'];?>" disabled />
               </div>
             </div>

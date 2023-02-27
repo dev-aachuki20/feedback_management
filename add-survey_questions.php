@@ -8,7 +8,7 @@ record_set("get_survey_details", "select * from surveys where id = '".$surveyid.
 $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 
 
- if(!empty($_POST['submit'])){		
+ if(!empty($_POST['submit'])){
 	$data_que =  array(
 			"parendit"=> $_POST['parent'],
 			"question" => $_POST['question'],

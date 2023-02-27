@@ -67,7 +67,7 @@
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th>Survey Name</th>
+                    <th>Questions</th>
                     <th>Type</th>
                     <th>Status</th>
                     <th>Action</th>

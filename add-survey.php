@@ -410,7 +410,7 @@ $(document).ready(function(){
       }
     });
 
-    $("#numberOfStep").keyup(function() {
+    $("#numberOfStep").on('keyup change', function() {
       $("#stepsTitle").html("");
       var numberOfSteps = $(this).val();
       if(numberOfSteps>50){
