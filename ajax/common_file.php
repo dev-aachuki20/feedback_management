@@ -239,7 +239,7 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
     $filter = " and survey_type = ".$_POST['survey_type'];
   }
   record_set("get_surveys", "select id,name from surveys where id !=0 $filter");
-  $html .='<option>Select</option>';				
+  $html .='<option value="">Select</option>';				
   while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
     $html .='<option value="'.$row_get_surveys['id'].'">'.$row_get_surveys['name'].'</option>';
   }

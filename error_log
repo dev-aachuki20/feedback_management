@@ -1,0 +1,12 @@
+[16-Feb-2023 20:13:53 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 116 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(116): send_survey_email('Pierre.hammond1...', 'PIERRE TEST 1', 39)
+#1 /home/dgfm/demo.dgfm.app/index.php(181): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[17-Feb-2023 00:44:27 Asia/calcutta] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 116 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(116): send_survey_email('Pierre.hammond1...', 'PIERRE 2', 40)
+#1 /home/dgfm/demo.dgfm.app/index.php(181): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222

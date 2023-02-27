@@ -95,9 +95,9 @@ if(!empty($requestData['survey_name'])){
         $start = $startDate;
     }
 
-    while($end <= date("Y-m-d")){
+    while($end <= date("Y-m-d",strtotime("+ 1 day"))){
         // echo $end.': '.date("Y-m-d"); echo '<br>';
-        if($end >= date("Y-m-d")){
+        if($end >= date("Y-m-d",strtotime("+ 1 day"))){
             break;
         }
         // $date_array[$a]['start']= $startDate;
