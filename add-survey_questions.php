@@ -20,8 +20,10 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			'cip'=>ipAddress(),
 			'cby'=>$_SESSION['user_id'],
 			'cdate'=>date("Y-m-d H:i:s"),
+			'is_weighted'=>$_POST['weighted_yes_no'],
 			'survey_step_id'=>(isset($_POST['survey_step'])) ? $_POST['survey_step'] : 0,
 		);
+
 	$insert_value =  dbRowInsert("questions",$data_que);
 	if(!empty($insert_value )){	
 		if(isset($_POST['question_sub_heading']) && !empty($_POST['question_sub_heading'])){
@@ -129,7 +131,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 					</div>
 					<!-- End Parent Question Section -->
 					<!-- Start Answer Type Section -->
-					<div class="col-md-4">
+					<div class="col-md-6">
 						<div class="form-group">
 							<label>Answer Type</label>
 							<select class="form-control atype" name="atype">
@@ -142,13 +144,20 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 					
 					<!-- End Answer Type Section -->
 					<!-- Start Position Section -->
-					<div class="col-md-2">
+					<div class="col-md-6">
 						<div class="form-group">
 							<label>Position</label>
 							<input type="number" class="form-control" name="dposition" min="0" value="1" />
 						</div>
 					</div>
 					<!-- End Position Section -->
+					<div class="col-md-6">
+						<label>Weighted</label>
+						<div class="form-group">	
+							<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="1" data-count="0"/>  Yes
+							<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="0" data-count="0" checked/>  No
+						</div>
+					</div>
 				</div>
 				<!-- End Row -->
 				<!-- Start Question Section -->
@@ -177,16 +186,9 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 								</div>
 							</div>
 							<div class="col-md-2">
-								<label>Weighted</label>
-								<div class="form-group">	
-									<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no[0]" data-id="2334edff" value="1" data-count="0"/>  Yes
-									<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no[0]" data-id="2334edff" value="0" data-count="0"/>  No
-								</div>
-							</div>
-							<div class="col-md-2">
 								<div class="form-group">
 								<label>Value</label>
-								<input type="text" value="0" class="form-control canval 2334edff" name="cans[]" />
+								<input type="number" value="0" class="form-control canval 2334edff" name="cans[]" readonly/>
 								</div>
 							</div>
 							<div class="col-md-2">
@@ -255,7 +257,7 @@ var lcode = new Array();
 
     $("#btnaddoption").click(function () {
 		let uniqueId = Math.random().toString(36).substr(2, 9);
-		$(".options").append('<div class="col-md-12"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control" name="correct[]"></div></div><div class="col-md-2"><label>Weighted</label><div class="form-group">	<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no[0]" value="1" data-count="0" data-id="'+uniqueId+'"/>  Yes<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no[0]" value="0" data-count="0" data-id="'+uniqueId+'"/> No</div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="text" class="form-control canval '+uniqueId+'" value="0" name="cans[]" /></div></div><div class="col-md-2 "><label>Conditional</label><div class="form-group"><input type="radio" class="form-check-input condition_yes_no'+chkvalue+'" name="condition_yes_no['+datacount+']"  value="1" data-count="'+datacount+'" />  Yes <input type="radio" class="form-check-input condition_yes_no'+chkvalue+'" name="condition_yes_no['+datacount+']"   value="0" data-count="'+datacount+'" />  No</div></div>');
+		$(".options").append('<div class="col-md-12"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval '+uniqueId+'" value="0" name="cans[]" readonly/></div></div><div class="col-md-2 "><label>Conditional</label><div class="form-group"><input type="radio" class="form-check-input condition_yes_no'+chkvalue+'" name="condition_yes_no['+datacount+']"  value="1" data-count="'+datacount+'" />  Yes <input type="radio" class="form-check-input condition_yes_no'+chkvalue+'" name="condition_yes_no['+datacount+']"   value="0" data-count="'+datacount+'" />  No</div></div>');
 
 
 		$(".options_other").append('<div class="col-md-6"><div class="form-group"><label>New Option</label><input type="text" class="form-control new-option" ></div></div></div>');
@@ -482,9 +484,10 @@ $(document).on('change', '.weighted_yes_no', function() {
 	let value = $(this).val();
 	let class_name = $(this).data('id');
 	if(value == 1){
-		$('.'+class_name).prop('readonly', false);
+		$('.canval').prop('readonly', false);
 	}else {
-		$('.'+class_name).prop('readonly', true);
+		$('.canval').prop('readonly', true);
+		$('.canval').val(0);
 	}
 });
 </script>

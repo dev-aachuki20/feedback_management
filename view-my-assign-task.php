@@ -347,7 +347,7 @@ if(isset($_POST['assign'])){
                                             $to_bo_contacted     = 0;
                                             $i=0;
                                             while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
                                                 if($result_question){
                                                     if(!in_array($result_question['answer_type'],array(2,3,5))){
 
@@ -401,7 +401,7 @@ if(isset($_POST['assign'])){
                                                     $to_bo_contacted     = 0;
                                                     $i=0;
                                                     while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
                                                             if($result_question){
                                                                 if(!in_array($result_question['answer_type'],array(2,3,5))){
                                                                     $total_result_val = ($i+1)*100;

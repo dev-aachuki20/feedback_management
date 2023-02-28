@@ -314,6 +314,9 @@ function get_survey_detail($id){
 	return $row_get_data;
 }
 
+function response_calculation(){
+	
+}
 // date 14-10-2022
 // if contacted is yes then only mail will send to admin and super admin
 // function send_mail_on_survey_respond_submitted(){

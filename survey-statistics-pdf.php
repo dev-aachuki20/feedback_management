@@ -62,7 +62,7 @@
                 $i=0;
                 $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_question['questionid']);
                     if($result_question){
                         if(!in_array($result_question['answer_type'],array(2,3,5))){
                         $i++;
@@ -90,7 +90,7 @@
                 $total_result_val = 0;
                 $to_bo_contacted     = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_question['questionid']);
                     if($result_question){
                         if(!in_array($result_question['answer_type'],array(2,3,5))){
                         $i++;
@@ -114,7 +114,7 @@
                 $i=0;
                 $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and  id =".$row_get_question['questionid']);
                     if($result_question){
                         if(!in_array($result_question['answer_type'],array(2,3,5))){
                         $i++;
@@ -139,7 +139,7 @@
                 $i=0;
                 $total_result_val = 0;
                 while($row_get_question= mysqli_fetch_assoc($get_question)){
-                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_question['questionid']);
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_question['questionid']);
                     if($result_question){
                         if(!in_array($result_question['answer_type'],array(2,3,5))){
                         $i++;

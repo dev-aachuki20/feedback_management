@@ -339,7 +339,7 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                                         record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_survey_response['surveyid']."' and cby='".$row_get_survey_response['cby']."'");
             
                                         while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where id =".$row_get_survey_result['questionid']);
+                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
                                             if($result_question){
                                                 if(!in_array($result_question['answer_type'],array(2,3,5))){
                                                     $total_result_val = ($i+1)*100;

@@ -120,14 +120,14 @@ $languages = explode(',',$row_get_survey_details['language']);
             <div class="col-md-5">
               <div class="form-group">
                 <label>Answer <?=$i?></label>
-                <input type="text" class="form-control" name="correct[]" value="<?php echo $row_get_questions_detail['description'];?>" disabled />
+                <input type="text" class="form-control" name="correct[]" value="<?php echo $row_get_questions_detail['description'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
               </div>
             </div>
 
             <div class="col-md-1">
               <div class="form-group">
                 <label>Value</label>
-                <input type="text" class="form-control" name="correct[]" value="<?php echo $row_get_questions_detail['answer'];?>" disabled />
+                <input type="text" class="form-control" name="correct[]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
               </div>
             </div>
 		      <?php } ?>
