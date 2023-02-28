@@ -352,6 +352,7 @@ var lcode = new Array();
 		});
 		datacount++;
 		chkvalue++;
+		setWeighted();
     });
 </script>
 <script>
@@ -481,13 +482,15 @@ $(document).ready(function(){
 	 
 });
 $(document).on('change', '.weighted_yes_no', function() {
-	let value = $(this).val();
-	let class_name = $(this).data('id');
+	setWeighted();
+});
+function setWeighted(){
+	let value = $("input[name='weighted_yes_no']:checked").val();
 	if(value == 1){
 		$('.canval').prop('readonly', false);
 	}else {
 		$('.canval').prop('readonly', true);
 		$('.canval').val(0);
 	}
-});
+}
 </script>
