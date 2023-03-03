@@ -111,6 +111,20 @@
               $insert =  dbRowInsert("relation_table",$data_dept,1);
             }
           }
+      
+           // assign role
+           if(isset($_POST['roleids'])){
+            $filter = "table_name = 'role' and user_id = $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['roleids'] as $roleId){
+              $data_role = array(
+                  "table_id"   => $roleId,
+                  "user_id"    => $uid,
+                  "table_name" => 'role'
+              );
+              $insert =  dbRowInsert("relation_table",$data_role);
+            }
+          }
           $msg = "User Updated Successfully";
           if(isset($_GET['user'])){
             alertSuccess($msg,'');
@@ -370,6 +384,8 @@ if(!empty($_POST['submit'])){
               <?php include ('./assignUserCheckbox/location.php')?>   
               <!-- assign department -->
               <?php include ('./assignUserCheckbox/department.php')?>   
+              <!-- assign role -->
+              <?php include ('./assignUserCheckbox/role.php')?>   
             </div>  
             <?php }?>
               <div class="col-md-12">
@@ -497,13 +513,20 @@ function ajax_for_checkbox(id,mode){
               $('.surveyCheck').html(response);
               $('.locationCheck').html('');
               $('.groupCheck').html('');
+              $('.departmentCheck').html('');
             }
             if(mode == 'add_user_group_assign'){
               $('.groupCheck').html(response);
               $('.locationCheck').html('');
+              $('.departmentCheck').html('');
             }
             if(mode == 'add_user_location_assign'){
               $('.locationCheck').html(response);
+              $('.departmentCheck').html('');
+            }
+            if(mode == 'add_user_department_assign'){
+              console.log(response);
+              $('.departmentCheck').html(response);
             }
         }
     });

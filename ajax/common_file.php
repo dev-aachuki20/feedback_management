@@ -251,7 +251,35 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'add_user_location_assign'){
   }
   echo $html; die();
 }
+if(isset($_POST['mode']) and $_POST['mode'] == 'add_user_department_assign'){
+  $role_ids = $_POST['id'];
+  $role_ids = implode(',',$role_ids);
 
+  record_set("role_data", "select id,name,role_id from departments where id IN ($role_ids) order by name ASC");
+  $roleId = array();
+  $html = '<div class="col-md-12 with-border">
+  <h4>Assign Role</h4>
+  <input type="checkbox" class="role_checkbox_all" /><strong> Select All</strong><br/><br/>
+  </div>';
+  while($row_get_role   = mysqli_fetch_assoc($role_data)){
+      $role_id          = $row_get_role['role_id'];
+      $role_id_explode  = explode(',',$role_id);
+      
+      foreach($role_id_explode as $roledata){
+        if(!in_array($roledata ,$roleId)){
+          if($roledata){
+            $html .='<div class="col-md-4">
+            <input type="checkbox" id="roleids'.$roledata.'" class="role_checkbox" value="'.$roledata.'" name="roleids['.$roledata.']" /> 
+            
+            <label for="roleids'.$roledata.'">'.getRole()[$roledata].'</label>
+          </div>';
+          }
+        }
+        $roleId[$role] = $roledata;
+      }
+  }
+  echo $html; die();
+}
 if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
   $filter = '';
   if($_POST['survey_type']){

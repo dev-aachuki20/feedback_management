@@ -19,8 +19,18 @@
         $filterSurvey = " where id IN(0)";
     }
     record_set("get_department_id", "select * from departments $filterSurvey");
+    $roleid_array= array();
     while($row_get_department_id=mysqli_fetch_assoc($get_department_id)){
         $department_id_saved[] = $row_get_department_id['id'];
+        // get role assign to given group
+        $roleidByGroup = $row_get_department_id['role_id'];
+        $roleidByGroup = explode(',',$roleidByGroup);
+        foreach($roleidByGroup as $role){
+            if($role){
+                $roleid_array[$role] = $role;
+            }
+        }
+    ///end
     }
     foreach($departmentName as $key => $value){ 
     $deptId  = $key;
@@ -58,8 +68,21 @@
 </div>
 
 <script>
+// for department checkbox
+$(document).on("change", '.dept_checkbox', function(event) { 
+    select_department();
+});
 //checked all department using select all
 $(document).on("change", '.dept_checkbox_all', function(event) { 
     checked_all(this,"dept_checkbox");
+    select_department();
 });
+function select_department(){
+    var checkedArray=[];
+    $(".dept_checkbox:checkbox:checked").each(function() {
+        checkedArray.push($(this).val());
+    });
+    var filteredArray = checkedArray.filter(e => e !== 'on')
+    ajax_for_checkbox(filteredArray,'add_user_department_assign')
+}
 </script>
