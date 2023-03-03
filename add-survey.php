@@ -29,6 +29,7 @@
             "groups"        => implode(",",$_POST['groupid']),
             "locations"     => implode(",",$_POST['locationid']),
             "departments"   => implode(",",$_POST['departments']),
+            "roles"         => implode(",",$_POST['roles']),
             //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
@@ -94,6 +95,7 @@
             "groups"                 => implode(",",$_POST['groupid']),
             "locations"              => implode(",",$_POST['locationid']),
             "departments"            => implode(",",$_POST['departments']),
+            "roles"                  => implode(",",$_POST['roles']),
   			"cdate"                  => date("Y-m-d H:i:s"),
             "google_review_link"     => $_POST['google_review_link'],
             "facebook_review_link"   => $_POST['facebook_review_link'],
@@ -275,7 +277,18 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 <?php } ?> 
                                 </select>	
                             </div>
-                            
+                            <div class="col-md-6 dropdwn ">
+                                <label>Role</label>
+                                <input type="checkbox"id="allrole" class="multiselect" onchange="select_all_option('allrole','roles')">
+                                <select name="roles[]" id="roles" class="form-control form-control-lg multiple-select" multiple=multiple>
+                                <?php 
+                                  $role = $row_get_surveys['roles'];
+                                  $roleId = get_data_by_id('roles',$role);
+                                    foreach($roleId as $key => $value){ ?>
+                                    <option value="<?=$key?>" selected><?=$value?></option>
+                                <?php } ?> 
+                                </select>	
+                            </div>
                             <div class="col-md-6">
                                 <div class="col-md-6">
                                     <label for=""></label>
@@ -502,6 +515,12 @@ $(document).ready(function(){
         let type     = 'location';
         load_location(location_id,type);
     });
+    $('#departments').change(function () {
+        let department_id = $(this).val();
+        console.log("department_id", department_id);
+        let type     = 'department';
+        load_location(department_id,type);
+    });
 })
 function load_location(ids,mode){
     $.ajax({
@@ -509,11 +528,14 @@ function load_location(ids,mode){
         url: 'ajax/common_file.php',
         data: {id: ids,mode:mode}, 
         success: function(response){
+            console.log(response);
             if(mode == 'group'){
                 $('#location_id').html(response);
                 $('#departments').html('');
             }else if(mode == 'location'){
                 $('#departments').html(response);
+            }else if(mode == 'department'){
+                $('#roles').html(response);
             }
            
         }

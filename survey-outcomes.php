@@ -4,6 +4,7 @@
     $locationByUsers   = get_filter_data_by_user('locations');
     $groupByUsers      = get_filter_data_by_user('groups');
     $surveyByUsers     = get_survey_data_by_user($_GET['type']);
+    $roleByUsers       = get_filter_data_by_user('roles');
 
     // get asssign ids only
     $assign_department = array();
@@ -23,7 +24,10 @@
     foreach($surveyByUsers as $survey){
         $assign_survey[] = $survey['id'];
     }
-
+    $assign_role = array();
+    foreach($roleByUsers as $role){
+        $assign_role[] = $role['id'];
+    }
     $dep_ids     = implode(',',$assign_department);
     $loc_ids     = implode(',',$assign_location);
     $grp_ids     = implode(',',$assign_group);
@@ -210,6 +214,20 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
+                            <label>Role</label>
+                            <select name="roleid" id="roleid" class="form-control form-control-lg role">
+                                <option value="">Select</option>
+                                <?php
+                                    foreach($roleByUsers as $roleData){ 
+                                    $roleId     = $roleData['id'];
+                                    $roleName   = $roleData['name'];?>
+                                    <option value="<?php echo $roleId;?>"><?php echo $roleName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
                             <label>Status</label>
                             <select name="contacted" id="contacted" class="form-control form-control-lg status">
                                 <option value="">Select status</option>
@@ -289,6 +307,7 @@
         let group       = $('.group').val();
         let locationid  = $('.locationid').val();
         let departmentid  = $('.department').val();
+        let roleid      = $('.role').val();
         let status   = $('.status').val();
         if(surveys ==''){
             $(".col-md-3").css("height", "87");
@@ -298,9 +317,9 @@
             $('.error').hide();
         }
         // this is the id of the form
-        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,status);
+        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,roleid,status);
     });
-    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,status){
+    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,roleid,status){
         var dataTable = $('#datatable-ajax').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -316,6 +335,7 @@
                     groupid:group,
                     locationid:locationid, 
                     departmentid:departmentid,
+                    roleid:roleid,
                     status:status,
                 },
                 error: function(){  

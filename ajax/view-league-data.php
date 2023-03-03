@@ -24,6 +24,10 @@ $data =array();
         $query = " and surveyid =".$surveyid." and departmentid in (select id from departments where cstatus=1)";
         $groupBy = 'departmentid';
     }
+    else if($survey_type=='role'){
+        $query = " and surveyid =".$surveyid." and roleid in (select id from roles where cstatus=1)";
+        $groupBy = 'roleid';
+    }
     if(!empty( $fdate) and !empty( $sdate)){
         $filter_date = " and  cdate between '".date('Y-m-d', strtotime( $fdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime( $sdate)))."'";
     }
@@ -48,6 +52,7 @@ $data =array();
             $locId      = $row_get_entry['locationid'];
             $depId      = $row_get_entry['departmentid'];
             $grpId      = $row_get_entry['groupid'];
+            $roleId     = $row_get_entry['roleid'];
             $surveyid   = $row_get_entry['surveyid'];
             $cby        = $row_get_entry['cby'];
 
@@ -117,6 +122,28 @@ $data =array();
                 }
                 $survey_data[$grpId][$cby] = $average_value;
             }
+            else if($survey_type=='role'){
+                $title = 'Role';
+                $count = array();
+                record_set("get_question","select * from answers where roleid=$roleId and cby=$cby");
+                $total_answer = 0;
+                $i=0;
+                $total_result_val = 0;
+                while($row_get_question= mysqli_fetch_assoc($get_question)){
+                    $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_question['questionid']);
+                    if($result_question){
+                        if(!in_array($result_question['answer_type'],array(2,3,5))){
+                        $i++;
+                            $total_answer += $row_get_question['answerval'];
+                        }
+                    }
+                }
+                $average_value = ($total_answer/($i*100))*100;
+                if($total_answer==0 and $total_result_val==0){
+                    $average_value=100;
+                }
+                $survey_data[$roleId][$cby] = $average_value;
+            }
         }
     }
 // get previous week data
@@ -135,6 +162,7 @@ if($totalRows_get_entry_lastweek){
         $locId      = $row_get_entry_lastweek['locationid'];
         $depId      = $row_get_entry_lastweek['departmentid'];
         $grpId      = $row_get_entry_lastweek['groupid'];
+        $roleId      = $row_get_entry_lastweek['roleid'];
         $surveyid   = $row_get_entry_lastweek['surveyid'];
         $cby        = $row_get_entry_lastweek['cby'];
         if($survey_type=='location'){
@@ -169,6 +197,17 @@ if($totalRows_get_entry_lastweek){
             }
             $average_value = ($total_answer/($totalRows_get_question*100))*100;
             $survey_data_lastweek[$grpId][$cby]['current'] = $average_value;
+        }
+        else if($survey_type=='role'){
+            $title = 'Role';
+            $count = array();
+            record_set("get_question","select * from answers where roleid=$roleId and cby=$cby");
+            $total_answer = 0;
+            while($row_get_question= mysqli_fetch_assoc($get_question)){
+                $total_answer += $row_get_question['answerval'];
+            }
+            $average_value = ($total_answer/($totalRows_get_question*100))*100;
+            $survey_data_lastweek[$roleId][$cby]['current'] = $average_value;
         }
     }
 }
@@ -215,6 +254,10 @@ if(count($current_data)>0){
             else if($survey_type=='department'){
                 $title = 'Department';
                 $titleName = getDepartment()[$datasurvey['id']];
+            }
+            else if($survey_type=='role'){
+                $title = 'Role';
+                $titleName = getRole()[$datasurvey['id']];
             }
             //compare value
             // if($last_week_data[$key]){

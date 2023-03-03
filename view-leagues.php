@@ -81,7 +81,7 @@
                         </div>
                         <hr style="border: 2px solid #6c757d36;">
                         <div class="row" style="margin-bottom: 21px;">
-                            <div class="col-md-12" style="margin-left:10% ;">
+                            <div class="col-md-12">
                                 <div class="col-md-3">
                                     <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
                                 </div>
@@ -90,6 +90,9 @@
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" data-type="role" class="btn btn-outline-secondary graph-btn" >Role</button>
                                 </div>
                             </div>
                         </div>

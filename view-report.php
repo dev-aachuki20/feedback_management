@@ -1,8 +1,9 @@
 <?php 
 // get data by user
 $page_type = $_GET['type'];
-$departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
+$departmentByUsers = get_filter_data_by_user('departments');
+$roleByUsers       = get_filter_data_by_user('roles');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($page_type,1);
 
@@ -11,15 +12,22 @@ $assign_department = array();
 foreach($departmentByUsers as $department){
     $assign_department[] = $department['id'];
 }
+
 $assign_location = array();
 foreach($locationByUsers as $location){
     $assign_location[] = $location['id'];
 }
-$assign_group = array();
 
+$assign_group = array();
 foreach($groupByUsers as $group){
     $assign_group[] = $group['id'];
 }
+
+$assign_role = array();
+foreach($roleByUsers as $role){
+    $assign_role[] = $role['id'];
+}
+
 $assign_survey = array();
 foreach($surveyByUsers as $survey){
     $assign_survey[] = $survey['id'];
@@ -29,6 +37,7 @@ $dep_ids     = implode(',',$assign_department);
 $loc_ids     = implode(',',$assign_location);
 $grp_ids     = implode(',',$assign_group);
 $surveys_ids = implode(',',$assign_survey);
+$role_ids = implode(',',$assign_role);
 ?>
 <style>
     .d-none{
@@ -204,6 +213,20 @@ $surveys_ids = implode(',',$assign_survey);
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
+                            <label>Role</label>
+                            <select name="roleid" id="roleid" class="form-control form-control-lg role">
+                                <option value="">Select</option>
+                                <?php
+                                    foreach($roleByUsers as $roleData){ 
+                                    $roleId     = $roleData['id'];
+                                    $roleName   = $roleData['name'];?>
+                                    <option value="<?php echo $roleId;?>"><?php echo $roleName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
                             <label>Contact</label>
                             <select name="contacted" id="contacted" class="form-control form-control-lg contact">
                                 <option value="3">All</option>
@@ -272,9 +295,9 @@ $surveys_ids = implode(',',$assign_survey);
         let surveys     = $('.surveys').val();
         let group       = $('.group').val();
         let locationid  = $('.locationid').val();
+        let roleid      = $('.role').val();
         let departmentid  = $('.department').val();
         let contacted   = $('.contact').val();
-
 
         //add data in hidden field of my task form
         $('#hidden_survey_id').val(surveys);
@@ -293,9 +316,9 @@ $surveys_ids = implode(',',$assign_survey);
             $('.error').hide();
         }
         // this is the id of the form
-        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted,my_task);
+        ajax_request(start_data,end_date,surveys,group,locationid,departmentid,roleid,contacted,my_task);
     });
-    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted,my_task=''){
+    function ajax_request(start_data,end_date,surveys,group,locationid,departmentid,roleid,contacted,my_task=''){
         var dataTable = $('#datatable-ajax').DataTable({
             "processing": true,
             "serverSide": true,
@@ -310,6 +333,7 @@ $surveys_ids = implode(',',$assign_survey);
                     groupid:group,
                     locationid:locationid, 
                     departmentid:departmentid,
+                    roleid:roleid,
                     contact:contacted,
                     my_task:my_task,
                 },

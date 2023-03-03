@@ -25,6 +25,14 @@
         <li class="treeview <?php if(in_array($_GET['page'],$configuration) and (!isset($_GET['type']))){ echo 'active';} ?>">
             <a href="#"><i class="fa fa-solid fa-gear"></i> <span>CONFIGURATION</span> <i class="fa fa-angle-left pull-right"></i> </a>
             <ul class="treeview-menu">
+                <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-role','manage-role'))?>">
+                    <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>ROLES</span> <i class="fa fa-angle-left pull-right"></i> </a> 
+                    <ul class="treeview-menu timeline-area child">
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-role')?>"><a href="?page=add-role" class="nav-link"> <i class=""></i> <span>ADD ROLE</span></a> </li>
+                        <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'manage-role')?>"><a href="?page=manage-role" class="nav-link"> <i class=""></i> <span>VIEW ROLES</span></a> </li>
+                    </ul>
+                </li>
+
                 <li class="treeview <?=make_sidebar_active($_GET['page'],array('add-department','manage-department'))?>">
                     <a href="#" class="nav-link "> <i class="fa fa-th-large"></i> <span>DEPARTMENTS</span> <i class="fa fa-angle-left pull-right"></i> </a> 
                     <ul class="treeview-menu timeline-area child">

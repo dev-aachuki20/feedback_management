@@ -42,6 +42,7 @@ if(isset($_POST['submit'])){
 	$locationid		= $_POST['locationid'];
 	$departmentid	= $_POST['departmentid'];
 	$groupid		= $_POST['groupid'];
+	$roleid			= $_POST['roleid'];
 	$questionid		= array_unique($_POST['questionid']);
 
 	// echo '<pre>';
@@ -87,6 +88,8 @@ if(isset($_POST['submit'])){
 
 					"departmentid"=> $departmentid,
 
+					"roleid"	  => $roleid,
+
 					"questionid"=> $key,
 
 					"answerid" => $ansttxtvaluearray[0],
@@ -120,29 +123,31 @@ if(isset($_POST['submit'])){
 			}
 			$data = array(
 
-				"locationid"=> $locationid,
+				"locationid"	=> $locationid,
 
-				"groupid"=> $groupid,
+				"groupid"		=> $groupid,
 
-				"departmentid"=> $departmentid,
+				"departmentid"	=> $departmentid,
 
-				"questionid"=> $questionid,
+				"roleid"	  	=> $roleid,
 
-				"answerid" => $ansid,
+				"questionid"	=> $questionid,
 
-				"surveyid"=>$surveyid,
+				"answerid" 		=> $ansid,
 
-				"answertext" => $ansttxt,
+				"surveyid"		=>	$surveyid,
 
-				"answerval" => $answerval,
+				"answertext" 	=> $ansttxt,
 
-				"cstatus" => "1",
+				"answerval" 	=> $answerval,
 
-				'cip'=>ipAddress(),
+				"cstatus" 		=> "1",
 
-				'cby'=>$_SESSION['maxid'],
+				'cip'			=>	ipAddress(),
 
-				'cdate'=>date("Y-m-d H:i:s")
+				'cby'			=>	$_SESSION['maxid'],
+
+				'cdate'			=>	date("Y-m-d H:i:s")
 
 			);
 
@@ -168,6 +173,8 @@ if(isset($_POST['submit'])){
 			"groupid"=> $groupid,
 
 			"departmentid"=> $departmentid,
+
+			"roleid"	  => $roleid,
 
 			"questionid"=> 0,
 
@@ -876,7 +883,46 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									?>
 									<!-- End Department -->
 
-									
+									<!-- Start Roles -->
+									<?php 
+										if(!empty($row_get_survey['roles'])){
+											record_set("get_role", "select * from roles where id in(".$row_get_survey['roles'].") AND cstatus=1 and id != 4");				
+											record_set("get_department", "select * from departments where id in(".$row_get_survey['departments'].") AND id != 4 AND cstatus=1 order by name asc");
+
+											if($totalRows_get_role == 1){
+												while($row_get_role = mysqli_fetch_assoc($get_role)){
+													echo '<input type="hidden" name="roleid" value="'.$row_get_role['id'].'">';
+												}
+											}else{
+												echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
+												<div class="col-md-6">
+
+													<div class="form-group">
+
+														<label for="roleid">Role</label>
+
+														<select name="roleid" id="roleid" class="form-control form-control-lg" required>
+															<option value="">Please select</option>
+															<?php
+
+																while($row_get_role = mysqli_fetch_assoc($get_role)){	
+
+															?>
+
+																<option value="<?php echo $row_get_role['id'];?>"><?php echo $row_get_role['name'];?></option>
+
+															<?php } ?>
+
+														</select>
+
+													</div>
+
+												</div>
+												<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';
+											} 
+										}
+									?>
+									<!-- End Roles -->
 
 								</div>
 

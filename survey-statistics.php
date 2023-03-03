@@ -66,17 +66,20 @@ p {
     <div class="box">
         <div class="box-body">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2 statics-tab">
                     <button type="button" class="btn btn-outline-secondary graph-btn active" data-type="survey">Survey</button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2 statics-tab">
                     <button type="button" class="btn btn-outline-secondary graph-btn" data-type="group">Group</button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2 statics-tab">
                     <button type="button" class="btn btn-outline-secondary graph-btn" data-type="location">Location</button>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2 statics-tab">
                     <button type="button" data-type="department" class="btn btn-outline-secondary graph-btn" >Department</button>
+                </div>
+                <div class="col-md-2 statics-tab">
+                    <button type="button" data-type="role" class="btn btn-outline-secondary graph-btn" >Role</button>
                 </div>
             </div>
             <div class="row filter_form">
@@ -87,59 +90,59 @@ p {
                 </div>
                 <div class="box-body">
                     <div class="center-block">
-                    <div class="row">
-                        <!-- <form action="" method="POST" id="viewReportcsv"> -->
-                            <div class="col-md-3">
-                                <input type="hidden" name="data_type" class="data_type" value="survey">
-                                <div class="form-group">
-                                    <label>Start Date</label>
-                                    <input type="date" name="fdate" class="form-control start_data" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
+                        <div class="row">
+                            <!-- <form action="" method="POST" id="viewReportcsv"> -->
+                                <div class="col-md-3">
+                                    <input type="hidden" name="data_type" class="data_type" value="survey">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="date" name="fdate" class="form-control start_data" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php //echo date('Y-m-d', strtotime('-1 months')); ?>"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3 ">
-                                <div class="form-group">
-                                    <label>End Date</label>
-                                    <input type="date" name="sdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
+                                <div class="col-md-3 ">
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <input type="date" name="sdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3 ajaxData" style="display: none;">
-                            <span>This Field is required</span>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>&nbsp;</label>
-                                    <input type="button" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                                <div class="col-md-3 ajaxData" style="display: none;">
+                                <span>This Field is required</span>
                                 </div>
-                            </div>
-                        <!-- </form>     -->
-                    </div>
-                    <div class="row" style="text-align: center;">
-                        <div class="col-md-2 custum-btn">
-                            <button type="button" class="btn btn-success btn-big btn-green large-btn schedule_btn" data-type="schedule">SCHEDULE NOW</button>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <input type="button" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                                    </div>
+                                </div>
+                            <!-- </form>     -->
                         </div>
-                        <div class="col-md-2 custum-btn">
-                            <a href="?page=view-schedule-report&type=<?=$_GET['type']?>">
-                                <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
-                            </a>
+                        <div class="row" style="text-align: center;">
+                            <div class="col-md-2 custum-btn">
+                                <button type="button" class="btn btn-success btn-big btn-green large-btn schedule_btn" data-type="schedule">SCHEDULE NOW</button>
+                            </div>
+                            <div class="col-md-2 custum-btn">
+                                <a href="?page=view-schedule-report&type=<?=$_GET['type']?>">
+                                    <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
+                                </a>
+                            </div>
+                            <div class="col-md-4"style="width: 33.33333333%" >
+                                <form action="" id="document_form" method="post">
+                                    <input type="hidden" name="survey" id="survey_id" value="">
+                                    <input type="hidden" name="sdate"  id="start_date" value="">
+                                    <input type="hidden" name="edate"  id="end_date" value="">
+                                    <input type="hidden" name="data_type" id="survey_data_type" value="">
+                                    <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
+                                    <div class="row">
+                                    <div class="col-md-6 custum-btn">
+                                        <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">VIEW PDF</button>
+                                    </div>
+                                    <div class="col-md-6 custum-btn">
+                                        <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">DOWNLOAD CSV</button>
+                                    </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <div class="col-md-4"style="width: 33.33333333%" >
-                            <form action="" id="document_form" method="post">
-                                <input type="hidden" name="survey" id="survey_id" value="">
-                                <input type="hidden" name="sdate"  id="start_date" value="">
-                                <input type="hidden" name="edate"  id="end_date" value="">
-                                <input type="hidden" name="data_type" id="survey_data_type" value="">
-                                <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
-                                <div class="row">
-                                <div class="col-md-6 custum-btn">
-                                    <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">VIEW PDF</button>
-                                </div>
-                                <div class="col-md-6 custum-btn">
-                                    <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">DOWNLOAD CSV</button>
-                                </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                     </div>
                     <hr style="border: 2px solid #6c757d36;">
                     <div class="row">
@@ -204,7 +207,6 @@ p {
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
@@ -505,7 +507,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     })
     $(".chartjs-render-monitor").css("height", height);
-    $('.col-md-4').attr('class', 'col-md-3');
+    $('.col-md-4').attr('class', 'col-md-3 ');
     $('.pdf-head').hide();
 }
 </script>

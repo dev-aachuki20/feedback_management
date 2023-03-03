@@ -11,6 +11,7 @@ $type = $_GET['type'];
 // get data by user
 $surveyByUsers      = get_survey_data_by_user($_GET['type'],1);
 $departmentByUsers  = get_filter_data_by_user('departments');
+$roleByUsers        = get_filter_data_by_user('roles');
 $locationByUsers    = get_filter_data_by_user('locations');
 $groupByUsers       = get_filter_data_by_user('groups');
 // assign task to user
@@ -102,6 +103,18 @@ if(isset($_POST['assign'])){
             }else{
                 $query .= " and departmentid = '".$_POST['hidden_department_id']."' ";
             }
+        }
+    }
+    if(!empty($_POST['roleid'])){
+        if($_POST['roleid'] == 4){
+            record_set("get_all_role","select id from roles where cstatus=1");	
+            $all_roles = array();
+            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
+                $all_roles[] = $row_get_all_role['id'];
+            }
+            $query .= " and roleid in (".implode(',',$all_roles).")";
+        }else{
+            $query .= " and roleid = '".$_POST['roleid']."'";
         }
     }
     if(!empty($_POST['locationid'])){
@@ -259,6 +272,20 @@ if(isset($_POST['assign'])){
                                         $departmentName   = $departmentData['name'];?>
                                         <option value="<?php echo $departmentId;?>" <?=($_POST['departmentid']==$departmentId)?'selected':''?>><?php echo $departmentName;?></option>
                                     <?php }?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Role</label>
+                                <select name="roleid" id="roleid" class="form-control form-control-lg role">
+                                    <option value="">Select</option>
+                                    <?php
+                                        foreach($roleByUsers as $roleData){ 
+                                        $roleId     = $roleData['id'];
+                                        $roleName   = $roleData['name'];?>
+                                        <option value="<?php echo $roleId;?>" <?=($_POST['roleid']==$roleId)?'selected':''?>><?php echo $roleName;?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                         </div>

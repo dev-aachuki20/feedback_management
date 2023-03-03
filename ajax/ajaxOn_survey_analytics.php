@@ -17,6 +17,10 @@ else if($_POST['survey_type']=='department'){
     $query = " and departmentid in (select id from departments where cstatus=1)";
     $groupBy = 'departmentid';
 }
+else if($_POST['survey_type']=='role'){
+    $query = " and roleid in (select id from roles where cstatus=1)";
+    $groupBy = 'roleid';
+}
 
 if(!empty($_POST['fdate']) and !empty($_POST['fdate'])){
     $query .= " and  cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
@@ -32,6 +36,7 @@ if($totalRows_get_entry){
     while($row_get_entry = mysqli_fetch_assoc($get_entry)){
         $locId      = $row_get_entry['locationid'];
         $depId      = $row_get_entry['departmentid'];
+        $roleId     = $row_get_entry['roleid'];
         $grpId      = $row_get_entry['groupid'];
         $cby        = $row_get_entry['cby'];
         
@@ -76,6 +81,27 @@ if($totalRows_get_entry){
                 $average_value=100;
             }
             $survey_data[$depId][$cby] = $average_value;
+        }
+        else if($_POST['survey_type']=='role'){
+            $count = array();
+            record_set("get_question","select * from answers where roleid=$roleId and cby=$cby");
+            $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
+            while($row_get_question= mysqli_fetch_assoc($get_question)){
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and  id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
+            }
+            $average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
+            $survey_data[$roleId][$cby] = $average_value;
         }
         else if($_POST['survey_type']=='group'){
             $count = array();
@@ -150,7 +176,7 @@ if(count($survey_data)>0){
     $html ='<table class="table">
     <thead class="thead-dark">
     <tr>
-        <th scope="col" style="text-align: center;">Location Name</th>
+        <th scope="col" style="text-align: center;">'.ucfirst($_POST['survey_type']).' Name</th>
         <th scope="col" style="text-align: center;">Total Surveys</th>
         <th scope="col" style="text-align: center;">Average Score</th>
     </tr>
@@ -162,6 +188,7 @@ array_multisort($key_values, SORT_DESC, $current_data);
     foreach($survey_data as $key =>$datasurvey){ 
         $total=  array_sum($datasurvey)/count($datasurvey);
         $total =  round($total, 2);
+
         if($_POST['survey_type']=='location'){
             $titleName = getLocation()[$key];
         }
@@ -170,6 +197,9 @@ array_multisort($key_values, SORT_DESC, $current_data);
         }
         else if($_POST['survey_type']=='department'){
             $titleName = getDepartment()[$key];
+        }
+        else if($_POST['survey_type']=='role'){
+            $titleName = getRole()[$key];
         }
         $graph_data[$titleName] = $total;
        $html.= '

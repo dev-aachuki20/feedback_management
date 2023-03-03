@@ -44,7 +44,18 @@ function getSurvey(){
 	}
 	return $arr;
 }
-
+function getRole($status = null){
+	$arr = array();
+	$filter = '';
+	if($status != 'all'){
+      $filter = "where cstatus=1";
+	}
+	$role_data = getaxecuteQuery_fn("select id,name from roles $filter order by name ASC ");
+	foreach ($role_data as $val) {
+		$arr[$val['id']] = $val['name'];
+	}
+	return $arr;
+}
 function getAdmin($id=null){
 	$arr = array();
 	$filter ='';
@@ -176,6 +187,8 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 		$type ='group';
 	}else if($table == 'surveys'){
 		$type ='survey';
+	}else {
+		$type = $table;
 	}
 	
 	$relation_data = getaxecuteQuery_fn("select * from relation_table where user_id = ".$_SESSION['user_id']." and table_name = '$type'");

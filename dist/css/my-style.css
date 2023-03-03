@@ -459,7 +459,9 @@ h4{margin-bottom:1px;font-size:16px;}
 .center-block .btn-big{ 
     width: 100%;
 }
-
+.statics-tab{
+    width: 20%;
+}
 
 @media (max-width:991px){
     .center-block .row{

@@ -15,13 +15,15 @@ if(!empty($_GET['id'])) {
 }
 
 if($_POST['update']){
+    $role_id = implode(",",$_POST['role']);
     $dataCol =  array(
-        "name"        => $_POST['name'],
+        "name"    => $_POST['name'],
+        "role_id" => $role_id,
         // "email"       => $_POST['email'],
     );
     //if status is readonly than it will not update
     $dataStatus = array(
-      "cstatus"=> $_POST['status']
+      "cstatus"=> $_POST['status'],
     );
     if($disabled === 'disabled'){
       $data = $dataCol;
@@ -42,10 +44,12 @@ if($_POST['update']){
 
   //Start insert
 	  if(!empty($_POST['submit'])){
+      $role_id = implode(",",$_POST['role']);
 			$dataCol =  array(
         "name"        => $_POST['name'],
         //"email"       => $_POST['email'],
         "cstatus"     => $_POST['status'],
+        "role_id"     => $role_id,
         'cip'         => ipAddress(),
         'cby'         => $_SESSION['user_id'],
         'cdate'       => date("Y-m-d H:i:s")
@@ -60,6 +64,8 @@ if($_POST['update']){
         }
 		}
     // End Insert
+    // get department by user
+    $roleByUsers = get_filter_data_by_user('roles'); 
 ?>
 <section class="content-header">
   <h1> <?=isset($_GET['id']) ? 'EDIT DEPARTMENT':'ADD DEPARTMENT'?></h1>
@@ -91,6 +97,33 @@ if($_POST['update']){
               </select>
             </div>
           </div>
+          <!-- Role start -->        
+            <div class="col-md-12 with-border">
+                <h4>Role</h4>
+                <input type="checkbox" onclick="checked_all(this,'roleCheckbox')" /><strong>Select All</strong><br /> <br />
+            </div>
+            <div class="col-md-12 with-border" style="padding:0px ;">
+                <?php
+                if(($_GET['id'])){
+                    $role_ids = explode(',',$row_get_departments_id['role_id']);
+                }else{
+                    $role_ids = array();
+                }
+                
+                foreach($roleByUsers as $roleData){ 
+                $roleId   = $roleData['id'];
+                $roleName = $roleData['name'];
+                ?>
+                <div class="col-md-4">
+                    <input type="checkbox" <?=(in_array($roleId,$role_ids) ? 'checked ':' ')?> id="role_id_<?php echo $key ?>" value="<?php echo $roleId; ?>" class="roleCheckbox" name="role[<?php echo $roleId; ?>]" /> 
+                    
+                    <label for="role_id_<?php echo $roleId; ?>">
+                    <?php echo $roleName ?>
+                    </label>
+                </div>
+                <?php } ?>
+            </div> 
+          <!-- Role end -->   
             <!-- assign user start --> 
              <?php include ('./assign_users.php');?>
             <!-- assign user end -->    

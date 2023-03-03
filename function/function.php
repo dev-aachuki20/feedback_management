@@ -860,7 +860,11 @@ function export_csv_file($data,$type,$survey_name){
 		}
 		else if($type == 'department'){
 			$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
-		}else {
+		}
+		else if($type == 'role'){
+			$excel_data[$i]['Role_Name'] = getRole('all')[$key];
+		}
+		else {
 			$excel_data[$i]['Survey_id']	= $key;
 			$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
 		}

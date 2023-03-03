@@ -1,6 +1,7 @@
 <?php 
   // get data by user
   $departmentByUsers = get_filter_data_by_user('departments');
+  $roleByUsers        = get_filter_data_by_user('roles');
   $locationByUsers   = get_filter_data_by_user('locations');
   $groupByUsers      = get_filter_data_by_user('groups');
   $surveyByUsers     = get_survey_data_by_user($_GET['type']);
@@ -44,6 +45,23 @@ if(!empty($requestData['survey_name'])){
                 $filterQuery .= " and answers.departmentid = '".$requestData['departmentid']."'";
             }
         }
+    }
+
+    // filter by roleid
+    if(isset($requestData['roleid']) && $requestData['roleid'] != ''){
+      if($requestData['roleid'] == 4){
+          if(!empty($filterQuery)){
+              $filterQuery .= " and answers.roleid in (select id from groups where cstatus=1)";    
+          }else{
+              $filterQuery .= " and answers.roleid in (select id from groups where cstatus=1)"; 
+          }
+      }else{
+          if(!empty($filterQuery)){  
+              $filterQuery .= " and answers.roleid = '".$requestData['roleid']."'";   
+          }else{
+              $filterQuery .= " and answers.roleid = '".$requestData['roleid']."'";
+          }
+      }
     }
 
     // filter by groupid
@@ -267,6 +285,20 @@ if(!empty($requestData['survey_name'])){
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
+                            <label>Role</label>
+                            <select name="roleid" id="roleid" class="form-control form-control-lg role">
+                                <option value="">Select</option>
+                                <?php
+                                    foreach($roleByUsers as $roleData){ 
+                                    $roleId     = $roleData['id'];
+                                    $roleName   = $roleData['name'];?>
+                                    <option value="<?php echo $roleId;?>" <?=($_POST['roleid']==$roleId) ? 'selected' :''?>><?php echo $roleName;?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
                             <label>Start Date</label>
                             <input type="date" name="fdate" class="form-control start_data" value="<?php echo(isset ($_POST['fdate'])) ? $_POST['fdate']: ''; ?>"/>
                         </div>
@@ -381,15 +413,15 @@ if(!empty($requestData['survey_name'])){
                                             $i++;
                                         }
                                     }
-                                if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+                                  if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                     $to_bo_contacted = 1;
                                     $contactedCount++;
-                                    }
+                                  }
                                 }
                                 //echo $achieved_result_val.' : '.$total_result_val;
                                 $result_response += $achieved_result_val*100/$total_result_val;
                                 $count++;
-                                }
+                            }
                         
                             $result_response_value = $result_response/$count;
                             if(is_nan($result_response_value)){

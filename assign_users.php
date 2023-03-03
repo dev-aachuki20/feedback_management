@@ -21,6 +21,8 @@
             $table_name = 'location';
         }else if($_GET['page'] == 'add-group'){
             $table_name = 'group';
+        }else if($_GET['page'] == 'add-role'){
+            $table_name = 'role';
         } 
         //if inserted department location group
         if($table_id){

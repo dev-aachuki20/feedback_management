@@ -16,6 +16,10 @@ else if($_POST['data_type']=='department'){
     $query = " and surveyid =".$_POST['survey']." and departmentid in (select id from departments where cstatus=1)";
     $groupBy = 'departmentid';
 }
+else if($_POST['data_type']=='role'){
+    $query = " and surveyid =".$_POST['survey']." and roleid in (select id from departments where cstatus=1)";
+    $groupBy = 'roleid';
+}
 else {
     $survey_allow = get_allowed_survey($_POST['survey_type']);
     $survey_allow_id = implode(',',array_keys($survey_allow));
@@ -44,6 +48,7 @@ if($totalRows_get_entry){
         $locId      = $row_get_entry['locationid'];
         $depId      = $row_get_entry['departmentid'];
         $grpId      = $row_get_entry['groupid'];
+        $roleId      = $row_get_entry['roleid'];
         $surveyid   = $row_get_entry['surveyid'];
         $cby        = $row_get_entry['cby'];
         
@@ -124,6 +129,31 @@ if($totalRows_get_entry){
             }
             $survey_data[$grpId]['data'][$cby] = $average_value;
         }
+        else if($_POST['data_type']=='role'){
+            $count = array();
+            record_set("get_question","select * from answers where roleid=$roleId and cby=$cby");
+            $total_answer = 0;
+            $i=0;
+            $total_result_val = 0;
+            while($row_get_question= mysqli_fetch_assoc($get_question)){
+                $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_question['questionid']);
+                if($result_question){
+                    if(!in_array($result_question['answer_type'],array(2,3,5))){
+                       $i++;
+                        $total_answer += $row_get_question['answerval'];
+                    }
+                }
+                if($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100){
+                    //$to_bo_contacted += 1;
+                    $survey_data[$roleId]['contact'] += 1;
+                }
+            }
+            $average_value = ($total_answer/($i*100))*100;
+            if($total_answer==0 and $total_result_val==0){
+                $average_value=100;
+            }
+            $survey_data[$roleId]['data'][$cby] = $average_value;
+        }
         else {
             $count = array();
             record_set("get_question","select * from answers where surveyid=$surveyid and cby=$cby");
@@ -184,6 +214,10 @@ if(count($survey_data)>0){
         else if($_POST['data_type']=='department'){
             $titleId = '';
             $titleName = getDepartment('all')[$key];
+        }
+        else if($_POST['data_type']=='role'){
+            $titleId = '';
+            $titleName = getRole('all')[$key];
         }
         else {
             $titleId ='Survey ID: '.$key;

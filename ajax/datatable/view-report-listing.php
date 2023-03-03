@@ -32,6 +32,19 @@ if(!empty($_POST['surveys'])){
         }
     }
 
+    if(!empty($_POST['roleid'])){
+        if($_POST['roleid'] == 4){
+            record_set("get_all_role","select id from roles where cstatus=1");	
+            $all_roles = array();
+            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
+                $all_roles[] = $row_get_all_role['id'];
+            }
+            $query .= " and roleid in (".implode(',',$all_roles).")";
+        }else{
+            $query .= " and roleid = '".$_POST['roleid']."'";
+        }
+    }
+
     if(!empty($_POST['locationid'])){
         if($_POST['locationid'] == 4){
             $query .= " and locationid in (select id from locations where cstatus=1)";  

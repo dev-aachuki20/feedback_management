@@ -121,7 +121,26 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'location'){
   }
   echo $html; die();
 }
+if(isset($_POST['mode']) and $_POST['mode'] == 'department'){
+  $department_ids = $_POST['id'];
+  $department_ids = implode(',',$department_ids);
 
+  record_set("department_data", "select id,name,role_id from departments where id IN ($department_ids) order by name ASC");
+  $roleId = array();
+  $html = '';
+  while($row_get_department   = mysqli_fetch_assoc($department_data)){
+      $role_id          = $row_get_department['role_id'];
+      $role_id_explode  = explode(',',$role_id);
+      
+      foreach($role_id_explode as $role){
+        if(!in_array($role ,$roleId)){
+          $html .='<option value="'.$role.'">'.getRole()[$role].'</option>';
+        }
+        $roleId[$dept] = $role;
+      }
+  }
+  echo $html; die();
+}
 if(isset($_POST['mode']) and $_POST['mode'] == 'load_group'){
   $survey_ids = $_POST['id'];
   // implode if current page is not create report
