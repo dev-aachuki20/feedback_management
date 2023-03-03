@@ -229,7 +229,7 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'add_user_location_assign'){
   record_set("department_data", "select id,name,department_id from locations where id IN ($location_ids) order by name ASC");
   $departmentId = array();
   $html = '<div class="col-md-12 with-border">
-  <h4>Assign Deprtment</h4>
+  <h4>Assign Department</h4>
   <input type="checkbox" class="dept_checkbox_all" /><strong> Select All</strong><br/><br/>
   </div>';
   while($row_get_department   = mysqli_fetch_assoc($department_data)){
