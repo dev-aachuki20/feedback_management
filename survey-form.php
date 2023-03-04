@@ -263,8 +263,15 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['ifrequired'] = $row_get_questions['ifrequired'];
 
+	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['conditional_logic'] = $row_get_questions['conditional_logic'];
+
+	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['conditional_answer'] = $row_get_questions['conditional_answer'];
+
+	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['skip_to_question_id'] = $row_get_questions['skip_to_question_id'];
+
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
-} 			
+} 	
+	
 ?>
 <!DOCTYPE HTML>
 
@@ -931,164 +938,144 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	                        	<?php 
 
 	                        	$eachindex = 0;
+
 	                        	foreach($questions[$key] AS $question){
+	                        	  $questionid = $question['id'];  ?>
 
-	                        	$questionid = $question['id']; 
-
-	                        	?>
-
-	                        	<div class="question_container_<?php echo $questionid; ?>">
-
-	                        	<h4><?php echo $question['question'];?><?php if($question['ifrequired']==1){ ?>  <?php } ?></h4>
+	                        	<div class="question-div question_container_<?php echo $questionid; ?>">
+								<div class="col-md-12">
+								  <h4><?php echo $question['question'];?><?php if($question['ifrequired']==1){ ?>  <?php } ?></h4>
+								</div>	
+	                        	
 
 	                        	<!-- When Answer Type 1 -->
-
 	                        	<?php 
-
 									if($question['answer_type'] == 1){  
 
 									//get Questions
 
 									record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus='1'");
 
-
-
 									//get Questions
-
 									record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 
-									if($totalRows_get_child_questions>0){
+									if($totalRows_get_child_questions>0){ ?>
+										<table class="table table-hover table-bordered">
 
-									?>
+											<tbody>
 
-									<table class="table table-hover table-bordered">
-
-										<tbody>
-
-											<tr align="center">
-
-											<?php
-
-											$child_answer = array();
-
-											$sub_answer = array();
-
-											$tdloop = 0;
-
-											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ $tdloop++; ?>
-
-												<td>
+												<tr align="center">
 
 												<?php
 
-												$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
-												echo $row_get_questions_detail['description'];?>	
-												</td>
+												$child_answer = array();
+
+												$sub_answer = array();
+
+												$tdloop = 0;
+
+												while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ $tdloop++; ?>
+
+													<td>
+
+													<?php
+
+													$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
+													echo $row_get_questions_detail['description'];?>	
+													</td>
+												<?php } ?>
+
+												</tr>
+
+											<?php while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
+
+											<tr>
+												<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
+											</tr>
+											<tr align="center">
+											<?php 
+											if($row_get_child_questions['parendit'] == 0){
+											record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
+
+											if($totalRows_get_answer_detail>0){
+
+												echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
+
+												while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
+													// echo $row_get_answer_detail['description'];
+													$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
+												}
+
+											?>
+
+											<?php
+
+												foreach($sub_answer as $key=>$child_answer_option){
+
+											?>
+
+
+
+											<td colspan="<?php echo count($sub_answer); ?>"><input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" 
+											value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
+											> <?php echo $child_answer_option; ?></td>
+
+
+
+											<?php
+
+												}
+
+											}
+
+
+
+											}else{
+
+
+
+											?>
+
+											<?php
+
+											foreach($child_answer as $key=>$child_answer_option){ ?>
+
+											<td><input type="radio" class="form-check-input" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"></td>
+
+
+
+											<?php } ?>
+
+
+
 											<?php } ?>
 
 											</tr>
 
-										<?php while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
+											<?php } ?>
 
-										<tr>
-											<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
-										</tr>
-										<tr align="center">
+											</tbody>
+
+										</table>
 										<?php 
-										if($row_get_child_questions['parendit'] == 0){
-										record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-										if($totalRows_get_answer_detail>0){
-
-											echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
-
-											while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
-												// echo $row_get_answer_detail['description'];
-												$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
-											}
-
-										?>
-
-										<?php
-
-											foreach($sub_answer as $key=>$child_answer_option){
-
-										?>
-
-
-
-										<td colspan="<?php echo count($sub_answer); ?>"><input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"> <?php echo $child_answer_option; ?></td>
-
-
-
-										<?php
-
-											}
-
-										}
-
-
-
-										}else{
-
-
-
-										?>
-
-										<?php
-
-										foreach($child_answer as $key=>$child_answer_option){ ?>
-
-										<td><input type="radio" class="form-check-input" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"></td>
-
-
-
-										<?php } ?>
-
-
-
-										<?php } ?>
-
-										</tr>
-
-										<?php } ?>
-
-										</tbody>
-
-									</table>
-
-
-
-									<?php 
-
 									}else {
-
 										while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-										$langRadioAnsVal= $row_get_questions_detail['description'];		
-									?>
-
-									<div class="form-check">
-
-									<label class="form-check-label">
-
-										<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>">
-
-										<?php echo $row_get_questions_detail['description'];?> 
-
-									</label>
-
-									</div>
-
-
-
-									<?php }?>
-
+										$langRadioAnsVal= $row_get_questions_detail['description'];	?>
+										<div class="form-check col-md-2">
+											<label class="form-check-label">
+												<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
+												data-condlogic="<?php echo $question['conditional_logic'];?>"
+												data-condans="<?php echo $question['conditional_answer'];?>"
+												data-skiptoquestion="<?php echo $question['skip_to_question_id'];?>"
+												>
+												<?php echo $row_get_questions_detail['description'];?> 
+											</label>
+										</div>
+									<?php } ?>
 									<?php } ?>	
 
 									<span class="viewQuestion<?php echo $questionid;?>"></span>
-
 									<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-
 								<?php } ?>
 
 	                        	<!-- End Answer Type 1 -->
@@ -1462,8 +1449,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                                 </ul>
 
                             <?php }else{ ?>
-
-                            <input type="submit" name="submit" class="default-btn submitform" id="submit" value="Submit">	
+								<div class="col-md-12">
+								<input type="submit" name="submit" class="default-btn submitform" id="submit" value="Submit">
+								</div>
 
                             <?php } ?>
 
@@ -1792,49 +1780,57 @@ $(document).ready(function() {
 
 
 $('.subque').change(function(){
-
 	if($(this).is(':checked')){
-
 		var view_question_id = $(this).data('questionid');
-
 		var questionDetailId =$(this).val();
-
 		var surveyId = <?php echo $surveyid;?>;
-
 		var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
-
 		//var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
+		var skiptoquestion = $(this).data('skiptoquestion');
+		var condans = $(this).data('condans');
+		var condlogic = $(this).data('condlogic');
+		let min_id = view_question_id;
+		let max_id = skiptoquestion;
+		if(min_id>max_id){
+			min_id = max_id;
+			max_id = view_question_id;
+		}
+		let counter = max_id-min_id;
+		console.log(min_id,max_id,counter);
+		for(let i = min_id; i<=max_id; i++){
+			$(".question_container_"+i).find('input').prop('required',false);
+		}
+		// old conditional Question
 
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
+		// 	data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
+		// 	success: function(response)
+		// 	{
+		// 		if (response != '') {
+		// 			$('.viewQuestion'+view_question_id).html(response);
+		// 		}else{
+		// 			$('.viewQuestion'+view_question_id).html('');
+		// 		}
+		// 	}
+		// });
+			console.log(questionDetailId,surveyId,parentqueid);
 		$.ajax({
-
 			type: "POST",
-
 			url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
-
 			data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
-
 			success: function(response)
-
 			{
-
-				if (response != '') {
-
+				if (answeridanswerid != '') {
 					$('.viewQuestion'+view_question_id).html(response);
-
 				}else{
-
 					$('.viewQuestion'+view_question_id).html('');
-
 				}
-
 			}
-
 		});
 
-
-
 	}
-
 });
 
 
@@ -1868,17 +1864,10 @@ $('.subque_select').change(function(){
 				$('.viewQuestion'+view_question_id).html(response);
 
 			}else{
-
 				$('.viewQuestion'+view_question_id).html('');
-
 			}
-
 		}
-
 	});
-
-
-
 });
 
 

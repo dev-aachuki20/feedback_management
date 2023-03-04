@@ -2,7 +2,6 @@
     include('../function/function.php');
     
     if(isset($_POST['questionDetailId'])){
-        
         $que_detail = explode('--',$_POST['questionDetailId']);
         $queId = $que_detail[0]; 
         $surveyid = $_POST['surveyId'];
@@ -11,8 +10,6 @@
         $child_answer = array();
         $response = '';
         $questionId = '';
-
-        
 
         record_set("get_question_id", "select * from questions_detail where id=".$queId." and condition_yes_no='1' and condition_qid!='' ");
         $row_get_question_id = mysqli_fetch_assoc($get_question_id);
@@ -157,16 +154,12 @@
 
         // Title Option
         if($row_get_question['answer_type'] == 5){
-
             $question_title =$row_get_question['question'];
-
             $response .='<div class="question_container_'.$row_get_question['id'].'">
                             <h4>'.$question_title.'</h4>';
-
             record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionId."' and surveyid='".$surveyid."' and cstatus='1' ");
                 if($totalRows_get_questions_detail>0){
                     while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-
                         $response .='<h5>'.$row_get_questions_detail['description'].'</h5>';
                     }
                 }
