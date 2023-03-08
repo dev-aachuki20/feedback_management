@@ -53,9 +53,14 @@
                 <tbody>
 				<?php 
 					record_set("get_questions", "select * from questions where cby='".$_SESSION['user_id']."' AND surveyid='".$_REQUEST['surveyid']."'");				
-					while($row_get_questions = mysqli_fetch_assoc($get_questions)){   ?>
+					while($row_get_questions = mysqli_fetch_assoc($get_questions)){
+          $label = ''; 
+          if($row_get_questions['conditional_logic'] > 0){
+            $label = '<span class="label label-primary">C</span>';
+          }
+          ?>
               <tr>
-                <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong><?php } ?></td>
+                <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong> <?php } echo $label; ?></td>
                 <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
                 <td><?=($row_get_questions['cstatus']==1)? '<span class="label label-success">'.status_data($row_get_questions['cstatus']).'</span>':'<span class="label label-danger">'.status_data($row_get_questions['cstatus']).'</span>'?></td>
                 <td>

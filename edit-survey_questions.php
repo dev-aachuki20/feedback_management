@@ -15,17 +15,15 @@ $languages = explode(',',$row_get_survey_details['language']);
     $condition_yes_no=$_POST['condition_yes_no'];
     $data =  array(
           "survey_step_id" => $_POST['survey_step'],
-          "cstatus" => $_POST['status'],
-          "dposition" => $_POST['dposition'],
-          "question" => $_POST['question'],
-          "ifrequired" => $_POST['ifrequired'],
+          "cstatus"            => $_POST['status'],
+          "dposition"          => $_POST['dposition'],
+          "question"           => $_POST['question'],
+          "ifrequired"         => $_POST['ifrequired'],
+          "conditional_logic"  => ($condition_yes_no == 1) ? $_POST['conditional_logic'] : 0,
+          "conditional_answer" => ($condition_yes_no == 1) ? $_POST['conditional_answer'] : 0,
+          "skip_to_question_id" => ($condition_yes_no == 1) ? $_POST['skip_to_question'] : 0,
           'cdate'=>date("Y-m-d H:i:s")
         );
-        if($condition_yes_no == 1){
-          $data['conditional_logic'] = $_POST['conditional_logic'];
-          $data['conditional_answer'] = $_POST['conditional_answer'];
-          $data['skip_to_question_id'] = $_POST['skip_to_question'];
-        }
     $updte=	dbRowUpdate("questions", $data, "where id=".$questionid." and surveyid=".$surveyid);
     $correct=$_POST['correct'];
         
@@ -199,7 +197,7 @@ $languages = explode(',',$row_get_survey_details['language']);
 						<div class="col-md-3">
 							<select class="form-control" name="skip_to_question">
 								<?php 
-									record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' ");
+									record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$_GET['questionid']);
 									if($totalRows_get_question>0){	
 
 									while($row_get_question = mysqli_fetch_assoc($get_question)){ ?>

@@ -45,13 +45,16 @@ if(isset($_POST['submit'])){
 	$roleid			= $_POST['roleid'];
 	$questionid		= array_unique($_POST['questionid']);
 
-	// echo '<pre>';
-	// print_r($questionid); die();
+	//echo '<pre>';
+
 	foreach($questionid as $value){
 		$questionid 	= $value;
 		$str 			= $answerid[$value];
 		$strarray 		= explode("--",$str);
 		$strarraycount 	= count($strarray);
+		$conditionalFlag = false;
+		// echo $strarraycount .' : '.$str; 
+		// print_r($strarray);
 		if($strarraycount==1){
 			//If textbox or textarea
 			$ansid = 0;
@@ -69,6 +72,11 @@ if(isset($_POST['submit'])){
 			$ansid = -1;
 			$ansttxt = $str;
 		}
+		else if($strarraycount==3){
+			$ansid = 0;
+			$ansttxt = '';
+			$conditionalFlag = true;
+		}
 		if($ansid<0){
 			foreach($ansttxt as $key=>$ansttxtvalue){
 				$ansttxtvaluearray = explode("--",$ansttxtvalue);
@@ -80,6 +88,7 @@ if(isset($_POST['submit'])){
 				}else{
 					$answerval = 100;
 				}
+
 				$data = array(
 
 					"locationid"=> $locationid,
@@ -121,6 +130,11 @@ if(isset($_POST['submit'])){
 			}else{
 				$answerval = 100;
 			}
+			//echo $questionid.' : '.$conditionalFlag;
+			if($conditionalFlag){
+				$answerval = 0;
+				$key = 0;
+			}
 			$data = array(
 
 				"locationid"	=> $locationid,
@@ -150,7 +164,8 @@ if(isset($_POST['submit'])){
 				'cdate'			=>	date("Y-m-d H:i:s")
 
 			);
-
+			//print_r($data);
+			
 			$insert_value =  dbRowInsert("answers",$data);
 		    $flagStatus = true;
 		}
@@ -1060,13 +1075,16 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 										<?php 
 									}else {
 										while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-										$langRadioAnsVal= $row_get_questions_detail['description'];	?>
+										$langRadioAnsVal= $row_get_questions_detail['description'];	
+										?>
+										
 										<div class="form-check col-md-2">
 											<label class="form-check-label">
 												<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
 												data-condlogic="<?php echo $question['conditional_logic'];?>"
 												data-condans="<?php echo $question['conditional_answer'];?>"
 												data-skiptoquestion="<?php echo $question['skip_to_question_id'];?>"
+												data-currentanswer="<?=$row_get_questions_detail['answer']?>"
 												>
 												<?php echo $row_get_questions_detail['description'];?> 
 											</label>
@@ -1783,6 +1801,7 @@ $('.subque').change(function(){
 	if($(this).is(':checked')){
 		var view_question_id = $(this).data('questionid');
 		var questionDetailId =$(this).val();
+		var questionCurrentValue =$(this).data('currentanswer');
 		var surveyId = <?php echo $surveyid;?>;
 		var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
 		//var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
@@ -1796,10 +1815,51 @@ $('.subque').change(function(){
 			max_id = view_question_id;
 		}
 		let counter = max_id-min_id;
-		console.log(min_id,max_id,counter);
-		for(let i = min_id; i<=max_id; i++){
-			$(".question_container_"+i).find('input').prop('required',false);
+		let startId = parseInt(min_id)  + 1;
+		console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+		console.log(min_id,max_id);
+
+		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					newValues = '--'+newValues;
+					$(".question_container_"+i).find('input').prop('required',false);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).hide();
+				}
+				
+			}
+		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					newValues = '--'+newValues;
+					$(".question_container_"+i).find('input').prop('required',false);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).hide();
+				}
+			}
+		}else {
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					$(".question_container_"+i).find('input').prop('required',true);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).show();
+				}
+			}
 		}
+		
 		// old conditional Question
 
 		// $.ajax({
@@ -1822,11 +1882,11 @@ $('.subque').change(function(){
 			data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
 			success: function(response)
 			{
-				if (answeridanswerid != '') {
-					$('.viewQuestion'+view_question_id).html(response);
-				}else{
-					$('.viewQuestion'+view_question_id).html('');
-				}
+				// if (response != '') {
+				// 	$('.viewQuestion'+view_question_id).html(response);
+				// }else{
+				// 	$('.viewQuestion'+view_question_id).html('');
+				// }
 			}
 		});
 
@@ -1878,16 +1938,11 @@ $('#langid').change(function(){
 
 });
 
-
-
 </script>
 <div style="text-align: center;">
 Powered by Datagroup Solutions
-
 <center><img  src="https://www.datagroupsolutions.com/wp-content/uploads/2020/11/Data-Group-Solutions-survey.png" alt="" width="200" height="36" /></center>
 </div>
-
-
 </body>
 
 </html>
