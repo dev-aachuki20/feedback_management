@@ -1816,9 +1816,9 @@ $('.subque').change(function(){
 		}
 		let counter = max_id-min_id;
 		let startId = parseInt(min_id)  + 1;
-		console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
-		console.log('questionCurrentValue',questionCurrentValue);
-
+		// console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+		// console.log('questionCurrentValue',questionCurrentValue);
+		$('.question-div').show();
 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
 			for(let i = startId; i<max_id; i++){
 				let values = $(".question_container_"+i).find('input').val();
