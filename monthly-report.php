@@ -1,7 +1,7 @@
 <?php 
   // get data by user
   $departmentByUsers = get_filter_data_by_user('departments');
-  $roleByUsers        = get_filter_data_by_user('roles');
+  $roleByUsers       = get_filter_data_by_user('roles');
   $locationByUsers   = get_filter_data_by_user('locations');
   $groupByUsers      = get_filter_data_by_user('groups');
   $surveyByUsers     = get_survey_data_by_user($_GET['type']);
@@ -287,13 +287,6 @@ if(!empty($requestData['survey_name'])){
                         <div class="form-group">
                             <label>Role</label>
                             <select name="roleid" id="roleid" class="form-control form-control-lg role">
-                                <option value="">Select</option>
-                                <?php
-                                    foreach($roleByUsers as $roleData){ 
-                                    $roleId     = $roleData['id'];
-                                    $roleName   = $roleData['name'];?>
-                                    <option value="<?php echo $roleId;?>" <?=($_POST['roleid']==$roleId) ? 'selected' :''?>><?php echo $roleName;?></option>
-                                <?php }?>
                             </select>
                         </div>
                     </div>
@@ -484,7 +477,27 @@ if(!empty($requestData['survey_name'])){
     //$('#interval_hidden').val(interval);
        $('#viewReportcsv').submit();
     });
- 
+    $(document).on('change','.department',function(){
+    //let interval = $('#interval').val();
+    let department = $(this).val();
+    $('#roleid').html('');
+      $.ajax({
+      type: "POST",
+          url: 'ajax/common_file.php',
+          dataType: "json",
+          data: {
+            department: department,
+            mode:'load_role',
+          }, 
+          success: function(response)
+          {
+            $('#roleid').append(`<option value="">Select Role</option>`);
+            for(data in response){
+              $('#roleid').append(`<option value="${data}">${response[data]}</option>`);
+            }
+          }
+      })
+    });
 </script>
 <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
 <script src="plugins/datatables/jquery.dataTables.min.js"></script> 

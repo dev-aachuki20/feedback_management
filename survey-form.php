@@ -1081,9 +1081,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 										<div class="form-check col-md-2">
 											<label class="form-check-label">
 												<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
-												data-condlogic="<?php echo $question['conditional_logic'];?>"
-												data-condans="<?php echo $question['conditional_answer'];?>"
-												data-skiptoquestion="<?php echo $question['skip_to_question_id'];?>"
+												data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
+												data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
+												data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
 												data-currentanswer="<?=$row_get_questions_detail['answer']?>"
 												>
 												<?php echo $row_get_questions_detail['description'];?> 
@@ -1817,7 +1817,7 @@ $('.subque').change(function(){
 		let counter = max_id-min_id;
 		let startId = parseInt(min_id)  + 1;
 		console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
-		console.log(min_id,max_id);
+		console.log('questionCurrentValue',questionCurrentValue);
 
 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
 			for(let i = startId; i<max_id; i++){
@@ -1834,6 +1834,7 @@ $('.subque').change(function(){
 				
 			}
 		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+			alert("amit");
 			for(let i = startId; i<max_id; i++){
 				let values = $(".question_container_"+i).find('input').val();
 				if(values !=undefined){

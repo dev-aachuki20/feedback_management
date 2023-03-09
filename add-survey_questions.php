@@ -11,26 +11,21 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
  if(!empty($_POST['submit'])){
 	$condition_yes_no=$_POST['condition_yes_no'];
 	$data_que =  array(
-		"parendit"=> $_POST['parent'],
-		"question" => $_POST['question'],
-		"surveyid"=>$surveyid,
-		"answer_type" => $_POST['atype'],
-		"ifrequired" => $_POST['ifrequired'],
-		"dposition" => $_POST['dposition'],
-		"cstatus" => $_POST['status'],
-		'cip'=>ipAddress(),
-		'cby'=>$_SESSION['user_id'],
-		'cdate'=>date("Y-m-d H:i:s"),
-		'is_weighted'=>$_POST['weighted_yes_no'],
-		'survey_step_id'=>(isset($_POST['survey_step'])) ? $_POST['survey_step'] : 0,
+		"parendit"		=> $_POST['parent'],
+		"question" 		=> $_POST['question'],
+		"surveyid"		=>$surveyid,
+		"answer_type" 	=> $_POST['atype'],
+		"ifrequired" 	=> $_POST['ifrequired'],
+		"dposition" 	=> $_POST['dposition'],
+		"cstatus" 		=> $_POST['status'],
+		"conditional_logic"   => (isset($condition_yes_no)?$condition_yes_no:'0'),
+		'cip'			=> ipAddress(),
+		'cby'			=> $_SESSION['user_id'],
+		'cdate'			=> date("Y-m-d H:i:s"),
+		'is_weighted'	=> $_POST['weighted_yes_no'],
+		'survey_step_id'=> (isset($_POST['survey_step'])) ? $_POST['survey_step'] : 0,
 	);
 	
-	if($condition_yes_no == 1){
-		$data_que['conditional_logic'] = $_POST['conditional_logic'];
-		$data_que['conditional_answer'] = $_POST['conditional_answer'];
-		$data_que['skip_to_question_id'] = $_POST['skip_to_question'];
-	}
-
 	$insert_value =  dbRowInsert("questions",$data_que);
 	if(!empty($insert_value )){	
 		if(isset($_POST['question_sub_heading']) && !empty($_POST['question_sub_heading'])){
@@ -44,13 +39,16 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 				'cby'=>$_SESSION['user_id'],
 				'cdate'=>date("Y-m-d H:i:s")
 			);
+			
 			//print_r($data1); exit;
 			$insert_value1 =  dbRowInsert("questions_detail",$data_head);
 		}
 		record_set("get_quest", "select id from questions order by id desc limit 1");				
 		$row_get_quest = mysqli_fetch_assoc($get_quest);
 		$correct=$_POST['correct'];
-
+		$conditional_logic 	 = $_POST['conditional_logic'];
+		$conditional_answer  = $_POST['conditional_answer'];
+		$skip_to_question_id = $_POST['skip_to_question'];
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
 			$condition_question=$_POST['condition_question'];
@@ -71,6 +69,11 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 						'cby'=>$_SESSION['user_id'],
 						'cdate'=>date("Y-m-d H:i:s")
 					);
+					if($condition_yes_no == 1){
+						$data_correct['conditional_logic']   = $conditional_logic[$i];
+						$data_correct['conditional_answer']  = $conditional_answer[$i];
+						$data_correct['skip_to_question_id'] = $skip_to_question_id[$i];
+					}
 					$insert_value2 =  dbRowInsert("questions_detail",$data_correct);
 					$i++;
 				}	
@@ -208,55 +211,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 							</div>
 						</div>
 					</div>
-					<!-- End Answer Section For English -->
-				
-				
-				<!-- Start Conditional Question Section-->
-				<div class="conditional_questions" id="conditional_questions">
-
-				</div>
-				<!-- End Conditional Question Section -->
-
-				<!-- Start Conditional Question skip to Section-->
-				<div class="conditional_questions_skip" id="conditional_questions_skip" style="display:none">
-					<div class="col-md-12" style="margin-bottom: 30px;">
-						<h3>Conditional Logic</h3>
-						<div class="col-md-2">
-							<label for="">If answer</label>		
-						</div>
-						<div class="col-md-3">
-							<select class="form-control" name="conditional_logic">
-								<option value="1">Equal To</option>
-								<option value="2">Not Equal To</option>
-							</select>		
-						</div>
-						<div class="col-md-3">
-							<select class="form-control" name="conditional_answer" id="conditional_answer">
-								
-							</select>	
-						</div>
-						<div class="col-md-1">
-							<label for="">Skip to</label>
-						</div>
-						<div class="col-md-3">
-							<select class="form-control" name="skip_to_question">
-								<?php 
-									record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' ");
-									if($totalRows_get_question>0){	
-
-									while($row_get_question = mysqli_fetch_assoc($get_question)){ ?>
-									<option value="<?=$row_get_question['id']?>"><?=$row_get_question['question']?></option>
-								<?php
-									}
-								}
-								?>
-							</select>	
-						</div>
-					</div>				
-				</div>
-				<!-- End Conditional Question skip to Section -->
-
-				<div class="row">
+					<div class="row">
 					<div class="col-md-12 text-right btnopt">
 						<a href="JavaScript:Void(0);" id="btnaddoption" class="btn btn-info">Add New Option</a>
 					</div>
@@ -281,6 +236,61 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 						</div>
 					</div>
 				</div>
+					<!-- End Answer Section For English -->
+				
+				
+				<!-- Start Conditional Question Section-->
+				<div class="conditional_questions" id="conditional_questions">
+
+				</div>
+				<!-- End Conditional Question Section -->
+
+				<!-- Start Conditional Question skip to Section-->
+				<div class="conditional_questions_skip" id="conditional_questions_skip" style="display:none">
+					<div class="col-md-12 logicSection" style="margin-bottom: 30px;">
+						<h3>Conditional Logic</h3>
+						<div class="col-md-12 conditional_logic">
+							<div class="col-md-2">
+								<label for="">If answer</label>		
+							</div>
+							<div class="col-md-3">
+								<select class="form-control" name="conditional_logic[]">
+									<option value="1">Equal To</option>
+									<option value="2">Not Equal To</option>
+								</select>		
+							</div>
+							<div class="col-md-3">
+								<select class="form-control conditional_answer" name="conditional_answer[]" id="conditional_answer">
+									
+								</select>	
+							</div>
+							<div class="col-md-1">
+								<label for="">Skip to</label>
+							</div>
+							<div class="col-md-3">
+								<select class="form-control skip_to_question" name="skip_to_question[]">
+									<?php 
+										record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' ");
+										if($totalRows_get_question>0){	
+
+										while($row_get_question = mysqli_fetch_assoc($get_question)){ ?>
+										<option value="<?=$row_get_question['id']?>"><?=$row_get_question['question']?></option>
+									<?php
+										}
+									}
+									?>
+								</select>	
+							</div>
+						</div>
+					</div>	
+					<div class="col-md-12">
+						<button type="button" class="add-more btn btn-info" style="float: right;margin: 15px;">Add More Logic</button>
+					</div>			
+				</div>
+
+				<!-- End Conditional Question skip to Section -->
+
+				
 			</div>
 			<!-- end box body -->
 			<div class="box-footer text-right">
@@ -548,14 +558,18 @@ $(document).on('change', '.weighted_yes_no', function() {
 
 $(document).on("blur", ".correct_answer, .canval", function() {
 	let option = '';
-	$('#conditional_answer').html('');
+	$('.conditional_answer').html('');
 	$('#options > .opt-div').each(function() {
 		let text = $(this).find('.correct_answer').val();
 		let value = $(this).find('.canval').val();
 		console.log('text :'+ text ,'value :'+ value);
 		if(text){
 			option = `<option value="${value}">${text}</option>`;
-			$('#conditional_answer').append(option);
+			$('.conditional_answer')
+			$('.conditional_answer').each(function() {
+				$(this).append(option);
+			});
+			
 		}
 	});
 });
@@ -567,5 +581,57 @@ function setWeighted(){
 		$('.canval').prop('readonly', true);
 		$('.canval').val(0);
 	}
+}
+$(document).on('click','.add-more',function(){
+  getConditionalQuestion();
+})
+
+$(document).on('change','.skip_to_question',function(){
+  let totalLength = $('.skip_to_question').length;
+  let currentIndex = $('.skip_to_question').index($(this));
+  for(let i=0; i<totalLength; i++){
+    if(i>=currentIndex){
+      $('.conditional_logic').eq(currentIndex+1).remove();
+    }
+  }
+})
+function getConditionalQuestion(mode='addQuestion'){
+  let questionid23 = $('.skip_to_question').val();
+  let surveyid = '<?=$_GET['surveyid']?>';
+  var possibleAnswerCount = $('.correct_answer').length;
+  var conditional_logicCount = $('.conditional_logic').length;
+  if(conditional_logicCount >= possibleAnswerCount){
+	alert('Conditional Logic can not be greater than No of Answer');
+	return false;
+  }
+
+  // alert("optionLength :",numItems);
+  // alert("ConditionalLogicLength :",numItems22);
+  const QuestionArray = [];
+  $('.skip_to_question').each(function(){
+    let Qid = $(this).val(); 
+    console.log(Qid);
+    QuestionArray.push(Qid);
+  });
+  QuestionArray.sort();
+  console.log(QuestionArray);
+  $.ajax({
+	type: "POST",
+	url: 'ajax/ajaxGetConditionalQuestionOnSelect.php',
+	data: {
+		surveyid: surveyid,
+		skipQid : QuestionArray,
+		mode:mode,
+	}, 
+	success: function(response)
+	{
+	//console.log(response);
+		if (response == '') {
+		}else{
+			$(".logicSection").append(response);
+			$('.correct_answer').trigger('blur');
+		}
+	}
+  })
 }
 </script>

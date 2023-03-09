@@ -371,13 +371,6 @@ if(!empty($_POST['surveys'])){
                         <div class="form-group">
                             <label>Role</label>
                             <select name="roleid" id="roleid" class="form-control form-control-lg role">
-                                <option value="">Select</option>
-                                <?php
-                                    foreach($roleByUsers as $roleData){ 
-                                    $roleId     = $roleData['id'];
-                                    $roleName   = $roleData['name'];?>
-                                    <option value="<?php echo $roleId;?>" <?=($_POST['roleid']==$roleId)?'selected':''?>><?php echo $roleName;?></option>
-                                <?php }?>
                             </select>
                         </div>
                     </div>
@@ -729,4 +722,25 @@ function check_selected_task(user_id,user_type,response_ids){
         }
     })
 }
+
+$(document).on('change','.department',function(){
+    let department = $(this).val();
+    $('#roleid').html('');
+      $.ajax({
+      type: "POST",
+          url: 'ajax/common_file.php',
+          dataType: "json",
+          data: {
+            department: department,
+            mode:'load_role',
+          }, 
+          success: function(response)
+          {
+            $('#roleid').append(`<option value="">Select Role</option>`);
+            for(data in response){
+              $('#roleid').append(`<option value="${data}">${response[data]}</option>`);
+            }
+          }
+      })
+    });
 </script>

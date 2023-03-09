@@ -344,4 +344,27 @@ if(isset($_POST['mode']) and $_POST['mode']=='fetch_scheduled_template_details')
   }
   echo json_encode($arr); die();
 }
-?>
+
+if(isset($_POST['mode']) and $_POST['mode']=='load_role'){
+  $deptId = $_REQUEST['department'];
+  record_set("get_role_id", "select role_id from departments where id IN ($deptId) order by name ASC");
+  $role_ids = array();
+  $new_array = array();
+  while($row_get_role_id = mysqli_fetch_assoc($get_role_id)){
+    $role_id = $row_get_role_id['role_id'];
+    if($role_id !=''){
+      $role_id = explode(',',$role_id);
+      $new_array = array_merge($role_ids,$role_id);
+    }
+  }
+  if(count($new_array)>0){
+    $id = implode(',',$new_array);
+    record_set("get_role", "select * from roles where id IN ($id) order by name ASC");
+    $html = '';
+    $data = array();
+    while($row_get_role = mysqli_fetch_assoc($get_role)){
+      $data[$row_get_role['id']] = $row_get_role['name'];
+    }
+  }
+  echo json_encode($data); die();
+}
