@@ -27,8 +27,11 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 	);
 	
 	$insert_value =  dbRowInsert("questions",$data_que);
+	echo $insert_value ;
 	if(!empty($insert_value )){	
+		echo 'amit';
 		if(isset($_POST['question_sub_heading']) && !empty($_POST['question_sub_heading'])){
+			echo 'case2';
 			$data_head =  array(
 				"description"=> $_POST['question_sub_heading'],
 				"questionid" => $insert_value,
@@ -41,7 +44,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			);
 			
 			//print_r($data1); exit;
-			$insert_value1 =  dbRowInsert("questions_detail",$data_head);
+			$insert_value1 =  dbRowInsert("questions_detail",$data_head,2);
 		}
 		record_set("get_quest", "select id from questions order by id desc limit 1");				
 		$row_get_quest = mysqli_fetch_assoc($get_quest);
@@ -49,6 +52,9 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 		$conditional_logic 	 = $_POST['conditional_logic'];
 		$conditional_answer  = $_POST['conditional_answer'];
 		$skip_to_question_id = $_POST['skip_to_question'];
+		echo '<pre>';
+		print_r($correct);
+		echo '</pre>';
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
 			$condition_question=$_POST['condition_question'];
@@ -79,6 +85,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 				}	
 			}
 		}
+		die();
 		$msg = "Question Added Successfully";
 	}else{
 		$msg = "Some Error Occourd. Please try again..";

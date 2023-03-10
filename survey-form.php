@@ -1161,14 +1161,19 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									  //$question_options = array();
 
 									  	while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-										  $tdloop++; ?>
+										
+										  $tdloop++; 
+										  ?>
 											<td align="center">
 												<?php
-													$child_answer[$row_get_questions_detail['id']]= $row_get_questions_detail['description'];
-													echo $row_get_questions_detail['description'];
+													$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
+													$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
+													$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
+													$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
+													$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
 												?>
 											</td>
-								          <?php } ?>
+								          <?php }  ?>
 								        </tr>
 								        <?php
 										  $ans_count = 0;
@@ -1190,31 +1195,29 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 								        <tr align="center" <?php if($ans_count==2){ ?> class="yesno" <?php } ?>>
 
 								          <?php
-
 										  foreach($child_answer as $key=>$child_answer_option){ ?>
 
 								          <td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
 
 								          <?php if($show_smily==1){ ?> 
-
 											<div>
-
-													<img style="width:40px" class="smily_icon" src="<?php if($ans_count==2){ echo "dist/img/".strtolower($child_answer_option).".png"; }else{ echo smile_format_icon($smily_loop,$ans_count); } ?>">
-
+												<img style="width:40px" class="smily_icon" src="<?php if($ans_count==2){ echo "dist/img/".strtolower($child_answer_option['description']).".png"; }else{ echo smile_format_icon($smily_loop,$ans_count); } ?>">
 											</div>
 
 										  <?php
 
 										  	$smily_loop++;
-
 											//$show_smily++;
+										  } 
+										  ?>
 
-										  } ?>
 
-
-
-											<input <?php if($show_smily==1){ ?> style="visibility:hidden;" <?php } ?> type="radio" class="form-check-input <?php if($show_smily==1){ ?> smily_icon_input <?php } ?> subque" name="answerid[<?php echo $question['id']; ?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>">
-
+											<input <?php if($show_smily==1){ ?> style="visibility:hidden;" <?php } ?> type="radio" class="form-check-input <?php if($show_smily==1){ ?> smily_icon_input <?php } ?> subque" name="answerid[<?php echo $question['id']; ?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+											data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+											data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+											data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+											data-currentanswer="<?=$child_answer_option['answer']?>"
+											>
 								          </label>
 
 								          </td>
@@ -1298,8 +1301,11 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
 
 											?>
-
-											<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>"><?php echo $row_get_questions_detail['description']; ?></option>
+											<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
+											data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
+											data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
+											data-currentanswer="<?=$row_get_questions_detail['answer']?>"
+											><?php echo $row_get_questions_detail['description']; ?></option>
 
 											<?php 
 
@@ -1798,7 +1804,7 @@ $(document).ready(function() {
 
 
 $('.subque').change(function(){
-	if($(this).is(':checked')){
+	//if($(this).is(':checked')){
 		var view_question_id = $(this).data('questionid');
 		var questionDetailId =$(this).val();
 		var questionCurrentValue =$(this).data('currentanswer');
@@ -1810,14 +1816,15 @@ $('.subque').change(function(){
 		var condlogic = $(this).data('condlogic');
 		let min_id = view_question_id;
 		let max_id = skiptoquestion;
+		
 		if(min_id>max_id){
 			min_id = max_id;
 			max_id = view_question_id;
 		}
 		let counter = max_id-min_id;
 		let startId = parseInt(min_id)  + 1;
-		// console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
-		// console.log('questionCurrentValue',questionCurrentValue);
+		//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+		//  console.log('questionCurrentValue',questionCurrentValue);
 		$('.question-div').show();
 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
 			for(let i = startId; i<max_id; i++){
@@ -1834,7 +1841,6 @@ $('.subque').change(function(){
 				
 			}
 		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
-			alert("amit");
 			for(let i = startId; i<max_id; i++){
 				let values = $(".question_container_"+i).find('input').val();
 				if(values !=undefined){
@@ -1891,7 +1897,7 @@ $('.subque').change(function(){
 			}
 		});
 
-	}
+	//}
 });
 
 
@@ -1907,6 +1913,68 @@ $('.subque_select').change(function(){
 	var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
 
 	var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
+
+
+	//-----------------------------
+
+	var skiptoquestion = $(this).find(':selected').data('skiptoquestion');
+	var condans = $(this).find(':selected').data('condans');
+	var questionCurrentValue =$(this).find(':selected').data('currentanswer');
+	var condlogic = $(this).find(':selected').data('condlogic');
+	let min_id = view_question_id;
+	let max_id = skiptoquestion;
+
+	if(min_id>max_id){
+	min_id = max_id;
+	max_id = view_question_id;
+	}
+	let counter = max_id-min_id;
+	let startId = parseInt(min_id)  + 1;
+	//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+	//  console.log('questionCurrentValue',questionCurrentValue);
+	$('.question-div').show();
+		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
+			console.log(startId,max_id);
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					newValues = '--'+newValues;
+					$(".question_container_"+i).find('input').prop('required',false);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).hide();
+				}
+				
+			}
+		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					newValues = '--'+newValues;
+					$(".question_container_"+i).find('input').prop('required',false);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).hide();
+				}
+			}
+		}else {
+			for(let i = startId; i<max_id; i++){
+				let values = $(".question_container_"+i).find('input').val();
+				if(values !=undefined){
+					const myArray = values.split("--");
+					const cleanArray = myArray.filter((a) => a);
+					let newValues = cleanArray.join("--");
+					$(".question_container_"+i).find('input').prop('required',true);
+					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+					$(".question_container_"+i).show();
+				}
+			}
+		}
+	//-----------------------------
 
 	$.ajax({
 

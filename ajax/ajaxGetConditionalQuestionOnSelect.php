@@ -9,6 +9,7 @@ if(isset($_REQUEST['questionid'])){
      $row_get_question_min = mysqli_fetch_assoc($get_question_min);
      $questionid = $row_get_question_min['id'];
 }
+$newIds = implode(',',$skipedQid);
 $count = count($skipedQid);
 if($count == 1){
     $min = $skipedQid[0];
@@ -53,7 +54,7 @@ if($_REQUEST['mode']=='editQuestion'){
     </div>
     <div class="col-md-3">
     <select class="form-control skip_to_question" name="skip_to_question[]">';
-    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$questionid." and id NOT BETWEEN $min AND $max");
+    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$questionid."");
     if($totalRows_get_question>0){
         while($row_get_question = mysqli_fetch_assoc($get_question)){
         $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
@@ -84,7 +85,7 @@ if($_REQUEST['mode']=='editQuestion'){
     </div>
     <div class="col-md-3">
     <select class="form-control skip_to_question" name="skip_to_question[]">';
-    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id NOT BETWEEN $min AND $max");
+    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1'");
     if($totalRows_get_question>0){
         while($row_get_question = mysqli_fetch_assoc($get_question)){
         $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
