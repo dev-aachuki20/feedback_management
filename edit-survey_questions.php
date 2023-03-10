@@ -70,6 +70,7 @@ $languages = explode(',',$row_get_survey_details['language']);
             record_set("get_questions", "select * from questions where surveyid='".$_REQUEST['surveyid']."'  and id='".$_REQUEST['questionid']."'");				
             $row_get_questions = mysqli_fetch_assoc($get_questions);
           ?>
+      
           <?php if($row_get_survey_details['isStep'] == 1){ ?>
             <div class="col-md-6">
               <div class="form-group">
@@ -148,6 +149,7 @@ $languages = explode(',',$row_get_survey_details['language']);
 							</div>
 					</div>
         </div>
+        
         <div class="row" id="options">
           <?php 
             $i=0;		
@@ -174,6 +176,7 @@ $languages = explode(',',$row_get_survey_details['language']);
               </div>
 		      <?php } ?>
         </div>
+        
         	<!-- Start Conditional Question skip to Section-->
 				<div class="conditional_questions_skip" id="conditional_questions_skip" style="<?=($condLogic == 1)?'':'display:none'?>">
 					<div class="col-md-12 logicSection" style="margin-bottom: 30px;">
@@ -211,10 +214,10 @@ $languages = explode(',',$row_get_survey_details['language']);
                     <?php 
                       record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$_GET['questionid']);
                       if($totalRows_get_questions>0){	
-                      while($row_get_questions = mysqli_fetch_assoc($get_questions)){ 
+                      while($row_get_questionss = mysqli_fetch_assoc($get_questions)){ 
 
                       ?>
-                      <option value="<?=$row_get_questions['id']?>" <?=($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questions['id'])?'selected':''?>><?=$row_get_questions['question']?></option>
+                      <option value="<?=$row_get_questionss['id']?>" <?=($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questionss['id'])?'selected':''?>><?=$row_get_questionss['question']?></option>
                     <?php
                       }
                     }
@@ -249,10 +252,10 @@ $languages = explode(',',$row_get_survey_details['language']);
                     <?php 
                       record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$_GET['questionid']);
                       if($totalRows_get_questions>0){	
-                      while($row_get_questions = mysqli_fetch_assoc($get_questions)){ 
+                      while($row_get_questionss = mysqli_fetch_assoc($get_questions)){ 
 
                       ?>
-                      <option value="<?=$row_get_questions['id']?>" <?=($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questions['id'])?'selected':''?>><?=$row_get_questions['question']?></option>
+                      <option value="<?=$row_get_questionss['id']?>" <?=($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questionss['id'])?'selected':''?>><?=$row_get_questionss['question']?></option>
                     <?php
                       }
                     }
@@ -267,7 +270,7 @@ $languages = explode(',',$row_get_survey_details['language']);
 						</div>				
 				</div>
 				<!-- End Conditional Question skip to Section -->
-
+       
         <div class="row">
           <?php if(!empty($surveyid) && empty($questionid)){ ?>
             <div class="col-md-12 text-right">
@@ -278,6 +281,7 @@ $languages = explode(',',$row_get_survey_details['language']);
             <div class="form-group">
               <label>Status</label>
               <select class="form-control" name="status">
+           
                 <?php foreach(status() as $key => $value) {?> 
                 <option value="<?=$key?>" <?=($row_get_questions['cstatus'] == $key)?'selected':''?>><?=$value?></option>
                 <?php }?>
