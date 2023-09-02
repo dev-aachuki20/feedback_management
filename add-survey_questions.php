@@ -25,13 +25,10 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 		'is_weighted'	=> $_POST['weighted_yes_no'],
 		'survey_step_id'=> (isset($_POST['survey_step'])) ? $_POST['survey_step'] : 0,
 	);
-	
+		
 	$insert_value =  dbRowInsert("questions",$data_que);
-	echo $insert_value ;
 	if(!empty($insert_value )){	
-		echo 'amit';
 		if(isset($_POST['question_sub_heading']) && !empty($_POST['question_sub_heading'])){
-			echo 'case2';
 			$data_head =  array(
 				"description"=> $_POST['question_sub_heading'],
 				"questionid" => $insert_value,
@@ -52,9 +49,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 		$conditional_logic 	 = $_POST['conditional_logic'];
 		$conditional_answer  = $_POST['conditional_answer'];
 		$skip_to_question_id = $_POST['skip_to_question'];
-		echo '<pre>';
-		print_r($correct);
-		echo '</pre>';
+
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
 			$condition_question=$_POST['condition_question'];
@@ -85,7 +80,6 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 				}	
 			}
 		}
-		die();
 		$msg = "Question Added Successfully";
 	}else{
 		$msg = "Some Error Occourd. Please try again..";
@@ -106,7 +100,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			</div>
 		<?php } ?>
 
-		<form action="" method="post" enctype="multipart/form-data">
+		<form action="" method="post" enctype="multipart/form-data" onkeydown="return event.keyCode != 13;">
 			<!-- Start Language tab panel -->
 			<div class="box-body">
 				<div class="row">
@@ -160,22 +154,32 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 					
 					<!-- End Answer Type Section -->
 					<!-- Start Position Section -->
-					<div class="col-md-6">
+					<div class="col-md-6 rating-type-div" style="display:none;">
 						<div class="form-group">
-							<label>Position</label>
-							<input type="number" class="form-control" name="dposition" min="0" value="1" />
+							<label>Select the type of rating</label>
+							<select class="form-control rating_type" name="rating_type" >
+								<?php foreach(answer_type() as $key => $value){?>
+										<option <?php if($row_update_data['cstatus']==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"><?php echo $value; ?></option>						
+								<?php }?>
+							</select>
 						</div>
 					</div>
 					<!-- End Position Section -->
 					<div class="col-md-6">
-						<div class="col-md-3">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label>Position</label>
+								<input type="number" class="form-control" name="dposition" min="0" value="1" />
+							</div>
+						</div>
+						<div class="col-md-4">
 							<label>Weighted</label>
 							<div class="form-group">	
 								<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="1" data-count="0"/>  Yes
 								<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="0" data-count="0" checked/>  No
 							</div>
 						</div>
-						<div class="col-md-3 conditional-radio-btn" style="display:none;">
+						<div class="col-md-4 conditional-radio-btn" style="display:none;">
 							<label>Conditional</label>
 							<div class="form-group">	
 								<input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="1" data-count="0"/>  Yes
@@ -215,6 +219,8 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 								<label>Value</label>
 								<input type="number" value="0" class="form-control canval 2334edff" name="cans[]" readonly/>
 								</div>
+							</div>
+							<div class="col-md-3 rating-type-option">
 							</div>
 						</div>
 					</div>
@@ -260,7 +266,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 							<div class="col-md-2">
 								<label for="">If answer</label>		
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<select class="form-control" name="conditional_logic[]">
 									<option value="1">Equal To</option>
 									<option value="2">Not Equal To</option>
@@ -319,8 +325,31 @@ var lcode = new Array();
 
 
     $("#btnaddoption").click(function () {
+		let aType = $('.atype').val();
+		let ratingType = $('.rating_type').val();
+		if(aType == 4){
+			let optionLength = $('.opt-div').length;
+			console.log(optionLength,'optionLength');
+			if(ratingType ==1 || ratingType ==2 ){
+				$('.rating-type-option').html('<div class="form-group"><label>Select the type of rating</label><select class="form-control rating_type" name="rating_type"><option selected="selected" value="0">Select Type</option></select></div>');
+				if(optionLength>4){
+					alert("You have exceed the limit of options");
+					return false;
+				}
+			}else if(ratingType ==3){
+				if(optionLength>10){
+					alert("You have exceed the limit of options");
+					return false;
+				}
+			}else if(ratingType ==4){
+				if(optionLength>2){
+					alert("You have exceed the limit of options");
+					return false;
+				}
+			}	
+		}
 		let uniqueId = Math.random().toString(36).substr(2, 9);
-		$(".options").append('<div class="col-md-12 opt-div"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval '+uniqueId+'" value="0" name="cans[]" readonly/></div></div></div>');
+		$(".options").append('<div class="col-md-12 opt-div new-appended-option"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval '+uniqueId+'" value="0" name="cans[]" readonly/></div></div><div class="col-md-3 rating-type-option"></div><div class="col-md-2"><label></label><button class="btn btn-danger remove-field" type="button">Remove</div></div></div>');
 		$(".options_other").append('<div class="col-md-6"><div class="form-group"><label>New Option</label><input type="text" class="form-control new-option" ></div></div></div>');
 
 		$(".condition_yes_no"+chkvalue).change(function () {
@@ -417,6 +446,19 @@ var lcode = new Array();
 <script>
 $(document).ready(function(){
 	
+	// $('.createquestion').click(function(e){
+	// 	e.preventDefault();
+	// 	let atype = $('.atype').val();
+	// 	if(atype == 1){
+	// 		var inputFields = $('.canval');
+	// 		var inputFieldValues = inputFields.map(function() {
+	// 			return $(this).val();
+	// 		});
+	// 	console.log(inputFieldValues,'inputFieldValues'); 
+	// 	let findDuplicates= inputFieldValues.filter((currentValue, currentIndex) => inputFieldValues.indexOf(currentValue) !== currentIndex);
+	// 	console.log(findDuplicates,'duplicates'); // [1]
+	// 	}
+	// })
 	$(".answer_type_other").hide();
 	$(".options").hide();
 	$(".options_other").hide();
@@ -425,6 +467,9 @@ $(document).ready(function(){
     $("select.atype").change(function(){
         var atype = $(this).children("option:selected").val();
 		// console.log(atype);
+		$('.rating_type').attr('disabled',true);
+		$('.rating-type-div').hide();
+		$(".answer_type_5").hide();
         if(atype == "2" || atype == "3" || atype == "5"){
 			$(".answer_type_other").show();
 			$(".options").hide();
@@ -438,6 +483,12 @@ $(document).ready(function(){
 				$(".answer_type_5").show();
 				$(".question_label").text("Title");
 			}
+		}else if(atype == 4){
+			$(".options").show();
+			$(".btnopt").show();
+			$(".answer_type_other").show();
+			$('.rating-type-div').show();
+			$('.rating_type').attr('disabled',false);
 		}else{
 			$('.conditional-radio-btn').show();
 			$(".answer_type_other").show();
@@ -553,6 +604,7 @@ $(document).ready(function(){
 	});
 	
 	$(".atype").change(function(e){
+		$('.new-appended-option').remove();
 		var $s = $(e.target);
 		$(".atype").val($s.val());
 		$(".atype").not($s).attr('disabled', true);
@@ -641,4 +693,16 @@ function getConditionalQuestion(mode='addQuestion'){
 	}
   })
 }
+
+
+$(document).on('click','.remove-field',function(){
+	$(this).closest('.opt-div').remove();
+})
+$(document).on('click','.remove-conditional-question',function(){
+	$(this).closest('.conditional_logic').remove();
+})
+$(document).on('change','.rating_type',function(){
+	$('.new-appended-option').remove();
+	$('.rating-type-option').html('<div class="form-group"><label>Select the type of rating</label><select class="form-control rating_type" name="rating_type"><option selected="selected" value="0">Select Type</option></select></div>');
+})
 </script>

@@ -437,6 +437,16 @@ function question_type(){
 		//"5" => "Yes/No"
 	);
 }
+function answer_type(){
+	return array(
+		"0" => "Select Type",
+		"1" => "Emoticons",
+		"2" => "Star rating",
+		"3" => "Number rating",
+		"4" => "Tick/Cross",
+	);
+}
+
 function question_type_name($status){
 	$status_id=question_type();
 	return $status_id[$status];
@@ -868,7 +878,14 @@ function export_csv_file($data,$type,$survey_name){
 			$excel_data[$i]['Survey_id']	= $key;
 			$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
 		}
-		$excel_data[$i]['Survey_Responses'] 	= count($datasurvey);
+		$first_value = reset($datasurvey['data']);
+        if($first_value === 'Not-Found'){
+            $totalSurvey = 0;
+        }else{
+            $totalSurvey = count($datasurvey['data']);
+        }
+		$excel_data[$i]['Survey_Responses'] 	= $totalSurvey;
+		$excel_data[$i]['Contacted_Requests'] 	= ($datasurvey['contact']) ? $datasurvey['contact'] : 0;
 		$excel_data[$i]['Average_Survey_Score'] = $total." %";
 		$i++;
 	}

@@ -356,7 +356,7 @@ if(!empty($requestData['survey_name'])){
               </div>
           </div> -->
           </div>      
-          <table id="example1" class="table table-bordered table-striped">
+          <table id="common-table" class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>DATE</th>
@@ -423,7 +423,7 @@ if(!empty($requestData['survey_name'])){
                             ?>
                             <?php if($count > 0 || $contactedCount > 0){?>
                             <tr>
-                                <td><?=$new_date?></td>
+                                <td data-sort="<?=date("Ymd", strtotime($new_date));?>"><?=$new_date?></td>
                                 <td><?=getSurvey()[$requestData['survey_name']]?></td>
                  
                                 <td><?=$count?></td>
@@ -434,7 +434,7 @@ if(!empty($requestData['survey_name'])){
                             <?php }
                         }else{ ?>
                             <tr>
-                                <td><?=$new_date?></td>
+                                <td data-sort="<?=date("Ymd", strtotime($new_date));?>"><?=$new_date?></td>
                                 <td><?=getSurvey()[$requestData['survey_name']]?></td>
                                 <td><?= 0?></td>
                                 <td><?= 0?></td>
@@ -497,14 +497,5 @@ if(!empty($requestData['survey_name'])){
             }
           }
       })
-    });
-</script>
-<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-<script src="plugins/datatables/jquery.dataTables.min.js"></script> 
-<script src="plugins/datatables/dataTables.bootstrap.min.js"></script> 
-<script src="plug-ins/1.13.1/sorting/monthYear.js"></script>
-<script>
-    $(function () {
-      $("#example1").DataTable({"ordering": false});
     });
 </script>

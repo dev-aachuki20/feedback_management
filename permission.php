@@ -16,12 +16,12 @@ if($_SESSION['user_type']==4){
 
 /* sidebar active permission */
 
-$configuration = array('add-department','manage-department','add-location','manage-locations','add-group','manage-groups','view-survey','add-survey','add-role','manage-role');
+$configuration = array('add-department','manage-department','add-location','manage-locations','add-group','manage-groups','view-survey','add-survey','add-role','manage-role','view-survey_questions','edit-survey_questions','add-survey_questions');
 
 $surveysMenu = array('view-report','monthly-report','view-statistics','report-statistics','add-group','manage-groups','view-survey','view-analytics','survey-outcomes','view-leagues','about','contact-us','view-surveys');
 
 $userMenu = array('view-users','add-user','import-users');
 
-$reportMenu = array('create-report','view-template','report','manage-report-template', 'list-report-templates');
+$reportMenu = array('create-report','view-template','report','manage-report-template', 'list-report-templates','list-scheduled-templates');
 $pulsesMenu = array('pulses','about','contact-us','view-pulses');
 ?>

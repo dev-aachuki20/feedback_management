@@ -150,7 +150,6 @@ p {
                             <div class="pdf-div">
                                 <div class="col-sm-12">
                                 <div class="pdf-head" style="display: none;">
-                                    
                                     <table width="93%" style="margin:0 auto;">
                                         <tr>
                                         <td colspan="3" style="text-align:center;margin-top:100px;"> <img src="<?=baseUrl()?>hats-logo-survey50.png" width="200"></td>
@@ -294,6 +293,8 @@ $(document).on('click','.search',function(){
     if(survey==''){
         $('.error').show();
         return;
+    }else{
+        $('.error').hide();
     }
     let data_type = $('.data_type').val();
     let survey_type = '<?=$_GET['type']?>';
@@ -324,6 +325,7 @@ $(document).on('click','.search',function(){
             //console.log(response.result);
             let results = response.result;
             let classid = 1;
+            console.log(response,'results');
             $.each(results, function( k, v ) {
                 let value_result = results[k]['data'];
                 //console.log(value_result);
@@ -387,6 +389,9 @@ function mychart(val,classes,color){
     console.log(val);
     var ctx = document.getElementById(classes).getContext("2d");
     var  values = 0.01 * val;
+    if(isNaN(values)){
+        values =0;
+    }
     var chart = new Chart(ctx, {
         type: 'gauge',
         data: {

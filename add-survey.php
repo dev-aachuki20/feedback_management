@@ -135,7 +135,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
 
 <section class="content-header">
     <h1> <?=($_GET['id'])?'EDIT SURVEY':'ADD SURVEY'?></h1>
-    <a href="?page=view-survey" class="btn btn-primary pull-right" style="margin-top:-25px">View Survey</a> 
+    <a href="?page=view-survey" class="btn btn-danger pull-right" style="margin-top:-25px">Cancel</a> 
 </section>
 <style>
 .container {
@@ -251,7 +251,6 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             <div class="col-md-6 dropdwn ">
                                 <div><label>Location</label>
                                  <?php 
-
                                  $location = $row_get_surveys['locations'];
                                  $locationId = get_data_by_id('locations',$location);
                                 ?>
@@ -261,7 +260,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 <select name="locationid[]" id="location_id" class="form-control form-control-lg multiple-select" multiple=multiple>
                                      <?php 
                                      foreach($locationId as $key => $value){ ?>
-                                        <option value="<?=$key?>" selected><?=$value?></option>
+                                        <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
                                     <?php } ?>   
                                 </select>	
                             </div>
@@ -273,7 +272,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                   $department = $row_get_surveys['departments'];
                                   $departmentId = get_data_by_id('departments',$department);
                                     foreach($departmentId as $key => $value){ ?>
-                                    <option value="<?=$key?>" selected><?=$value?></option>
+                                    <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
                                 <?php } ?> 
                                 </select>	
                             </div>
@@ -285,7 +284,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                   $role = $row_get_surveys['roles'];
                                   $roleId = get_data_by_id('roles',$role);
                                     foreach($roleId as $key => $value){ ?>
-                                    <option value="<?=$key?>" selected><?=$value?></option>
+                                    <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
                                 <?php } ?> 
                                 </select>	
                             </div>
@@ -351,7 +350,7 @@ $groupByUsers      = get_filter_data_by_user('groups');
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Alert Email (comma sepration for multiple email)</label>
+                                    <label>Alert Email (comma separation for multiple email addresses)</label>
                                     <textarea name="alter_email" rows="3"  class="form-control"><?php echo $row_get_surveys['alter_email'];?></textarea>
                                 </div>
                             </div>

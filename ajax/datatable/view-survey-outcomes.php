@@ -132,7 +132,10 @@ if(!empty($_POST['surveys'])){
             $nestedData[] = $row_get_survey_detail['name'];
             //$nestedData[] = ordinal($row_survey_entry);
             $nestedData[] = $row_survey_entry;
-            
+            $nestedData[] = $departments[$row_get_recent_entry['departmentid']];
+            $nestedData[] = getLocation()[$row_get_recent_entry['locationid']];
+            $nestedData[] = getGroup()[$row_get_recent_entry['groupid']];
+            $nestedData[] = getRole()[$row_get_recent_entry['roleid']];
             $total_result_val=0;
             record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
            

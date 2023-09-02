@@ -142,7 +142,6 @@ else{
 <link rel="stylesheet" href="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<!-- amit -->
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.css">
@@ -210,8 +209,8 @@ else{
 
 <!-- Datatable JS -->
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="dist/js/datatable-custum.js"></script>
 <!--<script src="dist/js/pages/dashboard.js"></script> 
-
 <script src="dist/js/demo.js"></script>-->
 
 <script>
@@ -286,6 +285,14 @@ $(document).ready( function () {
     });
 });
 
+$(document).ready(function(){
+  $('.singleSelect2').select2({
+    closeOnSelect: true
+  });
+  $('.reset').click(function(){
+    window.location.href = window.location.href;
+  })
+})
 </script>
 </body>
 </html>

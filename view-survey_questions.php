@@ -1,6 +1,19 @@
+<?php 
+//dbRowDelete('questions_detail', $filter);
+if(isset($_GET['deleted'])){
+  $questionid = $_GET['deleted'];
+  $filter = " questionid in($questionid)";
+  dbRowDelete('questions_detail', $filter);
+  dbRowDelete('questions', " id=$questionid");
+  $msg = "Question deleted Successfully";
+  reDirect("?page=view-survey_questions&surveyid=".$_REQUEST['surveyid']."&msg=".$msg);	
+}
+?>
+
 <section class="content-header">
   <h1>SURVEY QUESTIONS</h1>
-   <a href="?page=add-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>" class="btn btn-primary pull-right" style="margin-top:-25px">Add Question</a>
+  <a href="?page=add-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>" class="btn btn-success pull-right bg-success" style="margin-top:-25px">Add Question</a>
+  <a href="?page=view-survey" class="btn btn-primary pull-right" style="margin-top:-25px">View Surveys</a>
     </section>
     <section class="content">
           <div class="box box-solid">
@@ -41,7 +54,7 @@
           </div>
           <div class="box">
             <div class="box-body">
-              <table id="example1" class="table table-bordered table-striped">
+              <table id="common-table" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>Questions</th>
@@ -52,52 +65,50 @@
                 </thead>
                 <tbody>
 				<?php 
-					record_set("get_questions", "select * from questions where cby='".$_SESSION['user_id']."' AND surveyid='".$_REQUEST['surveyid']."'");				
+          $filter = '';
+          if($_SESSION['user_type'] > 2){
+            $filter = " and cby='".$_SESSION['user_id']."'";
+          }
+					record_set("get_questions", "select * from questions where surveyid='".$_REQUEST['surveyid']."'".$filter);				
 					while($row_get_questions = mysqli_fetch_assoc($get_questions)){
           $label = ''; 
           if($row_get_questions['conditional_logic'] > 0){
             $label = '<span class="label label-primary">C</span>';
           }
+          record_set("get_question_details", "select * from questions_detail where surveyid='".$_REQUEST['surveyid']."' and questionid ='".$row_get_questions['id']."'");	
+					while($row_get_question_details = mysqli_fetch_assoc($get_question_details)){
+           if($row_get_question_details['skip_to_question_id']> 0){
+            record_set("get_skipped_question", "select * from questions where id=".$row_get_question_details['skip_to_question_id']);	
+            $row_get_skipped_question = mysqli_fetch_assoc($get_skipped_question);
+            if($row_get_skipped_question['conditional_logic'] > 0){
+              $label = '<span class="label label-success">D</span>';
+            }
+           }
+          }
+
           ?>
               <tr>
-                <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong> <?php } echo $label; ?></td>
+                <td><?php if(empty($row_get_questions['parendit'])){ ?><strong><?php } ?><?php echo $row_get_questions['question'];?><?php if(empty($row_get_questions['parendit'])){ ?></strong> <?php } echo $label; ?> <?=($row_get_questions['ifrequired'] == 1) ? '' :'<strong>(Optional)</strong>'?></td>
                 <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
-                <td><?=($row_get_questions['cstatus']==1)? '<span class="label label-success">'.status_data($row_get_questions['cstatus']).'</span>':'<span class="label label-danger">'.status_data($row_get_questions['cstatus']).'</span>'?></td>
+                <td ><?=($row_get_questions['cstatus']==1)? '<span class="label label-success">'.status_data($row_get_questions['cstatus']).'</span>':'<span class="label label-danger">'.status_data($row_get_questions['cstatus']).'</span>'?></td>
                 <td>
                 <a class="btn btn-xs btn-info" href="?page=edit-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>&questionid=<?php  echo $row_get_questions['id'];?>">Edit</a>
-                <!-- <a class="btn btn-xs btn-info" href="?page=editSurveyQuestion&surveyid=<?php  //echo $_REQUEST['surveyid'];?>&questionid=<?php  //echo $row_get_questions['id'];?>">Edit Language Text</a> -->
+                <?php if($_SESSION['user_type'] == 1) { ?>
+                <a class="btn btn-xs btn-danger" href="?page=view-survey_questions&surveyid=<?php  echo $_REQUEST['surveyid'];?>&deleted=<?=$row_get_questions['id']?>">Delete</a>
+                <?php } ?>
                 </td>
               </tr>
         <?php	} ?>
                 </tbody>
-                <tfoot>
+                <!-- <tfoot>
                   <tr>
                     <th>Questions</th>
                     <th>Type</th>
                     <th>Status</th>
                     <th>Action</th>
                   </tr>
-                </tfoot>
+                </tfoot> -->
               </table>
             </div>
           </div>
-        
     </section>
-    
-    <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-    <script src="plugins/datatables/jquery.dataTables.min.js"></script> 
-<script src="plugins/datatables/dataTables.bootstrap.min.js"></script> 
-    
-    <script>
-      $(function () {
-        $('#example1').DataTable({
-          "paging": true,
-          "lengthChange": false,
-          "searching": false,
-          "ordering": false,
-          "info": true,
-          "autoWidth": false,
-		  "order": []
-        });
-      });
-    </script>

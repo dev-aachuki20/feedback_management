@@ -45,8 +45,6 @@ if(isset($_POST['submit'])){
 	$roleid			= $_POST['roleid'];
 	$questionid		= array_unique($_POST['questionid']);
 
-	//echo '<pre>';
-
 	foreach($questionid as $value){
 		$questionid 	= $value;
 		$str 			= $answerid[$value];
@@ -714,7 +712,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
                 <div class="wizard">
 
-                	<?php if(count($survey_steps) > 0){ ?>
+                	<?php if(count($survey_steps) > 1){ ?>
 
                     <div class="wizard-inner">
 
@@ -724,7 +722,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
                         <ul class="nav nav-tabs" role="tablist">
 
-                    		<?php foreach($survey_steps AS $survey_step){ ?>
+                    		<?php 
+							foreach($survey_steps AS $survey_step){ ?>
 
 		                    <li role="presentation" class="<?php if($survey_step['number'] == 1){ ?>active<?php } ?>">
 
@@ -817,7 +816,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 											echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
 											<div class="col-md-6">
 												<div class="form-group">
-													<label for="groupid">group</label>
+													<label for="groupid">Group</label>
 													<select name="groupid" id="groupid" class="form-control form-control-lg" required>
 														<option value="">Please select</option>
 														<?php	
@@ -907,16 +906,17 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 									<!-- Start Roles -->
 									<?php 
+									
 										if(!empty($row_get_survey['roles'])){
 											record_set("get_role", "select * from roles where id in(".$row_get_survey['roles'].") AND cstatus=1 and id != 4");				
-											record_set("get_department", "select * from departments where id in(".$row_get_survey['departments'].") AND id != 4 AND cstatus=1 order by name asc");
+											record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
 
 											if($totalRows_get_role == 1){
 												while($row_get_role = mysqli_fetch_assoc($get_role)){
 													echo '<input type="hidden" name="roleid" value="'.$row_get_role['id'].'">';
 												}
 											}else{
-												echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
+												echo ($totalRows_get_roles==1)?'<div class="col-md-3"></div>':'';?>
 												<div class="col-md-6">
 
 													<div class="form-group">
@@ -959,7 +959,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	                        	<div class="question-div question_container_<?php echo $questionid; ?>">
 								<div class="col-md-12">
-								  <h4><?php echo $question['question'];?><?php if($question['ifrequired']==1){ ?>  <?php } ?></h4>
+								  <h4><?php echo $question['question'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
 								</div>	
 	                        	
 
@@ -1212,7 +1212,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 										  ?>
 
 
-											<input <?php if($show_smily==1){ ?> style="visibility:hidden;" <?php } ?> type="radio" class="form-check-input <?php if($show_smily==1){ ?> smily_icon_input <?php } ?> subque" name="answerid[<?php echo $question['id']; ?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+											<input <?php if($show_smily==1){ ?> style="visibility:hidden;" <?php } ?> type="radio" class="form-check-input <?php if($show_smily==1){ ?> option_<?php echo $questionid; ?> smily_icon_input <?php } ?> subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
 											data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
 											data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
 											data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
@@ -1474,7 +1474,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
                             <?php }else{ ?>
 								<div class="col-md-12">
-								<input type="submit" name="submit" class="default-btn submitform" id="submit" value="Submit">
+								<input type="submit" name="submit" class="default-btn submit-survey-btn" id="submit" value="Finish">
 								</div>
 
                             <?php } ?>
@@ -1828,42 +1828,76 @@ $('.subque').change(function(){
 		$('.question-div').show();
 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
 			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					newValues = '--'+newValues;
-					$(".question_container_"+i).find('input').prop('required',false);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).hide();
-				}
+				//alert("hello ");
+				// let values = $(".question_container_"+i).find('input').val();
+				// if(values !=undefined){
+				// 	const myArray = values.split("--");
+				// 	const cleanArray = myArray.filter((a) => a);
+				// 	let newValues = cleanArray.join("--");
+				// 	newValues = '--'+newValues;
+				// 	$(".question_container_"+i).find('input').prop('required',false);
+				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+				// 	$(".question_container_"+i).hide();
+				// }
+
+				var div = $(".question_container_"+i);
+				$(".option_"+i).each(function() {
+				let values = $(this).data('value');
+					if(values !=undefined){
+						const myArray = values.split("--");
+						const cleanArray = myArray.filter((a) => a);
+						let newValues = cleanArray.join("--");
+						newValues = '--'+newValues;
+						$(".question_container_"+i).find('input').prop('required',false);
+						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+						$(".question_container_"+i).hide();
+					}
+				})
 				
 			}
 		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+			//alert("hello2 ");
 			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					newValues = '--'+newValues;
-					$(".question_container_"+i).find('input').prop('required',false);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).hide();
-				}
+				// let values = $(".question_container_"+i).find('input').val();
+				// if(values !=undefined){
+				// 	const myArray = values.split("--");
+				// 	const cleanArray = myArray.filter((a) => a);
+				// 	let newValues = cleanArray.join("--");
+				// 	newValues = '--'+newValues;
+				// 	$(".question_container_"+i).find('input').prop('required',false);
+				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+				// 	$(".question_container_"+i).hide();
+				// }
+				var div = $(".question_container_"+i);
+				$(".option_"+i).each(function() {
+				let values = $(this).data('value');
+					if(values !=undefined){
+						const myArray = values.split("--");
+						const cleanArray = myArray.filter((a) => a);
+						let newValues = cleanArray.join("--");
+						newValues = '--'+newValues;
+						$(".question_container_"+i).find('input').prop('required',false);
+						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+						$(".question_container_"+i).hide();
+					}
+				})
+				
 			}
 		}else {
+			//alert("hello3 ");
 			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					$(".question_container_"+i).find('input').prop('required',true);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).show();
-				}
+				var div = $(".question_container_"+i);
+				$(".option_"+i).each(function() {
+					let values = $(this).data('value');
+					if(values !=undefined){
+						const myArray = values.split("--");
+						const cleanArray = myArray.filter((a) => a);
+						let newValues = cleanArray.join("--");
+						$(this).prop('required',true);
+						$(this).val(newValues);
+						$(".question_container_"+i).show();
+					}
+				});
 			}
 		}
 		
@@ -1882,7 +1916,6 @@ $('.subque').change(function(){
 		// 		}
 		// 	}
 		// });
-			console.log(questionDetailId,surveyId,parentqueid);
 		$.ajax({
 			type: "POST",
 			url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',

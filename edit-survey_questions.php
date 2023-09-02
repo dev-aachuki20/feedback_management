@@ -12,22 +12,26 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 $languages = explode(',',$row_get_survey_details['language']);
 
   if(!empty($_POST['submit'])){
-    $condition_yes_no=$_POST['condition_yes_no'];
+    $condition_yes_no=(isset($_POST['condition_yes_no'])?$_POST['condition_yes_no']:'0');
     $data =  array(
           "survey_step_id" => $_POST['survey_step'],
           "cstatus"            => $_POST['status'],
           "dposition"          => $_POST['dposition'],
           "question"           => $_POST['question'],
           "ifrequired"         => $_POST['ifrequired'],
-          "conditional_logic"   => (isset($condition_yes_no)?$condition_yes_no:'0'),
+          "conditional_logic"  => $condition_yes_no,
           'cdate'=>date("Y-m-d H:i:s")
         );
     $updte=	dbRowUpdate("questions", $data, "where id=".$questionid." and surveyid=".$surveyid);
     $correct            = $_POST['correct'];
-    $conditional_logic  = $_POST['conditional_logic'];
-    $conditional_answer = $_POST['conditional_answer'];
-    $skip_to_question   = $_POST['skip_to_question'];
-
+    $conditional_logic  = ($condition_yes_no > 0) ? $_POST['conditional_logic']: 0;
+    $conditional_answer = ($condition_yes_no > 0) ? $_POST['conditional_answer']: 0;
+    $skip_to_question   = ($condition_yes_no > 0) ? $_POST['skip_to_question']: 0;
+    $deletedOption = $_POST['removed_question_option'];  
+    if($deletedOption != ''){
+      $filter = "id in ($deletedOption)";
+      dbRowDelete('questions_detail', $filter);
+    }
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
 			$condition_question=$_POST['condition_question'];
@@ -69,6 +73,7 @@ $languages = explode(',',$row_get_survey_details['language']);
           <?php 
             record_set("get_questions", "select * from questions where surveyid='".$_REQUEST['surveyid']."'  and id='".$_REQUEST['questionid']."'");				
             $row_get_questions = mysqli_fetch_assoc($get_questions);
+            $isWeighted = $row_get_questions['is_weighted'];
           ?>
       
           <?php if($row_get_survey_details['isStep'] == 1){ ?>
@@ -158,21 +163,29 @@ $languages = explode(',',$row_get_survey_details['language']);
             {
               
               $ansId = $row_get_questions_detail['id'];
-              $answerOptions[$row_get_questions_detail['answer']] = $row_get_questions_detail['description'];
+              $answerOptions[$row_get_questions_detail['id']]['description'] = $row_get_questions_detail['description'];
+              $answerOptions[$row_get_questions_detail['id']]['answer'] = $row_get_questions_detail['answer'];
               $i++;
               ?>
-              <div class="col-md-4">
+              <div class="col-md-6 answer-fields">
+                <input type="hidden" value="" name="removed_question_option" class="removed_question_option">
+              <div class="col-md-6">
                 <div class="form-group">
                   <label>Answer <?=$i?></label>
                   <input type="text" class="form-control correct_answer" name="correct[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['description'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
                 </div>
               </div>
-
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <div class="form-group">
                   <label>Value</label>
-                  <input type="text" class="form-control canval" name="cans[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
+                  <input type="text" class="form-control canval" name="cans[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1 || $isWeighted ==0) ? 'disabled ':''?> />
                 </div>
+              </div>
+              <div class="col-md-2">
+                <label></label>
+                  <button data-id="<?=$row_get_questions_detail['id']?>" class="btn btn-danger remove-answer-field" type="button">Remove
+                  </button>
+              </div>
               </div>
 		      <?php } ?>
         </div>
@@ -201,8 +214,8 @@ $languages = explode(',',$row_get_survey_details['language']);
                 <div class="col-md-3">
                   <select class="form-control" name="conditional_answer[]" id="conditional_answer">
                     <?php 
-                    foreach($answerOptions as $key=>$value){ ?>
-                      <option value="<?=$key?>" <?=($row_get_questions_conditional_detail['conditional_answer'] == $key)?'selected':''?>><?=$value?></option>
+                    foreach($answerOptions as $answerValue){ ?>
+                      <option value="<?=$answerValue['answer']?>" <?=($row_get_questions_conditional_detail['conditional_answer'] == $answerValue['answer'])?'selected':''?>><?=$answerValue['description']?></option>
                     <?php }?>
                   </select>	
                 </div>
@@ -233,14 +246,14 @@ $languages = explode(',',$row_get_survey_details['language']);
                 <div class="col-md-3">
                   <select class="form-control" name="conditional_logic[]">
                     <option value="1" <?=($row_get_questions_conditional_detail['conditional_logic'] == 1)?'selected':''?>>Equal To</option>
-                    <option value="2" <?=($row_get_questions_conditional_detail['conditional_logic'] ==2)?'selected':''?>>Not Equal To</option>
+                    <option value="1" <?=($row_get_questions_conditional_detail['conditional_logic'] ==2)?'selected':''?>>Not Equal To</option>
                   </select>		
                 </div>
                 <div class="col-md-3">
                   <select class="form-control" name="conditional_answer[]" id="conditional_answer">
-                    <?php 
-                    foreach($answerOptions as $key=>$value){ ?>
-                      <option value="<?=$key?>" <?=($row_get_questions_conditional_detail['conditional_answer'] == $key)?'selected':''?>><?=$value?></option>
+                     <?php 
+                    foreach($answerOptions as $answerValue){ ?>
+                      <option value="<?=$answerValue['answer']?>" <?=($row_get_questions_conditional_detail['conditional_answer'] == $answerValue['answer'])?'selected':''?>><?=$answerValue['description']?></option>
                     <?php }?>
                   </select>	
                 </div>
@@ -389,4 +402,11 @@ function getConditionalQuestion(mode='editQuestion'){
 				}
   })
 }
+const questionId = [];
+$(document).on('click','.remove-answer-field',function(){
+  let id = $(this).data('id');
+  questionId.push(id);
+  $('.removed_question_option').val(questionId);
+	$(this).closest('.answer-fields').remove();
+})
 </script>

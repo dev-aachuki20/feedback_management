@@ -99,13 +99,13 @@
                         <?php if($_SESSION['user_type']==1 and !isset($_GET['type'])) {?>
                           <a class="btn btn-xs btn-info" href="?page=view-survey_questions&surveyid=<?php echo $row_get_surveys['id'];?>">Questions</a>
 
-                          <a class="btn btn-xs btn-primary" href="survey-form.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">View</a>
+                          <!-- <a class="btn btn-xs btn-primary" href="survey-form.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">View</a>
 
-                          <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">Result</a>
+                          <a class="btn btn-xs btn-success" href="survey-result.php?surveyid=<?php echo $row_get_surveys['id'];?>" target="_blank">Result</a> -->
 
-                          <a class="btn btn-xs bg-black" href="export-result.php?surveyid=<?php echo $row_get_surveys['id'];?>&name=<?php echo $row_get_surveys['name'];?>" target="_blank">Export CSV</a>
+                          <!-- <a class="btn btn-xs bg-black" href="export-result.php?surveyid=<?php echo $row_get_surveys['id'];?>&name=<?php echo $row_get_surveys['name'];?>" target="_blank">Export CSV</a> -->
 
-                          <a class="btn btn-xs bg-green" href="export-pdf.php?surveyid=<?php echo $row_get_surveys['id'];?>&name=<?php echo $row_get_surveys['name'];?>" target="_blank">Export PDF</a>
+                          <!-- <a class="btn btn-xs bg-green" href="export-pdf.php?surveyid=<?php echo $row_get_surveys['id'];?>&name=<?php echo $row_get_surveys['name'];?>" target="_blank">Export PDF</a> -->
                         <?php } ?>
                       </div>
                     </td>

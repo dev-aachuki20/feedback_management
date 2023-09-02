@@ -9,7 +9,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
 <section class="content">
   <div class="box">
     <div class="box-body table-responsive">
-      <table id="example1" class="table table-bordered table-hover">
+      <table id="common-table" class="table table-bordered table-hover">
         <thead>
           <tr>
             <th>#</th>
@@ -79,21 +79,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
   </div>
 </div>
 
-<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-<script src="plugins/datatables/jquery.dataTables.min.js"></script> 
-<script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
-<script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
-
 <script type="text/javascript">
-$('#example1').DataTable({
-  "paging": true,
-  "lengthChange": true,
-  "searching": true,
-  "ordering": true,
-  "info": true,
-  "autoWidth": false
-});
-
 function scheduled_details(sch_id, temp_name){
   $("#sch_modal_title").html(temp_name);
   $.ajax({

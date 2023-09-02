@@ -7,7 +7,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="box-body">
-          <table id="example1" class="table table-bordered table-striped">
+          <table id="manage-table" class="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>Name</th>
@@ -47,13 +47,6 @@
                 </tr>
               <?php }?>
             </tbody>
-            <tfoot>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>
@@ -62,23 +55,6 @@
   <!-- End location table -->
 </section>
 <!-- End content section -->
-
-<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
-<script src="plugins/datatables/jquery.dataTables.min.js"></script> 
-<script src="plugins/datatables/dataTables.bootstrap.min.js"></script> 
-<script>
-      $(function () {
-        $("#example1").DataTable({"ordering": false});
-        $('#example2').DataTable({
-          "paging": true,
-          "lengthChange": false,
-          "searching": false,
-          "ordering": false,
-          "info": true,
-          "autoWidth": false
-        });
-      });
-    </script>
 <script type="application/javascript">
   $(document).ready(function(){
     $('.form-control').click(function(){

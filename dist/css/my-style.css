@@ -469,3 +469,21 @@ h4{margin-bottom:1px;font-size:16px;}
     }
     .center-block  .btn{ margin-bottom: 10px;}
 }
+span.select2-selection.select2-selection--single {
+    height: 35px;
+}
+.remove-field {
+    margin-top: 24px;
+}
+.submit-survey-btn {
+    background-color: #0d90b7;
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 30px;
+}
+.bg-success{
+    background: green !important;
+}

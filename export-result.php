@@ -1,5 +1,7 @@
-<?php include('function/function.php');
-$filename = $_GET["name"].date(" Y-m-d-H-i-s").".xls"; // File Name
+<?php 
+include('function/function.php');
+include('function/get_data_function.php');
+$filename = $_GET["name"].'-'.date("Y-m-d-H:i:s", time()).".xls"; // File Name
 
 $surveyid=$_GET['surveyid'];
 // if($_REQUEST['month']){
@@ -38,7 +40,7 @@ if($totalRows_getdata>0){
 		$row_excel_data[$i]['Last Name'] 	= ''; 
 		$row_excel_data[$i]['Phone Number'] = ''; 
 		$row_excel_data[$i]['Email'] 		= ''; 
-		$row_excel_data[$i]['School'] 		= ''; 
+		//$row_excel_data[$i]['School'] 	= ''; 
 			
 		// $sub_query = "SELECT a.*,q.question as question FROM answers a left join questions q on a.questionid=q.id where a.surveyid='".$surveyid."' and a.cdate='".$row_getdata['cdate']."'";
 		$sub_query ="SELECT * FROM questions LEFT JOIN answers ON questions.id = answers.questionid and answers.cdate ='".$row_getdata['cdate']."' where questions.surveyid =$surveyid and questions.cstatus=1 order by questions.id ASC,questions.dposition asc";
@@ -48,8 +50,13 @@ if($totalRows_getdata>0){
 		$contact_query ="SELECT * FROM answers  where surveyid =$surveyid and answers.cdate ='".$row_getdata['cdate']."'";
 		record_set('contact_query',$contact_query);
 		while ($row_contact_query = mysqli_fetch_assoc($contact_query)) {
+			$row_excel_data[$i]['Group'] = getGroup()[$row_contact_query['groupid']];
+			$row_excel_data[$i]['Location'] = getLocation()[$row_contact_query['locationid']];
+			$row_excel_data[$i]['Department'] = getDepartment()[$row_contact_query['departmentid']];
+			$row_excel_data[$i]['Role'] = getRole()[$row_contact_query['roleid']];
 			if($row_contact_query['answerid']==-2){
 				$data = json_decode($row_contact_query['answertext']);
+				
 				foreach($data as $key =>$value){
 				
 					if($key =='first_name'){
@@ -66,7 +73,7 @@ if($totalRows_getdata>0){
 					}
 				}
 			}else if($row_contact_query['answerid']==-3){
-				$row_excel_data[$i]['School'] = $row_contact_query['answertext'];
+				//$row_excel_data[$i]['School'] = $row_contact_query['answertext'];
 			}
 		}
 

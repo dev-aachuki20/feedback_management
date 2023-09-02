@@ -26,8 +26,52 @@ $co_action = "";
 $contact_comment="";
 $created_date ="";
 $showAllComment =[];
+
+if($_SESSION['user_type'] == 1 && !isset($_POST['submit'])){
+  $survey_id =  $_GET['surveyid'];
+  $surveyData = get_survey_detail($survey_id);
+  $tasks = $_GET['userid'];
+  $assing_to_user_id = $_SESSION['user_id'];
+  $survey_type_id = $surveyData['survey_type'];
+
+  $data = array(
+    "assign_to_user_id"   => $assing_to_user_id,
+    "task_id"             => $tasks,
+    "survey_id"           => $survey_id,
+    "survey_type"         => $survey_type_id,
+    "task_status"         => 2,
+    "assign_by_user_id"   => $assing_to_user_id,
+    "cdate"               => date("Y-m-d H:i:s")
+  );
+  // check the assign task already exists for this user or not
+  record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id  and task_id = $tasks and survey_id = $survey_id");
+  $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+
+  if($totalRows_check_assign_task > 0 ){
+    //$insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
+  }else {
+    $insert_value = dbRowInsert("assign_task",$data);
+    $data_contact_action = array(
+      "user_id"=> $tasks,
+      "action"=> 2,
+      "cby" =>$assing_to_user_id,
+      "comment"=> 'response assigned to '.$_SESSION['user_name'],
+      'created_date'=>date("Y-m-d H:i:s")
+    );
+    $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+  }
+  // $data_contact_action = array(
+  //   "user_id"=> $tasks,
+  //   "action"=> 2,
+  //   "cby" =>$assing_to_user_id,
+  //   "comment"=> 'response assigned to '.$_SESSION['user_name'],
+  //   'created_date'=>date("Y-m-d H:i:s")
+  // );
+  // $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
+}
+
+
 if(isset($_GET['userid'])){
-  
 record_set("get_contact_action", "select * from survey_contact_action where user_id='".$_GET['userid']."'");
 if($totalRows_get_contact_action > 0){ 
 $i = 0;
@@ -101,10 +145,9 @@ if($totalRows_get_survey_id > 0){
 if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
 
   $user_id = $_GET['userid'];
-  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."  and cby=".$_SESSION['user_id']."");
+  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."  and cby=".$_SESSION['user_id']."",);
  
   if($totalRows_total_contact > 0){
-      
     $data_contact_action_update = array(
       "action"=> $_POST['contact_action'],
       "comment"=> $_POST['comment'],
@@ -144,7 +187,6 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
       header("Refresh:0");
     }
   }else{
-
     $data_contact_action = array(
       "user_id"=> $_GET['userid'],
       "action"=> $_POST['contact_action'],
@@ -163,7 +205,7 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
       }
     }
     else {
-      $mess = "Sorry! Only assign user Can take task";
+      $mess = "Only the assigned user can update this task";
       alertdanger($mess,'');
     }
 
@@ -279,10 +321,18 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
       <table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
         <thead style="border-top:1px solid black;border-bottom:1px solid black;">
           <tr>
+            <th class="thead" style="width:5%;">Group:</th>
+            <th class="thead" style="width:45%;padding: 0px;"><?php echo getGroup()[$row_get_loc_dep['groupid']] ?></th>
             <th class="thead" style="width:5%;">Location:</th>
-            <th class="thead" style="width:45%;padding: 0px;"><?php echo $row_get_location['name']; ?></th>
-            <th class="thead" style="width:5%;">Department:</th>
-            <th class="thead" style="width:45%;padding: 0px;"><?php echo $row_get_department['name']; ?></th>
+            <th class="thead" style="width:45%;padding: 0px;"><?php echo getLocation()[$row_get_loc_dep['locationid']] ?></th>
+          </tr>
+        </thead>
+        <thead style="border-top:1px solid black;border-bottom:1px solid black;">
+          <tr>
+          <th class="thead" style="width:5%;">Department:</th>
+            <th class="thead" style="width:45%;padding: 0px;"><?php echo getDepartment()[$row_get_loc_dep['departmentid']] ?></th>
+            <th class="thead" style="width:5%;">Role:</th>
+            <th class="thead" style="width:45%;padding: 0px;"><?php echo getRole()[$row_get_loc_dep['groupid']] ?></th>
           </tr>
         </thead>
       </table>
@@ -413,7 +463,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                </div>
               <hr style="border: 0.5px solid #d3cccc;"/>
              <?php } ?>
-             <?php if($_GET['status']== 'assign') { ?>
+             <?php if($_GET['status']== 'assign' || $_SESSION['user_type'] == 1) { ?>
               <form id="contactActionForm" role="form" method="POST">
                 <div class="row notforpdf" style="text-align: center;margin-top: 20px;">
                   <div class="col-md-12">

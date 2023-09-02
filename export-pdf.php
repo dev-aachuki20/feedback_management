@@ -1,5 +1,7 @@
 <?php 
 include('function/function.php');
+include('function/get_data_function.php');
+
 $surveyid=$_GET['surveyid'];
 if(isset($_GET['surveyid'])){
 	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1 ");	
@@ -11,7 +13,6 @@ if(isset($_GET['surveyid'])){
 }else{
 	echo 'Missing survey ID.';  exit;
 }
-
 $ans_filter_query='';
 if($_REQUEST['userid']){
 	$ans_filter_query .= " and cby='".$_REQUEST['userid']."' ";
@@ -70,10 +71,20 @@ $message = '<table width="100%">
       <tbody style="border-top:1px solid black;border-bottom:1px solid black;">
         <tr style="">
           <td colspan="4" style="text-align:center;font-size:20px;"><span>'.$row_get_survey['name'].'</span></td>
-         
         </tr>
       </tbody>
+    
   </table>';
+    // <tfoot>
+    //   <tr style="">
+    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>GROUP :'.getGroup()[$row_get_survey['groups']].'</span></td>
+    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>LOCATION :'.getLocation()[$row_get_survey['locations']].'</span></td>
+    //   </tr>14px
+    //   <tr style="">
+    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>DEPARTMENT :'.getDepartment()[$row_get_survey['departments']].'</span></td>
+    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>ROLE :'.getRole()[$row_get_survey['role']].'</span></td>
+    //   </tr>
+    // </tfoot>
   // <tr style="">
   //   <td style="width:10%;"><span>Location :</span></td>
   //   <td style="width:40%;"><span>'.$location_name.'</span></td>
@@ -163,11 +174,15 @@ $message = '<table width="100%">
                           <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
                         </tr>';
                         $total = 0;
+                        
+                        $sum_of_count = array_sum(array_column($table_display_data, "count"));
+                        $perResponsePercentage = 100/$sum_of_count;
                         foreach($table_display_data as $key=>$val){ 
+                          $response = ($val['count'])?$val['count']:0;
                           $message .='<tr>
                             <td style="border: 1px solid">'.$key.'</td>
-                            <td style="text-align:center;border: 1px solid">'.round($val['percantage'],2).'%</td>
-                            <td style="text-align:center;border: 1px solid">'.$val['count'].'</td>
+                            <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
+                            <td style="text-align:center;border: 1px solid">'.$response.'</td>
                           </tr>';
                           $total +=$val['count'];
                         } 

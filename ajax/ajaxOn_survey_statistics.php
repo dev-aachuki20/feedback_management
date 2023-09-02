@@ -2,6 +2,8 @@
 include('../function/function.php');
 include('../function/get_data_function.php');
 $data =array();
+$allSurvey = getSurvey();
+
 $querys = 'SELECT * FROM answers where id!=0 ';
 $groupBy = '';
 if($_POST['data_type']=='location'){
@@ -77,7 +79,6 @@ if($totalRows_get_entry){
                 $average_value=100;
             }
             $survey_data[$locId]['data'][$cby] = $average_value;
-            
         }
         else if($_POST['data_type']=='department'){
             $count = array();
@@ -189,15 +190,28 @@ if($totalRows_get_entry){
 }
 $html ='';
 $i=1;
+if($_POST['data_type'] =='survey' || $_POST['data_type'] ==''){
+    $survey_id = array_keys($survey_data);
+    $survey_id_1 = array_keys($allSurvey);
+    $unique_array = array_diff($survey_id_1 , $survey_id);
+    $remainingSurvey = [];
+    foreach ($allSurvey as $key => $value) {
+        if (!array_key_exists($key, $survey_data)) {
+            $survey_data[$key]['data'][0] = 'Not-Found';
+            $survey_data[$key]['contact'] = '';
+        }
+    }
+}
+ksort($survey_data);
+//export csv in survey static
 // echo '<pre>';
 // print_r($survey_data);
 // die();
-ksort($survey_data);
-//export csv in survey static
+$survey_name = getSurvey()[$_POST['survey']];
 if(isset($_GET['export']) and $_GET['export']=='csv'){
-    $survey_name = getSurvey()[$_POST['survey']];
     export_csv_file($survey_data,$_GET['data_type'],$survey_name); die();
 }
+$html.='<h2 class="survey_name text-center" style="margin:0px;">'.$survey_name.'</h2>';
 if(count($survey_data)>0){
     foreach($survey_data as $key =>$datasurvey){ 
         $total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
@@ -228,6 +242,12 @@ if(count($survey_data)>0){
         }else {
             $contacted =0;
         }
+        $first_value = reset($datasurvey['data']);
+        if($first_value === 'Not-Found'){
+            $totalSurvey = 0;
+        }else{
+            $totalSurvey = count($datasurvey['data']);
+        }
        $html.= '<div class="col-md-3"> 
         <div class="graph-body">  
                 <p style="font-size: 14px;font-weight: 700;text-align:center;height: 60px;">'.ucwords($titleName).'</p>  
@@ -236,7 +256,7 @@ if(count($survey_data)>0){
                     <span class="g-persent" style="font-size:18px;margin-left: 15px;"><strong>'.$total.' %</strong></span>
                     <canvas id="chart_'.$i.'"></canvas>
                         <div class="row" style="text-align:center;">
-                            <div class="col-md-12"><span class="total-count"><strong>TOTAL SURVEYS:'.count($datasurvey['data']).'</strong></span></div>
+                            <div class="col-md-12"><span class="total-count"><strong>TOTAL SURVEYS:'.$totalSurvey.'</strong></span></div>
                         </div>
                         <div class="row" style="text-align:center;">
                             <div class="col-md-12"><span class="total-count"><strong>CONTACT REQUESTS: '.($contacted).'</strong></span></div>

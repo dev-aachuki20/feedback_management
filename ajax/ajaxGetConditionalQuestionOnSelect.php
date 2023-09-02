@@ -70,7 +70,7 @@ if($_REQUEST['mode']=='editQuestion'){
     <div class="col-md-2">
     <label for="">If answer</label>		
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
     <select class="form-control" name="conditional_logic[]">
         <option value="1" >Equal To</option>
         <option value="2">Not Equal To</option>
@@ -92,6 +92,9 @@ if($_REQUEST['mode']=='editQuestion'){
         }
     }
     $html .='</select>	
+    </div>
+    <div class="col-md-1">
+    <button class="btn btn-danger remove-conditional-question">Remove</button>
     </div>
 </div>';
 echo $html; die();

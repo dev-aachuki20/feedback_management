@@ -314,7 +314,11 @@ function get_admin_manager_of_survey($survey_id){
 function get_data_by_id($table,$id){
 	$arr = array();
 	$user_type = '';
-	$data = getaxecuteQuery_fn("select id,name from $table where id IN($id) order by name ASC");
+	$query = '';
+	if($id){
+		$query = "where id IN($id)";
+	}
+	$data = getaxecuteQuery_fn("select id,name from $table $query order by name ASC");
 	foreach ($data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}

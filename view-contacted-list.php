@@ -211,7 +211,7 @@ if(!empty($_POST['surveys'])){
     <!-- top box container start-->
     <div class="row">
         <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=contact request&aid=-2&avl=10" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=contact requests&aid=-2&avl=10"> 
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-red"><i class="fa-solid fa-image-portrait"></i></span>
@@ -247,7 +247,7 @@ if(!empty($_POST['surveys'])){
             </div>
         </a> 
    
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=in progress&task_status=3" target="_blank"> 
+        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=in progress&task_status=3"> 
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-aqua"><i class="fa-solid fa-spinner"></i></span>
@@ -261,7 +261,7 @@ if(!empty($_POST['surveys'])){
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=void&task_status=4" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=void&task_status=4">
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-gray"><i class="fa-solid fa-trash"></i></span>
@@ -274,7 +274,7 @@ if(!empty($_POST['surveys'])){
                 <!-- /.info-box -->
             </div>
         </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved postive&task_status=5" target="_blank">
+        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved postive&task_status=5">
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
@@ -468,7 +468,7 @@ if(!empty($_POST['surveys'])){
                                             <tr>
                                                 <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
 
-                                                <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
+                                                <td data-sort="<?=date("Ymdhhmmss", strtotime($row_get_recent_entry['cdate']))?>"><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
                                                 <td><?=$row_get_survey_detail['name']?></td>
 
