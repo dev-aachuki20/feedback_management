@@ -37,6 +37,7 @@ if(isset($surveyid)){
 if(isset($_POST['submit'])){
     $api_key 		= 'AIzaSyCuDHZB-Yu6rYuIsISs7sSmvtlU8AEDQEo';
     //$translate 		= new TranslateClient(['key' => $api_key]);
+
     $flagStatus 	= false;
 	$answerid 		= $_POST['answerid'];
 	$locationid		= $_POST['locationid'];
@@ -283,6 +284,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['skip_to_question_id'] = $row_get_questions['skip_to_question_id'];
 
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
+
+	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['rating_type'] = $row_get_questions['rating_type'];
+	
 } 	
 	
 ?>
@@ -1135,109 +1139,103 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	                        	<?php 
 
 	                        	if($question['answer_type'] == 4){ 
-
-	                        		//get Questions
-
+									//get Questions
 									record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
 									if($totalRows_get_questions_detail>0){
+										$child_answer = array();
+										 $tdloop = 0;
 
-	                        		?>
-
-									
-
-	                        	    <table class="table table-hover table-bordered">
-
-								      <tbody>
-
-								        <tr>
-
-								          <?php
-
-									  $child_answer = array();
-
-									  $tdloop = 0;
-
-									  //$question_options = array();
-
-									  	while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-										
-										  $tdloop++; 
-										  ?>
-											<td align="center">
-												<?php
-													$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
-													$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
-													$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
-													$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
-													$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
-												?>
-											</td>
-								          <?php }  ?>
-								        </tr>
-								        <?php
-										  $ans_count = 0;
-
-										  $show_smily = 0;
-
-										  $smily_loop = 0;
-
-										  $ans_count = count($child_answer);
-
-										  if($ans_count==2 || $ans_count==3 || $ans_count==5 || $ans_count==11){
-
-											  $show_smily = 1;
-
-										  }
-
-										  ?>
-
-								        <tr align="center" <?php if($ans_count==2){ ?> class="yesno" <?php } ?>>
-
-								          <?php
-										  foreach($child_answer as $key=>$child_answer_option){ ?>
-
-								          <td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
-
-								          <?php if($show_smily==1){ ?> 
-											<div>
-												<img style="width:40px" class="smily_icon" src="<?php if($ans_count==2){ echo "dist/img/".strtolower($child_answer_option['description']).".png"; }else{ echo smile_format_icon($smily_loop,$ans_count); } ?>">
-											</div>
-
-										  <?php
-
-										  	$smily_loop++;
-											//$show_smily++;
-										  } 
-										  ?>
-
-
-											<input <?php if($show_smily==1){ ?> style="visibility:hidden;" <?php } ?> type="radio" class="form-check-input <?php if($show_smily==1){ ?> option_<?php echo $questionid; ?> smily_icon_input <?php } ?> subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-											data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-											data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-											data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-											data-currentanswer="<?=$child_answer_option['answer']?>"
-											>
-								          </label>
-
-								          </td>
-
-								          <?php } ?>
-
-								        </tr>
-
-								      </tbody>
-
-								    </table>
-
-								    <input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+												$tdloop++; 
+												$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
+												$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
+												$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
+												$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
+												$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
+												$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
+											}
+									?>
+									<table class="table table-hover table-bordered">
+									<tbody>
+									    <?php if($question['rating_type'] == 1){ 
+											 $emoticonsRatingImages = emoticonsRatingImages();
+											?>
+											<tr align="center">
+												<?php 
+												
+												foreach($child_answer as $key=>$child_answer_option){ ?>
+													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
+													<div>
+														<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
+													</div>	
+													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+													data-currentanswer="<?=$child_answer_option['answer']?>"
+													>
+													</label>	
+												<?php } ?>
+											</tr>
+										<?php }else if($question['rating_type'] == 2){ ?>
+											<tr align="center" class="question-<?=$questionid?>">
+												<?php $i=0; foreach($child_answer as $key=>$child_answer_option){  $i++; ?>
+													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
+													<div>
+														<img style="width:40px" data-qid="<?=$questionid?>" data-index="<?=$i?>" class="smily_icon rating-img image-<?=$i?>" src="./dist/img/star-gray.png">
+													</div>	
+													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+													data-currentanswer="<?=$child_answer_option['answer']?>"
+													>
+													</label>	
+												<?php } ?>
+											</tr>
+										<?php } else if($question['rating_type'] == 3){ ?>
+											<tr align="center" class="question-<?=$questionid?>" >
+												<?php foreach($child_answer as $key=>$child_answer_option){  ?>
+													<td style="padding:0px;" class="show_smily_<?php echo $show_smily; ?> smile-block rating-type-number" data-qid="<?=$questionid?>"><label style=" width: 100%;height: 100%;padding:8px;">
+													<div class="number-grid">
+													<?=$child_answer_option['rating_option_type']+1?>
+													</div>	
+													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+													data-currentanswer="<?=$child_answer_option['answer']?>"
+													>
+													</label>	
+												<?php } ?>
+											</tr>
+										<?php } else if($question['rating_type']== 4){ 
+											$tickCrossRatingImages = tickCrossRatingImages();
+										?> 
+											<tr align="center">
+												<?php 
+												foreach($child_answer as $key=>$child_answer_option){  ?>
+													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
+													<div>
+														<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
+													</div>	
+													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+													data-currentanswer="<?=$child_answer_option['answer']?>"
+													>
+													</label>	
+												<?php } ?>
+											</tr>
+										<?php } ?>
+									</tbody>
+									</table>
+									<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
 
 									<span class="viewQuestion<?php echo $questionid;?>"></span>
-
-	                        	<?php 
-
-	                        		}
-
+									<?php
+									}
 	                        	} ?>
 
 	                        	<!-- End Answer Type 4 -->
@@ -1591,7 +1589,7 @@ $(document).ready(function () {
 
 
 
-    $(".next-step,.tab-next").click(function (e) {
+    $(".next-step,.submit-survey-btn, .tab-next").click(function (e) {
 
     	$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
 
@@ -2039,7 +2037,20 @@ $('#langid').change(function(){
 	window.location.replace(window.location.origin+window.location.pathname+'?surveyid='+<?=$surveyid ?>+'&langid='+$(this).val());
 
 });
-
+$(".rating-type-number").click(function(){
+	let qid = $(this).data("qid");
+	$('.question-'+qid).find('.rating-type-number').removeClass('active');
+	$(this).addClass('active');
+});
+$(".rating-img").click(function(){
+	let qid = $(this).data("qid");
+	let index = $(this).data("index");
+	console.log(qid,index);
+	$('.rating-img').attr('src', './dist/img/star-gray.png');
+	for(let i=1; i<=index; i++){
+		$('.question-'+qid).find('.image-'+i).attr('src', './dist/img/star-yellow.png');
+	}
+})
 </script>
 <div style="text-align: center;">
 Powered by Datagroup Solutions

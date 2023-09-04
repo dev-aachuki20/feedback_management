@@ -34,6 +34,7 @@ $languages = explode(',',$row_get_survey_details['language']);
     }
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
+			$rating_option_type = $_POST['rating_option_type'];
 			$condition_question=$_POST['condition_question'];
 			$i=0;
 			foreach($correct as $key=>$value){
@@ -42,6 +43,7 @@ $languages = explode(',',$row_get_survey_details['language']);
 					$data_correct =  array(
 						"description"=> $answer,
 						"answer"=>$cans[$key],
+            "rating_option_type" => $rating_option_type[$i],
 						"condition_yes_no"=>(isset($condition_yes_no)?$condition_yes_no:'0'),
 						"conditional_logic"=>$conditional_logic[$i],
 						"conditional_answer"=>$conditional_answer[$i],
@@ -110,7 +112,7 @@ $languages = explode(',',$row_get_survey_details['language']);
             </div>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <label>Answer Type</label>
               <select class="form-control" name="atype" disabled>
@@ -126,8 +128,21 @@ $languages = explode(',',$row_get_survey_details['language']);
               </select>
             </div>
           </div>
+          <?php if($row_get_questions['answer_type'] == 4) { ?>
+          <div class="col-md-6 rating-type-div">
+						<div class="form-group">
+							<label>Select the type of rating</label>
+							<select class="form-control rating_type" name="rating_type" disabled>
+              <?php foreach(answer_type() as $key => $value){
+                    if($row_get_questions['rating_type']==$key){ ?>
+			                <option  selected="selected" value="<?php echo $key; ?>"><?php echo $value; ?></option>			
+                <?php  } } ?>
+							</select>
+						</div>
+					</div>
+          <?php } ?>
 
-          <div class="col-md-2">
+          <div class="col-md-6">
             <div class="form-group">
               <label>Position</label>
                <input type="number" class="form-control" name="dposition" min="0" value="<?php echo $row_get_questions['dposition'];?>" />
@@ -161,33 +176,80 @@ $languages = explode(',',$row_get_survey_details['language']);
             record_set("get_questions_detail", "select * from questions_detail where   surveyid='".$_REQUEST['surveyid']."'  and questionid='".$_REQUEST['questionid']."'");		
             while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail))
             {
-              
               $ansId = $row_get_questions_detail['id'];
               $answerOptions[$row_get_questions_detail['id']]['description'] = $row_get_questions_detail['description'];
               $answerOptions[$row_get_questions_detail['id']]['answer'] = $row_get_questions_detail['answer'];
               $i++;
               ?>
+              <?php 
+              if($row_get_questions['answer_type'] == 4){ ?>
+                <div class="col-md-12 answer-fields">
+                <input type="hidden" value="" name="removed_question_option" class="removed_question_option">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Answer <?=$i?></label>
+                    <input type="text" class="form-control correct_answer" name="correct[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['description'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Value</label>
+                    <input type="text" class="form-control canval" name="cans[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1 || $isWeighted ==0) ? 'disabled ':''?> />
+                  </div>
+                </div>
+                <div class="col-md-3 rating-type-option">
+                  <?php
+                  $ratingTypeOption = '';
+                  if($row_get_questions['rating_type'] == 1){
+                    $ratingTypeOption = emoticonsRatingOptions();
+                    $label = 'Select Emoticon';
+                  }else if($row_get_questions['rating_type'] == 2) {
+                    $ratingTypeOption = starRatingOptions();
+                    $label = 'Select Star Rating';
+                  }else if($row_get_questions['rating_type'] == 3) {
+                    $ratingTypeOption = numberRatingOptions();
+                    $label = 'Select Number Rating';
+                  }else if($row_get_questions['rating_type'] == 4) {
+                    $ratingTypeOption = tickCrossRatingOptions();
+                    $label = 'Select Tick/Cross';
+                  }
+                  ?>
+                  <label><?=$label?></label>
+                  <select class="form-control survey_step" name="rating_option_type[]">
+                  <?php 
+                    foreach($ratingTypeOption as $key => $value){ ?>
+                      <option value="<?=$key?>" <?=($row_get_questions_detail['rating_option_type'] == $key) ? 'selected':'' ?>><?=$value?></option>
+                    <?php } ?>
+                  </select>
+							  </div>
+                <div class="col-md-3 remove-answer-div">
+                  <label></label>
+                    <button data-id="<?=$row_get_questions_detail['id']?>" class="btn btn-danger remove-answer-field" type="button">Remove
+                    </button>
+                </div>
+              </div>
+              <?php }else{ ?>
               <div class="col-md-6 answer-fields">
                 <input type="hidden" value="" name="removed_question_option" class="removed_question_option">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Answer <?=$i?></label>
-                  <input type="text" class="form-control correct_answer" name="correct[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['description'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Answer <?=$i?></label>
+                    <input type="text" class="form-control correct_answer" name="correct[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['description'];?>" <?=($_SESSION['user_type'] != 1) ? 'disabled ':''?> />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Value</label>
+                    <input type="text" class="form-control canval" name="cans[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1 || $isWeighted ==0) ? 'disabled ':''?> />
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <label></label>
+                    <button data-id="<?=$row_get_questions_detail['id']?>" class="btn btn-danger remove-answer-field" type="button">Remove
+                    </button>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Value</label>
-                  <input type="text" class="form-control canval" name="cans[<?=$ansId?>]" value="<?php echo $row_get_questions_detail['answer'];?>" <?=($_SESSION['user_type'] != 1 || $isWeighted ==0) ? 'disabled ':''?> />
-                </div>
-              </div>
-              <div class="col-md-2">
-                <label></label>
-                  <button data-id="<?=$row_get_questions_detail['id']?>" class="btn btn-danger remove-answer-field" type="button">Remove
-                  </button>
-              </div>
-              </div>
-		      <?php } ?>
+		      <?php } } ?>
         </div>
         
         	<!-- Start Conditional Question skip to Section-->

@@ -487,3 +487,13 @@ span.select2-selection.select2-selection--single {
 .bg-success{
     background: green !important;
 }
+
+td.show_smily_.smile-block.rating-type-number {
+    background-color: #c3c3c3;
+}
+.rating-type-number.active {
+    background: #f3f3f3 !important;
+}
+.remove-answer-div{
+    margin-top: 25px;
+}

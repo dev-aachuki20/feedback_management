@@ -15,6 +15,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 		"question" 		=> $_POST['question'],
 		"surveyid"		=>$surveyid,
 		"answer_type" 	=> $_POST['atype'],
+		"rating_type" 	=> $_POST['rating_type'],
 		"ifrequired" 	=> $_POST['ifrequired'],
 		"dposition" 	=> $_POST['dposition'],
 		"cstatus" 		=> $_POST['status'],
@@ -53,6 +54,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 		if(!empty($correct)){
 			$cans=$_POST['cans'];
 			$condition_question=$_POST['condition_question'];
+			$rating_option_type = $_POST['rating_option_type'];
 			$i=0;
 			//print_r($cans);
 			foreach($correct as $ans){
@@ -63,6 +65,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 						"questionid" => $insert_value,
 						"surveyid"=>$surveyid,
 						"answer"=>$cans[$i],
+						"rating_option_type" => $rating_option_type[$i],
 						"condition_yes_no"=>(isset($condition_yes_no)?$condition_yes_no:'0'),
 						"condition_qid"=>(isset($condition_question[$i])?$condition_question[$i]:'0'),
 						"cstatus" => $_POST['status'],
@@ -144,7 +147,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 					<div class="col-md-6">
 						<div class="form-group">
 							<label>Answer Type</label>
-							<select class="form-control atype" name="atype">
+							<select class="form-control atype" name="atype" required>
 								<?php foreach(question_type() as $key => $value){?>
 										<option <?php if($row_update_data['cstatus']==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"><?php echo $value; ?></option>						
 								<?php }?>
@@ -193,7 +196,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 				<div class="col-md-12 answer_type_other">
 					<div class="form-group">
 						<label class="question_label">Question</label>
-						<input type="text" class="form-control" name="question" />
+						<input type="text" class="form-control" name="question" required/>
 					</div>
 				</div>
 				<!-- End Question Section -->
@@ -329,20 +332,31 @@ var lcode = new Array();
 		let ratingType = $('.rating_type').val();
 		if(aType == 4){
 			let optionLength = $('.opt-div').length;
-			console.log(optionLength,'optionLength');
-			if(ratingType ==1 || ratingType ==2 ){
-				$('.rating-type-option').html('<div class="form-group"><label>Select the type of rating</label><select class="form-control rating_type" name="rating_type"><option selected="selected" value="0">Select Type</option></select></div>');
+			let isSelected = $('.rating_option_type').last().val();
+			const answerType = <?=json_encode(answer_type())?>;
+			const lable = answerType[ratingType];
+			const capitalizedWord = lable.replace(/\b(\w)/g, m => m.toUpperCase());
+			if(isSelected == ''){
+				alert(`Please fill all the ${capitalizedWord} option first`);
+				return false;
+			}
+			if(ratingType ==1){
+				if(optionLength>4){
+					alert("You have exceed the limit of options");
+					return false;
+				}
+			}else if(ratingType ==2){
 				if(optionLength>4){
 					alert("You have exceed the limit of options");
 					return false;
 				}
 			}else if(ratingType ==3){
-				if(optionLength>10){
+				if(optionLength>9){
 					alert("You have exceed the limit of options");
 					return false;
 				}
 			}else if(ratingType ==4){
-				if(optionLength>2){
+				if(optionLength>1){
 					alert("You have exceed the limit of options");
 					return false;
 				}
@@ -352,6 +366,29 @@ var lcode = new Array();
 		$(".options").append('<div class="col-md-12 opt-div new-appended-option"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval '+uniqueId+'" value="0" name="cans[]" readonly/></div></div><div class="col-md-3 rating-type-option"></div><div class="col-md-2"><label></label><button class="btn btn-danger remove-field" type="button">Remove</div></div></div>');
 		$(".options_other").append('<div class="col-md-6"><div class="form-group"><label>New Option</label><input type="text" class="form-control new-option" ></div></div></div>');
 
+		if(aType == 4){
+			let optionLength = $('.opt-div').length;
+			console.log(optionLength,'optionLength');
+
+			const answerType = <?=json_encode(answer_type())?>;
+			const lable = answerType[ratingType];
+			const capitalizedWord = lable.replace(/\b(\w)/g, m => m.toUpperCase());
+			var selectedValues = [];
+			$('.rating_option_type').each(function() {
+				selectedValues.push($(this).val());
+			});
+			
+			if(ratingType == 1){
+				emotionsOptionsAppendHtml(capitalizedWord, selectedValues);
+			}else if(ratingType == 2) {
+				starRatingOptionsAppendHtml(capitalizedWord, selectedValues)
+			}else if(ratingType == 3) {
+				numberRatingOptionsAppendHtml(capitalizedWord, selectedValues)
+			}else if(ratingType == 4) {
+				tickCrossOptionsAppendHtml(capitalizedWord, selectedValues)
+			}
+		}
+		/*---------------------------------------------------*/
 		$(".condition_yes_no"+chkvalue).change(function () {
 			var count=$(this).data('count');
 			var selectArr = new Array();
@@ -469,7 +506,9 @@ $(document).ready(function(){
 		// console.log(atype);
 		$('.rating_type').attr('disabled',true);
 		$('.rating-type-div').hide();
+		$('.rating_type').attr('required',false);
 		$(".answer_type_5").hide();
+		$('.rating-type-form').remove();
         if(atype == "2" || atype == "3" || atype == "5"){
 			$(".answer_type_other").show();
 			$(".options").hide();
@@ -488,6 +527,7 @@ $(document).ready(function(){
 			$(".btnopt").show();
 			$(".answer_type_other").show();
 			$('.rating-type-div').show();
+			$('.rating_type').attr('required',true);
 			$('.rating_type').attr('disabled',false);
 		}else{
 			$('.conditional-radio-btn').show();
@@ -703,6 +743,65 @@ $(document).on('click','.remove-conditional-question',function(){
 })
 $(document).on('change','.rating_type',function(){
 	$('.new-appended-option').remove();
-	$('.rating-type-option').html('<div class="form-group"><label>Select the type of rating</label><select class="form-control rating_type" name="rating_type"><option selected="selected" value="0">Select Type</option></select></div>');
+	let ratingValue = $(this).val();
+	const ratingType = <?=json_encode(answer_type())?>;
+	const lable = ratingType[ratingValue];
+	const capitalizedWord = lable.replace(/\b(\w)/g, m => m.toUpperCase());
+	if(ratingValue == 1){
+		emotionsOptionsAppendHtml(capitalizedWord);
+	}else if(ratingValue == 2) {
+		starRatingOptionsAppendHtml(capitalizedWord)
+	}else if(ratingValue == 3) {
+		numberRatingOptionsAppendHtml(capitalizedWord)
+	}else if(ratingValue == 4) {
+		tickCrossOptionsAppendHtml(capitalizedWord)
+	}
+
 })
+
+function emotionsOptionsAppendHtml(text,selectedValues=''){
+	const emoticonsRatingOption = <?=json_encode(emoticonsRatingOptions())?>;
+	console.log(selectedValues,'selectedValues',emoticonsRatingOption);
+	let html = `<div class="form-group"><label>Select ${text}</label><select class="form-control rating_option_type" name="rating_option_type[]"><option selected="selected" value="">Select Type</option>`;
+	for(option in emoticonsRatingOption){
+		if(selectedValues.includes(option) === false){
+			html +=`<option value="${option}">${emoticonsRatingOption[option]}</option>`;
+		}
+	}
+	html +=`</select></div>`;
+	$('.rating-type-option').last().html(html);
+}
+function starRatingOptionsAppendHtml(text,selectedValues=''){
+	const starRatingOptions = <?=json_encode(starRatingOptions())?>;
+	let html = `<div class="form-group"><label>Select ${text}</label><select class="form-control rating_option_type" name="rating_option_type[]"><option selected="selected" value="">Select Type</option>`;
+	for(option in starRatingOptions){
+		if(selectedValues.includes(option) === false){
+			html +=`<option value="${option}">${starRatingOptions[option]}</option>`;
+		}
+	}
+	html +=`</select></div>`;
+	$('.rating-type-option').last().html(html);
+}
+function numberRatingOptionsAppendHtml(text,selectedValues=''){
+	const numberRatingOptions = <?=json_encode(numberRatingOptions())?>;
+	let html = `<div class="form-group"><label>Select ${text}</label><select class="form-control rating_option_type" name="rating_option_type[]"><option selected="selected" value="">Select Type</option>`;
+	for(option in numberRatingOptions){
+		if(selectedValues.includes(option) === false){
+			html +=`<option value="${option}">${numberRatingOptions[option]}</option>`;
+		}
+	}
+	html +=`</select></div>`;
+	$('.rating-type-option').last().html(html);
+}
+function tickCrossOptionsAppendHtml(text,selectedValues=''){
+	const tickCrossRatingOptions = <?=json_encode(tickCrossRatingOptions())?>;
+	let html = `<div class="form-group"><label>Select ${text}</label><select class="form-control rating_option_type" name="rating_option_type[]"><option selected="selected" value="">Select Type</option>`;
+	for(option in tickCrossRatingOptions){
+		if(selectedValues.includes(option) === false){
+			html +=`<option value="${option}">${tickCrossRatingOptions[option]}</option>`;
+		}
+	}
+	html +=`</select></div>`;
+	$('.rating-type-option').last().html(html);
+}
 </script>

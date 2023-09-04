@@ -427,7 +427,7 @@ function required_name($status){
 }
 function question_type(){
 	return array(
-		"0" => "Select Type",
+		"" => "Select Type",
 		"1" => "Radio Button",
 		"2" => "Text Box",
 		"3" => "Text Area",
@@ -439,7 +439,7 @@ function question_type(){
 }
 function answer_type(){
 	return array(
-		"0" => "Select Type",
+		"" => "Select Type",
 		"1" => "Emoticons",
 		"2" => "Star rating",
 		"3" => "Number rating",
@@ -1000,5 +1000,64 @@ function mail_attachment($path, $to, $from_mail, $from_name,$subject,$message){
 	$message.="--{$mime_boundary}--\n";
 	// now we just send the message
 	return @mail($to, $subject, $message, $headers);
+ }
+ function emoticonsRatingImages(){
+	return array(
+		"0"=>"dist/img/5-5.png",
+		"1"=>"dist/img/5-4.png",
+		"2"=>"dist/img/5-3.png",
+		"3"=>"dist/img/5-2.png",
+		"4"=>"dist/img/5-1.png"	
+	);
+ }
+ function tickCrossRatingImages(){
+	return array(
+		"0"=>"dist/img/yes.png",
+		"1"=>"dist/img/no.png",
+	);
+ }
+ function starRatingImages(){
+	return array(
+		"0"=>"dist/img/yes.png",
+		"1"=>"dist/img/no.png",
+	);
+ }
+ function emoticonsRatingOptions(){
+	return array(
+		"0"=>"Ecstatic Smiley",
+		"1"=>"Happy Smiley",
+		"2"=>"Nonchalant",
+		"3"=>"Unhappy Smiley",
+		"4"=>"Furious Smiley"	
+	);
+ }
+ function starRatingOptions(){
+	return array(
+		"0"=>"One Star",
+		"1"=>"Two Star",
+		"2"=>"Three Star",
+		"3"=>"Four Star",
+		"4"=>"Five Star",
+	);
+ }
+ function numberRatingOptions(){
+	return array(
+		"0"=>"One",
+		"1"=>"Two",
+		"2"=>"Three",
+		"3"=>"Four",
+		"4"=>"Five",
+		"5"=>"Six",
+		"6"=>"Seven",
+		"7"=>"Eight",
+		"8"=>"Nine",
+		"9"=>"Ten",
+	);
+ }
+ function tickCrossRatingOptions(){
+	return array(
+		"0"=>"Yes",
+		"1"=>"No",
+	);
  }
 ?>
