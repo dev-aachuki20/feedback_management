@@ -20,7 +20,7 @@ $languages = explode(',',$row_get_survey_details['language']);
           "question"           => $_POST['question'],
           "ifrequired"         => $_POST['ifrequired'],
           "conditional_logic"  => $condition_yes_no,
-          'cdate'=>date("Y-m-d H:i:s")
+          'cdate'              => date("Y-m-d H:i:s")
         );
     $updte=	dbRowUpdate("questions", $data, "where id=".$questionid." and surveyid=".$surveyid);
     $correct            = $_POST['correct'];
@@ -161,13 +161,15 @@ $languages = explode(',',$row_get_survey_details['language']);
             $row_get_conditional_logic = mysqli_fetch_assoc($get_questions_logic);
             $condLogic = $row_get_conditional_logic['condition_yes_no'];
           ?>
-          <div class="col-md-2 conditional-radio-btn">
-							<label>Conditional</label>
-							<div class="form-group">	
-								<input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="1" data-count="0" <?=($condLogic==1)?'checked':''?>/>  Yes
-								<input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="0" data-count="0" <?=($condLogic==0)?'checked':''?>/>  No
-							</div>
-					</div>
+          <?php if($row_get_questions['is_weighted'] == 1){ ?>
+            <div class="col-md-2 conditional-radio-btn">
+                <label>Conditional</label>
+                <div class="form-group">	
+                  <input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="1" data-count="0" <?=($condLogic==1)?'checked':''?>/>  Yes
+                  <input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="0" data-count="0" <?=($condLogic==0)?'checked':''?>/>  No
+                </div>
+            </div>
+          <?php } ?>
         </div>
         
         <div class="row" id="options">
@@ -253,7 +255,8 @@ $languages = explode(',',$row_get_survey_details['language']);
         </div>
         
         	<!-- Start Conditional Question skip to Section-->
-				<div class="conditional_questions_skip" id="conditional_questions_skip" style="<?=($condLogic == 1)?'':'display:none'?>">
+        <?php if($row_get_questions['is_weighted'] == 1){ ?>
+        <div class="conditional_questions_skip" id="conditional_questions_skip" style="<?=($condLogic == 1)?'':'display:none'?>">
 					<div class="col-md-12 logicSection" style="margin-bottom: 30px;">
 						<h3>Conditional Logic</h3>
             <?php 
@@ -344,6 +347,8 @@ $languages = explode(',',$row_get_survey_details['language']);
 							<button type="button" class="add-more btn btn-info" style="float: right;margin: 15px;">Add More Logic</button>
 						</div>				
 				</div>
+        <?php } ?>
+
 				<!-- End Conditional Question skip to Section -->
        
         <div class="row">

@@ -285,10 +285,18 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
   if($_POST['survey_type']){
     $filter = " and survey_type = ".$_POST['survey_type'];
   }
+  $surveyId ='';
+  if(!is_null($_POST['survey_id'])){
+    $surveyId =json_decode($_POST['survey_id']);
+  }
   record_set("get_surveys", "select id,name from surveys where id !=0 $filter");
   $html .='<option value="">Select</option>';				
   while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
-    $html .='<option value="'.$row_get_surveys['id'].'">'.$row_get_surveys['name'].'</option>';
+    $selected = '';
+     if($surveyId!='' and $surveyId == $row_get_surveys['id']){
+      $selected = 'selected';
+     }
+    $html .='<option value="'.$row_get_surveys['id'].'" '.$selected.'>'.$row_get_surveys['name'].'</option>';
   }
   echo  json_encode($html); die();
 }

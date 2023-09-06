@@ -286,7 +286,7 @@ if(!empty($_POST['surveys'])){
                         <div class="form-group">
                             <label>Role</label>
                             <select name="roleid" id="roleid" class="form-control form-control-lg role">
-                            <option>Select Role</option>
+                            <option value="">Select Role</option>
                             <?php 
                             $Roles = getRole();
                             foreach($Roles as $key => $value){ ?>

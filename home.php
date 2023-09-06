@@ -137,7 +137,6 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
       $final_chart_array[$days]=$arra_txt;
   }
     $final_chart_array_item = implode(" ",$final_chart_array);
-
     //for dashboard top boxs
     if($_SESSION['user_type']==4){
      //for first box
@@ -226,14 +225,15 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="exampleFormControlSelect1">Select Survey Type</label>
+                                    <label for="exampleFormControlSelect1">Select Survey Type <?= $_POST['selectSurvey']; ?></label>
                                     <select class="form-control singleSelect2" name="survey_type" id="survey_type">
                                         <option value=''>All Survey</option>
                                         <?php 
                                         // record_set("get_surveys", "select id,name from surveys where cby='".$_SESSION['user_id']."' order by name desc");                
                                         // while($row_get_surveys = mysqli_fetch_assoc($get_surveys)){ 
+                                          
                                         foreach(survey_type() as $key => $value){ ?>
-                                        <option value="<?=$key?>" <?=($_POST['survey_type']==$key) ? 'selected':''?>><?=$value?></option>
+                                        <option value="<?=$key?>" <?=($_POST['selectSurvey']===$key) ? 'selected':''?>><?=$value?></option>
                                         <?php }?>
                                     </select>
                                 </div>
@@ -317,97 +317,69 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                                 $surveyId = $row_get_survey_id_result['surveyid'];
                                 $where = " and surveyid = $surveyId";
                             }
-                            if($_POST['survey_type']){
-                                $survey_type = strtolower(survey_type()[$_POST['survey_type']]); 
-                                $allSurveyList = get_allowed_survey($survey_type);
-                                $allSurveyIds = implode(',',array_keys($allSurveyList));
-                                $where .= " and surveyid IN ($allSurveyIds)";
-                            }
-                            // record_set("get_survey_result", "SELECT * FROM `answers` where id!='' $where AND MONTH(cdate) = MONTH(CURRENT_DATE()) AND YEAR(cdate) = YEAR(CURRENT_DATE()) GROUP BY DATE(cdate) ORDER BY cdate DESC LIMIT 10"); 
-                            record_set("get_survey_result", "SELECT * FROM `answers` where id!='' $where GROUP BY DATE(cdate) ORDER BY cdate DESC LIMIT 10"); 
+                            // if($_POST['selectSurvey']){
+                            //     $survey_type = strtolower(survey_type()[$_POST['selectSurvey']]); 
+                            //     $allSurveyList = get_allowed_survey($survey_type);
+                            //     $allSurveyIds = implode(',',array_keys($allSurveyList));
+                            //     $where .= " and surveyid IN ($allSurveyIds)";
+                            // }
+                            record_set("get_survey_result", "SELECT * FROM `answers` where id!='' $where GROUP BY cby ORDER BY cdate DESC  LIMIT 10"); 
                             $counter = 0;
                             $surveyIdExist = [];
                             if($totalRows_get_survey_result>0){
                                 while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-                                //if($counter == 10){ break; }
-                                //if(!isset($_POST['filter'])){
-                                    // if (in_array($row_get_survey_result['surveyid'], $surveyIdExist)){
-                                    //     continue;
-                                    // }
-                                    //  array_push($surveyIdExist,$row_get_survey_result['surveyid']);
-                               //}
-                               $row_survey_entry = 1;
-                               record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_result['surveyid']."' and cby <".$row_get_survey_result['cby']);
-                               $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-
-                                $counter++;
                                 $cdate = date('Y-m-d',strtotime($row_get_survey_result['cdate']));
                                 $sid = $row_get_survey_result['surveyid'];
-                                record_set("get_survey_result_data", "SELECT * FROM `answers` where DATE(cdate) = '".$cdate."' GROUP BY cby");
-                                $total_result_val=0;
+                                $row_survey_response_entry = 1;
                                 $achieved_result_val = 0;
                                 $to_bo_contacted     = 0;
-                                $i=0;
-                                $contactedCount = 0;
-                                $count= 0;
-                                $result_response = 0;
-                                    while($row_get_survey_response = mysqli_fetch_assoc($get_survey_result_data)){
-                                        record_set("get_survey_response_count", "SELECT * FROM answers where surveyid=".$row_get_survey_response['surveyid']." GROUP BY cby");
-                                        //$response = $totalRows_get_survey_response_count;
-                                        $response = $row_survey_entry;
-                                        // if(!isset($_POST['filter'])){
-                                        //     $response = $totalRows_get_survey_response_count;
+                                $total_result_val=0;
 
-                                        // }else{
-                                        //     $response = $count;
-                                        // }
-                                        record_set("get_survey_result_ans", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_survey_response['surveyid']."' and cby='".$row_get_survey_response['cby']."'");
-                                        // testt
-                                        while($row_get_survey_result_ans = mysqli_fetch_assoc($get_survey_result_ans)){
-                                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result_ans['questionid']);
-                                            if($result_question){
-                                                if(!in_array($result_question['answer_type'],array(2,3,5))){
-                                                    $total_result_val = ($i+1)*100;
-                                                    $achieved_result_val += $row_get_survey_result_ans['answerval'];
-                                                    $i++;
-                                                }
-                                            }
-                                        if($row_get_survey_result_ans['answerid'] == -2 && $row_get_survey_result_ans['answerval'] == 100){
-                                            $to_bo_contacted = 1;
-                                            $contactedCount++;
+                               record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_result['surveyid']."' and cby <".$row_get_survey_result['cby']);
+                               $row_survey_response_entry = $totalRows_survey_entry+$row_survey_response_entry;
+                                
+                                record_set("get_survey_result_data", "SELECT id,answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_survey_result['surveyid']."' and cby='".$row_get_survey_result['cby']."'");
+                                    $i=0;
+                                    while($row_get_survey_response = mysqli_fetch_assoc($get_survey_result_data)){
+
+                                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_response['questionid']);
+                                        if($result_question){
+                                            if(!in_array($result_question['answer_type'],array(2,3,5))){
+                                                
+                                                $total_result_val = ($i+1)*100;
+                                                $achieved_result_val += $row_get_survey_response['answerval'];
+                                                $i++;
                                             }
                                         }
-                                        //echo $achieved_result_val.' : '.$total_result_val;
-                                        $result_response += $achieved_result_val*100/$total_result_val;
-                                        $count++;
-                                    } 
-
-                                    $result_response_value = $result_response/$count;
-                                    if(is_nan($result_response_value)){
-                                        $result_response_value=100;
+                                        if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+                                            $to_bo_contacted = 1;
+                                        }
+                                    }
+                                    $result_response = $achieved_result_val*100/$total_result_val;
+                                    if($achieved_result_val==0 and $total_result_val==0){
+                                        $result_response=100;
                                     }
                                     $label_class = 'success';
                                     if($result_response<50){
-                                    $label_class = 'danger';
+                                        $label_class = 'danger';
                                     }else 
                                     if($result_response<75){
-                                    $label_class = 'info';
+                                        $label_class = 'info';
                                     }
+                                    if($to_bo_contacted==1){ 
+                                        $contactedLabel ='<a class="btn btn-xs bg-green">Yes</a>';
+                                    }else{ 
+                                        $contactedLabel ='<a class="btn btn-xs btn-danger">No</a>';
+                                    } 
                                     $new_date = date('jS M Y', strtotime($cdate));
                                 ?>
                                 <tr>
                                     <td><?=$new_date?></td>
                                     <td><?=getSurvey()[$sid]?></td>
                                     <td><?=$sid?></td>
-                                    <td><?=$response?></td>
-                                    <td><label class="label label-<?php echo $label_class; ?>"><?php echo round($result_response_value,2); ?>%</label></td>
-                                    <td>
-                                        <?php if($to_bo_contacted==1){ ?>
-                                        <a class="btn btn-xs btn-success">Yes</a>
-                                        <?php }else{ ?>
-                                        <a class="btn btn-xs btn-info">No</a>
-                                        <?php } ?>
-                                    </td>
+                                    <td><?=$row_survey_response_entry?></td>
+                                    <td><label class="label label-<?php echo $label_class; ?>"><?php echo round($result_response,2); ?>%</label></td>
+                                    <td><?=$contactedLabel?></td>
                                 </tr> 
                                 <?php } ?>
                                 <tr>
@@ -476,7 +448,11 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
         $.ajax({
             type: "POST",
             url: './ajax/common_file.php',
-            data: {survey_type: survey_type,mode:'dashboard'}, 
+            data: {
+                survey_type: survey_type,
+                survey_id:'<?=json_encode($_POST['selectSurvey'])?>',
+                mode:'dashboard',
+            }, 
             success: function(response){
                 response = JSON.parse(response);
                 $('#selectSurvey').html(response);

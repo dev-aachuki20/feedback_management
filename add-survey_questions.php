@@ -653,6 +653,15 @@ $(document).ready(function(){
 });
 $(document).on('change', '.weighted_yes_no', function() {
 	setWeighted();
+	let weightedValue = $(this).val();
+	if(weightedValue == 1){
+		$('.conditional-radio-btn').attr('disable',false);
+		$('.conditional-radio-btn').show();
+	}else{
+		$('.conditional-radio-btn').attr('disable',true);
+		$('.conditional-radio-btn').hide();
+	}
+	
 });
 
 $(document).on("blur", ".correct_answer, .canval", function() {
@@ -756,7 +765,6 @@ $(document).on('change','.rating_type',function(){
 	}else if(ratingValue == 4) {
 		tickCrossOptionsAppendHtml(capitalizedWord)
 	}
-
 })
 
 function emotionsOptionsAppendHtml(text,selectedValues=''){

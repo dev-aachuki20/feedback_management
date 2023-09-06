@@ -291,7 +291,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	
 ?>
 <!DOCTYPE HTML>
-
 <html lang="en" class="notranslate" translate="no">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -1563,67 +1562,30 @@ $(document).ready(function () {
 
 
 
-    $('.nav-tabs > li a[title]').tooltip();
-
-    
+    $('.nav-tabs > li a[title]').tooltip();   
 
     //Wizard
-
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-
-
-
-        var target = $(e.target);
-
-    
-
+        var target = $(e.target);   
         if (target.parent().hasClass('disabled')) {
-
             return false;
-
         }
-
     });
-
-
-
-
 
     $(".next-step,.submit-survey-btn, .tab-next").click(function (e) {
-
     	$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
-
         if($("#surveyForm").valid()){
-
         	var active = $('.wizard .nav-tabs li.active');
-
 	        active.next().removeClass('disabled');
-
 	        nextTab(active);
-
         }else{
-
         	return false;
-
         }
-
     });
 
-
-
-	
-
-
-
     $(".prev-step,.tab-prev").click(function (e) {
-
-
-
         var active = $('.wizard .nav-tabs li.active');
-
         prevTab(active);
-
-
 
     });
 
