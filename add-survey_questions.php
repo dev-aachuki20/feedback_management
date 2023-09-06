@@ -504,6 +504,7 @@ $(document).ready(function(){
     $("select.atype").change(function(){
         var atype = $(this).children("option:selected").val();
 		// console.log(atype);
+		let isWeighted = $('.weighted_yes_no:checked').val();
 		$('.rating_type').attr('disabled',true);
 		$('.rating-type-div').hide();
 		$('.rating_type').attr('required',false);
@@ -530,8 +531,11 @@ $(document).ready(function(){
 			$('.rating_type').attr('required',true);
 			$('.rating_type').attr('disabled',false);
 		}else{
-			$('.conditional-radio-btn').show();
+			
 			$(".answer_type_other").show();
+			if(isWeighted == 1){
+				$('.conditional-radio-btn').show();
+			}
 			$(".conditional_questions").show();
 			var  parent = $('.parent').val();
 			$(".question_label").text("Question");

@@ -885,7 +885,7 @@ function export_csv_file($data,$type,$survey_name){
             $totalSurvey = count($datasurvey['data']);
         }
 		$excel_data[$i]['Survey_Responses'] 	= $totalSurvey;
-		$excel_data[$i]['Contacted_Requests'] 	= ($datasurvey['contact']) ? $datasurvey['contact'] : 0;
+		$excel_data[$i]['Contact_Requests'] 	= ($datasurvey['contact']) ? $datasurvey['contact'] : 0;
 		$excel_data[$i]['Average_Survey_Score'] = $total." %";
 		$i++;
 	}

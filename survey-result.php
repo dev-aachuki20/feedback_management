@@ -145,7 +145,7 @@ if($totalRows_get_survey_id > 0){
 if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
 
   $user_id = $_GET['userid'];
-  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."  and cby=".$_SESSION['user_id']."",);
+  record_set("total_contact", "select * from survey_contact_action where user_id=".$user_id." and action=".$_POST['contact_action']."  and cby=".$_SESSION['user_id']."");
  
   if($totalRows_total_contact > 0){
     $data_contact_action_update = array(
