@@ -8,7 +8,7 @@
             <?php if($userDetails['photo']) { ?>
                 <img src="upload_image/<?php echo $userDetails['photo']?>" alt="profile-user">
            <?php } else { ?> 
-            <img src="https://laravel.spruko.com/sparic/ltr/assets/images/users/avatars/2.png" alt="profile-user">
+            <img src="upload_image/avatar.png" alt="profile-user">
             <?php }?>
 			
 		</div>
