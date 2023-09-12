@@ -12,7 +12,8 @@ require_once("connectin_config.php");
 		//define('BASE_URL', 'https://survey.datagroup.dev/');
 			define('BASE_URL', 'https://demo.dgfm.app/');
 	} 
-date_default_timezone_set('Asia/calcutta');
+//date_default_timezone_set('Asia/calcutta');
+date_default_timezone_set('Europe/London');
 //Get Home URL
 function getHomeUrl(){
 	return BASE_URL;

@@ -303,7 +303,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
     <div align="center"><img src="<?=MAIN_LOGO?>" width="200"></div>
     <h2 align="center" style="margin:20px;"> <?= $row_get_survey['name']; ?> </h2>
     <?php 
-    record_set("get_loc_dep", "select locationid, departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);
+    record_set("get_loc_dep", "select locationid,groupid,roleid,departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);
     $row_get_loc_dep = mysqli_fetch_assoc($get_loc_dep);
     
     //Department
