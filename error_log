@@ -10,3 +10,27 @@ Stack trace:
 #1 /home/dgfm/demo.dgfm.app/index.php(181): include('/home/dgfm/demo...')
 #2 {main}
   thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[19-Sep-2023 05:40:57 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 118 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(118): send_survey_email('Eum nobis minim...', 'Zeus Herring', 49)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[19-Sep-2023 05:58:59 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 118 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(118): send_survey_email('Aut laboriosam ...', 'Stewart Palmer', 50)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[19-Sep-2023 06:32:53 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 118 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(118): send_survey_email('Aut ullam labor...', 'Tamekah Gates', 53)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[19-Sep-2023 06:35:22 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 118 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:222
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(118): send_survey_email('Dolor laborum I...', 'Aretha Fields', 54)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222

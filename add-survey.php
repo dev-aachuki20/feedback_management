@@ -229,38 +229,45 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     <input type="date" class="form-control" min="" name="edate" id="edate" value="<?=($_GET['id'] and $row_get_surveys['end_date'])?date('Y-m-d',strtotime($row_get_surveys['end_date'])):''?>"/>
                                 </div>
                             </div>
+                            <?php 
+                            ?>
                             <div class="col-md-6 dropdwn ">
                                 <label>Group</label>
                                 <input type="checkbox"id="allgrp" class="multiselect" onchange="select_all_option('allgrp','group_id')">
                                 <select name="groupid[]" id="group_id" class="form-control form-control-lg multiple-select" multiple=multiple>
-                                    <!-- <option value="">Please select</option> -->
-                                    <?php //if(!empty($row_get_surveys['locations'])){
-                                        $groups = explode(',',$row_get_surveys['groups']);
-                                        $selected_option_group = array();
-                                        foreach($groups as $val){
-                                            $selected_option_group[] = $val;
+                                    <?php 
+                                    $groups = $row_get_surveys['groups'];
+                                    $groupId = explode(',',$groups);
+                                    $getGroup = getGroup(); 
+                                    foreach($getGroup as $key => $value){ 
+                                        $selected = '';
+                                        if(in_array($key,$groupId)){
+                                            $selected ='selected';
                                         }
-                                    foreach($groupByUsers as $groupData){ 
-                                        $groupId    = $groupData['id'];
-                                        $groupName  = $groupData['name'];
-                                    ?>
-                                        <option value="<?php echo $groupId;?>" <?php echo (in_array($groupId, $selected_option_group))? 'selected':''; ?>><?php echo $groupName;?></option>
-                                    <?php }  ?>
+                                        ?>
+                                        <option value="<?=$key?>" <?=$selected?>> <?=$value?> </option> 
+                                    <?php } ?>                
                                 </select>	
                             </div>
                             <div class="col-md-6 dropdwn ">
                                 <div><label>Location</label>
-                                 <?php 
-                                 $location = $row_get_surveys['locations'];
-                                 $locationId = get_data_by_id('locations',$location);
+                                <?php 
+                                 $locations = $row_get_surveys['locations'];
+                                 $locationsId = explode(',',$locations);
+                                 $getLocation = getLocation();
                                 ?>
                                 <input type="checkbox" id="allLoc" class="multiselect" onchange="select_all_option('allLoc','location_id')">
                             </div>
 
                                 <select name="locationid[]" id="location_id" class="form-control form-control-lg multiple-select" multiple=multiple>
                                      <?php 
-                                     foreach($locationId as $key => $value){ ?>
-                                        <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
+                                     foreach($getLocation as $key => $value){ 
+                                        $selected = '';
+                                        if(in_array($key , $locationsId)){
+                                            $selected ='selected';
+                                        }
+                                        ?>
+                                        <option value="<?=$key?>" <?=$selected?>><?=$value?></option>
                                     <?php } ?>   
                                 </select>	
                             </div>
@@ -270,9 +277,15 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 <select name="departments[]" id="departments" class="form-control form-control-lg multiple-select" multiple=multiple>
                                 <?php 
                                   $department = $row_get_surveys['departments'];
-                                  $departmentId = get_data_by_id('departments',$department);
-                                    foreach($departmentId as $key => $value){ ?>
-                                    <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
+                                  $departmentId = explode(',',$department);
+                                  $getDeparment = getDepartment();
+                                    foreach($getDeparment as $key => $value){ 
+                                        $selected = '';
+                                        if(in_array($key,$departmentId)){
+                                            $selected = 'selected';
+                                        }
+                                    ?>
+                                    <option value="<?=$key?>" <?=$selected ?>><?=$value?></option>
                                 <?php } ?> 
                                 </select>	
                             </div>
@@ -282,8 +295,8 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 <select name="roles[]" id="roles" class="form-control form-control-lg multiple-select" multiple=multiple>
                                 <?php 
                                   $role = $row_get_surveys['roles'];
-                                  $roleId = get_data_by_id('roles',$role);
-                                    foreach($roleId as $key => $value){ ?>
+                                    $getRole = getRole();    
+                                    foreach($getRole as $key => $value){ ?>
                                     <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
                                 <?php } ?> 
                                 </select>	
@@ -507,18 +520,18 @@ $(document).ready(function(){
     $('#group_id').change(function () {
         let group_id = $(this).val();
         let type     = 'group';
-        load_location(group_id,type);
+        //load_location(group_id,type);
     });
     $('#location_id').change(function () {
         let location_id = $(this).val();
         let type     = 'location';
-        load_location(location_id,type);
+        //load_location(location_id,type);
     });
     $('#departments').change(function () {
         let department_id = $(this).val();
         console.log("department_id", department_id);
         let type     = 'department';
-        load_location(department_id,type);
+        //load_location(department_id,type);
     });
 })
 function load_location(ids,mode){

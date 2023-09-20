@@ -100,27 +100,7 @@ if($_POST['update']){
             </div>
           </div>
           <!-- add location -->
-
-          <div class="row">
-            <div class="col-md-12 with-border">
-                <div class="col-md-12"><h4>Location</h4></div>
-                <input type="checkbox" style="margin-left: 15px;" onclick="checked_all(this,'locCheckbox')" /><strong> Select All</strong><br/><br/>
-                <?php
-                $location_ids = explode(',',$row_get_groups_id['location_id']);
-                foreach($locationByUsers as $locData){
-                $locId    = $locData['id'];
-                $locName  = $locData['name'];
-                ?>
-                <div class="col-md-4">
-                  <input type="checkbox" <?=(in_array($locId,$location_ids) ? 'checked ':' ')?> id="locations_id_<?php echo $locId ?>" class="locCheckbox" value="<?php echo $locId; ?>" name="locations[<?php echo $locId; ?>]" /> 
-                  
-                  <label for="locations_id_<?php echo $locId; ?>">
-                  <?php echo $locName ?>
-                  </label>
-                </div>
-              <?php } ?>
-            </div>
-          </div>
+          <!-- remove dependency-->  
           <!-- assign user start -->        
           <?php include ('./assign_users.php');?>
           <!-- assign user end -->   

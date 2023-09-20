@@ -26,7 +26,7 @@
             }
         }
     }else{
-    $pulse_saved = array();
+        $pulse_saved = array();
     }
     foreach($pulseByUsers as $pulseData){ 
         $pulseId    = $pulseData['id'];
@@ -45,15 +45,15 @@
 <script>
 // for group load
 //var checkedPulseArray;
-$(".pulse_checkbox").change(function(){
-    var checkedSurveyArray=[];
-    $(".common_survey_class:checkbox:checked").each(function() {
-        checkedSurveyArray.push($(this).val());
-    });
-    // combine checked survey id and pulse id 
-    //array_survey_pulse = checkedSurveyArray.concat(checkedPulseArray);
-    filteredArray = checkedSurveyArray.filter(e => e !== 'on')
-    console.log(filteredArray);
-    ajax_for_checkbox(filteredArray,'load_group');
-});
+// $(".pulse_checkbox").change(function(){
+//     var checkedSurveyArray=[];
+//     $(".common_survey_class:checkbox:checked").each(function() {
+//         checkedSurveyArray.push($(this).val());
+//     });
+//     // combine checked survey id and pulse id 
+//     //array_survey_pulse = checkedSurveyArray.concat(checkedPulseArray);
+//     filteredArray = checkedSurveyArray.filter(e => e !== 'on')
+//     console.log(filteredArray);
+//     ajax_for_checkbox(filteredArray,'load_group');
+// });
 </script>

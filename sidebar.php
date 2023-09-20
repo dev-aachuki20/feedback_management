@@ -221,7 +221,7 @@
             <?php endif ?>
             <ul class="treeview-menu timeline-area <?=make_sidebar_active($_GET['page'],$reportMenu)?>">
                 <li class="treeview cusul-line <?=($_GET['page']=='list-report-templates') ? 'active':''?>">
-                    <a href="?page=list-report-templates" class="nav-link"> <i class=""></i> <span>VIEW TEMPLATES</span> </a> 
+                    <a href="?page=list-report-templates" class="nav-link"> <i class=""></i> <span>VIEW TEMPLATES56</span> </a> 
                 </li>
 
                 <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'list-scheduled-templates')?>">

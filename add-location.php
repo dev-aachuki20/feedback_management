@@ -100,32 +100,8 @@ $departmentByUsers = get_filter_data_by_user('departments');
               </select>
             </div>
           </div>
-            <!-- Department -->        
-          <div class="col-md-12 with-border">
-              <h4>Department</h4>
-              <input type="checkbox" onclick="checked_all(this,'deptCheckbox')" /><strong> Select All</strong><br /> <br />
-          </div>
-          <div class="col-md-12 with-border" style="padding:0px ;">
-            <?php
-            if(($_GET['id'])){
-							$department_ids = explode(',',$row_get_locations_id['department_id']);
-						}else{
-							$department_ids = array();
-						}
-            
-            foreach($departmentByUsers as $deptData){ 
-              $deptId   = $deptData['id'];
-              $deptName = $deptData['name'];
-              ?>
-              <div class="col-md-4">
-                <input type="checkbox" <?=(in_array($deptId,$department_ids) ? 'checked ':' ')?> id="deparment_id_<?php echo $key ?>" value="<?php echo $deptId; ?>" class="deptCheckbox" name="deparments[<?php echo $deptId; ?>]" /> 
-                
-                <label for="deparment_id_<?php echo $deptId; ?>">
-                <?php echo $deptName ?>
-                </label>
-              </div>
-            <?php } ?>
-          </div>          
+            <!-- Department -->  
+          <!-- remove dependency-->  
           <!-- assign user start --> 
           <?php include ('./assign_users.php');?>
             <!-- assign user end -->     

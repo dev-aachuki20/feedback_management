@@ -114,8 +114,11 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'location'){
       
       foreach($department_id_explode as $dept){
         if(!in_array($dept ,$departmentId)){
-          $html .='<option value="'.$dept.'">'.getDepartment()[$dept].'</option>';
+            if($dept !=''){
+               $html .='<option value="'.$dept.'">'.getDepartment()[$dept].'</option>';
+            }
         }
+        
         $departmentId[$dept] = $dept;
       }
   }

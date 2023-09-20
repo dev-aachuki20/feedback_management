@@ -45,15 +45,15 @@
 <script>
 // for group load
 //var checkedEngagementArray;
-$(".engagement_checkbox").change(function(){
-    var checkedSurveyArray=[];
-    $(".common_survey_class:checkbox:checked").each(function() {
-        checkedSurveyArray.push($(this).val());
-    });
-    // combine checked survey id and pulse id and engegament id  
-    //array_survey_pulse_engagement = array_survey_pulse.concat(checkedEngagementArray);
-    filteredArray = checkedSurveyArray.filter(e => e !== 'on')
-    console.log(filteredArray);
-    ajax_for_checkbox(filteredArray,'load_group');
-});
+// $(".engagement_checkbox").change(function(){
+//     var checkedSurveyArray=[];
+//     $(".common_survey_class:checkbox:checked").each(function() {
+//         checkedSurveyArray.push($(this).val());
+//     });
+//     // combine checked survey id and pulse id and engegament id  
+//     //array_survey_pulse_engagement = array_survey_pulse.concat(checkedEngagementArray);
+//     filteredArray = checkedSurveyArray.filter(e => e !== 'on')
+//     console.log(filteredArray);
+//     ajax_for_checkbox(filteredArray,'load_group');
+// });
 </script>

@@ -97,31 +97,8 @@ if($_POST['update']){
               </select>
             </div>
           </div>
-          <!-- Role start -->        
-            <div class="col-md-12 with-border">
-                <h4>Role</h4>
-                <input type="checkbox" onclick="checked_all(this,'roleCheckbox')" /><strong>Select All</strong><br /> <br />
-            </div>
-            <div class="col-md-12 with-border" style="padding:0px ;">
-                <?php
-                if(($_GET['id'])){
-                    $role_ids = explode(',',$row_get_departments_id['role_id']);
-                }else{
-                    $role_ids = array();
-                }
-                
-                foreach($roleByUsers as $roleData){ 
-                $roleId   = $roleData['id'];
-                $roleName = $roleData['name'];
-                ?>
-                <div class="col-md-4">
-                    <input type="checkbox" <?=(in_array($roleId,$role_ids) ? 'checked ':' ')?> id="role_id_<?php echo $key ?>" value="<?php echo $roleId; ?>" class="roleCheckbox" name="role[<?php echo $roleId; ?>]" /> 
-                    
-                    <label for="role_id_<?php echo $roleId; ?>">
-                    <?php echo $roleName ?>
-                    </label>
-                </div>
-                <?php } ?>
+          <!-- Role start --> 
+            <!-- remove dependency-->
             </div> 
           <!-- Role end -->   
             <!-- assign user start --> 

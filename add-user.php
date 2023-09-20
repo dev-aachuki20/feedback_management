@@ -47,7 +47,9 @@
           $groupids =$locationids= $departmentids= $survey_type='';
           $uid = $_GET['id'];
           // assign group
+          print_r($_POST['groupids']);
           if(isset($_POST['groupids'])){
+            echo 'aaaaaaaaaaa';
             $filter = "table_name = 'group' and user_id = $uid";
             dbRowDelete('relation_table', $filter);
             foreach($_POST['groupids'] as $groupId){

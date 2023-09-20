@@ -26,7 +26,7 @@
             }
         }
     }else{
-    $survey_saved = array();
+        $survey_saved = array();
     }
     foreach($surveyByUsers as $suveyData){ 
         $survyId    = $suveyData['id'];
@@ -45,13 +45,13 @@
 <script>
 // for group load
 
-$(".survey_checkbox").change(function(){
-   var checkedSurveyArray=[];
-    $(".common_survey_class:checkbox:checked").each(function() {
-        checkedSurveyArray.push($(this).val());
-    });
-    var filteredArray = checkedSurveyArray.filter(e => e !== 'on')
-    console.log(filteredArray);
-    ajax_for_checkbox(filteredArray,'load_group');
-});
+// $(".survey_checkbox").change(function(){
+//    var checkedSurveyArray=[];
+//     $(".common_survey_class:checkbox:checked").each(function() {
+//         checkedSurveyArray.push($(this).val());
+//     });
+//     var filteredArray = checkedSurveyArray.filter(e => e !== 'on')
+//     console.log(filteredArray);
+//     ajax_for_checkbox(filteredArray,'load_group');
+// });
 </script>
