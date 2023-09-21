@@ -14,7 +14,6 @@ require_once("connectin_config.php");
 	} 
 //date_default_timezone_set('Asia/calcutta');
 date_default_timezone_set('Europe/London');
-
 //Get Home URL
 function getHomeUrl(){
 	return BASE_URL;
