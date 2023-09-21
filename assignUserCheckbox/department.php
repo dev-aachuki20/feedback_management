@@ -10,16 +10,16 @@
     }
     if($_SESSION['user_type']>2){
         $assignDepartmenttId = get_assigned_user_data($_SESSION['user_id'],'department');
-        if(count($assignLocationId)>0){
+        if(count($assignDepartmenttId)>0){
             $array =[];
-            foreach($locationName as $key=> $value){
-                if(in_array($key,$assignLocationId)){
+            foreach($departmentName as $key=> $value){
+                if(in_array($key,$assignDepartmenttId)){
                     $array[$key] =$value;
                 }
             }
-            $locationName = $array;
+            $departmentName = $array;
         }else{
-            $locationName = []; 
+            $departmentName = []; 
         }
     }
     
@@ -37,9 +37,9 @@
 
 <script>
 // for department checkbox
-$(document).on("change", '.dept_checkbox', function(event) { 
-    select_department();
-});
+// $(document).on("change", '.dept_checkbox', function(event) { 
+//     select_department();
+// });
 //checked all department using select all
 $(document).on("change", '.dept_checkbox_all', function(event) { 
     checked_all(this,"dept_checkbox");

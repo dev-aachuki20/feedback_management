@@ -288,9 +288,11 @@ if(!empty($_POST['surveys'])){
                             <select name="roleid" id="roleid" class="form-control form-control-lg role">
                             <option value="">Select Role</option>
                             <?php 
-                            $Roles = getRole();
-                            foreach($Roles as $key => $value){ ?>
-                                <option value="<?=$key?>"><?=$value?></option>
+                            foreach($roleByUsers as $roleByUser ){ 
+                                $RoleId     = $roleByUser['id'];
+                                $RoleName   = $roleByUser['name']; 
+                            ?>
+                                <option value="<?=$RoleId?>"><?=$RoleName?></option>
                             <?php } ?>
                             </select>
                         </div>

@@ -187,6 +187,8 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 		$type ='group';
 	}else if($table == 'surveys'){
 		$type ='survey';
+	}else if($table == 'roles'){
+		$type ='role';
 	}else {
 		$type = $table;
 	}

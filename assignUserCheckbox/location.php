@@ -45,9 +45,9 @@
 
 <script>
 // for location checkbox
-$(document).on("change", '.loc_checkbox', function(event) { 
-    select_location();
-});
+// $(document).on("change", '.loc_checkbox', function(event) { 
+//     select_location();
+// });
 
 //checked all location using select all
 $(document).on("change", '.loc_checkbox_all', function(event) { 

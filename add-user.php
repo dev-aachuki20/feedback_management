@@ -4,7 +4,6 @@
   }
 </style>
 <?php
-
   $coloumn_name = '';
 	if(!empty($_GET['id'])){
     record_set("get_user_id", "select * from manage_users where id='".$_GET['id']."'");
@@ -46,12 +45,11 @@
           //assign user location,group,department
           $groupids =$locationids= $departmentids= $survey_type='';
           $uid = $_GET['id'];
+          $filter = "user_id =  $uid";
+          dbRowDelete('relation_table', $filter);
+
           // assign group
-          print_r($_POST['groupids']);
           if(isset($_POST['groupids'])){
-            echo 'aaaaaaaaaaa';
-            $filter = "table_name = 'group' and user_id = $uid";
-            dbRowDelete('relation_table', $filter);
             foreach($_POST['groupids'] as $groupId){
               $data = array(
                   "table_id"    => $groupId,
@@ -63,8 +61,6 @@
           }
           // assign survey 
           if(isset($_POST['surveyids'])){
-            $filter = "table_name IN ('survey','pulse','engagement') and user_id =  $uid";
-            dbRowDelete('relation_table', $filter);
             foreach($_POST['surveyids'] as $surveyId){
               //get survey and check survey type
               record_set("get_user_id", "select * from surveys where id='".$surveyId."'");
@@ -89,8 +85,6 @@
           }
           // assign location 
           if(isset($_POST['locationids'])){
-            $filter = "table_name = 'location' and user_id =  $uid";
-            dbRowDelete('relation_table', $filter);
             foreach($_POST['locationids'] as $locationId){
               $data_loc = array(
                   "table_id"   => $locationId,
@@ -102,8 +96,6 @@
           }
            // assign department
            if(isset($_POST['departmentids'])){
-            $filter = "table_name = 'department' and user_id = $uid";
-            dbRowDelete('relation_table', $filter);
             foreach($_POST['departmentids'] as $departmentId){
               $data_dept = array(
                   "table_id"   => $departmentId,
@@ -116,8 +108,6 @@
       
            // assign role
            if(isset($_POST['roleids'])){
-            $filter = "table_name = 'role' and user_id = $uid";
-            dbRowDelete('relation_table', $filter);
             foreach($_POST['roleids'] as $roleId){
               $data_role = array(
                   "table_id"   => $roleId,
@@ -206,11 +196,24 @@ if(!empty($_POST['submit'])){
           if(isset($_POST['surveyids'])){
             $filter = "table_name = 'survey' and user_id = $insert_value";
             dbRowDelete('relation_table', $filter);
+            
             foreach($_POST['surveyids'] as $surveyId){
+              //get survey and check survey type
+              record_set("get_user_id", "select * from surveys where id='".$surveyId."'");
+              $row_get_user_id = mysqli_fetch_assoc($get_user_id);
+              $surveyType = $row_get_user_id['survey_type'];
+              $type ='';
+              if($surveyType == 1){
+                $type = 'survey';
+              }else if($surveyType == 2){
+                $type = 'pulse';
+              }else if($surveyType == 3){
+                $type = 'engagement';
+              }
               $data = array(
                   "table_id"    => $surveyId,
                   "user_id"     => $insert_value,
-                  "table_name"  => 'survey'
+                  "table_name"  => $type
               );
               $insert =  dbRowInsert("relation_table",$data);
             }
@@ -240,6 +243,20 @@ if(!empty($_POST['submit'])){
                   "table_name" => 'department'
               );
               $insert =  dbRowInsert("relation_table",$data);
+            }
+          }
+
+           // assign role
+           if(isset($_POST['roleids'])){
+            $filter = "table_name = 'role' and user_id = $uid";
+            dbRowDelete('relation_table', $filter);
+            foreach($_POST['roleids'] as $roleId){
+              $data_role = array(
+                  "table_id"   => $roleId,
+                  "user_id"    => $insert_value,
+                  "table_name" => 'role'
+              );
+              $insert =  dbRowInsert("relation_table",$data_role);
             }
           }
 

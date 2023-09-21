@@ -4,9 +4,9 @@
         <input type="checkbox" onclick="checked_all(this,'role_checkbox')" /><strong> Select All</strong><br/><br/>
     </div>
     <?php
-     $roleName = getRole(); 
+    $roleName = getRole(); 
     if(isset($_GET['id'])){
-    $role_id = get_assigned_user_data($_GET['id'],'role');
+        $role_id = get_assigned_user_data($_GET['id'],'role');
     }
     if($_SESSION['user_type']>2){
         $assignRoleId = get_assigned_user_data($_SESSION['user_id'],'role');
@@ -22,7 +22,7 @@
             $roleName = []; 
         }
     }
-    foreach($roleName as $key => $value){ 
+foreach($roleName as $key => $value){ 
     $roleId  = $key;
     $roleName = $value; ?>
     <div class="col-md-4">
@@ -32,7 +32,6 @@
         </label>
     </div>
     <?php } ?> 
-
 </div>
 
 <script>

@@ -41,9 +41,9 @@
 
   <script>
     // for group checkbox
-    $(document).on("change", '.group_checkbox', function(event) { 
-      select_group();
-    });
+    // $(document).on("change", '.group_checkbox', function(event) { 
+    //   select_group();
+    // });
 
     // //checked all group using select all
     $(document).on("change", '.group_checkbox_all', function(event) { 

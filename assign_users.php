@@ -1,5 +1,14 @@
 <?php
     $allUserIds = array();
+    if($_GET['page'] == 'add-department'){
+        $table_name = 'department';
+    }else if($_GET['page'] == 'add-location'){
+        $table_name = 'location';
+    }else if($_GET['page'] == 'add-group'){
+        $table_name = 'group';
+    }else if($_GET['page'] == 'add-role'){
+        $table_name = 'role';
+    } 
     if($_POST['admin_id'] OR $_POST['client_id']){
         //Update Deprtment
         if(count($_POST['admin_id'])>0 and count($_POST['client_id'])){
@@ -15,15 +24,6 @@
         }else if($insert_value){
             $table_id = $insert_value;
         }
-        if($_GET['page'] == 'add-department'){
-            $table_name = 'department';
-        }else if($_GET['page'] == 'add-location'){
-            $table_name = 'location';
-        }else if($_GET['page'] == 'add-group'){
-            $table_name = 'group';
-        }else if($_GET['page'] == 'add-role'){
-            $table_name = 'role';
-        } 
         //if inserted department location group
         if($table_id){
             $filter = "table_name = '$table_name' and table_id = $table_id";
@@ -46,7 +46,6 @@
     }else {
         $assign_data = array();
     }
-    
 ?>
 <div class="row">
     <div class="col-md-12 with-border">
