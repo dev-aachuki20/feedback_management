@@ -810,7 +810,21 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<!-- Start groups -->
 									<?php 
 									if(!empty($row_get_survey['groups'])){ 
-										record_set("get_group", "select * from groups where id in(".$row_get_survey['groups'].") AND id != 4 AND cstatus=1 order by name asc");	
+										if($_SESSION['user_type']>2){
+											record_set("get_assign_group", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='group'");
+											$assignGroupId = [];
+											while($row_get_assign_group = mysqli_fetch_assoc($get_assign_group)){
+												$assignGroupId[] = $row_get_assign_group['table_id'];
+											}
+											if(count($assignGroupId)>0){
+												$GroupId = implode(',',$assignGroupId);
+											}else{
+												$GroupId = 0;
+											}
+										}else{
+											$GroupId = $row_get_survey['groups'];
+										}
+										record_set("get_group", "select * from groups where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
 										if($totalRows_get_group == 1){
 											while($row_get_group = mysqli_fetch_assoc($get_group)){
 												echo '<input type="hidden" name="groupid" value="'.$row_get_group['id'].'">';
@@ -839,7 +853,22 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<!-- Start Locations -->
 									<?php 
 									if(!empty($row_get_survey['locations'])){ 
-										record_set("get_location", "select * from locations where id in(".$row_get_survey['locations'].") AND id != 4 AND cstatus=1 order by name asc");	
+										if($_SESSION['user_type']>2){
+											record_set("get_assign_location", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='location'");
+											$assignLocationId = [];
+											while($row_get_assign_location = mysqli_fetch_assoc($get_assign_location)){
+												$assignLocationId[] = $row_get_assign_location['table_id'];
+											}
+											if(count($assignLocationId)>0){
+												$LocationId = implode(',',$assignLocationId);
+											}else{
+												$LocationId = 0;
+											}
+										}else{
+											$LocationId = $row_get_survey['locations'];
+										}
+
+										record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc");	
 										if($totalRows_get_location == 1){
 											while($row_get_location = mysqli_fetch_assoc($get_location)){
 												echo '<input type="hidden" name="locationid" value="'.$row_get_location['id'].'">';
@@ -869,15 +898,31 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<!-- Start Department -->
 									<?php 
 										if(!empty($row_get_survey['departments'])){
-											record_set("get_department", "select * from departments where id in(".$row_get_survey['departments'].") AND cstatus=1 and id != 4");				
-											record_set("get_location", "select * from locations where id in(".$row_get_survey['locations'].") AND id != 4 AND cstatus=1 order by name asc");
+											if($_SESSION['user_type']>2){
+												record_set("get_assign_department", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='department'");
+												$assignDepartmentId = [];
+												while($row_get_assign_department = mysqli_fetch_assoc($get_assign_department)){
+													$assignDepartmentId[] = $row_get_assign_department['table_id'];
+												}
+												if(count($assignDepartmentId)>0){
+													$DepartmentId = implode(',',$assignDepartmentId);
+												}else{
+													$DepartmentId = 0;
+												}
+											}else{
+												$DepartmentId = $row_get_survey['departments'];
+											}
+
+											record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1 and id != 4");	
+
+											//record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc",2);
 
 											if($totalRows_get_department == 1){
 												while($row_get_department = mysqli_fetch_assoc($get_department)){
 													echo '<input type="hidden" name="departmentid" value="'.$row_get_department['id'].'">';
 												}
 											}else{
-												echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
+												echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
 												<div class="col-md-6">
 
 													<div class="form-group">
@@ -901,7 +946,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 													</div>
 
 												</div>
-												<?php echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';
+												<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';
 											} 
 										}
 									?>
@@ -911,15 +956,30 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<?php 
 									
 										if(!empty($row_get_survey['roles'])){
-											record_set("get_role", "select * from roles where id in(".$row_get_survey['roles'].") AND cstatus=1 and id != 4");				
-											record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
+											if($_SESSION['user_type']>2){
+												record_set("get_assign_role", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='role'");
+												$assignRoleId = [];
+												while($row_get_assign_role = mysqli_fetch_assoc($get_assign_role)){
+													$assignRoleId[] = $row_get_assign_role['table_id'];
+												}
+												if(count($assignRoleId)>0){
+													$RoleId = implode(',',$assignRoleId);
+												}else{
+													$RoleId = 0;
+												}
+											}else{
+												$RoleId = $row_get_survey['roles'];
+											}
 
-											if($totalRows_get_role == 1){
+											record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1 and id != 4");				
+											// record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
+
+											if($totalRows_get_roles == 1){
 												while($row_get_role = mysqli_fetch_assoc($get_role)){
 													echo '<input type="hidden" name="roleid" value="'.$row_get_role['id'].'">';
 												}
 											}else{
-												echo ($totalRows_get_roles==1)?'<div class="col-md-3"></div>':'';?>
+												echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';?>
 												<div class="col-md-6">
 
 													<div class="form-group">
@@ -943,7 +1003,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 													</div>
 
 												</div>
-												<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';
+												<?php echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';
 											} 
 										}
 									?>

@@ -11,7 +11,6 @@
             $group_id = get_assigned_user_data($_GET['id'],'group');
           }
           if($_SESSION['user_type']>2){
-     
             $assignGroupId = get_assigned_user_data($_SESSION['user_id'],'group');
             if(count($assignGroupId)>0){
               $array =[];

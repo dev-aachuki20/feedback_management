@@ -73,53 +73,48 @@ if($_POST['update']){
 <section class="content">
   <div class="box box-secondary">
     <div class="box-body">
-      <form action="" method="post" id="departmentForm" >
+      <form action="" method="post" id="groupForm">
         <div class="row">
           <div class="col-md-4">
             <div class="form-group">
-              <label>Name *</label>
-              <input type="text" class="form-control" name="name" id="name" value="<?php echo $row_get_departments_id['name'];?>" required/>
+              <label>Name</label>
+              <input type="text" class="form-control" name="name" id="name" value="<?= $row_get_departments_id['name'];?>" required/>
             </div>
           </div>
-          
-          <!-- <div class="col-md-4">
-            <div class="form-group">
-              <label>Email *</label>
-              <input type="email" class="form-control" name="email" id="email" value="<?php echo $row_get_departments_id['email'];?>" required/>
-            </div>
-          </div> -->
+          <!-- End name according to languages -->
+           
           <div class="col-md-4">
             <div class="form-group">
               <label>Status</label>
-              <select class="form-control" name="status" <?=$disabled ?>><?php foreach(status() as $key => $value){ ?>
+              <select class="form-control" name="status" <?=$disabled?>>
+                <?php  
+             
+                foreach(status() as $key => $value){ ?>
                   <option <?php if($row_get_departments_id['cstatus']==$key){?> selected="selected"<?php }?>value="<?php echo $key; ?>"><?php echo $value; ?></option>                    
                 <?php }?>
               </select>
             </div>
           </div>
-          <!-- Role start --> 
-            <!-- remove dependency-->
-            </div> 
-          <!-- Role end -->   
-            <!-- assign user start --> 
-             <?php include ('./assign_users.php');?>
-            <!-- assign user end -->    
+          <!-- add location -->
+          <!-- remove dependency-->  
+          <!-- assign user start -->        
+          <?php include ('./assign_users.php');?>
+          <!-- assign user end -->   
         </div>
         <!-- End row -->
         <!-- Start submit button -->
         <div class="text-right">
-          <?php if(empty($_GET['id'])){ ?>
+            <?php  if(empty($_GET['id'])){ ?>
               <input type="Submit" class="btn btn-primary" value="Create" name="submit" id="submit"/>
-          <?php }else{?>                
-            <input type="Submit" class="btn btn-primary" value="Update" name="update"/>
-          <?php }?>
-            <span class="text-denger"><?php echo $_GET['msg']; ?></span>
+            <?php }else{?>                
+              <input type="Submit" class="btn btn-primary" value="Update" name="update"/>
+            <?php }?>
+            <span class="text-danger"><?php echo $_GET['msg']; ?></span>
         </div>
         <!-- End submit button -->
       </form>
     </div>
   </div>
-
 </section>
 
 <script type="application/javascript">

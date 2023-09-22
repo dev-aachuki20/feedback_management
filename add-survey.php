@@ -239,6 +239,20 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     $groups = $row_get_surveys['groups'];
                                     $groupId = explode(',',$groups);
                                     $getGroup = getGroup(); 
+                                    if($_SESSION['user_type']>2){
+                                        $assignGroupId = get_assigned_user_data($_SESSION['user_id'],'group');
+                                        if(count($assignGroupId)>0){
+                                            $array =[];
+                                            foreach($getGroup as $key=> $value){
+                                            if(in_array($key,$assignGroupId)){
+                                                $array[$key] =$value;
+                                            }
+                                            }
+                                            $getGroup = $array;
+                                        }else{
+                                            $getGroup = []; 
+                                        }
+                                    }
                                     foreach($getGroup as $key => $value){ 
                                         $selected = '';
                                         if(in_array($key,$groupId)){
@@ -255,6 +269,20 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                  $locations = $row_get_surveys['locations'];
                                  $locationsId = explode(',',$locations);
                                  $getLocation = getLocation();
+                                 if($_SESSION['user_type']>2){
+                                    $assignLocationId = get_assigned_user_data($_SESSION['user_id'],'location');
+                                    if(count($assignLocationId)>0){
+                                        $array =[];
+                                        foreach($getLocation as $key=> $value){
+                                        if(in_array($key,$assignLocationId)){
+                                            $array[$key] =$value;
+                                        }
+                                        }
+                                        $getLocation = $array;
+                                    }else{
+                                        $getLocation = []; 
+                                    }
+                                }
                                 ?>
                                 <input type="checkbox" id="allLoc" class="multiselect" onchange="select_all_option('allLoc','location_id')">
                             </div>
@@ -279,6 +307,20 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                   $department = $row_get_surveys['departments'];
                                   $departmentId = explode(',',$department);
                                   $getDeparment = getDepartment();
+                                    if($_SESSION['user_type']>2){
+                                        $assignDeparmentId = get_assigned_user_data($_SESSION['user_id'],'department');
+                                        if(count($assignDeparmentId)>0){
+                                            $array =[];
+                                            foreach($getDeparment as $key=> $value){
+                                            if(in_array($key,$assignDeparmentId)){
+                                                $array[$key] =$value;
+                                            }
+                                            }
+                                            $getDeparment = $array;
+                                        }else{
+                                            $getDeparment = []; 
+                                        }
+                                    }
                                     foreach($getDeparment as $key => $value){ 
                                         $selected = '';
                                         if(in_array($key,$departmentId)){
@@ -295,9 +337,30 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                 <select name="roles[]" id="roles" class="form-control form-control-lg multiple-select" multiple=multiple>
                                 <?php 
                                   $role = $row_get_surveys['roles'];
-                                    $getRole = getRole();    
-                                    foreach($getRole as $key => $value){ ?>
-                                    <option value="<?=$key?>" <?=(isset($_GET['id']))? 'selected ': ''?>><?=$value?></option>
+                                  $role = $row_get_surveys['roles'];
+                                  $roleId = explode(',',$role);
+                                    $getRole = getRole();  
+                                    if($_SESSION['user_type']>2){
+                                        $assignRoleId = get_assigned_user_data($_SESSION['user_id'],'role');
+                                        if(count($assignRoleId)>0){
+                                            $array =[];
+                                            foreach($getRole as $key=> $value){
+                                            if(in_array($key,$assignRoleId)){
+                                                $array[$key] =$value;
+                                            }
+                                            }
+                                            $getRole = $array;
+                                        }else{
+                                            $getRole = []; 
+                                        }
+                                    }  
+                                    foreach($getRole as $key => $value){ 
+                                        $selected = '';
+                                        if(in_array($key,$roleId)){
+                                            $selected = 'selected';
+                                        }
+                                    ?>
+                                    <option value="<?=$key?>" <?=$selected?>><?=$value?></option>
                                 <?php } ?> 
                                 </select>	
                             </div>
