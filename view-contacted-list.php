@@ -57,11 +57,11 @@ if(isset($_POST['assign'])){
 
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report&type='.$_GET['type']);
+        alertSuccess( $msg,'?page=view-contacted-list&type='.$_GET['type']);
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report&type='.$_GET['type']);
+        alertdanger( $msg,'?page=view-contacted-list&type='.$_GET['type']);
 }
 //self assign task
 if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){
@@ -535,7 +535,7 @@ if(!empty($_POST['surveys'])){
                         <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
                         <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
                         <label>User Type</label>
-                        <select class="form-control " tabindex=7 id="user_type" name="user_type">
+                        <select class="form-control " tabindex=7 id="user_type" name="user_type" required>
                             <option value="">Select User Type</option>
                         <?php 
                             $user_types_array=user_type();  

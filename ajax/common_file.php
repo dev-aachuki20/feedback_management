@@ -56,16 +56,20 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'assign_users'){
     //manger
     $title = "Manger";
     $userData = getUsers(4);
-  } 
- 
-  $html = '<div class="form-group">
-  <label>'.$title .'</label>
-  <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id">
-  <option value=""> select '.$title.'</option></option>';
-   foreach($userData as $key => $value){
-      $html .='<option value="'.$key.'">'.$value.'</option>';
-   }
-   $html .= '</select> <p  class="error_1" style="display:none;color: red;font-weight: 600;"> These Task is either completed by users or already reassigned. Please Choose Other Task </p></div> ';
+  }else if($user_type == 1){
+    $title = "DGS User";
+    $userData = getUsers(1);
+  }
+  if($title){
+    $html = '<div class="form-group">
+    <label>'.$title .'</label>
+    <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id" required>
+    <option value=""> select '.$title.'</option></option>';
+    foreach($userData as $key => $value){
+        $html .='<option value="'.$key.'">'.$value.'</option>';
+    }
+    $html .= '</select> <p  class="error_1" style="display:none;color: red;font-weight: 600;"> These Task is either completed by users or already reassigned. Please Choose Other Task </p></div> ';
+  }
   echo json_encode($html); die();
 }
 

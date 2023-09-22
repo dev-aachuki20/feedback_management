@@ -5,7 +5,6 @@
 </style>
 
 <?php 
-
 $sid = $_GET['id'];
 $type = $_GET['type'];
 // get data by user
@@ -16,18 +15,19 @@ $locationByUsers    = get_filter_data_by_user('locations');
 $groupByUsers       = get_filter_data_by_user('groups');
 // assign task to user
 if(isset($_POST['assign'])){
-    $survey_id           = $_POST['survey_id'];
+    $survey_id           = explode(',',$_POST['survey_id']);
     $task_id             = explode(',',$_POST['response_id_hidden']);
     $assing_to_user_id   = $_POST['assing_to_user_id'];
     // $assign_to_user_type = $_POST['user_type'];
     // $assign_by_user_type = $_SESSION['user_type'];
     $assign_by_user_id   = $_SESSION['user_id'];
+    $i = 0;
     foreach($task_id as $tasks){
         $data = array(
             "assign_to_user_id"   => $assing_to_user_id,
             "task_id"             => $tasks,
             "task_status"         => 2,
-            "survey_id"           => $survey_id,
+            "survey_id"           => $survey_id[$i],
             "survey_type"         => $survey_type_id,
             "assign_by_user_id"   => $assign_by_user_id,
             "reassign_status"     => 1,
@@ -56,9 +56,10 @@ if(isset($_POST['assign'])){
             'created_date'=>date("Y-m-d H:i:s")
         );
 
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action,2);
+        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
         // send mail to user assigned task
         send_email_to_assign_user($user_name,$user_email);
+        $i++;
     }
 
     $userdata   = get_user_datails($assing_to_user_id);
@@ -69,19 +70,19 @@ if(isset($_POST['assign'])){
     send_email_to_assign_user($user_name,$user_email);
     if(!empty($insert_value )){	
         $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-contacted-list');
+        alertSuccess( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
         die();
     }
         $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-contacted-list');
+        alertdanger( $msg,'?page=view-my-assign-task='.$_GET['type']);
 }
-
     $dateflag= false;
     $query = 'SELECT * FROM answers where id !=0';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
         $dateflag= true;
     }
+
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid = ".$_POST['surveys'];
     }
@@ -117,6 +118,7 @@ if(isset($_POST['assign'])){
             $query .= " and roleid = '".$_POST['roleid']."'";
         }
     }
+
     if(!empty($_POST['locationid'])){
         if($_POST['locationid'] == 4){
             $query .= " and locationid in (select id from locations where cstatus=1)";  
@@ -146,7 +148,9 @@ if(isset($_POST['assign'])){
             $que= " and  answerid != -2 and answerval != 100";
         }
     }
+
     $filter_status = '';
+
     if(!empty($_POST['task_status'])){
         $filter_status = ' and task_status ='.$_POST['task_status'];
     }
@@ -160,6 +164,7 @@ if(isset($_POST['assign'])){
     if(empty($task_id)){
         $task_id = '0';
     }
+
     if($loggedIn_user_type > 2){
         $assign_survey = array();
         foreach($surveyByUsers as $survey){
@@ -279,6 +284,14 @@ if(isset($_POST['assign'])){
                             <div class="form-group">
                                 <label>Role</label>
                                 <select name="roleid" id="roleid" class="form-control form-control-lg role">
+                                    <option value="">Select Role</option>
+                                    <?php 
+                                    foreach($roleByUsers as $roleByUser ){ 
+                                        $RoleId     = $roleByUser['id'];
+                                        $RoleName   = $roleByUser['name']; 
+                                    ?>
+                                    <option value="<?=$RoleId?>"><?=$RoleName?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
@@ -574,10 +587,13 @@ if(isset($_POST['assign'])){
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');
     var checkedArray=[];
+    var surveyArray = []
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
+        surveyArray.push($(this).data('sid'));
     });
-    $('.survey_id').val(sid);
+    //console.log(checkedArray,'checkedArray',surveyArray);
+    $('.survey_id').val(surveyArray);
     $('.response_id_hidden').val(checkedArray);
    
 
