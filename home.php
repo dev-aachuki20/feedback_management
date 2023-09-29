@@ -351,7 +351,7 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                                                 $i++;
                                             }
                                         }
-                                        if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+                                        if($row_get_survey_response['answerid'] == -2 && $row_get_survey_response['answerval'] == 100){
                                             $to_bo_contacted = 1;
                                         }
                                     }
