@@ -420,11 +420,11 @@ if(!empty($requestData['survey_name'])){
                                   }
                                 }
                                 //echo $achieved_result_val.' : '.$total_result_val;
-                                $result_response += $achieved_result_val*100/$total_result_val;
+                               
                                 $count++;
                             }
-                        
-                            $result_response_value = $result_response/$count;
+                            $result_response = $achieved_result_val*100/$total_result_val;
+                            //$result_response_value = $result_response/$count;
                             if(is_nan($result_response_value)){
                             $result_response_value=100;
                             }
@@ -436,7 +436,7 @@ if(!empty($requestData['survey_name'])){
                  
                                 <td><?=$count?></td>
                                 <td><?=$contactedCount?></td>
-                                <td><?=round($result_response_value,2).'%'?></td>
+                                <td><?=round($result_response,2).'%'?></td>
                                 <td><?='<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$requestData['survey_name'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>'?></td>
                             </tr>
                             <?php }
