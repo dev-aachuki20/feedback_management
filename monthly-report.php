@@ -437,7 +437,7 @@ if(!empty($requestData['survey_name'])){
                                 <td><?=$count?></td>
                                 <td><?=$contactedCount?></td>
                                 <td><?=round($result_response,2).'%'?></td>
-                                <td><?='<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$requestData['survey_name'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>'?></td>
+                                <td><?='<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&score='.round($result_response,2).'&contact='.$contactedCount.'&survey-count='.$count.'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$requestData['survey_name'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>'?></td>
                             </tr>
                             <?php }
                         }else{ ?>
@@ -447,7 +447,7 @@ if(!empty($requestData['survey_name'])){
                                 <td><?= 0?></td>
                                 <td><?= 0?></td>
                                 <td><?= 0?></td>
-                                <td><?='<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$requestData['survey_name'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>'?></td>
+                                <td><?='<div class="action-btn"><a class="btn btn-xs btn-primary " href="export-pdf.php?surveyid='.$requestData['survey_name'].'&amp;start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&score='.round($result_response,2).'&contact='.$contactedCount.'&survey-count='.$count.'" target="_blank">View PDF</a> <a class="btn btn-xs btn-primary" href="export-result.php?surveyid='.$requestData['survey_name'].'&start='.$date['start'].'&end='.$date['end'].'&location='.$requestData['curr_loc_id'].'&name='.$row_getSurveyname['name'].'" target="_blank">Download CSV</a></div>'?></td>
                             </tr>
                         <?php }
                     }

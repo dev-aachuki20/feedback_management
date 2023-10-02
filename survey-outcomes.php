@@ -398,7 +398,10 @@
                                                 if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
                                                     $to_bo_contacted = 1;
                                                 }
-                                
+                                            }
+                                            // for showing only contacted yes data
+                                            if($to_bo_contacted == 0){
+                                                continue;
                                             }
                                             $result_response = $achieved_result_val*100/$total_result_val;
                                             if($achieved_result_val==0 and $total_result_val==0){
@@ -433,7 +436,7 @@
                                                 <td><?=getRole()[$row_get_recent_entry['roleid']];?></td>
                                                 <td data-sort="<?=$result_response?>"><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>%</label></td>
                                                 <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
-                                                <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'].$param?>" target="_blank">VIEW DETAILS</a></td>
+                                                <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'].$param?>&score=<?=round($result_response,2)?>&contacted=<?=$to_bo_contacted?>" target="_blank">VIEW DETAILS</a></td>
                                             </tr>
                                         <?php
                                         }

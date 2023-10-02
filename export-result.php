@@ -34,12 +34,16 @@ if($totalRows_getdata>0){
 	$i=0;
 	$row_excel_data = array();
 	while ($row_getdata = mysqli_fetch_assoc($getdata)) {
+		
+		/** CALCUCLATE RESULT */
+		$survey_score = survey_score_calculation($row_getdata['surveyid'],$row_getdata['cby']);
 		$row_excel_data[$i]['Date'] 		= $row_getdata['cdate']; 
 		$row_excel_data[$i]['Survey ID'] 	= $row_getdata['surveyid']; 
 		$row_excel_data[$i]['First Name'] 	= ''; 
 		$row_excel_data[$i]['Last Name'] 	= ''; 
 		$row_excel_data[$i]['Phone Number'] = ''; 
 		$row_excel_data[$i]['Email'] 		= ''; 
+		$row_excel_data[$i]['Survey Score'] = $survey_score['survey_score']."%"; 
 		//$row_excel_data[$i]['School'] 	= ''; 
 			
 		// $sub_query = "SELECT a.*,q.question as question FROM answers a left join questions q on a.questionid=q.id where a.surveyid='".$surveyid."' and a.cdate='".$row_getdata['cdate']."'";
@@ -97,6 +101,7 @@ if($totalRows_getdata>0){
 	    // echo implode("\t", array_values($row_excel_data)) . "\r\n";	
 }
 arsort($row_excel_data);
+
 foreach($row_excel_data as $data){
 	if (!$flag) {
 		// display field/column names as first row

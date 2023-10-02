@@ -7,6 +7,7 @@ include('function/get_data_function.php');
 //Get Survey Details
 
 $surveyid = $_GET['surveyid'];
+$cby_userid = $_GET['userid'];
 //$client_id = '';
 if(isset($_GET['surveyid'])){
   record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1");
@@ -315,7 +316,13 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
     $row_get_location = mysqli_fetch_assoc($get_location);
 
      //School
-     record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='100' and cstatus=1");
+    //  record_set("get_school", "select answertext from answers where surveyid ='".$surveyid."' and answerid='-3' and answerval='100' and cstatus=1");
+
+    //Contact Details
+    record_set("get_contact", "select answertext from answers where surveyid ='".$surveyid."' and cby='".$cby_userid."' and answerid='-2' and answerval='100' and cstatus=1");
+    $row_get_contact = mysqli_fetch_assoc($get_contact);
+    $contactDetails = json_decode($row_get_contact['answertext'],1);
+
     ?>
     <div class="container">
       <table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
@@ -336,6 +343,32 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
           </tr>
         </thead>
       </table>
+      <?php if($_GET['contacted'] == 1){ ?>
+        <table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
+          <thead>
+            <tr>
+              <th colspan="3"></th>
+            </tr>
+            <tr>
+              <th colspan="3">Contact Detail</th>
+            </tr>
+          </thead>
+
+          <tbody style="border-bottom:1px solid black;">
+              <?php 
+                $name =  $contactDetails['first_name'].' '.$contactDetails['last_name'];
+              ?>
+              <tr>
+                <td><strong>Name</strong> : <?= $contactDetails['first_name'].' '.$contactDetails['last_name'] ?> </td>
+                <td><strong>Phone Number</strong> : <?= $contactDetails['phone_number'] ?></td>
+                <td><strong>Contact Email</strong> : <?= $contactDetails['to_be_contact_mail'] ?></td>
+              </tr>
+          </tbody>
+        </table>
+      <?php } ?>
+      <?php if(isset($_GET['score'])){ ?> 
+        <h4 class="text-center" style="margin-top:20px;">Survey Score: <?=$_GET['score'] ?>%</h4>
+      <?php } ?>
     </div>
     
         <div class="container">

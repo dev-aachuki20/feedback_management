@@ -333,8 +333,35 @@ function get_survey_detail($id){
 	return $row_get_data;
 }
 
-function response_calculation(){
-	
+function survey_score_calculation($surveyId, $cby){
+	$total_result_val=0;
+	$achieved_result_val = 0;
+	$to_bo_contacted     = 0;
+	$count=0;
+	$get_survey_result = getaxecuteQuery_fn("SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$surveyId."' and cby=".$cby);
+	//record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$surveyId."' and cby=".$cby);
+	while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+		$get_question_type = getaxecuteQuery_fn("SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
+		$result_question = mysqli_fetch_assoc($get_question_type);
+		if($result_question){
+			if(!in_array($result_question['answer_type'],array(2,3,5))){
+				$total_result_val = ($count+1)*100;
+				$achieved_result_val += $row_get_survey_result['answerval'];
+				$count++;
+			}
+		}
+		if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+			$to_bo_contacted = 1;
+		}
+	}
+	$result_response = $achieved_result_val*100/$total_result_val;
+	if($achieved_result_val==0 and $total_result_val==0){
+		$result_response=100;
+	}
+	return array(
+		"survey_score"=>$result_response,
+		"to_bo_contacted" => $to_bo_contacted,
+	);
 }
 // date 14-10-2022
 // if contacted is yes then only mail will send to admin and super admin

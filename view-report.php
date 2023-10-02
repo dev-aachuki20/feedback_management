@@ -397,7 +397,7 @@ if(!empty($_POST['surveys'])){
                                             <td><?=$row_survey_entry?></td>
                                             <td data-sort="<?=round($result_response,2)?>"><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>%</label></td>
                                             <td data-sort="<?=$to_bo_contacted?>"><?=$contactedLabel?></td>
-                                            <td> <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>" target="_blank">VIEW DETAILS</a></td>
+                                            <td> <a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?>&score=<?=round($result_response,2)?>&contacted=<?=$to_bo_contacted?>" target="_blank">VIEW DETAILS</a></td>
                                         </tr>
                                         <?php
                                         }

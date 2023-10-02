@@ -112,7 +112,7 @@
                     $insert_steps =  dbRowInsert("surveys_steps",$step_data_col);
                 }
             }
-  	        $msg = "Surveys Added Successfully";
+  	        $msg = "Survey Added Successfully";
             alertSuccess($msg,'?page=view-survey');
             if(!empty($_POST['alter_email'])){
                 send_survey_email($_POST['alter_email'], $_POST['name'], $insert_value);

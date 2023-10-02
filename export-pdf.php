@@ -93,6 +93,24 @@ $message = '<table width="100%">
   // </tr>
 // echo '<pre>';
 // print_r($questions); die();
+
+$message .= '<table width="100%" style="text-align:center;" >
+      <thead>
+        <tr>
+          <td">Total Survey</td>
+          <td">Contacted Requested</td>
+          <td">Average result Score</td>
+        </tr>
+      </thead>
+      <tbody style="">
+        <tr style="">
+          <td>'.$_GET['survey-count'].'</td>
+          <td>'.$_GET['contact'].'</td>
+          <td>'.$_GET['score'].'</td>
+        </tr>
+      </tbody>
+  </table>';
+
 if(count($survey_steps)>0){
   foreach($survey_steps AS $key => $value) { 
     $message .= '<div class="container" style="page-break-after: always;height: 500px;">
