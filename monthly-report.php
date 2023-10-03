@@ -425,9 +425,12 @@ if(!empty($requestData['survey_name'])){
                             }
                             $result_response = $achieved_result_val*100/$total_result_val;
                             //$result_response_value = $result_response/$count;
-                            if(is_nan($result_response_value)){
-                            $result_response_value=100;
-                            }
+                            // if(is_nan($result_response_value)){
+                            //     $result_response_value=100;
+                            // }
+                            if(is_nan($result_response)){
+                              $result_response=100;
+                          }
                             ?>
                             <?php if($count > 0 || $contactedCount > 0){?>
                             <tr>

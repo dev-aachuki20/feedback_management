@@ -106,7 +106,7 @@ $message .= '<table width="100%" style="text-align:center;" >
         <tr style="">
           <td>'.$_GET['survey-count'].'</td>
           <td>'.$_GET['contact'].'</td>
-          <td>'.$_GET['score'].'</td>
+          <td>'.$_GET['score'].'%</td>
         </tr>
       </tbody>
   </table>';

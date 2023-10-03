@@ -217,8 +217,8 @@ else{
   $(document).ready(function(){
     // multiple department select
     $(".multiple-select").select2({
-    placeholder: "Select option",
-    allowClear: true
+      placeholder: "Select option",
+      allowClear: true
     });
   })
 

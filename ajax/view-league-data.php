@@ -73,7 +73,10 @@ $data =array();
                     }
                 }
                 $average_value = ($total_answer/($i*100))*100;
-                if($total_answer==0 and $total_result_val==0){
+                // if($total_answer==0 and $total_result_val==0){
+                //     $average_value=100;
+                // }
+                if(is_nan($average_value)){
                     $average_value=100;
                 }
                 $survey_data[$locId][$cby] = $average_value;
@@ -95,7 +98,10 @@ $data =array();
                     }
                 }
                 $average_value = ($total_answer/($i*100))*100;
-                if($total_answer==0 and $total_result_val==0){
+                // if($total_answer==0 and $total_result_val==0){
+                //     $average_value=100;
+                // }
+                if(is_nan($average_value)){
                     $average_value=100;
                 }
                 $survey_data[$depId][$cby] = $average_value;
@@ -117,7 +123,10 @@ $data =array();
                     }
                 }
                 $average_value = ($total_answer/($i*100))*100;
-                if($total_answer==0 and $total_result_val==0){
+                // if($total_answer==0 and $total_result_val==0){
+                //     $average_value=100;
+                // }
+                if(is_nan($average_value)){
                     $average_value=100;
                 }
                 $survey_data[$grpId][$cby] = $average_value;
@@ -139,7 +148,10 @@ $data =array();
                     }
                 }
                 $average_value = ($total_answer/($i*100))*100;
-                if($total_answer==0 and $total_result_val==0){
+                // if($total_answer==0 and $total_result_val==0){
+                //     $average_value=100;
+                // }
+                if(is_nan($average_value)){
                     $average_value=100;
                 }
                 $survey_data[$roleId][$cby] = $average_value;

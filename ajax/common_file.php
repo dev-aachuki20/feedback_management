@@ -311,11 +311,15 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
 if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
   $field = $_POST['field'];
   $filter = $_POST['filter'];
+
   $survey_data = get_allowed_survey(strtolower(survey_type()[$filter]));
 
   $html = '<label id="label_survey_field" for="survey_field" class="col-sm-4 col-form-label">'.strtoupper(survey_type()[$filter]).'</label>
   <div class="col-sm-8">
       <select id="template_survey" name="template_field[]" class="form-control form-control-lg multiple-select" required >';
+      if($field != 'survey' and $field != 'engagement' and $field != 'pulse'){
+        $html .= '<option value="">Select Option</option>';
+      }
         foreach($survey_data as $key => $value){
           $html .= '<option value="'.$key.'">'.$value.'</option>';
         }
@@ -325,6 +329,8 @@ if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
   // }
   echo json_encode($html); die();
 }
+
+
 
 if(isset($_POST['mode']) and $_POST['mode']=='fetch_filter_data'){
     $html ='';

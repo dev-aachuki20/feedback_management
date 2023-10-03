@@ -83,7 +83,8 @@ if(isset($_POST['schedule_btn'])){
                 <button type="submit" class="btn btn-sm btn-green">DOWNLOAD CSV</button>
               </form> -->
 
-              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>);">SCHEDULE</button>
+              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>,'schedule');">SCHEDULE</button>
+              <button class="btn btn-sm btn-green" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>,'preview');">RUN</button>
             </td>
           </tr>
         <?php } ?>
@@ -108,7 +109,7 @@ if(isset($_POST['schedule_btn'])){
             </div>
             <div class="modal-body">
               <div class="form-group">
-                  <form class="second_form" method="post">
+                  <form class="second_form" method="post" >
                       <input type="hidden" id="sch_template_id" name="sch_template_id" value="">
                       <input type="hidden" id="sch_template_field_name" name="sch_template_field_name" value="">
                       <input type="hidden" id="template_filter" name="template_filter" value="">
@@ -117,19 +118,19 @@ if(isset($_POST['schedule_btn'])){
                       </div>
                       <div class="form-group row filter_data">
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row schedule-field">
                           <label for="start_date" class="col-sm-4 col-form-label">Start Date</label>
                           <div class="col-sm-8">
                               <input type="date"  class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
                           </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row schedule-field">
                           <label for="end_date" class="col-sm-4 col-form-label">End Date</label>
                           <div class="col-sm-8">
                               <input type="date"  class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
                           </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row schedule-field">
                           <label for="interval" class="col-sm-4 col-form-label">Interval</label>
                           <div class="col-sm-8">
                           <select class="form-control" id="interval" name="interval" required>
@@ -151,12 +152,34 @@ if(isset($_POST['schedule_btn'])){
   </div>
 </div>
 
+
 <script type="text/javascript">
 $("#survey_type").on('change', function(){
   window.location = window.location.href.split('&')[0] + "&type=" + this.value
 });
 
-function scheduleTemplate(template_id, template_name, template_field, template_filter,report_type){
+function scheduleTemplate(template_id, template_name, template_field, template_filter,report_type, modal_type){
+  if(modal_type === 'preview'){
+    $('.schedule-field').hide();
+    $('.modal-content').css("height", "200px");
+    $('#start_date').prop('required',false);
+    $('#end_date').prop('required',false);
+    $('#interval').prop('required',false);
+    if(report_type == 1){
+      $('.second_form').attr('action', './report-doc/preview-report/report-pdf.php');
+    }else if(report_type == 2){
+      $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
+    }
+    $('.second_form').attr("target", "_blank");
+  }else{
+    $('#start_date').prop('required',true);
+    $('#end_date').prop('required',true);
+    $('#interval').prop('required',true);
+    $('.second_form').removeAttr('action');
+    $('.second_form').removeAttr('target');
+    $('.schedule-field').show();
+    $('.modal-content').css("height", "360px");
+  }
   //$(".multiple-select").empty().trigger('change');
   $("#sch_modal_title").html(template_name);
   $("#sch_template_id").val(template_id);
@@ -185,6 +208,7 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
   $('.filter_data').html('');
   $('#schedule_report_templates').modal('show');
 }
+
 
 //onchange survey
 $(document).on('change','#template_survey',function(){
