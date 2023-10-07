@@ -11,7 +11,7 @@ if($_POST['data_type']=='location'){
     $groupBy = 'locationid';
 }
 else if($_POST['data_type']=='group'){
-    $query = " and surveyid =".$_POST['survey']." and groupid in (select id from groups where cstatus=1)";  
+    $query = " and surveyid =".$_POST['survey']." and groupid in (select id from `groups` where cstatus=1)";  
     $groupBy = 'group';
 }
 else if($_POST['data_type']=='department'){

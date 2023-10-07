@@ -119,7 +119,7 @@ if(isset($_GET['viewid'])){
     }
 
      // get groups for view template and schedule
-    record_set("get_groups", "select * from groups where cstatus=1");
+    record_set("get_groups", "select * from `groups` where cstatus=1");
     while($row_get_groups = mysqli_fetch_assoc($get_groups)){
         $groupByUsers[] = $row_get_groups;
     }

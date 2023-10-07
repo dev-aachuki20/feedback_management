@@ -88,7 +88,7 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'group'){
   $group_ids = $_POST['id'];
   $group_ids = implode(',',$group_ids);
 
-  record_set("locations_data", "select id,name,location_id from groups where id IN ($group_ids) order by name ASC");
+  record_set("locations_data", "select id,name,location_id from `groups` where id IN ($group_ids) order by name ASC");
   $locationId = array();
   $html = '';
   while($row_get_location = mysqli_fetch_assoc($locations_data)){
@@ -206,7 +206,7 @@ if(isset($_POST['mode']) and $_POST['mode'] == 'add_user_group_assign'){
   $group_ids = $_POST['id'];
   $group_ids = implode(',',$group_ids);
 
-  record_set("locations_data", "select id,name,location_id from groups where id IN ($group_ids) order by name ASC");
+  record_set("locations_data", "select id,name,location_id from `groups` where id IN ($group_ids) order by name ASC");
   $locationId = array();
   $html = '<div class="col-md-12 with-border">
     <h4>Assign Location</h4>

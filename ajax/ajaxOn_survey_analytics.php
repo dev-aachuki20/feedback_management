@@ -10,7 +10,7 @@ if($_POST['survey_type']=='location'){
     $groupBy = 'locationid';
 }
 else if($_POST['survey_type']=='group'){
-    $query = " and groupid in (select id from groups where cstatus=1)";  
+    $query = " and groupid in (select id from `groups` where cstatus=1)";  
     $groupBy = 'group';
 }
 else if($_POST['survey_type']=='department'){

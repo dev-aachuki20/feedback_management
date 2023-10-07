@@ -132,7 +132,7 @@ if(isset($_POST['assign'])){
     }
     if(!empty($_POST['groupid'])){
         if($_POST['groupid'] == 4){
-            $query .= " and groupid in (select id from groups where cstatus=1)";  
+            $query .= " and groupid in (select id from `groups` where cstatus=1)";  
         }else{
             if($dateflag == true){
                 $query .= " and groupid = '".$_POST['groupid']."'";

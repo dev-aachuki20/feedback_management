@@ -16,7 +16,7 @@ $data =array();
     }
     //survey group
     else if($survey_type=='group'){
-        $query = " and surveyid =".$surveyid." and groupid in (select id from groups where cstatus=1)";  
+        $query = " and surveyid =".$surveyid." and groupid in (select id from `groups` where cstatus=1)";  
         $groupBy = 'group';
     }
     //survey department

@@ -824,7 +824,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 										}else{
 											$GroupId = $row_get_survey['groups'];
 										}
-										record_set("get_group", "select * from groups where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
+										record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
 										if($totalRows_get_group == 1){
 											while($row_get_group = mysqli_fetch_assoc($get_group)){
 												echo '<input type="hidden" name="groupid" value="'.$row_get_group['id'].'">';
@@ -1478,7 +1478,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 										<div class="col-md-12">
 											<input type="checkbox" id="accept_privacy" name="accept_privacy" value="agree">
-											<label for="accept_privacy">Please confirm you agree with <a href="https://www.datagroupsolutions.com/privacy-policy/" target="_blank">our privacy policy</a>  </label>
+											<!--<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>-->
+										    <label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>
 											<br>
 										</div>
 

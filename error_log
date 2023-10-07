@@ -34,3 +34,4 @@ Stack trace:
 #1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
 #2 {main}
   thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 222
+[04-Oct-2023 12:16:06 UTC] PHP Parse error:  syntax error, unexpected '<' in /home/dgfm/demo.dgfm.app/survey-form.php on line 857

@@ -44,9 +44,9 @@ if(!empty($requestData['survey_name'])){
     if(isset($requestData['groupid']) && $requestData['groupid'] != ''){
         if($requestData['groupid'] == 4){
             if(!empty($filterQuery)){
-                $filterQuery .= " and answers.groupid in (select id from groups where cstatus=1)";    
+                $filterQuery .= " and answers.groupid in (select id from `groups` where cstatus=1)";    
             }else{
-                $filterQuery .= " and answers.groupid in (select id from groups where cstatus=1)"; 
+                $filterQuery .= " and answers.groupid in (select id from `groups` where cstatus=1)"; 
             }
         }else{
             if(!empty($filterQuery)){  

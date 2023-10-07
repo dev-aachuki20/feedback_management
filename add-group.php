@@ -1,6 +1,6 @@
 <?php
 if(!empty($_GET['id'])){
-    record_set("get_groups_id", "select * from groups where id='".$_GET['id']."'");
+    record_set("get_groups_id", "select * from `groups` where id='".$_GET['id']."'");
     $row_get_groups_id = mysqli_fetch_assoc($get_groups_id);
 }
 //only created by and super admin can change status
@@ -30,13 +30,13 @@ if($_POST['update']){
   }else {
     $data = array_merge($dataCol,$dataStatus);
   }
-	$updte=	dbRowUpdate("groups", $data, "where id=".$_GET['id']);
+	$updte=	dbRowUpdate("`groups`", $data, "where id=".$_GET['id']);
     if(!empty($updte)){
       $msg = "Group Updated Successfully";
       alertSuccess($msg,'?page=manage-groups');
     }else{
       $msg = "User Not Updated Successfully";
-      alertdanger($msg,'manage-groups&id='.$_GET["id"]);
+      alertdanger($msg,'?page=manage-groups&id='.$_GET["id"]);
     }
    // reDirect("?page=manage-groups&id=".$_GET["id"]."&msg=".$msg);			
 }
@@ -56,7 +56,7 @@ if($_POST['update']){
             'cdate'         => date("Y-m-d H:i:s")
         );
 
-        $insert_value =  dbRowInsert("groups",$data);
+        $insert_value =  dbRowInsert("`groups`",$data);
         if(!empty($insert_value )){	
             $msg = "Group Added Successfully";
             alertSuccess($msg,'?page=manage-groups');

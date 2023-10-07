@@ -30,7 +30,7 @@ function getGroup($status = null){
 	if($status != 'all'){
       $filter = "where cstatus=1";
 	}
-	$groups_data = getaxecuteQuery_fn("select id,name from groups  $filter order by name ASC");
+	$groups_data = getaxecuteQuery_fn("select id,name from `groups`  $filter order by name ASC");
 	foreach ($groups_data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}
@@ -210,7 +210,7 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 		}
 	}
 	 
-	  $allowed_data = getaxecuteQuery_fn("select * from $table where id>0 and cstatus=1 $filter order by cdate desc");
+	  $allowed_data = getaxecuteQuery_fn("select * from `$table` where id>0 and cstatus=1 $filter order by cdate desc");
 	  $arr =array();
 	  while($row_get_data=mysqli_fetch_assoc($allowed_data)){
 	  	$arr[] =$row_get_data;
@@ -320,7 +320,7 @@ function get_data_by_id($table,$id){
 	if($id){
 		$query = "where id IN($id)";
 	}
-	$data = getaxecuteQuery_fn("select id,name from $table $query order by name ASC");
+	$data = getaxecuteQuery_fn("select id,name from `$table` $query order by name ASC");
 	foreach ($data as $val) {
 		$arr[$val['id']] = $val['name'];
 	}

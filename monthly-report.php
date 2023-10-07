@@ -51,9 +51,9 @@ if(!empty($requestData['survey_name'])){
     if(isset($requestData['roleid']) && $requestData['roleid'] != ''){
       if($requestData['roleid'] == 4){
           if(!empty($filterQuery)){
-              $filterQuery .= " and answers.roleid in (select id from groups where cstatus=1)";    
+              $filterQuery .= " and answers.roleid in (select id from `roles` where cstatus=1)";    
           }else{
-              $filterQuery .= " and answers.roleid in (select id from groups where cstatus=1)"; 
+              $filterQuery .= " and answers.roleid in (select id from `roles` where cstatus=1)"; 
           }
       }else{
           if(!empty($filterQuery)){  
@@ -68,9 +68,9 @@ if(!empty($requestData['survey_name'])){
     if(isset($requestData['groupid']) && $requestData['groupid'] != ''){
         if($requestData['groupid'] == 4){
             if(!empty($filterQuery)){
-                $filterQuery .= " and answers.groupid in (select id from groups where cstatus=1)";    
+                $filterQuery .= " and answers.groupid in (select id from `groups` where cstatus=1)";    
             }else{
-                $filterQuery .= " and answers.groupid in (select id from groups where cstatus=1)"; 
+                $filterQuery .= " and answers.groupid in (select id from `groups` where cstatus=1)"; 
             }
         }else{
             if(!empty($filterQuery)){  

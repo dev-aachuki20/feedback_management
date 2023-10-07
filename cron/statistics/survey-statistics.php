@@ -34,7 +34,7 @@ while($row_get_report= mysqli_fetch_assoc($get_report)){
             $groupBy = 'locationid';
         }
         else if($data_type=='group'){
-            $query = " and surveyid =".$survey." and groupid in (select id from groups where cstatus=1)";  
+            $query = " and surveyid =".$survey." and groupid in (select id from `groups` where cstatus=1)";  
             $groupBy = 'group';
         }
         else if($data_type=='department'){

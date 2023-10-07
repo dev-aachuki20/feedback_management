@@ -27,7 +27,7 @@
                   $filter .= " OR id IN ($group_ids)";
                 }
               }
-                record_set("get_groups", "select * from groups where id>0 $filter order by cdate desc");				
+                record_set("get_groups", "select * from `groups` where id>0 $filter order by cdate desc");				
                 while($row_get_groups = mysqli_fetch_assoc($get_groups)){
               ?>
                 <tr>
