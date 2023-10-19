@@ -125,7 +125,7 @@
                                 <!-- loader div end  -->
                                 <div class="col-md-12">
                                     <div class="col-md-2"></div>
-                                    <div class="col-md-7 renderTable">
+                                    <div class="col-md-7 renderTable mt-4">
                                     </div>
                                 </div>
                             </div>

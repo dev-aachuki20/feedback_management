@@ -78,6 +78,7 @@ h4{margin-bottom:1px;font-size:16px;}
 .main-sidebar, .left-side {
     padding-top: 50px;
 }
+
 }
 
 .info-box-number {
@@ -497,4 +498,28 @@ td.show_smily_.smile-block.rating-type-number {
 }
 .remove-answer-div{
     margin-top: 25px;
+}
+
+ /*  16-10-23  Adnan*/
+/* .survey-title {
+    top: -15px;
+    left: 42%;
+    position: absolute;
+    transform: translate(-50%,100%);
+    margin: 0 !important;
+    font-weight: 700;
+}
+
+.renderTable {
+    margin-top: 2rem;
+} */
+
+@media(max-width:600px){
+    .renderTable {
+        margin-top: 2.5rem;
+    }
+    /* .survey-title {
+        top: -50px ;
+        left: 50%;
+    } */
 }

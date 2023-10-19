@@ -152,7 +152,7 @@ p {
                                 <div class="pdf-head" style="display: none;">
                                     <table width="93%" style="margin:0 auto;">
                                         <tr>
-                                        <td colspan="3" style="text-align:center;margin-top:100px;"> <img src="<?=baseUrl()?>hats-logo-survey50.png" width="200"></td>
+                                        <td colspan="3" style="text-align:center;margin-top:100px;"> <img src="<?=baseUrl().MAIN_LOGO?>" width="200"></td>
                                         </tr>
                                         <tr >
                                             <td colspan="3" style="text-align:center;height: 30px;"></td>
@@ -486,7 +486,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
         if(survey){
                 var file_name = survey_arr[survey]+'<?='-'.date('Y-m-d-H-i-s').'.pdf'?>';
                 $('.filterSurvey').show();
-                $('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
+                //$('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
         }
     }else {
         let heading = 'Survey Statics';

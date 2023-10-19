@@ -9,6 +9,8 @@ $data =array();
   $surveyid    = $_POST['survey'];
   $fdate       = $_POST['fdate'];
   $sdate       = $_POST['sdate'];
+
+    $surveyName = getSurvey()[$surveyid];
     //survey location
     if($survey_type=='location'){
         $query = " and surveyid =".$surveyid." and locationid in (select id from locations where cstatus=1)";  
@@ -244,8 +246,9 @@ array_multisort($key_values, SORT_DESC, $current_data);
 
 // send data with table
 if(count($current_data)>0){
-    $html ='';
-    $html ='<table id="datatable1" class="table table-bordered">
+
+    $html ='<h2 class="survey-title text-center">'.$surveyName.'</h2>';
+    $html .='<table id="datatable1" class="table table-bordered">
     <thead>
       <tr>
         <th scope="col" style="text-align:center;">'.$title.'</th>

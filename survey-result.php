@@ -350,7 +350,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
               <th colspan="3"></th>
             </tr>
             <tr>
-              <th colspan="3">Contact Detail</th>
+              <th colspan="3">Contact Details</th>
             </tr>
           </thead>
 
@@ -374,7 +374,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
         <div class="container">
           <?php foreach($survey_steps AS $key => $value) {  ?>
           <div class="">  
-            <h4 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['title']; ?></h4>
+            <h2 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['title']; ?></h2>
             <table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
               <thead>
                 <tr>
@@ -547,7 +547,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
           </div>
         </div>
     </div>
-  </body>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <!-- Resources -->
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
@@ -574,8 +573,11 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
         }, 2000);
     });
  // End export pdf
-
- 
  </script>
+<div style="text-align: center;">
+<?php echo POWERED_BY; ?>
+<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="200" height="36" /></center>
+</div>
+</body>
 </html>
 

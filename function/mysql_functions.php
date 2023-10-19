@@ -2,7 +2,9 @@
 //set logo
 define('ADMIN_EMAIL', 'system@dgam.app');
 define('MAIN_LOGO', 'upload_image/dgs-logo-2.jpg');
-define('FOOTER_LOGO', 'image/dgs-logo-3.png');
+define('FOOTER_LOGO', 'upload_image/Data-Group-footer.png');
+define('POWERED_BY', 'Powered by Data Group Solutions');
+
 
 require_once("connectin_config.php");
     if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
