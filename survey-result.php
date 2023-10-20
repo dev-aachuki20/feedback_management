@@ -367,14 +367,14 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
         </table>
       <?php } ?>
       <?php if(isset($_GET['score'])){ ?> 
-        <h4 class="text-center" style="margin-top:20px;">Survey Score: <?=$_GET['score'] ?>%</h4>
+        <h2 class="text-center" style="margin-top:20px;">Survey Score: <?=$_GET['score'] ?>%</h2>
       <?php } ?>
     </div>
     
         <div class="container">
           <?php foreach($survey_steps AS $key => $value) {  ?>
           <div class="">  
-            <h2 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['title']; ?></h2>
+            <h4 align="center" style="margin-top:20px;margin-bottom:10px;"><?php echo $value['title']; ?></h4>
             <table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
               <thead>
                 <tr>
@@ -452,7 +452,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
             <br>
           <div class="row">
             <?php if(count($showAllComment) > 0 ) { ?>
-            <h4 align="center" style="margin-top:20px;margin-bottom:10px;">CONTACT</h4>
+            <h2 align="center" style="margin-top:20px;margin-bottom:10px;">CONTACT</h2>
             <?php } ?>
             <?php 
             foreach($showAllComment as $comm) { ?>
