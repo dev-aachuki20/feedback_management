@@ -249,7 +249,7 @@ if(count($current_data)>0){
 
     $html ='<div class="row">
             <div class="col-md-8">
-                <h2 class="survey-title text-center">'.$surveyName.'</h2>
+                <h2 class="survey-title text-right">'.$surveyName.'</h2>
             </div>
             <div class="col-md-4">
                 <div class="col-md-6 text-right">
