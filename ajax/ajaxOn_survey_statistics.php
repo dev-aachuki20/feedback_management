@@ -211,7 +211,7 @@ $survey_name = getSurvey()[$_POST['survey']];
 if(isset($_GET['export']) and $_GET['export']=='csv'){
     export_csv_file($survey_data,$_GET['data_type'],$survey_name); die();
 }
-$html.='<h2 class="survey_name text-center" style="margin:0px;">'.$survey_name.'</h2>';
+$html.='<h2 class="survey_name text-center" style="margin:0px;font-size:20px;">'.strtoupper($survey_name).'</h2>';
 if(count($survey_data)>0){
     foreach($survey_data as $key =>$datasurvey){ 
         $total=  array_sum($datasurvey['data'])/count($datasurvey['data']);

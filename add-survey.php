@@ -19,6 +19,7 @@
             "end_date"             => $_POST['edate'],
              "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
              "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+             "contacted_request_label" => $_POST['contacted_request_label'],
             "google_review_link"   => $_POST['google_review_link'],
             "facebook_review_link" => $_POST['facebook_review_link'],
             "other_link"           => $_POST['other_link'],
@@ -86,6 +87,7 @@
             "alter_email"            => $_POST['alter_email'],
             "isStep"                 => (isset($_POST['isStep'])) ? 1 : 0,
             "isEnableContacted"      => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+            "contacted_request_label" => $_POST['contacted_request_label'],
             //"isSchoolAllowed"        => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
   			"css_txt"                => $_POST['css_txt'],
   			"cstatus"                => $_POST['status'],
@@ -384,6 +386,48 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     </div>
                                 </div>            
                             </div>
+                            <!-- <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="threshold-notification">
+                                        <label class="form-check-label" for="threshold-notification">
+                                            Set Notification Threshold
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 threshold-notification-section" >
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Select Percentage</label>
+                                        <select class="form-control" id="interval" name="interval">
+                                            <option value="1">25%</option>
+                                            <option value="2">50%</option>
+                                            <option value="3">75%</option>
+                                            <option value="4">100%</option>
+                                        </select>
+                                    </div>
+                                </div> 
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Select User</label>
+                                        <select class="form-control multiple-select" id="interval" name="interval" multiple>
+                                        <?php 
+                                                $users = getUsers();
+                                                foreach($users as $key => $value){ ?>
+                                                <option value="<?=$key?>"><?=$value?></option>      
+                                            <?php  }
+                                        ?>
+                                        </select>
+                                    </div>
+                                </div>  
+                            </div> -->
+                            <div class="col-md-12 contacted_request_section" style="<?=$row_get_surveys['isEnableContacted'] == 1 ? 'display:block;':'display:none;'?>">
+                                <label for="">Enter the lable for contact request *</label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="contacted_request_label" name="contacted_request_label" value="<?=$row_get_surveys['contacted_request_label']?>" required/>
+                                    </div>
+                            </div>
                             <div class="col-md-12" style="padding-top:20px;">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" id="isStep" name="isStep" <?php echo ($row_get_surveys['isStep'] == 1) ? "checked" : ""; ?>>
@@ -562,6 +606,7 @@ $form.validate({
     sdate: {
       required: true,
     },
+    
   },
   messages: {
     name        : "Please specify your Survey name ",
@@ -619,5 +664,22 @@ function load_location(ids,mode){
 $('.send_by').change(function(){
     $('.send_by').prop('checked', false);
     $(this).prop('checked', true);
+})
+$("#isEnableContacted").change(function(){
+    if ($(this).is(":checked")) {
+        let isValue = $("#contacted_request_label").val();
+        console.log(isValue,'asdds');
+        if(isValue !=''){
+            console.log(isValue,'asdds2');
+            $("#contacted_request_label").prop("required", false);
+        }else{
+            console.log(isValue,'asdds3');
+            $("#contacted_request_label").prop("required", true);
+        }
+        $(".contacted_request_section").show();
+    } else {
+        $(".contacted_request_section").hide();
+        $("#contacted_request_label").prop("required", false);
+    }
 })
 </script>
