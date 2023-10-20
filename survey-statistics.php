@@ -520,6 +520,8 @@ function export_pdf(sdate,edate,data_type ='',survey){
 
 
 
+
+
 <!-- <div id="element">
     <div>First Content</div>
     <div class="html2pdf__page-break"></div>
