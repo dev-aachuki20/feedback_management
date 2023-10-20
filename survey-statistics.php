@@ -161,7 +161,7 @@ p {
                                             <td colspan="3" style="text-align:center;font-size:20px;"> </td>
                                         </tr>
                                         <tr class="borderClass filterSurvey">
-                                            <td colspan="3" style="text-align:center;font-size:18px;"><strong> Survey Statistics</strong></td>
+                                            <td colspan="3" style="text-align:center;font-size:18px;"><strong> <?=strtoupper('Survey Statistics')?></strong></td>
                                         </tr>
                                         <tr class="borderClass filterDate" style="font-weight: 900;font-size: 16px;">
                                             <td  style="text-align:center;">Start Date: <span class="pdf-sdate"></span></td>
