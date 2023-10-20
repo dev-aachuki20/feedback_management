@@ -381,6 +381,7 @@ h4{margin-bottom:1px;font-size:16px;}
 .btn-yellow{
     background-color: #fdae15 !important;
     border: unset;
+    color: white;
 }
 .purple-btn{
     background-color: var(--framework_blue) !important;
@@ -522,4 +523,13 @@ td.show_smily_.smile-block.rating-type-number {
         top: -50px ;
         left: 50%;
     } */
+}
+
+.datatable_buttontd{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.datatable_buttontd button{
+    min-height: 22px;
 }

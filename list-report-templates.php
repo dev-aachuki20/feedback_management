@@ -83,7 +83,7 @@ if(isset($_POST['schedule_btn'])){
                 <button type="submit" class="btn btn-sm btn-green">DOWNLOAD CSV</button>
               </form> -->
 
-              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>,'schedule');">SCHEDULE</button>
+              <button class="btn btn-sm btn-yellow" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>,'schedule');" style>SCHEDULE</button>
               <button class="btn btn-sm btn-green" onclick="scheduleTemplate(<?= $report_template['id'] ?>, '<?= $report_template['name'] ?>', '<?= $report_template['fields'] ?>', <?= $report_template['filter'] ?>,<?= $report_template['report_type'] ?>,'preview');">RUN</button>
             </td>
           </tr>

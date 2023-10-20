@@ -112,10 +112,13 @@ $message .= '<table width="100%" style="text-align:center;" >
   </table>';
 
 if(count($survey_steps)>0){
+ 
+  $mainCount = 1; 
   foreach($survey_steps AS $key => $value) { 
     $message .= '<div class="container" style="page-break-after: always;height: 500px;">
       <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
       foreach($questions[$key] AS $question){
+      
         $questionid   = $question['id'];
         $answer_type  = $question['answer_type'];
         $totalRows_get_child_questions = 0;
@@ -289,8 +292,17 @@ if(count($survey_steps)>0){
           $message .= '</table>';
         }
       } 
-    $message .='</div>';
+      
+    if(count($survey_steps) == $mainCount){
+
+      $message .='<div style="text-align: center;">'.POWERED_BY.'
+      <center><img  src="'.MAIN_LOGO.'" alt="" width="200"/></center></div></div>';
+    }else{
+      $message .='</div>';
+    }
+    $mainCount ++;
   }
+
 }else{
     foreach($questions[0] AS $question){
       $questionid   = $question['id'];
@@ -466,11 +478,11 @@ if(count($survey_steps)>0){
         $message .= '</table>';
       }
     } 
-}
-//$message .= '</table>';
 
-//echo $message; exit;
-//die();
+}
+
+
+
 // Include autoloader 
 require_once 'dompdf/autoload.inc.php'; 
 // Reference the Dompdf namespace 
