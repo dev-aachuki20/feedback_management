@@ -139,9 +139,11 @@
         </div>
     </div>
 </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.js"></script>
 <script>
     ajax_league_table();
-    function ajax_league_table(fdate,sdate,type,survey){
+    function ajax_league_table(fdate,sdate,type,survey, document_type=''){
         $.ajax({
             method:"POST",
             url:'<?=baseUrl()?>ajax/view-league-data.php',
@@ -194,6 +196,7 @@
         $('.renderTable').hide();
         ajax_league_table(fdate,sdate,type,survey);
     })
+
 </script>
 
 

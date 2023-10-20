@@ -247,7 +247,42 @@ array_multisort($key_values, SORT_DESC, $current_data);
 // send data with table
 if(count($current_data)>0){
 
-    $html ='<h2 class="survey-title text-center">'.$surveyName.'</h2>';
+    $html ='<div class="row">
+            <div class="col-md-8">
+                <h2 class="survey-title text-center">'.$surveyName.'</h2>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-6 text-right">
+                <a href="./Export-Pdf/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
+                    <button class="btn btn-primary pdf-download">PDF</button>
+                </a>
+                </div>
+                <div class="col-md-6" style="padding-left: 5px;">
+                <a href="./Export-Csv/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
+                    <button class="btn btn-primary pdf-download">CSV</button>
+                </a>
+                </div>
+            </div>
+        </div>';
+    $html .='<div id="table-containerr">    
+            <div class="pdf-head" style="display: none;">
+            <table width="93%" style="margin:0 auto;">
+                <tr>
+                <td colspan="3" style="text-align:center;margin-top:100px;"> <img src="'.getHomeUrl().MAIN_LOGO.'" width="200"></td>
+                </tr>
+                <tr class="borderClass filterSurvey">
+                    <td colspan="3" style="text-align:center;font-size:18px;"><strong>'.$surveyName.'</strong></td>
+                </tr>
+                <tr class="borderClass">
+                    <td colspan="3" style="text-align:center;"> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>';
     $html .='<table id="datatable1" class="table table-bordered">
     <thead>
       <tr>
@@ -294,7 +329,7 @@ if(count($current_data)>0){
             <td style="text-align:center;">'.$total.' %</td>
         </tr>';
         }
-    $html .='</tbody></table>';
+    $html .='</tbody></table></div>';
 }else {
     $html = '';
 }

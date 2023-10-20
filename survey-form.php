@@ -1406,7 +1406,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	               
 
-	                    		<h4>Can HATS Group contact you about your comments/feedback?</h4>
+	                    		<h4><?=($row_get_survey['contacted_request_label'] != '') ? $row_get_survey['contacted_request_label'] :'Can HATS Group contact you about your comments/feedback?'?></h4>
 
 	                    		<div class="form-group">
 
