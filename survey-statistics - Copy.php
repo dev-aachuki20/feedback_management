@@ -105,7 +105,7 @@ p {
                                         <input type="date" name="sdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
                                     </div>
                                 </div>
-                                <div class="ajaxData" style="width:25%;display: none;">
+                                <div class="col-md-3 ajaxData" style="display: none;">
                                 <span>This Field is required</span>
                                 </div>
                                 <div class="col-md-3">
@@ -157,11 +157,11 @@ p {
                                         <tr >
                                             <td colspan="3" style="text-align:center;height: 30px;"></td>
                                         </tr>
-                                        <tr class="borderClass filterSurvey">
-                                            <td colspan="3" style="text-align:center;font-size:18px;"><strong> <?=strtoupper('Survey Statistics')?></strong></td>
-                                        </tr>
                                         <tr class="borderClass filterSurveyType">
                                             <td colspan="3" style="text-align:center;font-size:20px;"> </td>
+                                        </tr>
+                                        <tr class="borderClass filterSurvey">
+                                            <td colspan="3" style="text-align:center;font-size:18px;"><strong> <?=strtoupper('Survey Statistics')?></strong></td>
                                         </tr>
                                         <tr class="borderClass filterDate" style="font-weight: 900;font-size: 16px;">
                                             <td  style="text-align:center;">Start Date: <span class="pdf-sdate"></span></td>
@@ -179,7 +179,7 @@ p {
                                     </table>
                                 </div>
                                 </div>
-                                <div class="row" style="width:90%; margin:0 auto; page-break-after: always;">
+                                <div class="row" style="width:90%; margin:0 auto;">
                                     <!-- loader div start -->
                                     <div class="loader col-md-12" style="text-align: center; display:none;">
                                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="150px" height="150px" viewBox="0 0 150 150" enable-background="new 0 0 150 150" xml:space="preserve">
@@ -202,16 +202,8 @@ p {
                                         </svg>
                                     </div>
                                     <!-- loader div end  -->
-                                    <div class="row renderChart" style="page-break-after: always;"  id="block2" style="">
+                                    <div class="row renderChart"  id="block2" style="">
                                     </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <footer id="pdf-footer" style="display: none;">
-                                        <div style="text-align: center;">
-                                        <?=POWERED_BY?>
-                                        <center><img  src="<?=MAIN_LOGO?>" alt="" width="150"/></center>
-                                        </div>
-                                    </footer>
                                 </div>
                             </div>
                         </div>
@@ -305,11 +297,6 @@ $(document).on('click','.search',function(){
         $('.error').hide();
     }
     let data_type = $('.data_type').val();
-    if(data_type == 'survey'){
-        $('.survey_name').hide();
-    }else{
-        $('.survey_name').show();
-    }
     let survey_type = '<?=$_GET['type']?>';
     ajax_to_load_graph(fdate,sdate,survey,data_type,survey_type);
 })
@@ -332,15 +319,6 @@ $(document).on('click','.search',function(){
         },
         success:function(response){
             response = JSON.parse(response);
-
-            if(parseInt(response.footer_flag) !=0 && parseInt(response.footer_flag) <=3){
-                $('#pdf-footer').css("margin-top", '675px');
-            }else if( parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
-                $('#pdf-footer').css("margin-top", '348px');
-            }else{
-                $('#pdf-footer').css("margin-top", '20px');
-            }
-
             $('.renderChart').html(response.html);
             $('.loader').hide();
             $('.renderChart').show();
@@ -508,15 +486,14 @@ function export_pdf(sdate,edate,data_type ='',survey){
         if(survey){
                 var file_name = survey_arr[survey]+'<?='-'.date('Y-m-d-H-i-s').'.pdf'?>';
                 $('.filterSurvey').show();
-                $('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
+                //$('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
         }
     }else {
         let heading = 'Survey Statics';
         $('.filterSurveyType>td').html('<strong>'+heading.toUpperCase()+'</strong>');
     }
     $('.pdf-head').show();
-    $('.survey_name').hide();
-    $('#pdf-footer').show();
+
     // draw html in pdf
     let element = document.getElementById('element');
     //$(".chartjs-render-monitor").css("width", "180");
@@ -525,8 +502,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
     let height = box.offsetHeight;
     // $(".col-md-3").css("width", "300");
     $('.col-md-3').attr('class', 'col-md-4');
-    $(".chartjs-render-monitor").css("height", "90");
-
+    $(".chartjs-render-monitor").css("height", "90")
     html2pdf(element,{
         margin:5,
         filename:file_name,
@@ -534,13 +510,10 @@ function export_pdf(sdate,edate,data_type ='',survey){
         html2canvas:{scale:2,logging:true,dpi:192,letterRendering:true},
         jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    });
-
-    $('#pdf-footer').hide();
+    })
     $(".chartjs-render-monitor").css("height", height);
     $('.col-md-4').attr('class', 'col-md-3 ');
     $('.pdf-head').hide();
-    $('.survey_name').show();
 }
 </script>
 
