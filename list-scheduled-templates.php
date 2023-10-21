@@ -1,5 +1,9 @@
 <?php
-record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id ORDER BY srt.created_at DESC');
+$filter =  '';
+if($_SESSION['user_type'] >1){
+  $filter = "where srt.temp_id =".$_SESSION['user_id'];
+}
+record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id '.$filter.' ORDER BY srt.created_at DESC');
 ?>
 
 <section class="content-header">
@@ -14,6 +18,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
           <tr>
             <th>#</th>
             <th>Report Name</th>
+            <th>Report Template</th>
             <th>Created By</th>
             <th>Frequency</th>
             <th>Start Date</th>
@@ -26,6 +31,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
         <?php while($scheduled_report_template = mysqli_fetch_assoc($scheduled_report_templates)){ ?>
           <tr>
             <td><?= ++$i ?></td>
+            <td><?=$scheduled_report_template['report_name']?></td>
             <td><?=$scheduled_report_template['name']?></td>
             <td><?=get_user_datails($scheduled_report_template['cby'])['name']?></td>
             <td><?=ucfirst(service_type()[$scheduled_report_template['sch_interval']])?></td>

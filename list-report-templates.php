@@ -9,6 +9,8 @@ record_set('report_templates', 'SELECT * FROM report_templates WHERE status = 2 
 
 // Submit modal to schedule report
 if(isset($_POST['schedule_btn'])){
+    $report_name = $_POST['report_name'];
+    $send_to = implode(',',$_POST['send_to']);
     $template_id = $_POST['sch_template_id'];
     $template_field_name = $_POST['sch_template_field_name'];
     $start = $_POST['start_date'];
@@ -18,6 +20,8 @@ if(isset($_POST['schedule_btn'])){
     $filter  = array("field" => $template_field_name, "survey_id" => $_POST['survey'],"field_value" => $_POST['template_field']);
 
     $dataCol =  array(
+      "report_name"     => $report_name,
+      "send_to"         => $send_to,
       "temp_id"         => $template_id,
       "sch_interval"    => $interval,
       'start_date'      => $start,
@@ -102,7 +106,7 @@ if(isset($_POST['schedule_btn'])){
 <!-- schedule report modal -->
 <div class="modal" id="schedule_report_templates">
   <div class="modal-dialog">
-        <div class="modal-content" style="height:360px ;">
+        <div class="modal-content" style="height:430px ;">
             <div class="modal-header">
               <h5 id="sch_modal_title" class="modal-title"> </h5>
               <button type="button" class="close closes" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
@@ -113,6 +117,13 @@ if(isset($_POST['schedule_btn'])){
                       <input type="hidden" id="sch_template_id" name="sch_template_id" value="">
                       <input type="hidden" id="sch_template_field_name" name="sch_template_field_name" value="">
                       <input type="hidden" id="template_filter" name="template_filter" value="">
+                      <div class="form-group row schedule-field">
+                          <label for="report-name" class="col-sm-4 col-form-label">Report Name</label>
+                          <div class="col-sm-8">
+                              <input type="text"  class="form-control" id="report_name" name="report_name" placeholder="Enter Report Name" value="" min="<?= date('Y-m-d') ?>" required>
+                          </div>
+                      </div>
+
                       <div class="form-group row survey">
                          
                       </div>
@@ -140,10 +151,19 @@ if(isset($_POST['schedule_btn'])){
                           </select>
                           </div>
                       </div>
+                      <div class="form-group row">
+                          <label for="interval" class="col-sm-4 col-form-label">Send to User</label>
+                          <div class="col-sm-8">
+                          <select class="form-control multiple-select" id="send_to" name="send_to[]"  multiple required>
+                              <?php foreach(getUsers() as $key => $value) { ?>
+                                  <option value="<?php echo $key; ?>" ><?=$value?></option>
+                              <?php } ?>
+                          </select>
+                          </div>
+                      </div>
                       <div class="pull-right">
                           <button type="submit"class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
                           <button type="button" class="btn btn-danger closes" data-dismiss="modal" aria-label="Close" style="background-color:#ff1c00 !important;"> Cancel</button>
-
                       </div>
                   </form>
               </div>
@@ -178,7 +198,7 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
     $('.second_form').removeAttr('action');
     $('.second_form').removeAttr('target');
     $('.schedule-field').show();
-    $('.modal-content').css("height", "360px");
+    $('.modal-content').css("height", "430px");
   }
   //$(".multiple-select").empty().trigger('change');
   $("#sch_modal_title").html(template_name);

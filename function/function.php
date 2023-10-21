@@ -1,13 +1,25 @@
 <?php 
 require('mysql_functions.php');
+// Turn off error reporting
+// error_reporting(0);
+// error_reporting(E_ERROR | E_WARNING | E_PARSE);
+// error_reporting(E_ALL);
+// ini_set("error_reporting", E_ALL);
+// error_reporting(E_ALL & ~E_NOTICE);
 // php mailer start
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-define('SMTP_HOST', "ssl://mail.dgam.app");
-define('SMTP_USER', "noreply@dgam.app");
-define('SMTP_PASS', "x%k*&]ulld]~");
+// define('SMTP_HOST', "ssl://mail.dgam.app");
+// define('SMTP_USER', "noreply@dgam.app");
+// define('SMTP_PASS', "x%k*&]ulld]~");
+// define('SMTP_PORT', "465");
+
+//mail trap
+define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+define('SMTP_USER', "a4675565cb1dd9");
+define('SMTP_PASS', "4574e6f43e2c75");
 define('SMTP_PORT', "465");
 // end 
 $msg='';
@@ -250,6 +262,97 @@ function send_survey_email($recipients, $survey_name, $surveyid, $to_be_contacte
 		$success = mail($recipient['email'],$subject,$body,$headers);	
     }
 }
+
+function sendNotificationThreshold($surveyId, $data){
+	$getSurveyDetails = getaxecuteQuery_fn("SELECT * from surveys where id=$surveyId");
+	$row_get_survey_details = mysqli_fetch_assoc($getSurveyDetails);
+	$thresholdPercentage = $row_get_survey_details['select_percentage'];
+	$thresholdUsers = $row_get_survey_details['notification_threshold_users'];
+	$type = 'survey';
+	if($row_get_survey_details['survey_type'] == 2){
+		$type = 'pulse';
+	}else if($row_get_survey_details['survey_type'] == 3){
+		$type = 'engagement';
+	}
+	$res = getaxecuteQuery_fn("SELECT id from questions where surveyid=$surveyId and is_weighted =1 and `answer_type` NOT IN (2,3,5)");
+	$answer_value = array();
+	while($row_get_admin_id = mysqli_fetch_assoc($res)){
+		$question_id[] = $row_get_admin_id['id'];
+		$answerData = $data['answerid'][$row_get_admin_id['id']];
+		$explodeAnswerData = explode('--',$answerData);
+		$answerId = $explodeAnswerData[0];
+		$answerQuery = getaxecuteQuery_fn("SELECT * from questions_detail where id=$answerId");
+		$row_get_answer_value = mysqli_fetch_assoc($answerQuery);
+		$answer_value[] = $row_get_answer_value['answer'];
+	}
+	$totalScore = array_sum($answer_value);
+	$result = $totalScore/count($answer_value) ;
+	$response = round($result_response,2);
+
+
+	## send Threshold Notification mail
+	$subject = 'Threshold Notification';
+	$body ='<table width="100%" style="background-color:#dbdbdb;">
+	<tr>
+	<td>
+	<table align="center" width="690" border="">
+		<tr>
+			<td style="background-color:#fff;" width="94%">
+			<table width="100%;">
+			<tr>
+			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+			</tr>
+			<tr> <td height="20px;">&nbsp;</td> </tr>
+			<tr>
+			<td align="center"><h2> SURVEY RESPONSE</h2></td>
+			</tr>
+			<tr> <td height="20px;">&nbsp;</td> </tr>
+
+			<tr>
+				<td><p style="font-size:15px;margin:10px;">Hello Amit</p> <br>
+					<p style="font-size:15px;margin:10px;">A Survey Response has been submitted and the respondent score is '.$response.' </p>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+			</tr>
+			<tr>
+			<td><p style="font-size:15px;margin:10px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a>to view the response.</p></td>
+			</tr>
+			<tr>
+			<td height="20px;">&nbsp;</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+		<tr>
+		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+		</td>
+		</tr>
+		</table></td>
+	</tr>
+	</table>';
+	if($response < $thresholdUsers){
+		$users = explode(',',$thresholdUsers);
+		foreach($users as $user){
+			$getUser = getaxecuteQuery_fn("SELECT email from manage_users where id=$user");
+			$row_get_user = mysqli_fetch_assoc($getUser);
+			$email_to = $row_get_user['email'];
+			send_mail($email_to, $subject, $body);
+
+		}
+	}
+}
+ function send_mail($send_to, $subject,$body){
+	$from = DEFAULT_FROM_EMAIL;
+	$subject = 'Hello';
+	$headers = "MIME-Version: 1.0" . "\r\n";
+	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+	$headers .= 'From: Survey Entry Alert<'.$from.'>' . "\r\n";
+	$success = mail($send_to,$subject,$body,$headers);	
+ }
+
 function upload_image1($folder_path,$file_name, $file_tempname,$image_id)
 {
 	//$file_name=$_FILES["image"]["name"];

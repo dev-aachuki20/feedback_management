@@ -363,9 +363,20 @@ function survey_score_calculation($surveyId, $cby){
 		"to_bo_contacted" => $to_bo_contacted,
 	);
 }
+
+function getThresholdPercentage(){
+	return array(
+		25 => 25,
+		50 => 50,
+		75 => 75,
+		100 => 100,
+	);
+}
+
 // date 14-10-2022
 // if contacted is yes then only mail will send to admin and super admin
 // function send_mail_on_survey_respond_submitted(){
 	
 // }
+
 ?>

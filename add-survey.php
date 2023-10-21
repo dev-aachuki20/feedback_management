@@ -6,23 +6,26 @@
     }
     if($_POST['update']){
         $dataCol = array(
-            "name"                 => $_POST['name'],
-            "survey_type"          => $_POST['survey_type'],
-            "survey_needed"        => $_POST['survey_needed'],
-            "cstatus"              => $_POST['status'],
-            "confidential"         => (isset($_POST['confidential'])) ? 1 : 0,
-            "intervals"            => $_POST['interval'],
-            "css_txt"              => $_POST['css_txt'],
-            //"send_by"              => $_POST['send_by'],
-            "alter_email"          => $_POST['alter_email'],
-            "start_date"           => $_POST['sdate'],
-            "end_date"             => $_POST['edate'],
-             "isStep"               => (isset($_POST['isStep'])) ? 1 : 0,
-             "isEnableContacted"    => (isset($_POST['isEnableContacted'])) ? 1 : 0,
-             "contacted_request_label" => $_POST['contacted_request_label'],
-            "google_review_link"   => $_POST['google_review_link'],
-            "facebook_review_link" => $_POST['facebook_review_link'],
-            "other_link"           => $_POST['other_link'],
+            "name"                          => $_POST['name'],
+            "survey_type"                   => $_POST['survey_type'],
+            "survey_needed"                 => $_POST['survey_needed'],
+            "cstatus"                       => $_POST['status'],
+            "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
+            "intervals"                     => $_POST['interval'],
+            "css_txt"                       => $_POST['css_txt'],
+            //"send_by"                     => $_POST['send_by'],
+            "alter_email"                   => $_POST['alter_email'],
+            "start_date"                    => $_POST['sdate'],
+            "end_date"                      => $_POST['edate'],
+            "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+            "contacted_request_label"       => $_POST['contacted_request_label'],
+            "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
+            "select_percentage"             => $_POST['select_percentage'],
+            "notification_threshold_users"  => implode(",",$_POST['notification_threshold_users']),
+            "google_review_link"            => $_POST['google_review_link'],
+            "facebook_review_link"          => $_POST['facebook_review_link'],
+            "other_link"                    => $_POST['other_link'],
         );
 
         // avoid updating disable value
@@ -73,35 +76,38 @@
         $randomCode = $string1.$string;  
        	
         $dataCol =  array(
-  			"name"                   => $_POST['name'],
-  			"survey_needed"          => $_POST['survey_needed'],
-  			// "clientid"               => $_POST['clientid'],
-            // "adminid"                => $_POST['adminid'],
-            // "user_type"              => $_POST['user_type'],
-            "survey_type"            => $_POST['survey_type'],
-            "intervals"              => $_POST['interval'],
-            "start_date"             => $_POST['sdate'],
-            "end_date"               => $_POST['edate'],
-            "qrcode"                 => $randomCode,
-            "confidential"           => (isset($_POST['confidential'])) ? 1 : 0,
-            "alter_email"            => $_POST['alter_email'],
-            "isStep"                 => (isset($_POST['isStep'])) ? 1 : 0,
-            "isEnableContacted"      => (isset($_POST['isEnableContacted'])) ? 1 : 0,
-            "contacted_request_label" => $_POST['contacted_request_label'],
-            //"isSchoolAllowed"        => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
-  			"css_txt"                => $_POST['css_txt'],
-  			"cstatus"                => $_POST['status'],
-  			"cip"                    => ipAddress(),
-            "cby"                    => $_SESSION['user_id'],
-            "send_by"                => $_POST['send_by'],
-            "groups"                 => implode(",",$_POST['groupid']),
-            "locations"              => implode(",",$_POST['locationid']),
-            "departments"            => implode(",",$_POST['departments']),
-            "roles"                  => implode(",",$_POST['roles']),
-  			"cdate"                  => date("Y-m-d H:i:s"),
-            "google_review_link"     => $_POST['google_review_link'],
-            "facebook_review_link"   => $_POST['facebook_review_link'],
-            "other_link"             => $_POST['other_link'],
+  			"name"                          => $_POST['name'],
+  			"survey_needed"                 => $_POST['survey_needed'],
+  			// "clientid"                   => $_POST['clientid'],
+            // "adminid"                    => $_POST['adminid'],
+            // "user_type"                  => $_POST['user_type'],
+            "survey_type"                   => $_POST['survey_type'],
+            "intervals"                     => $_POST['interval'],
+            "start_date"                    => $_POST['sdate'],
+            "end_date"                      => $_POST['edate'],
+            "qrcode"                        => $randomCode,
+            "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
+            "alter_email"                   => $_POST['alter_email'],
+            "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+            "contacted_request_label"       => $_POST['contacted_request_label'],
+            "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
+            "select_percentage"             => $_POST['select_percentage'],
+            "notification_threshold_users"  => $_POST['notification_threshold_users'],
+            //"isSchoolAllowed"             => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
+  			"css_txt"                       => $_POST['css_txt'],
+  			"cstatus"                       => $_POST['status'],
+  			"cip"                           => ipAddress(),
+            "cby"                           => $_SESSION['user_id'],
+            "send_by"                       => $_POST['send_by'],
+            "groups"                        => implode(",",$_POST['groupid']),
+            "locations"                     => implode(",",$_POST['locationid']),
+            "departments"                   => implode(",",$_POST['departments']),
+            "roles"                         => implode(",",$_POST['roles']),
+  			"cdate"                         => date("Y-m-d H:i:s"),
+            "google_review_link"            => $_POST['google_review_link'],
+            "facebook_review_link"          => $_POST['facebook_review_link'],
+            "other_link"                    => $_POST['other_link'],
   		);
  	
         $insert_value =  dbRowInsert("surveys",$dataCol);
@@ -159,6 +165,9 @@ $groupByUsers      = get_filter_data_by_user('groups');
 
 .error {
   color: #e74c3c;
+}
+span.select2.select2-container.select2-container--default {
+    width: 100% !important;
 }
 </style>
 <section class="content">
@@ -386,47 +395,55 @@ $groupByUsers      = get_filter_data_by_user('groups');
                                     </div>
                                 </div>            
                             </div>
-                            <!-- <div class="col-md-6">
+                            <div class="col-md-6">
                                 <div class="col-md-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="threshold-notification">
+                                        <input class="form-check-input" type="checkbox" value="" id="threshold-notification" name="notification_threshold" <?php echo ($row_get_surveys['notification_threshold'] == 1) ? "checked" : ""; ?>>
                                         <label class="form-check-label" for="threshold-notification">
                                             Set Notification Threshold
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 threshold-notification-section" >
+                            <div class="col-md-12 contacted_request_section" style="<?=$row_get_surveys['isEnableContacted'] == 1 ? 'display:block;':'display:none;'?>">
+                                <label for="">Enter the label for contact request *</label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="contacted_request_label" name="contacted_request_label" value="<?=$row_get_surveys['contacted_request_label']?>" required/>
+                                    </div>
+                            </div>
+                            <div class="col-md-12 threshold-notification-section" style="<?=($row_get_surveys['notification_threshold'] ==1)? 'display:block':'display:none'?>">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Select Percentage</label>
-                                        <select class="form-control" id="interval" name="interval">
-                                            <option value="1">25%</option>
-                                            <option value="2">50%</option>
-                                            <option value="3">75%</option>
-                                            <option value="4">100%</option>
+                                        <select class="form-control" id="select_percentage" name="select_percentage">
+                                            <option value="">Select Percentage</option>
+                                            <?php 
+                                             $thresholdPercentage = getThresholdPercentage();
+                                             foreach($thresholdPercentage as $key => $value){ ?>
+                                                <option value="<?=$key?>" <?=($row_get_surveys['select_percentage'] == $key ) ? 'selected':''?>><?=$value?> %</option>
+                                             <?php } ?>
                                         </select>
                                     </div>
                                 </div> 
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label>Select User</label>
-                                        <select class="form-control multiple-select" id="interval" name="interval" multiple>
-                                        <?php 
+                                        <label>Select Users</label>
+                                        <select class="form-control multiple-select" id="select_users" name="notification_threshold_users[]" multiple>
+                                            <?php 
                                                 $users = getUsers();
-                                                foreach($users as $key => $value){ ?>
-                                                <option value="<?=$key?>"><?=$value?></option>      
+                                                $thresholdUser = explode(',',$row_get_surveys['notification_threshold_users']);
+                                                foreach($users as $key => $value){ 
+                                                    $selected = '';
+                                                    if (in_array($key, $thresholdUser)){
+                                                        $selected = 'selected';
+                                                    }
+                                                ?>
+                                                <option value="<?=$key?>" <?= $selected?>><?=$value?></option>      
                                             <?php  }
                                         ?>
                                         </select>
                                     </div>
                                 </div>  
-                            </div> -->
-                            <div class="col-md-12 contacted_request_section" style="<?=$row_get_surveys['isEnableContacted'] == 1 ? 'display:block;':'display:none;'?>">
-                                <label for="">Enter the lable for contact request *</label>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" id="contacted_request_label" name="contacted_request_label" value="<?=$row_get_surveys['contacted_request_label']?>" required/>
-                                    </div>
                             </div>
                             <div class="col-md-12" style="padding-top:20px;">
                                 <div class="form-check">
@@ -680,6 +697,17 @@ $("#isEnableContacted").change(function(){
     } else {
         $(".contacted_request_section").hide();
         $("#contacted_request_label").prop("required", false);
+    }
+})
+$("#threshold-notification").change(function(){
+    if($(this).is(":checked")){
+        $(".threshold-notification-section").show();
+        $("#select_percentage").prop("required", true);
+        $("#select_users").prop("required", true);
+    }else{
+        $(".threshold-notification-section").hide();
+        $("#select_percentage").prop("required", false);
+        $("#select_users").prop("required", false);
     }
 })
 </script>

@@ -105,7 +105,7 @@ p {
                                         <input type="date" name="sdate" min ="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control end_date" value="<?php //echo date('Y-m-d'); ?>"/>
                                     </div>
                                 </div>
-                                <div class="col-md-3 ajaxData" style="display: none;">
+                                <div class="ajaxData" style="width:25%;display: none;">
                                 <span>This Field is required</span>
                                 </div>
                                 <div class="col-md-3">
@@ -157,11 +157,11 @@ p {
                                         <tr >
                                             <td colspan="3" style="text-align:center;height: 30px;"></td>
                                         </tr>
-                                        <tr class="borderClass filterSurveyType">
-                                            <td colspan="3" style="text-align:center;font-size:20px;"> </td>
-                                        </tr>
                                         <tr class="borderClass filterSurvey">
                                             <td colspan="3" style="text-align:center;font-size:18px;"><strong> <?=strtoupper('Survey Statistics')?></strong></td>
+                                        </tr>
+                                        <tr class="borderClass filterSurveyType">
+                                            <td colspan="3" style="text-align:center;font-size:20px;"> </td>
                                         </tr>
                                         <tr class="borderClass filterDate" style="font-weight: 900;font-size: 16px;">
                                             <td  style="text-align:center;">Start Date: <span class="pdf-sdate"></span></td>
@@ -297,6 +297,11 @@ $(document).on('click','.search',function(){
         $('.error').hide();
     }
     let data_type = $('.data_type').val();
+    if(data_type == 'survey'){
+        $('.survey_name').hide();
+    }else{
+        $('.survey_name').show();
+    }
     let survey_type = '<?=$_GET['type']?>';
     ajax_to_load_graph(fdate,sdate,survey,data_type,survey_type);
 })
@@ -486,14 +491,14 @@ function export_pdf(sdate,edate,data_type ='',survey){
         if(survey){
                 var file_name = survey_arr[survey]+'<?='-'.date('Y-m-d-H-i-s').'.pdf'?>';
                 $('.filterSurvey').show();
-                //$('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
+                $('.filterSurvey>td').html('<strong>'  +survey_arr[survey].toUpperCase()+'</strong>');
         }
     }else {
         let heading = 'Survey Statics';
         $('.filterSurveyType>td').html('<strong>'+heading.toUpperCase()+'</strong>');
     }
     $('.pdf-head').show();
-
+    $('.survey_name').hide();
     // draw html in pdf
     let element = document.getElementById('element');
     //$(".chartjs-render-monitor").css("width", "180");
@@ -502,7 +507,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
     let height = box.offsetHeight;
     // $(".col-md-3").css("width", "300");
     $('.col-md-3').attr('class', 'col-md-4');
-    $(".chartjs-render-monitor").css("height", "90")
+    $(".chartjs-render-monitor").css("height", "90");
     html2pdf(element,{
         margin:5,
         filename:file_name,
@@ -514,6 +519,7 @@ function export_pdf(sdate,edate,data_type ='',survey){
     $(".chartjs-render-monitor").css("height", height);
     $('.col-md-4').attr('class', 'col-md-3 ');
     $('.pdf-head').hide();
+    $('.survey_name').show();
 }
 </script>
 

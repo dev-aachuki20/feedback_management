@@ -230,7 +230,7 @@ if(isset($_POST['submit'])){
 		// 		$i++;
 		// 	}
 		// }
-
+		sendNotificationThreshold($_GET['surveyid'],$_POST);
 		if(!empty($row_get_survey['alter_email'])){
 			$to_mail[$i]['name'] = "User";
 			$to_mail[$i]['email'] = $row_get_survey['alter_email'];
@@ -238,6 +238,7 @@ if(isset($_POST['submit'])){
 		if(count($to_mail) > 0){
 			 send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
 		}
+
 	}else{
 		$msg = "Some Error Occourd. Please try again..";
 	}
