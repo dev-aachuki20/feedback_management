@@ -344,9 +344,72 @@ function sendNotificationThreshold($surveyId, $data){
 		}
 	}
 }
+function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_be_contacted){
+
+	$send_to = $recipients['email'];
+	$getSurveyDetails = getaxecuteQuery_fn("SELECT * from surveys where id=$surveyid");
+	$row_get_survey_details = mysqli_fetch_assoc($getSurveyDetails);
+	$type = 'survey';
+	if($row_get_survey_details['survey_type'] == 2){
+		$type = 'pulse';
+	}else if($row_get_survey_details['survey_type'] == 3){
+		$type = 'engagement';
+	}
+
+	## send Threshold Notification mail
+	$subject = 'NEW SURVEY RESPONSE';
+	$body ='<table width="100%" style="background-color:#dbdbdb;">
+	<tr>
+	<td>
+	<table align="center" width="690" border="">
+		<tr>
+			<td style="background-color:#fff;" width="94%">
+			<table width="100%;">
+			<tr>
+			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+			</tr>
+			<tr> <td height="20px;">&nbsp;</td> </tr>
+			<tr>
+			<td align="center"><h2> SURVEY RESPONSE</h2></td>
+			</tr>
+			<tr> <td height="20px;">&nbsp;</td> </tr>';
+
+		$body .='<tr>
+				<td><p style="font-size:15px;margin:10px;">Hello '.$recipients['name'].'</p> <br>
+					<p style="font-size:15px;margin:10px;">A new Response has been submitted for '.$survey_name.'.';
+					 if($to_be_contacted == 1){
+						$body .='The respondent has requested contact.';
+					 }
+				$body .='</p>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+			</tr>
+			<tr>
+			<td><p style="font-size:15px;margin:6px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a>to view the response.</p></td>
+			</tr>
+			<tr>
+			<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
+			</tr>
+			<tr>
+			<td height="20px;">&nbsp;</td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+		<tr>
+		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+		</td>
+		</tr>
+		</table></td>
+	</tr>
+	</table>';				 
+	send_mail($send_to , $subject, $body);
+}
  function send_mail($send_to, $subject,$body){
 	$from = DEFAULT_FROM_EMAIL;
-	$subject = 'Hello';
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 	$headers .= 'From: Survey Entry Alert<'.$from.'>' . "\r\n";

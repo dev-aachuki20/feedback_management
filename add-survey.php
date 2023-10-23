@@ -13,8 +13,9 @@
             "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
             "intervals"                     => $_POST['interval'],
             "css_txt"                       => $_POST['css_txt'],
-            //"send_by"                     => $_POST['send_by'],
+            "send_by"                       => $_POST['send_by'],
             "alter_email"                   => $_POST['alter_email'],
+            "contact_requested"             => $_POST['contact_requested'],
             "start_date"                    => $_POST['sdate'],
             "end_date"                      => $_POST['edate'],
             "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
@@ -88,6 +89,7 @@
             "qrcode"                        => $randomCode,
             "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
             "alter_email"                   => $_POST['alter_email'],
+            "contact_requested"             => $_POST['contact_requested'],
             "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
             "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "contacted_request_label"       => $_POST['contacted_request_label'],
@@ -157,7 +159,9 @@ $groupByUsers      = get_filter_data_by_user('groups');
 .alert {
   display: none;
 }
-
+#alter_email-error{
+    position:absolute;
+}
 
 /**
  * Error color for the validation plugin
@@ -476,6 +480,15 @@ span.select2.select2-container.select2-container--default {
                             <?php  } } ?>
                             <div id="stepsTitle" class="whenStepAllow">
                             </div>
+                            <!-- <div class="col-md-12">
+                                <h5><strong>Alert Email</strong></h5>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="Email">Email</label>
+                                        <input type="email" class="form-control" id="alert-email" name="alert-email" placeholder="Enter Email" value="">
+                                    </div>
+                                </div>
+                            </div> -->
                             <div class="col-md-12">
                                 <p style="margin:15px 5px 20px 0px !important"><strong>Send By</strong></p>
                                 <div class="col-md-1" style="padding-left: 0px;">
@@ -487,18 +500,37 @@ span.select2.select2-container.select2-container--default {
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Alert Email (comma separation for multiple email addresses)</label>
-                                    <textarea name="alter_email" rows="3"  class="form-control"><?php echo $row_get_surveys['alter_email'];?></textarea>
+                                    <label>Alert Email (comma separation for multiple email addresses) *</label>
+                                    <textarea name="alter_email" rows="3"  class="form-control" required><?php echo $row_get_surveys['alter_email'];?></textarea>
                                 </div>
                             </div>
-
+                            <div class="col-md-6" style="height:120px;">
+                                <label for="Email">Contact Requested ?</label>
+                                <div class="form-group">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
+                                            <label class="form-check-label" for="flexCheckDisabled">
+                                                Yes
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'selected' : 'selected'?>>
+                                            <label class="form-check-label" for="flexCheckCheckedDisabled">
+                                            No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>             
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Custom CSS</label>
                                     <textarea name="css_txt" rows="3" class="form-control"><?php echo $row_get_surveys['css_txt'];?></textarea>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Google Review Link</label>
@@ -710,4 +742,9 @@ $("#threshold-notification").change(function(){
         $("#select_users").prop("required", false);
     }
 })
+
+$(".contacted-checkbox").change(function(){
+    $('.contacted-checkbox').prop('checked',false);
+    $(this).prop('checked', true);
+});
 </script>

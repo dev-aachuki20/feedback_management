@@ -219,7 +219,6 @@ if(isset($_POST['submit'])){
 	// if(!empty($insert_value)){	
 	if($flagStatus){
 		$msg = "Question Submitted Successfully";
-		// $to_mail = array();
 		// record_set("survey_clients", "SELECT name,email FROM clients where FIND_IN_SET(".$locationid.",locationid)");
 		// $i = 0;
 		
@@ -230,17 +229,21 @@ if(isset($_POST['submit'])){
 		// 		$i++;
 		// 	}
 		// }
-		sendNotificationThreshold($_GET['surveyid'],$_POST);
-		if(!empty($row_get_survey['alter_email'])){
-			$to_mail[$i]['name'] = "User";
-			$to_mail[$i]['email'] = $row_get_survey['alter_email'];
-		}
-		if(count($to_mail) > 0){
-			 send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
-		}
+		
 
 	}else{
 		$msg = "Some Error Occourd. Please try again..";
+	}
+	$to_mail = array();
+	sendNotificationThreshold($_GET['surveyid'],$_POST);
+
+	if(!empty($row_get_survey['alter_email']) and $row_get_survey['contact_requested'] == 1){
+		$to_mail['name'] = 'User';
+		$to_mail['email'] = $row_get_survey['alter_email'];
+	}
+	if(count($to_mail) > 0){
+		//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
+		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted );
 	}
 	$msg = "Question Submitted Successfully";
 	reDirect("survey-thankyou.php?msg=".$msg."&surveyid=".$_REQUEST['surveyid']);
