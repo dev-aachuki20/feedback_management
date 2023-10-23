@@ -209,7 +209,7 @@ p {
                                     <footer id="pdf-footer" style="display: none;">
                                         <div style="text-align: center;">
                                         <?=POWERED_BY?>
-                                        <center><img  src="<?=MAIN_LOGO?>" alt="" width="150"/></center>
+                                        <center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="150"/></center>
                                         </div>
                                     </footer>
                                 </div>

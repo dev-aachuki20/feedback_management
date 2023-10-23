@@ -468,14 +468,13 @@ if(count($survey_steps)>0){
 
      
 $message .='<footer>
-<div style="text-align: center;">
-'.POWERED_BY.'
-<center><img  src="'.MAIN_LOGO.'" alt="" width="150"/></center>
+<div style="text-align: center;margin-bottom:10px;" >
+<span style="font-size:14px;">'.POWERED_BY.'</span>
+<center><img  src="'.FOOTER_LOGO.'" alt="" width="150"/></center>
 </div>
 </footer></div>';
 
-// echo $message;
-// die();
+
 // Include autoloader 
 require_once 'dompdf/autoload.inc.php'; 
 // Reference the Dompdf namespace 
@@ -492,4 +491,3 @@ $file_location = "upload/trans_docs/".'Quotation'.$_GET['eid'].".pdf";
 file_put_contents($file_location,$pdf);*/
 // Output the generated PDF to Browser 
 $dompdf->stream($_GET['name'], array("Attachment"=>0));
-?>

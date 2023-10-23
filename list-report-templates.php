@@ -121,7 +121,7 @@ if(isset($_POST['schedule_btn'])){
                       <div class="form-group row schedule-field">
                           <label for="report-name" class="col-sm-4 col-form-label">Report Name</label>
                           <div class="col-sm-8">
-                              <input type="text"  class="form-control" id="report_name" name="report_name" placeholder="Enter Report Name" value="" min="<?= date('Y-m-d') ?>" required>
+                              <input type="text"  class="form-control" id="report_name" name="report_name" placeholder="Enter Report Name" value="" min="<?= date('Y-m-d') ?>">
                           </div>
                       </div>
 
