@@ -5,6 +5,7 @@ $additional_query = '';
 if($selected_survey_type){
   $additional_query = ' AND filter = '.$selected_survey_type;
 }
+
 record_set('report_templates', 'SELECT * FROM report_templates WHERE status = 2 AND deleted_at IS NULL '.$additional_query.' ORDER BY id ASC');
 
 // Submit modal to schedule report
@@ -151,10 +152,10 @@ if(isset($_POST['schedule_btn'])){
                           </select>
                           </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row" style="display:none;">
                           <label for="interval" class="col-sm-4 col-form-label">Send to User</label>
                           <div class="col-sm-8">
-                          <select class="form-control multiple-select" id="send_to" name="send_to[]"  multiple required>
+                          <select class="form-control multiple-select" id="send_to" name="send_to[]"  multiple >
                               <?php foreach(getUsers() as $key => $value) { ?>
                                   <option value="<?php echo $key; ?>" ><?=$value?></option>
                               <?php } ?>
@@ -185,6 +186,8 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
     $('#start_date').prop('required',false);
     $('#end_date').prop('required',false);
     $('#interval').prop('required',false);
+    $('#report_name').prop('required',false);
+    //$('#send_to').prop('required',false);
     if(report_type == 1){
       $('.second_form').attr('action', './report-doc/preview-report/report-pdf.php');
     }else if(report_type == 2){
@@ -195,6 +198,8 @@ function scheduleTemplate(template_id, template_name, template_field, template_f
     $('#start_date').prop('required',true);
     $('#end_date').prop('required',true);
     $('#interval').prop('required',true);
+    $('#report_name').prop('required',true);
+    //$('#send_to').prop('required',true);
     $('.second_form').removeAttr('action');
     $('.second_form').removeAttr('target');
     $('.schedule-field').show();

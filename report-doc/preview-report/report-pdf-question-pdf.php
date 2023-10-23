@@ -56,7 +56,6 @@ $row_get_department = mysqli_fetch_assoc($get_department);
 //Location
 record_set("get_location", "select name from locations where id = '".$row_get_loc_dep['locationid']."'");
 $row_get_location = mysqli_fetch_assoc($get_location);
-
 $message = '<div align="center">
   <img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></div>
     <table width="100%">

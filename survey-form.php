@@ -235,7 +235,9 @@ if(isset($_POST['submit'])){
 		$msg = "Some Error Occourd. Please try again..";
 	}
 	$to_mail = array();
-	sendNotificationThreshold($_GET['surveyid'],$_POST);
+	if($row_get_survey['notification_threshold'] == 1){
+	    	sendNotificationThreshold($_GET['surveyid'],$_POST);
+	}
 
 	if(!empty($row_get_survey['alter_email']) and $row_get_survey['contact_requested'] == 1){
 		$to_mail['name'] = 'User';
@@ -243,14 +245,12 @@ if(isset($_POST['submit'])){
 	}
 	if(count($to_mail) > 0){
 		//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
-		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted );
+		$contacted = $row_get_survey['isEnableContacted'];
+		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $contacted );
 	}
 	$msg = "Question Submitted Successfully";
 	reDirect("survey-thankyou.php?msg=".$msg."&surveyid=".$_REQUEST['surveyid']);
-
 }
-
-
 
 //Survey Steps 
 

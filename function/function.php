@@ -287,58 +287,62 @@ function sendNotificationThreshold($surveyId, $data){
 	}
 	$totalScore = array_sum($answer_value);
 	$result = $totalScore/count($answer_value) ;
-	$response = round($result_response,2);
-
+	
+	$response = round($result,2);
 
 	## send Threshold Notification mail
 	$subject = 'Threshold Notification';
-	$body ='<table width="100%" style="background-color:#dbdbdb;">
-	<tr>
-	<td>
-	<table align="center" width="690" border="">
-		<tr>
-			<td style="background-color:#fff;" width="94%">
-			<table width="100%;">
-			<tr>
-			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
-			</tr>
-			<tr> <td height="20px;">&nbsp;</td> </tr>
-			<tr>
-			<td align="center"><h2> SURVEY RESPONSE</h2></td>
-			</tr>
-			<tr> <td height="20px;">&nbsp;</td> </tr>
 
-			<tr>
-				<td><p style="font-size:15px;margin:10px;">Hello Amit</p> <br>
-					<p style="font-size:15px;margin:10px;">A Survey Response has been submitted and the respondent score is '.$response.' </p>
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-			</tr>
-			<tr>
-			<td><p style="font-size:15px;margin:10px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a>to view the response.</p></td>
-			</tr>
-			<tr>
-			<td height="20px;">&nbsp;</td>
-			</tr>
-			</table>
-		</td>
-	</tr>
-		<tr>
-		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
-		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
-		</td>
-		</tr>
-		</table></td>
-	</tr>
-	</table>';
-	if($response < $thresholdUsers){
+	if($response < $thresholdPercentage){
 		$users = explode(',',$thresholdUsers);
 		foreach($users as $user){
-			$getUser = getaxecuteQuery_fn("SELECT email from manage_users where id=$user");
+			$getUser = getaxecuteQuery_fn("SELECT name, email from manage_users where id=$user");
 			$row_get_user = mysqli_fetch_assoc($getUser);
+			$uname = $row_get_user['name'];
 			$email_to = $row_get_user['email'];
+
+				$body ='<table width="100%" style="background-color:#dbdbdb;">
+                	<tr>
+                	<td>
+                	<table align="center" width="690" border="">
+                		<tr>
+                			<td style="background-color:#fff;" width="94%">
+                			<table width="100%;">
+                			<tr>
+                			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                			<tr>
+                			<td align="center"><h2> SURVEY RESPONSE</h2></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                
+                			<tr>
+                				<td><p style="font-size:15px;margin:10px;">Hello '.$uname.'</p> <br>
+                					<p style="font-size:15px;margin:10px;">A Survey Response has been submitted and the respondent score is '.$response.'% </p>
+                				</td>
+                			</tr>
+                			<tr>
+                				<td></td>
+                			</tr>
+                			<tr>
+                			<td><p style="font-size:15px;margin:10px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a> to view the response.</p></td>
+                			</tr>
+                			<tr>
+                			<td height="20px;">&nbsp;</td>
+                			</tr>
+                			</table>
+                		</td>
+                	</tr>
+                		<tr>
+                		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		</td>
+                		</tr>
+                		</table></td>
+                	</tr>
+                	</table>';
+                	
 			send_mail($email_to, $subject, $body);
 
 		}
@@ -387,7 +391,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 				<td></td>
 			</tr>
 			<tr>
-			<td><p style="font-size:15px;margin:6px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a>to view the response.</p></td>
+			<td><p style="font-size:15px;margin:6px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type='.$type.'" target="_blank">Click here</a> to view the response.</p></td>
 			</tr>
 			<tr>
 			<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
