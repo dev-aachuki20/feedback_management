@@ -2081,7 +2081,7 @@ $(".rating-img").click(function(){
 </script>
 <div style="text-align: center;">
 <?php echo POWERED_BY; ?>
-<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="200" height="36" /></center>
+<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="150"/></center>
 </div>
 </body>
 

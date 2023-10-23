@@ -60,7 +60,18 @@ if(!empty($_GET['location']) and $_GET['location']!=4){
 }else{
      $location_name ="All";
 }
-$message = '<table width="100%">
+$message = '<!DOCTYPE html><html lang="en">
+<head>
+<style>
+footer {
+  position: fixed;
+  bottom: 50px;
+  width: 100%;
+  text-align: center;
+}
+</style>
+</head>
+    <table width="100%">
       <thead>
         <tr>
           <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;">
@@ -73,26 +84,8 @@ $message = '<table width="100%">
           <td colspan="4" style="text-align:center;font-size:20px;"><span>'.$row_get_survey['name'].'</span></td>
         </tr>
       </tbody>
-    
-  </table>';
-    // <tfoot>
-    //   <tr style="">
-    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>GROUP :'.getGroup()[$row_get_survey['groups']].'</span></td>
-    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>LOCATION :'.getLocation()[$row_get_survey['locations']].'</span></td>
-    //   </tr>14px
-    //   <tr style="">
-    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>DEPARTMENT :'.getDepartment()[$row_get_survey['departments']].'</span></td>
-    //     <td colspan="2" style="text-align:left;font-size:14px;"><span>ROLE :'.getRole()[$row_get_survey['role']].'</span></td>
-    //   </tr>
-    // </tfoot>
-  // <tr style="">
-  //   <td style="width:10%;"><span>Location :</span></td>
-  //   <td style="width:40%;"><span>'.$location_name.'</span></td>
-  //   <td style="width:20%;text-align:right;"><span>Department :</span></td>
-  //   <td style="width:30%;"><span>'.$row_get_department['name'].'</span></td>
-  // </tr>
-// echo '<pre>';
-// print_r($questions); die();
+    </table>';
+
 
 $message .= '<table width="100%" style="text-align:center;" >
       <thead>
@@ -115,7 +108,7 @@ if(count($survey_steps)>0){
  
   $mainCount = 1; 
   foreach($survey_steps AS $key => $value) { 
-    $message .= '<div class="container" style="page-break-after: always;height: 500px;">
+    $message .= '<div class="container" style="page-break-after: always;height: 100%;">
       <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
       foreach($questions[$key] AS $question){
       
@@ -161,7 +154,7 @@ if(count($survey_steps)>0){
             record_set("get_child_questions", $get_child_questions);
           }
           if(empty($totalRows_get_child_questions)){
-              $message .='<table width="505px" align="center" style="page-break-inside: avoid; ">
+              $message .='<table width="505px" h align="center" style="page-break-inside: avoid; ">
                 <tr>
                   <td align="center" colspan="3">
                   <h4 colspan="2" style="margin-top:10px;text-align:center;">'.$question['question'].'</h4>
@@ -266,7 +259,7 @@ if(count($survey_steps)>0){
         }
 
         if($answer_type==2 || $answer_type==3){
-          $message .= '<table width="505px" align="center">
+          $message .= '<table width="505px" height="100vh" align="center">
             <tr>
               <td align="center">
                 <h4 style="margin-top:10px;">'.$question['question'].'</h4>
@@ -292,15 +285,7 @@ if(count($survey_steps)>0){
           $message .= '</table>';
         }
       } 
-      
-    if(count($survey_steps) == $mainCount){
 
-      $message .='<div style="text-align: center;">'.POWERED_BY.'
-      <center><img  src="'.MAIN_LOGO.'" alt="" width="200"/></center></div></div>';
-    }else{
-      $message .='</div>';
-    }
-    $mainCount ++;
   }
 
 }else{
@@ -481,8 +466,16 @@ if(count($survey_steps)>0){
 
 }
 
+     
+$message .='<footer>
+<div style="text-align: center;">
+'.POWERED_BY.'
+<center><img  src="'.MAIN_LOGO.'" alt="" width="150"/></center>
+</div>
+</footer></div>';
 
-
+// echo $message;
+// die();
 // Include autoloader 
 require_once 'dompdf/autoload.inc.php'; 
 // Reference the Dompdf namespace 
