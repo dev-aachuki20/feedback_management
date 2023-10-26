@@ -309,6 +309,11 @@ if(isset($_POST['mode']) and $_POST['mode']=='dashboard'){
 }
 
 if(isset($_POST['mode']) and $_POST['mode']=='fetch_schedule_filter'){
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
+
+  // die('gf');
   $field = $_POST['field'];
   $filter = $_POST['filter'];
 

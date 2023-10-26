@@ -25,6 +25,7 @@ else if($_POST['survey_type']=='role'){
 if(!empty($_POST['fdate']) and !empty($_POST['fdate'])){
     $query .= " and  cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
 }
+
 record_set("total_survey","SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];

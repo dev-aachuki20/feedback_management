@@ -2,6 +2,8 @@
 //set logo
 define('ADMIN_EMAIL', 'system@dgam.app');
 define('MAIN_LOGO', 'upload_image/dgs-logo-2.jpg');
+define('MAIN_LOGO_2', 'upload_image/dgs-logo-3-new.jpg');
+
 define('FOOTER_LOGO', 'upload_image/Data-Group-footer.png');
 define('POWERED_BY', 'Powered by Data Group Solutions');
 

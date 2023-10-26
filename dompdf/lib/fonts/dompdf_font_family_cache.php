@@ -97,4 +97,8 @@
   'arizonia' => array(
     'normal' => $fontDir . '\2c5b97f5cfec9a503ea3b1ac016f5314',
   ),
+  'roboto' => array(
+    'italic' => $fontDir . '\71d4fad1ca0f22d70d8be7cc40bb76ab',
+    'normal' => $fontDir . '\1c4e32da7e6c8539dd3a51af38f413be',
+  ),
 ) ?>

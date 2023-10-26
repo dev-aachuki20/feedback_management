@@ -135,6 +135,9 @@
       <input type="hidden" name="sdate" id="start_date" value="">
       <input type="hidden" name="edate" id="end_date" value="">
       <input type="hidden" name="survey_type" id="survey_data_type" value="">
+      <input type="hidden" name="mode" id="mode-type" value="">
+      <input type="hidden" name="canvasData" id="canvasData" value="">
+
       <div class="row">
         <div class="col-md-6 custum-btn">
           <a class="btn btn-xs btn-info export" id="exportPDF" href="#" data-action="export">Export PDF</a>
@@ -223,15 +226,12 @@
             <div class="col-sm-12 graph-listing" style="display: none;">
             </div>
             <hr style="border: 0.5px solid #e8e3e3;" />
-
-            <div class="col-sm-12">
-              <footer id="pdf-footer" style="display: none;">
-                <div style="text-align: center;margin-bottom:10px;font-size:15px;">
-                  <?= POWERED_BY ?>
-                  <center><img src="<?= BASE_URL . FOOTER_LOGO ?>" alt="" width="150" /></center>
-                </div>
-              </footer>
-            </div>
+            <footer id="pdf-footer" style="display: none;">
+              <div style="text-align: center;margin-bottom:10px;font-size:15px;">
+                <?= POWERED_BY ?>
+                <center><img src="<?= BASE_URL . FOOTER_LOGO ?>" alt="" width="150" /></center>
+              </div>
+            </footer>
           </div>
         </div>
       </div>
@@ -244,14 +244,25 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.js"></script>
+
 <script type="text/javascript">
   //for graph
   let locationChart;
 
+
   function mychart(label, data) {
     if (locationChart) {
-      locationChart.destroy()
+      locationChart.destroy();
+      $("#canvasData").val('');
     }
+
+    var options = {
+      bezierCurve: false,
+      animation: {
+        onComplete: done
+      }
+    };
+
     let locationChartCtx = document.getElementById('chartData').getContext('2d');
     locationChart = new Chart(locationChartCtx, {
       type: 'pie',
@@ -261,8 +272,15 @@
           backgroundColor: [<?= '"' . implode('","', generate_unique_color(200)) . '"' ?>],
           data: data,
         }]
-      }
+      },
+      options: options
     });
+
+
+    function done() {
+      var url = locationChart.toBase64Image();
+      $("#canvasData").val(url);
+    }
   }
 </script>
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
@@ -273,14 +291,30 @@
 <script>
   // start export pdf 
   $(document).on('click', '.export', function() {
-    let survey = $('#survey_name').val();
-    let sdate = $('#fdate').val();
-    let edate = $('#sdate').val();
-    let data_type = $('.graph-btn.active').data('type');
     let exportAction = $(this).data('action');
     if (exportAction === "export") {
-      export_pdf(survey, sdate, edate, data_type);
+      //  export_pdf(survey, sdate, edate, data_type);
+      let survey = $('.survey_id').val();
+      let fdate = $('#fdate').val();
+      let sdate = $('#sdate').val();
+      let type = $('#survey_type').val();
+      let data_type = $('.graph-btn.active').data('type');
+
+
+      $('#survey_id').val(survey);
+      $('#start_date').val(fdate);
+      $('#end_date').val(sdate);
+      $('#survey_data_type').val(data_type);
+
+      $('#document_form').attr('action', './Export-Pdf/view-analytics-pdf.php');
+      $('#document_form').submit();
+
     } else {
+      let survey = $('#survey_name').val();
+      let sdate = $('#fdate').val();
+      let edate = $('#sdate').val();
+      let data_type = $('.graph-btn.active').data('type');
+
       $('#survey_id').val(survey);
       $('#start_date').val(edate);
       $('#end_date').val(edate);
@@ -290,9 +324,11 @@
     }
   });
 
+
   /**@abstract
    * export_pdf
    */
+  /*
   function export_pdf(survey, sdate, edate, data_type = '') {
     // get all surveys 
     const survey_arr = <?php echo json_encode(getSurvey()); ?>;
@@ -325,7 +361,7 @@
     $('.survey_name').hide();
     $('#pdf-footer').show();
     $('.graph-listing').show();
-    $('.content-wrapper').css('margin-bottom','58px');
+    $('.content-wrapper').css('margin-bottom', '58px');
 
     // draw html in pdf
     let element = document.getElementById('analytics-pdf');
@@ -336,7 +372,7 @@
     $('.col-md-3').attr('class', 'col-md-4');
     $(".chartjs-size-monitor").css("height", "90");
 
-    
+
     html2pdf(element, {
       margin: 5,
       filename: file_name,
@@ -370,6 +406,7 @@
     $('.listing').show();
 
   }
+  */
   // End export pdf
 
   // add survey type div like loc dept group on survey choose
@@ -395,6 +432,8 @@
     let sdate = $('#sdate').val();
 
     $('.graphTitle').html('SURVEY ' + type.toUpperCase());
+
+    $('#mode-type').val('survey_type');
     survey_graph(fdate, sdate, survey, type, 'survey_type');
   });
 
@@ -406,6 +445,7 @@
 
     // check the survey is selected or not 
     (survey) ? $('.error').hide(): $('.error').show();
+    $('#mode-type').val('filter');
     survey_graph(fdate, sdate, survey, type, 'filter')
   });
 
@@ -445,7 +485,7 @@
           $('.data-available').show();
           $('.data-notAvailable').hide();
           $('.listing').html(response.html);
-          $('.graph-listing').html(response.html);
+          // $('.graph-listing').html(response.html);
           const result = response.result;
           const locName = Object.keys(result);
           const avgResult = Object.values(result);
@@ -455,5 +495,3 @@
     });
   }
 </script>
-
-
