@@ -418,15 +418,11 @@ span.select2.select2-container.select2-container--default {
                             <div class="col-md-12 threshold-notification-section" style="<?=($row_get_surveys['notification_threshold'] ==1)? 'display:block':'display:none'?>">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Select Percentage</label>
-                                        <select class="form-control" id="select_percentage" name="select_percentage">
-                                            <option value="">Select Percentage</option>
+                                        <label>Percentage</label>
+                                        <input type=number min=0 max=100 class="form-control" id="select_percentage" name="select_percentage" value="<?=$row_get_surveys['select_percentage']?>"   placeholder="insert percentage">
                                             <?php 
-                                             $thresholdPercentage = getThresholdPercentage();
-                                             foreach($thresholdPercentage as $key => $value){ ?>
-                                                <option value="<?=$key?>" <?=($row_get_surveys['select_percentage'] == $key ) ? 'selected':''?>><?=$value?> %</option>
-                                             <?php } ?>
-                                        </select>
+                                            // $thresholdPercentage = getThresholdPercentage();
+                                            ?>
                                     </div>
                                 </div> 
                                 <div class="col-md-8">
@@ -747,4 +743,12 @@ $(".contacted-checkbox").change(function(){
     $('.contacted-checkbox').prop('checked',false);
     $(this).prop('checked', true);
 });
+
+
+$('#select_percentage').keyup(function(){
+  if ($(this).val() < 1 || $(this).val() > 100){
+    $(this).val(1);
+  }
+});
+
 </script>

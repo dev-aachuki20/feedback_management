@@ -239,7 +239,7 @@ if(isset($_POST['submit'])){
 	    	sendNotificationThreshold($_GET['surveyid'],$_POST);
 	}
 
-	if(!empty($row_get_survey['alter_email']) and $row_get_survey['contact_requested'] == 1){
+	if(!empty($row_get_survey['alter_email']) and $row_get_survey['contact_requested'] == $row_get_survey['isEnableContacted']){
 		$to_mail['name'] = 'User';
 		$to_mail['email'] = $row_get_survey['alter_email'];
 	}
@@ -255,6 +255,7 @@ if(isset($_POST['submit'])){
 //Survey Steps 
 
 $survey_steps = array();
+
 
 if($row_get_survey['isStep'] == 1){
 	record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$surveyid."' order by step_number asc");
@@ -1406,7 +1407,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	                        	?>
 
-	                        	<?php if($value['number'] == count($survey_steps) && $row_get_survey['isEnableContacted'] == 1){ ?>
+	                        	<?php if(($value['number'] == 1 || $value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
 
 	               
 
