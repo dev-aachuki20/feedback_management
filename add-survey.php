@@ -4,6 +4,7 @@
         record_set("get_surveys", "select * from surveys where id='".$_GET['id']."'");
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
     }
+    
     if($_POST['update']){
         $dataCol = array(
             "name"                          => $_POST['name'],
@@ -513,7 +514,7 @@ span.select2.select2-container.select2-container--default {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check">
-                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'selected' : 'selected'?>>
+                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
                                             <label class="form-check-label" for="flexCheckCheckedDisabled">
                                             No
                                             </label>
