@@ -5,28 +5,15 @@ include('../../permission.php');
 require_once dirname(__DIR__, 2). '/vendor/autoload.php';
 $mpdf = new \Mpdf\Mpdf();
 
- 
 record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
-// echo "<pre>";
-// print_r($get_scheduled_report);
-// echo "</pre>";
-// die('ctcf');
 
 while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $current_date   = date('Y-m-d', time());
     $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
     $result_1   = check_differenceDate($current_date,$end_date,'lte');
-    $result_2   = check_differenceDate($current_date,$next_schedule,'eq');
-    
-    echo "$current_date".$current_date.'<br>';
-    echo "$end_date".$end_date.'<br>';
-    echo "$next_schedule".$next_schedule.'<br>';
-
-    echo "result_1 => ".$result_1.'<br>';
-    echo "result_2 => ".$result_2.'<br>';
-
+    $result_2   = check_differenceDate($current_date,$next_schedule,'lte');
 
     if($result_1 && $result_2){
 
@@ -63,6 +50,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
         $total_survey = $row_total_survey['totalCount'];
         record_set("get_entry",$querys.$query." GROUP by cby");
         if($totalRows_get_entry){
+
             $survey_data = array();
             $to_bo_contacted = 0;
             while($row_get_entry = mysqli_fetch_assoc($get_entry)){
@@ -177,26 +165,27 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                 }
             }
         }
+        
+
         ksort($survey_data);
         //export csv in survey static
-        if(isset($_GET['export']) and $_GET['export']=='csv'){
+        // if(isset($_GET['export']) and $_GET['export']=='csv'){
+        // }
+        
+            if (!file_exists('document')) {
+                 mkdir('document', 0755, true);
+            }
+
             $survey_name = getSurvey()[$survey_id];
             $dir = 'document/survey-report-'.$row_get_report['id'].'.csv';
             $path[] = $dir;
-            download_csv_folder($survey_data,$data_type,$dir); continue;
-        }
+            download_csv_folder($survey_data,$data_type,$dir);
 
-        // update next schedule date with interval
-        $nextScheduledDate = $row_get_report['next_date'];
-        $updateSchedule = date('Y-m-d H:i:s', strtotime(' + '.$row_get_report['sch_interval'].' hours',strtotime($nextScheduledDate)));   
-        $data = array(
-        "next_date" => $updateSchedule,
-        );
-        $updte=	dbRowUpdate("scheduled_report_templates",$data , "where id=".$row_get_report['id']);
-        
-        $counter = 0;
-        $html = '<!DOCTYPE html>
-        <html lang="en">
+
+    $counter = 1;
+    $j = 6;
+    $html = '<!DOCTYPE html>
+            <html lang="en">
             <head>
                 <title>Test</title>
                 <style>
@@ -210,31 +199,19 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                         word-wrap: break-word;
                         font-size: 14px;
                     }
-
-                    
-                    .col-md-4 {
-                        display: inline-block;
-                        margin-left: 1.5%;
-                        margin-right: 1.5%;
-                        margin-bottom: 1.5%;
-                        width: 31.33%;
-                        float:left;
-                    }
                     .metter-outer.active {
-                        padding: 5px;
-                        border: 1px solid #000;
-                        background: #eee;
+                        padding: 15 20px;
+                        border: 1px solid #c8bfbf;
+                        background: #ecf0f5;
                         height: 250px
                         display: inline-block;
-                        padding-top: 10px;
-                        padding-bottom: 10px;
                         text-align: center;
                     }
                     .circle-bg {
                             width: 258;
-                            height: 125px;
+                            height: 110px;
                             background: #eee;
-                            background-image: url("'.getHomeUrl().'upload_image/chart.png");
+                            background-image: url("' . getHomeUrl() . 'upload_image/chart.png");
                             background-repeat: no-repeat;
                             background-position: center;
                             background-size: contain;
@@ -243,7 +220,6 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                             padding-bottom: 5px;
                         }
                     .metter-outer.active .meter-clock {
-                        
                             background-position: center;
                             background-size: contain;
                             height: 250px;
@@ -258,7 +234,17 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                             display: -ms-flexbox;
                             display: flex;
                             -ms-flex-wrap: wrap;
+                            margin-left: -15px;
+                            margin-right: -15px;
                         } 
+                        .col-md-4{
+                            width: 29.1%;
+                            float: left;
+                            padding-left: 15px;
+                            padding-right: 15px;
+                            padding-top: 15px;
+                            padding-bottom: 15px;
+                        }
                         .top-content h4 {
                             margin-bottom: 10px;
                         }
@@ -269,27 +255,34 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                         }
 
                         .top-content span {
-                            margin-bottom: 15px;
+                            margin-bottom: 0px;
                             display: block;
-                            font-weight: 600;
-                            font-size: 22px;
+                            font-weight: bold;
+                            font-size: 18px;
                         }  
 
                         .bottom-content h4 {
                             margin-top: 40px;
                             margin-bottom: 10px;
+                            font-size: 14px;
                         }
                         .header img {
-                            width: 13%;
+                            width: 150px;
+                            height: 70px;
                             margin-bottom: 10px;
-                            margin-top: 10px;
+                            margin-top: 0px;
                         }
 
                         .header {
                             width: 100%;
                             text-align: center;
+                            padding-left: 15px;
+                            padding-right: 15px;
                         }
 
+                        .header .title{
+                            margin-top: 30px;
+                        }
                         .header .title h3 {
                             font-size: 20px;
                             padding: 12px;
@@ -300,24 +293,29 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
 
                         .title {
                             margin-bottom: 10px;
+
                         }
                         .bottom-content {
-                            margin-top: -120px;
+                            margin-top: -110px;
                         }
                 </style>
             </head>
-            <body>
-                <div class="report-container">
+            <body style="padding: 0;margin: 0;">
+                <div class="report-container" style="font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif">
                     <div class="row">
                         <div class="header">
-                            <img src="'.getHomeUrl().MAIN_LOGO.'" alt="" height="60">
+                            <div>
+                                <img src="' . getHomeUrl() . MAIN_LOGO_2 . '" alt="" style="width: 200px;margin-top: -22px;">
+                            </div>
                             <div class="title">
-                                <h4>'.strtoupper($data_type .' Statistics').'</h4>
-                                <h4>'.strtoupper(getSurvey()[$survey_id]).'</h4>
+                                <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
+                                <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>
                             </div>
                         </div>
                     </div>   
-                    <div class="row">'; 
+                    <div class="row">';
+                    
+                    
                         if(count($survey_data)>0){
                             foreach($survey_data as $key =>$datasurvey){ 
                                 $total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
@@ -351,78 +349,104 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                                                 <div class="metter-outer active">
                                                         <div class="circle">
                                                             <div class="top-content">
-                                                                <h5 style="height:30px;">'.$titleName.'</h5>
-                                                                <span>'.$total.'%</span>
+                                                                <h5 style="height:50px;margin-top: 0;">' . $titleName  . '</h5>
+                                                                <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>
+                                                                <span style="font-size: 16px;">' . $total . '%</span>
                                                             </div>                                  
                                     
                                                             <div class="circle-frame">
                                                                 <div class="circle-bg"></div>
                                                                 <div class="" style="">
-                                                                    <img src="'.getHomeUrl().'upload_image/niddle/180_niddle/niddle_with_circle/Asset '.$degree.'.png" height="190" style="margin-top:-107px" class="meter-clock meter-clock-overall_1"/>
+                                                                    <img src="' . getHomeUrl() . 'upload_image/niddle/180_niddle/niddle_with_circle/Asset ' . $degree . '.png" height="190" style="margin-top:-96px" class="meter-clock meter-clock-overall_1"/>
                                                                 </div>
                                                             </div>
                                                             <div class="bottom-content">
-                                                                <h4>Total Surveys : '.count($datasurvey['data']).'</h4>
-                                                                <h4 style="margin-top:5px">Contact Requests : '.($contacted).'</h4>
+                                                                <h4 style="font-size: 12px;text-transform: uppercase;">Total Surveys : ' . count($datasurvey['data']) . '</h4>
+                                                                <h4 style="margin-top:8px;margin-bottom: 0;font-size: 12px;text-transform: uppercase;">Contact Requests : ' . ($contacted) . '</h4>
                                                             </div>
                                                     </div>
                                                 </div>
                                             </div>';
                                     }else{
                                         $html .=  '
-                                        <div style=" margin-left: 1.5%; margin-right: 1.5%; margin-bottom: 1.5%; width: 31.33%; float:left; ">
-                                            <div style=" height:90px;width: 31.33%;">
-                                            </div>
+                                        <div class="col-md-4">
                                             <div class="metter-outer active">
                                                     <div class="circle">
                                                         <div class="top-content">
-                                                            <h5 style="height:30px;">'.$titleName.'</h5>
-                                                            <span >'.$total.'% </span>
+                                                            <h5 style="height:50px;margin-top: 0;">' . $titleName . '</h5>
+                                                            <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>
+                                                            <span style="font-size: 16px;">' . $total . '% </span>
                                                         </div>                                  
                                 
                                                         <div class="circle-frame">
                                                             <div class="circle-bg"></div>
                                                             <div class="" style="">
-                                                                <img src="'.getHomeUrl().'upload_image/niddle/180_niddle/niddle_with_circle/Asset '.$degree.'.png" height="190" style="margin-top:-107px" class="meter-clock meter-clock-overall_1"/>
+                                                                <img src="' . getHomeUrl() . 'upload_image/niddle/180_niddle/niddle_with_circle/Asset ' . $degree . '.png" height="190" style="margin-top:-96px" class="meter-clock meter-clock-overall_1"/>
                                                             </div>
                                                         </div>
                                                         <div class="bottom-content">
-                                                            <h4>Total Surveys : 20</h4>
-                                                            <h4 style="margin-top:5px">Contact Requests : 20</h4>
+                                                            <h4 style="font-size: 12px;text-transform: uppercase;">Total Surveys : 20</h4>
+                                                            <h4 style="margin-top:8px;margin-bottom: 0;font-size: 12px;text-transform: uppercase;">Contact Requests : 20</h4>
                                                         </div>
                                                 </div>
                                             </div>
                                         </div>';
                                     }
-                                $counter++;
-                            if($counter % 6==0){
-                                $html .='<pagebreak>';
-                            }
+                                    
+                                    if ($counter == 6) {
+                                    $j = $j + 9;
+                                    $html .= '<pagebreak>';
+                                    }
+                                    
+                                    if ($j > 14 && $counter == $j && $counter < count($survey_data)) {
+                                    $j = $j + 9;
+                                    $html .= '<pagebreak>';
+                                    }
+                                    
+                                    $counter++;
                             }
                         }
                 $html .= '</div>
                 </div>
             </body>
-        </html>';
+            </html>';
+       
         $dir = 'document/survey-report-'.$row_get_report['id'].'.pdf';
+        $footer = '<div style="text-align: center;"> '.POWERED_BY.'
+        <center><img  src="'.BASE_URL.FOOTER_LOGO.'" alt="" width="150"/></center>
+        </div>';
         
         $mpdf->WriteHTML($html);
-        $mpdf->Output($dir, 'F');
-        //send mail
-        $user_details = get_user_datails($row_get_report['cby']);
-        $path = array('document/survey-report-'.$row_get_report['id'].'.csv','document/survey-report-'.$row_get_report['id'].'.pdf');
-        $to = "amitpandey.his@gmail.com";
-        $to = $user_details['email'];
-        //$from = "admin@gmail.com"; 
-        $subject ="My subject"; 
-        $name = $user_details['name'];
-        $message = 'Hello '.$name.' you have schedule report';
-        
-        $mail = mail_attachment($path,$to,$from,$name,$subject,$message);
-        if($mail){
-            foreach($path as $key => $value){
-                unlink($value);
-            }
+        $mpdf->SetHTMLFooter($footer); 
+        $mpdf->Output($dir,'F');
+
+        if($row_get_report['send_to'] != null){
+            $attachments = array('document/survey-report-'.$row_get_report['id'].'.csv','document/survey-report-'.$row_get_report['id'].'.pdf');
+            $mail_users = explode(",", $row_get_report['send_to']);
+                foreach($mail_users as $userId){
+                    //send mail
+                    $user_details = get_user_datails($userId);
+                    $to = $user_details['email'];
+                    $from_mail = "dgs@gmail.com"; 
+                    $name = $user_details['name'];
+                    $subject ="My subject"; 
+                    $message = 'Hello '.$name.' you have schedule report';
+                    $mail = cron_emails($attachments,$to,$from_mail,$name,$subject,$message);
+                }
+            
+                // update next schedule date with interval
+                $nextScheduledDate = $row_get_report['next_date'];
+                $updateSchedule = date('Y-m-d H:i:s', strtotime(' + '.$row_get_report['sch_interval'].' hours',strtotime($nextScheduledDate)));   
+                $data = array(
+                "next_date" => $updateSchedule,
+                );
+                $updte=	dbRowUpdate("scheduled_report_templates",$data , "where id=".$row_get_report['id']);
+                
+                if(count($attachments) > 0){
+                    foreach($attachments as $key => $value){
+                        unlink($value);
+                    }
+                }
         }
     }
 }

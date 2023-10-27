@@ -9,7 +9,7 @@ require('mysql_functions.php');
 // php mailer start
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-require_once dirname(__DIR__).'/vendor/autoload.php';
+require_once dirname(__DIR__). '/vendor/autoload.php';
 
 // define('SMTP_HOST', "ssl://mail.dgam.app");
 // define('SMTP_USER', "noreply@dgam.app");
@@ -17,10 +17,7 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 // define('SMTP_PORT', "465");
 
 //mail trap
-define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-define('SMTP_USER', "a4675565cb1dd9");
-define('SMTP_PASS', "4574e6f43e2c75");
-define('SMTP_PORT', "465");
+
 // end 
 $msg='';
 $active_user_id= $_SESSION['admin_id'];
@@ -1234,3 +1231,37 @@ function mail_attachment($path, $to, $from_mail, $from_name,$subject,$message){
 		"1"=>"No",
 	);
  }
+ 
+ 
+function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
+	$mail = new PHPMailer(true);
+    try {
+        $mail = new PHPMailer(true);
+        $mail = new PHPMailer();
+        $mail->isSMTP();
+        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->SMTPAuth = true;
+        $mail->Port = 2525;
+        $mail->Username = '9bb50416f293ea';
+        $mail->Password = 'a28f5c4d4023f2';
+        
+        $mail->setFrom($from_mail, $name);
+        $mail->addAddress($to);  
+        
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $message;
+        
+        // Add the attachments to the email
+        foreach ($attachments as $key => $filePath) {
+            $mail->addAttachment($filePath);
+        }
+        
+        $mail->SMTPDebug = 4;
+        $mail->send();
+        
+        return true;
+    } catch (Exception $e) {
+        //echo "Message could not be sent. Mailer Error: {$e}";
+    }
+}
