@@ -2,7 +2,16 @@
 require('../../function/function.php');
 require('../../function/get_data_function.php');
 include('../../permission.php');
-record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1");
+require_once dirname(__DIR__, 2). '/vendor/autoload.php';
+$mpdf = new \Mpdf\Mpdf();
+
+
+record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
+
+// echo "<pre>";
+// print_r($get_scheduled_report);
+// echo "</pre>";
+// die('ctcf');
 
 while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $current_date   = date('Y-m-d', time());
@@ -10,9 +19,17 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
     $result_1   = check_differenceDate($current_date,$end_date,'lte');
     $result_2   = check_differenceDate($current_date,$next_schedule,'eq');
+    
+    echo "$current_date".$current_date.'<br>';
+    echo "$end_date".$end_date.'<br>';
+    echo "$next_schedule".$next_schedule.'<br>';
+
+    echo "result_1 => ".$result_1.'<br>';
+    echo "result_2 => ".$result_2.'<br>';
+
+
     if($result_1 && $result_2){
-        require_once dirname(__DIR__,2).'/vendor/autoload.php';
-        $mpdf = new \Mpdf\Mpdf();
+
         $filter = json_decode($row_get_report['filter'],1);
         $data_type = $filter['field'];
         $survey_id   = $filter['survey_id'];
