@@ -5,7 +5,7 @@ include('../../permission.php');
 require_once dirname(__DIR__, 2). '/vendor/autoload.php';
 $mpdf = new \Mpdf\Mpdf();
 
-
+ 
 record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
 // echo "<pre>";
