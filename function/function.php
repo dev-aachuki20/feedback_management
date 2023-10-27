@@ -1165,7 +1165,7 @@ function mail_attachment($path, $to, $from_mail, $from_name,$subject,$message){
 		 // now we encode it and split it into acceptable length lines
 		 $data = chunk_split(base64_encode($data));
 		 
-		 $message .= "--{$mime_boundary}\n" ."Content-Type: {'application/pdf'};\n" ." name=\"{$file_name}\"\n" ."Content-Disposition: attachment;\n" ." filename=\"{$fileatt_name}\"\n" ."Content-Transfer-Encoding: base64\n\n" .
+		 $message .= "--{$mime_boundary}\n" ."Content-Type: {'application/pdf'};\n" ." name=\"{$file_name}\"\n" ."Content-Disposition: attachment;\n" ." filename=\"{$file_name}\"\n" ."Content-Transfer-Encoding: base64\n\n" .
 		 $data . "\n\n";
 	
 	} 
