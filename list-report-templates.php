@@ -19,6 +19,7 @@ if (isset($_POST['schedule_btn'])) {
   $interval = $_POST['interval'];
   $next_date =  date('Y-m-d H:i:s', strtotime('+' . $_POST['interval'] . 'hour', strtotime($start)));
   $filter  = array("field" => $template_field_name, "survey_id" => $_POST['survey'], "field_value" => $_POST['template_field']);
+  $mail_recipients = $_POST['send_to'];
 
   $dataCol =  array(
     "report_name"     => $report_name,
@@ -158,7 +159,7 @@ if (isset($_POST['schedule_btn'])) {
           <div class="form-group row schedule-field">
             <label for="interval" class="col-sm-4 col-form-label">Send to User</label>
             <div class="col-sm-8">
-              <select class="form-control multiple-select" id="send_to" name="send_to[]" placeholder="Select Any User" multiple>
+              <select class="form-control recipients-select2" id="send_to" name="send_to[]" placeholder="Select Any User" multiple>
                 <?php foreach (getUsers() as $key => $value) { ?>
                   <option value="<?php echo $key; ?>"><?= $value ?></option>
                 <?php } ?>
@@ -259,6 +260,13 @@ if (isset($_POST['schedule_btn'])) {
             placeholder: "Select Any",
             allowClear: true
           });
+
+          $('.recipients-select2').val(null).prop('multiple', true).select2({
+            placeholder: "Select Any",
+            allowClear: true
+          });
+          
+
         } else {
           $('.multiple-select').attr('name', 'survey');
         }
