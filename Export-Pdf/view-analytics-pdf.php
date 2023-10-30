@@ -155,9 +155,6 @@ if (is_nan($avgScore)) {
 
 $canvasChart = $_POST['canvasData'];
 
-require_once '../dompdf/autoload.inc.php';
-
-use Dompdf\Dompdf;
 
 $html = '<!DOCTYPE html><html lang="en">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
@@ -209,12 +206,12 @@ footer {
 
 
 
-$html .= '<img src="' . $canvasChart . '" />';
+$html .= '<img src="'.$canvasChart.'" />';
 
 $i = 1;
 ksort($survey_data);
 if (count($survey_data) > 0) {
-    $html .= '<table class="table main-table-data">
+    $html .= '<table class="table main-table-data" style="margin-top:100px;">
     <thead class="thead-dark">
     <tr>
         <th scope="col" style="text-align: center;">' . ucfirst($_POST['survey_type']) . ' Name</th>
@@ -257,19 +254,5 @@ if (count($survey_data) > 0) {
     $html .= '';
 }
 
-$html .= '<footer>
-<div style="text-align: center;margin-bottom:10px;" >
-<span style="font-size:14px;">' . POWERED_BY . '</span>
-<center><img  src="../'.FOOTER_LOGO.'" alt="" width="150"/></center>
-</div>
-</footer></div></body></html>';
-
-
-// Instantiate and use the dompdf class 
-$dompdf = new Dompdf();
-$dompdf->loadHtml($html);
-$dompdf->setPaper('A4', 'PORTRAIT');
-// Render the HTML as PDF 
-$dompdf->render();
-// $dompdf->stream('Survey Statics-' . date('Y-m-d-H-i-s') . '.pdf', array("Attachment" => 0));
-$dompdf->stream('Survey Statics-' . date('Y-m-d-H-i-s') . '.pdf', array("Attachment" => true));
+$html .= '</div></body></html>';
+create_mpdf($html , 'Survey Statics-' . date('Y-m-d-H-i-s') . '.pdf','D');

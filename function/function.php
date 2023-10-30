@@ -1290,15 +1290,14 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
                 	</table>';
             $mail->Body = $body;
 
-        
         // Add the attachments to the email
+		
         foreach ($attachments as $key => $filePath) {
             $mail->addAttachment($filePath);
         }
         
         //$mail->SMTPDebug = 4;
-        $mail->send();
-        
+        $mail->send();  
         return true;
     } catch (Exception $e) {
         //echo "Message could not be sent. Mailer Error: {$e}";

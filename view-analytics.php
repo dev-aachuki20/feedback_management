@@ -239,11 +239,11 @@
   </div>
 </section>
 
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.js"></script>
+<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 
 <script type="text/javascript">
   //for graph
@@ -278,16 +278,13 @@
 
 
     function done() {
-      var url = locationChart.toBase64Image();
-      $("#canvasData").val(url);
+      var canvas = locationChart.canvas;
+      var dataUrl = canvas.toDataURL();
+      $("#canvasData").val(dataUrl);
     }
   }
 </script>
-<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
-<!-- Resources -->
-<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script>
+
 <script>
   // start export pdf 
   $(document).on('click', '.export', function() {

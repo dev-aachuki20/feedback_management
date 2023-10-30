@@ -1,7 +1,4 @@
 <?php 
-include('../../function/function.php');
-require('../../function/get_data_function.php');
-
 record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2");
 
 
@@ -13,9 +10,6 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $result_1   = check_differenceDate($current_date,$end_date,'lte');
     $result_2   = check_differenceDate($current_date,$next_schedule,'eq');
     
-    echo 'result_1'.$result_1.'<br>';
-    echo 'result_2'.$result_2.'<br>';
-
     if($result_1 && $result_2){
         $filter = json_decode($row_get_report['filter'],1);
         $data_type = $filter['field'];
@@ -111,6 +105,8 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
             }	
         }
         arsort($row_excel_data);
+       
+
 
         $csv_header = array_keys($row_excel_data[0]);
         $csv_data = implode(',',$csv_header);
@@ -121,8 +117,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
         $csv_handler = fopen ('document/survey-report-question-'.$row_get_report['id'].'.csv','w');
         fwrite ($csv_handler,$csv_data);
         fclose ($csv_handler);
-        
-        die('xcvxcv');
+
     }
 }
 ?>
