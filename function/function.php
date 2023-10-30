@@ -1290,12 +1290,13 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
                 	</table>';
             $mail->Body = $body;
 
+        
         // Add the attachments to the email
         foreach ($attachments as $key => $filePath) {
             $mail->addAttachment($filePath);
         }
         
-        // $mail->SMTPDebug = 4;
+        //$mail->SMTPDebug = 4;
         $mail->send();
         
         return true;

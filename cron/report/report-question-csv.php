@@ -4,12 +4,18 @@ require('../../function/get_data_function.php');
 
 record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2");
 
+
 while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
+    
     $current_date   = date('Y-m-d', time());
     $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
     $result_1   = check_differenceDate($current_date,$end_date,'lte');
     $result_2   = check_differenceDate($current_date,$next_schedule,'eq');
+    
+    echo 'result_1'.$result_1.'<br>';
+    echo 'result_2'.$result_2.'<br>';
+
     if($result_1 && $result_2){
         $filter = json_decode($row_get_report['filter'],1);
         $data_type = $filter['field'];
@@ -22,15 +28,20 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
         if($data_type == 'location'){
             $ans_filter_query .= " and locationid = ".$field_value ;
         }
+        
         if($data_type == 'department'){
             $ans_filter_query .= " and departmentid = ".$field_value ;
         }
+        
         if($data_type == 'group'){
             $ans_filter_query .= " and groupid = ".$field_value ;
         }
+        
         if(!empty($surveyid)){
             $query = "SELECT * FROM answers  where surveyid in($surveyid) ".$ans_filter_query." group by cdate order by cdate DESC;";
-        }else{
+        }
+        
+        else{
             echo "Invalid request"; exit;
         }
 
@@ -45,6 +56,8 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
 
         $flag = false;
         record_set('getdata',$query);
+        
+     
         if($totalRows_getdata>0){
             $i=0;
             $row_excel_data = array();
@@ -108,6 +121,8 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
         $csv_handler = fopen ('document/survey-report-question-'.$row_get_report['id'].'.csv','w');
         fwrite ($csv_handler,$csv_data);
         fclose ($csv_handler);
+        
+        die('xcvxcv');
     }
 }
 ?>
