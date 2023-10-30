@@ -5,14 +5,14 @@ include('../../permission.php');
 require_once dirname(__DIR__, 2). '/vendor/autoload.php';
 $mpdf = new \Mpdf\Mpdf();
 
-record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1");
+record_set("get_scheduled_report","select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
 while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
     $current_date   = date('Y-m-d', time());
     $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
     $result_1   = check_differenceDate($current_date,$end_date,'lte');
-    $result_2   = check_differenceDate($current_date,$next_schedule,'eq');
+    $result_2   = check_differenceDate($current_date,$next_schedule,'lte');
     if($result_1 && $result_2){
       
         $filter = json_decode($row_get_report['filter'],1);
@@ -23,7 +23,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
             $survey_id = implode(',',$survey_id);
         }
         // fetch survey data
-        $querys = 'SELECT * FROM answers where id!=0 ';
+        $queries = 'SELECT * FROM answers where id!=0 ';
         $groupBy = '';
         if($data_type == 'location'){
             $query = " and surveyid =".$survey_id." and locationid in ($field_value)";  
@@ -46,7 +46,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
 
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
-        record_set("get_entry",$querys.$query." GROUP by cby");
+        record_set("get_entry",$queries.$query." GROUP by cby");
         if($totalRows_get_entry){
             $survey_data = array();
             $to_bo_contacted = 0;

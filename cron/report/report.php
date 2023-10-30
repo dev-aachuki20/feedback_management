@@ -450,4 +450,3 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
         }
     }
 }
-?>
