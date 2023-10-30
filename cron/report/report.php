@@ -429,7 +429,7 @@ while($row_get_report= mysqli_fetch_assoc($get_scheduled_report)){
                     $to = $user_details['email'];
                     $from_mail = "dgs@gmail.com"; 
                     $name = $user_details['name'];
-                    $subject ="My subject"; 
+                    $subject ="Schedule Report"; 
                     $message = 'Hello '.$name.' you have schedule report';
                     $mail = cron_emails($attachments,$to,$from_mail,$name,$subject,$message);
                 }

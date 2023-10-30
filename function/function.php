@@ -1250,14 +1250,52 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
         
         $mail->isHTML(true);
         $mail->Subject = $subject;
-        $mail->Body    = $message;
-        
+        $body ='<table width="100%" style="background-color:#dbdbdb;">
+                	<tr>
+                	<td>
+                	<table align="center" width="690" border="">
+                		<tr>
+                			<td style="background-color:#fff;" width="94%">
+                			<table width="100%;">
+                			<tr>
+                			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                			<tr>
+                			<td align="center"><h2> SURVEY REPORT</h2></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                
+                			<tr>
+                				<td><p style="font-size:15px;margin:10px;">Hello '.$name.',</p> <br>
+                					<p style="font-size:15px;margin:10px;">You have received schedule reports with attachments.</p>
+                				</td>
+                			</tr>
+                			<tr>
+                				<td></td>
+                			</tr>
+                			<tr>
+                			<td height="20px;">&nbsp;</td>
+                			</tr>
+                			</table>
+                		</td>
+                	</tr>
+                		<tr>
+                		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		</td>
+                		</tr>
+                		</table></td>
+                	</tr>
+                	</table>';
+            $mail->Body = $body;
+
         // Add the attachments to the email
         foreach ($attachments as $key => $filePath) {
             $mail->addAttachment($filePath);
         }
         
-        $mail->SMTPDebug = 4;
+        // $mail->SMTPDebug = 4;
         $mail->send();
         
         return true;
