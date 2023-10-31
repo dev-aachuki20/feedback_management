@@ -130,7 +130,7 @@
   </div>
 
   <div class="col-md-4" style="width: 33.33333333%;margin-bottom: 10px;">
-    <form action="" id="document_form" method="post">
+    <form action="" id="document_form" method="post" target="_blank">
       <input type="hidden" name="survey" id="survey_id" value="">
       <input type="hidden" name="sdate" id="start_date" value="">
       <input type="hidden" name="edate" id="end_date" value="">
@@ -139,11 +139,11 @@
       <input type="hidden" name="canvasData" id="canvasData" value="">
 
       <div class="row">
-        <div class="col-md-6 custum-btn">
-          <a class="btn btn-xs btn-info export" id="exportPDF" href="#" data-action="export">Export PDF</a>
+        <div class="col-md-3 custum-btn">
+          <a class="btn btn-xs btn-info export" id="exportPDF" href="#" data-action="export">VIEW PDF</a>
         </div>
         <div class="col-md-6 custum-btn">
-          <a class="btn btn-xs btn-info export" id="exportCSV" href="#" data-action="csv">Export CSV</a>
+          <a class="btn btn-xs btn-info export" id="exportCSV" href="#" data-action="csv">DOWNLOAD CSV</a>
         </div>
       </div>
     </form>

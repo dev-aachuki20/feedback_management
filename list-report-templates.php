@@ -159,7 +159,7 @@ if (isset($_POST['schedule_btn'])) {
           <div class="form-group row schedule-field">
             <label for="interval" class="col-sm-4 col-form-label">Send to User</label>
             <div class="col-sm-8">
-              <select class="form-control recipients-select2" id="send_to" name="send_to[]" placeholder="Select Any User" multiple>
+              <select class="form-control recipients-select2" id="send_to" name="send_to[]" placeholder="Select Any User" multiple required>
                 <?php foreach (getUsers() as $key => $value) { ?>
                   <option value="<?php echo $key; ?>"><?= $value ?></option>
                 <?php } ?>
@@ -269,6 +269,10 @@ if (isset($_POST['schedule_btn'])) {
 
         } else {
           $('.multiple-select').attr('name', 'survey');
+          $('.recipients-select2').val(null).prop('multiple', true).select2({
+            placeholder: "Select Any",
+            allowClear: true
+          });
         }
       }
     })
@@ -321,8 +325,11 @@ if (isset($_POST['schedule_btn'])) {
     });
 
     $("#schedule_btn").on('click', function(event) {
-      console.log(activeModalType);
       if (activeModalType === "preview") {
+          if ($('#template_survey').val() === '' || $('#template_survey').val() === null) {
+            alert('Please select a survey!');
+            return false;
+          }
         let flag = $('.preview-file-type').is(':checked');
         if (flag == false) {
           alert('Please select a preview format!');

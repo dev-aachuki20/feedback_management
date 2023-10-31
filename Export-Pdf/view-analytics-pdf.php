@@ -255,4 +255,4 @@ if (count($survey_data) > 0) {
 }
 
 $html .= '</div></body></html>';
-create_mpdf($html , 'Survey Statics-' . date('Y-m-d-H-i-s') . '.pdf','D');
+create_mpdf($html , 'Survey Statics-' . date('Y-m-d-H-i-s') . '.pdf','I');

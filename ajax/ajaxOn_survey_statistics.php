@@ -261,7 +261,6 @@ if(count($survey_data)>0){
 
         if($j > 14 && $i == $j && $i < count($survey_data) ){
             $j = $j+9;
-            
             $html .= '<div class="html2pdf__page-break" style="margin-top: 50px"></div>';
         }
         $i++;
@@ -269,8 +268,11 @@ if(count($survey_data)>0){
 } else {
     $html .= '<p style="margin-left: 21px !important;">No result found</p>';
 }
+
+$footer_flag = (count($survey_data)-6)%9;
+$data['survey_data_count'] = count($survey_data);
 $data['html'] = $html;
 $data['result'] = $survey_data;
-$data['footer_flag'] = (count($survey_data)-6)%9;
+$data['footer_flag'] = abs($footer_flag);
 echo json_encode($data);
 die();

@@ -155,13 +155,13 @@ p {
                                         <td colspan="3" style="text-align:center;margin-top:100px;"> <img src="<?=baseUrl().MAIN_LOGO?>" width="200"></td>
                                         </tr>
                                         <tr >
-                                            <td colspan="3" style="text-align:center;height: 30px;"></td>
+                                            <td colspan="3" style="text-align:center;height: 30px;color:red;font-size:20px;"></td>
                                         </tr>
                                         <tr class="borderClass filterSurvey">
-                                            <td colspan="3" style="text-align:center;font-size:18px;"><strong> <?=strtoupper('Survey Statistics')?></strong></td>
+                                            <td colspan="3" style="text-align:center;font-size:20px;"><strong><?=strtoupper('Survey Statistics')?></strong></td>
                                         </tr>
                                         <tr class="borderClass filterSurveyType">
-                                            <td colspan="3" style="text-align:center;font-size:20px;"> </td>
+                                            <td colspan="3" style="text-align:center;font-size:17px;"> </td>
                                         </tr>
                                         <tr class="borderClass filterDate" style="font-weight: 900;font-size: 16px;">
                                             <td  style="text-align:center;">Start Date: <span class="pdf-sdate"></span></td>
@@ -332,25 +332,34 @@ $(document).on('click','.search',function(){
         },
         success:function(response){
             response = JSON.parse(response);
-
-            if(parseInt(response.footer_flag) !=0 && parseInt(response.footer_flag) <=3){
-                $('#pdf-footer').css("margin-top", '675px');
-            }else if( parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
-                $('#pdf-footer').css("margin-top", '348px');
+            // console.log('footer_flag', response.footer_flag);
+            // console.log('survey_data_count',response.survey_data_count);
+            
+            if(parseInt(response.survey_data_count) > 6){
+                if(parseInt(response.footer_flag) !=0 && parseInt(response.footer_flag) <=3){
+                    $('#pdf-footer').css("margin-top", '675px');
+                }else if( parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
+                    $('#pdf-footer').css("margin-top", '348px');
+                }else{
+                    $('#pdf-footer').css("margin-top", '20px');
+                }
             }else{
-                $('#pdf-footer').css("margin-top", '20px');
+                if(parseInt(response.footer_flag) !=0 && parseInt(response.footer_flag) <=3){
+                    $('#pdf-footer').css("margin-top", '210px');
+                }else if( parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
+                    $('#pdf-footer').css("margin-top", '500px');
+                }
             }
+            
 
             $('.renderChart').html(response.html);
             $('.loader').hide();
             $('.renderChart').show();
-            //console.log(response.result);
+
             let results = response.result;
             let classid = 1;
-            console.log(response,'results');
             $.each(results, function( k, v ) {
                 let value_result = results[k]['data'];
-                //console.log(value_result);
                 let i=0;
                 let sum = 0;
                     $.each(value_result, function( a, b ) {
@@ -408,7 +417,6 @@ function ajx_report_type(type){
 * chart js start
 */
 function mychart(val,classes,color){
-    console.log(val);
     var ctx = document.getElementById(classes).getContext("2d");
     var  values = 0.01 * val;
     if(isNaN(values)){

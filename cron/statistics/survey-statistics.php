@@ -1,8 +1,9 @@
 <?php
-require('../../function/function.php');
-require('../../function/get_data_function.php');
-include('../../permission.php');
-require_once dirname(__DIR__, 2). '/vendor/autoload.php';
+require dirname(__DIR__, 2) . '/function/function.php';
+require dirname(__DIR__, 2) . '/function/get_data_function.php';
+include dirname(__DIR__, 2) . '/permission.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+
 $mpdf = new \Mpdf\Mpdf();
  
 record_set("get_report","select * from schedule_report_new ORDER BY created_at DESC;

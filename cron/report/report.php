@@ -1,21 +1,22 @@
 <?php
-require('../../function/function.php');
-require('../../function/get_data_function.php');
-include('../../permission.php');
+require dirname(__DIR__, 2) . '/function/function.php';
+require dirname(__DIR__, 2) . '/function/get_data_function.php';
+include dirname(__DIR__, 2) . '/permission.php';
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-$mpdf = new \Mpdf\Mpdf();
 
 record_set("get_scheduled_report", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
 
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
+    $mpdf = new \Mpdf\Mpdf();
+
     $current_date   = date('Y-m-d', time());
     $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
     $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
     $result_1   = check_differenceDate($current_date, $end_date, 'lte');
     $result_2   = check_differenceDate($current_date, $next_schedule, 'lte');
 
-    if ($result_1 && $result_2) {
+    if ($result_1 && $result_2 && $row_get_report['send_to'] != null) {
 
         $filter = json_decode($row_get_report['filter'], 1);
         $data_type = $filter['field'];
@@ -174,7 +175,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $path[] = $dir;
         download_csv_folder($survey_data, $data_type, $dir);
 
-
+        $html = '';
         $counter = 1;
         $j = 6;
         $html = '<!DOCTYPE html>
@@ -410,45 +411,43 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $mpdf->SetHTMLFooter($footer);
         $mpdf->Output($dir, 'F');
 
-        if ($row_get_report['send_to'] != null) {
-            $attachments = array('document/survey-report-' . $row_get_report['id'] . '.csv', 'document/survey-report-' . $row_get_report['id'] . '.pdf');
-            $mail_users = explode(",", $row_get_report['send_to']);
-            foreach ($mail_users as $userId) {
-                //send mail
-                $user_details = get_user_datails($userId);
-                $to = $user_details['email'];
-                $from_mail = "dgs@gmail.com";
-                $name = $user_details['name'];
-                $subject = "Schedule Report";
-                $message = 'Hello ' . $name . ' you have schedule report';
-                $mail = cron_emails($attachments, $to, $from_mail, $name, $subject, $message);
-            }
+        $attachments = array('document/survey-report-' . $row_get_report['id'] . '.csv', 'document/survey-report-' . $row_get_report['id'] . '.pdf');
+        $mail_users = explode(",", $row_get_report['send_to']);
+        foreach ($mail_users as $userId) {
+            //send mail
+            $user_details = get_user_datails($userId);
+            $to = $user_details['email'];
+            $from_mail = "dgs@gmail.com";
+            $name = $user_details['name'];
+            $subject = "Schedule Report";
+            $message = 'Hello ' . $name . ' you have schedule report';
+            $mail = cron_emails($attachments, $to, $from_mail, $name, $subject, $message);
+        }
 
-            if (count($attachments) > 0) {
-                foreach ($attachments as $key => $value) {
-                    echo "<br>".$value."<br>";
-                    unlink($value);
-                }
+        // update next schedule date with interval
+        $nextScheduledDate = $row_get_report['next_date'];
+        $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
+        $data = array(
+            "next_date" => $updateSchedule,
+        );
+        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $key => $value) {
+                // echo "<br>" . $value . "<br>";
+                unlink($value);
             }
-            
-            // update next schedule date with interval
-            $nextScheduledDate = $row_get_report['next_date'];
-            $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
-            $data = array(
-                "next_date" => $updateSchedule,
-            );
-            $update =    dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
         }
     }
 }
 
-$anotherArray = array('document/survey-report-1.csv', 'document/survey-report-1.pdf', 'document/survey-report-18.csv', 'document/survey-report-27.pdf' );
+// $anotherArray = array('document/survey-report-1.csv', 'document/survey-report-1.pdf', 'document/survey-report-18.csv', 'document/survey-report-27.pdf');
 
-if (count($anotherArray) > 0) {
-    foreach ($anotherArray as $key => $value) {
-        if(file_exists($value)){
-            echo "<br>".$value."<br>";
-            unlink($value);
-        }
-    }
-}
+// if (count($anotherArray) > 0) {
+//     foreach ($anotherArray as $key => $value) {
+//         if (file_exists($value)) {
+//             echo "<br>" . $value . "<br>";
+//             unlink($value);
+//         }
+//     }
+// }
