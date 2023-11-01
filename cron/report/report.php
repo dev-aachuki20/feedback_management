@@ -384,9 +384,9 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                         </div>';
                 }
 
-                if ($counter == 6) {
+                if ($counter == 6 && count($survey_data) > 6) {
                     $j = $j + 9;
-                    $html .= '<pagebreak>';
+                    $html .= '<pagebreak/>';
                 }
 
                 if ($j > 14 && $counter == $j && $counter < count($survey_data)) {

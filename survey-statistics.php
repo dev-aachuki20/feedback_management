@@ -344,10 +344,13 @@ $(document).on('click','.search',function(){
                     $('#pdf-footer').css("margin-top", '20px');
                 }
             }else{
-                if(parseInt(response.footer_flag) !=0 && parseInt(response.footer_flag) <=3){
-                    $('#pdf-footer').css("margin-top", '210px');
-                }else if( parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
+                if(parseInt(response.survey_data_count) !=0 && parseInt(response.survey_data_count) <=3){
                     $('#pdf-footer').css("margin-top", '500px');
+                }else if(parseInt(response.footer_flag) !=0 &&  parseInt(response.footer_flag) <= 6){
+                    $('#pdf-footer').css("margin-top", '210px');
+                }
+                else{
+                    $('#pdf-footer').css("margin-top", '210px');
                 }
             }
             

@@ -254,12 +254,12 @@ if(count($current_data)>0){
             <div class="col-md-4">
                 <div class="col-md-6 text-right">
                 <a href="./Export-Pdf/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
-                    <button class="btn btn-primary pdf-download">PDF</button>
+                    <button class="btn btn-primary pdf-download">VIEW PDF</button>
                 </a>
                 </div>
                 <div class="col-md-6" style="padding-left: 5px;">
                 <a href="./Export-Csv/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
-                    <button class="btn btn-primary pdf-download">CSV</button>
+                    <button class="btn btn-primary pdf-download">DOWNOAD CSV</button>
                 </a>
                 </div>
             </div>

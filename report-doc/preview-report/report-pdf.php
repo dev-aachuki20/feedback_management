@@ -367,14 +367,16 @@ if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
                                             </div>
                                         </div>';
             }
-            if ($counter == 6) {
+            
+            
+            if ($counter == 6 && count($survey_data) > 6) {
                 $j = $j + 9;
-                $html .= '<pagebreak>';
+                $html .= '<pagebreak/>';
             }
 
             if ($j > 14 && $counter == $j && $counter < count($survey_data)) {
                 $j = $j + 9;
-                $html .= '<pagebreak>';
+                $html .= '<pagebreak/>';
             }
 
             $counter++;

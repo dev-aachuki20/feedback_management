@@ -205,9 +205,9 @@ if (isset($_GET['export']) and $_GET['export'] == 'csv') {
     die();
 }
 //$html.='<h2 class="survey_name text-center" style="margin:0px;font-size:20px;">'.strtoupper($survey_name).'</h2>';
-if(count($survey_data)>0){
-    foreach($survey_data as $key =>$datasurvey){ 
-        $total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
+if (count($survey_data) > 0) {
+    foreach ($survey_data as $key => $datasurvey) {
+        $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
         $total =  round($total, 2);
         $titleName = '';
         if ($_POST['data_type'] == 'location') {
@@ -245,7 +245,7 @@ if(count($survey_data)>0){
                     <span class="g-persent" style="font-size:18px;margin-left: 15px;"><strong>' . $total . ' %</strong></span>
                     <canvas id="chart_' . $i . '"></canvas>
                         <div class="row" style="text-align:center;">
-                            <div class="col-md-12"><span class="total-count"><strong>TOTAL SURVEYS:' . $totalSurvey . '</strong></span></div>
+                            <div class="col-md-12"><span class="total-count"><strong>TOTAL SURVEYS: ' . $totalSurvey . '</strong></span></div>
                         </div>
                         <div class="row" style="text-align:center;">
                             <div class="col-md-12"><span class="total-count"><strong>CONTACT REQUESTS: ' . ($contacted) . '</strong></span></div>
@@ -254,13 +254,13 @@ if(count($survey_data)>0){
                 </div>
             </div>';
 
-        if ($i == 6) {
-            $j = $j+9;
+        if ($i == 6 && count($survey_data) > 6) {
+            $j = $j + 9;
             $html .= '<div class="html2pdf__page-break"></div>';
-        } 
+        }
 
-        if($j > 14 && $i == $j && $i < count($survey_data) ){
-            $j = $j+9;
+        if ($j > 14 && $i == $j && $i < count($survey_data)) {
+            $j = $j + 9;
             $html .= '<div class="html2pdf__page-break" style="margin-top: 50px"></div>';
         }
         $i++;
@@ -269,7 +269,7 @@ if(count($survey_data)>0){
     $html .= '<p style="margin-left: 21px !important;">No result found</p>';
 }
 
-$footer_flag = (count($survey_data)-6)%9;
+$footer_flag = (count($survey_data) - 6) % 9;
 $data['survey_data_count'] = count($survey_data);
 $data['html'] = $html;
 $data['result'] = $survey_data;

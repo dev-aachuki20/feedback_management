@@ -302,7 +302,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
   <div id="reportPage">
     <div align="center"><img src="<?=MAIN_LOGO?>" width="200"></div>
-    <h2 align="center" style="margin:20px;"> <?= $row_get_survey['name']; ?> </h2>
+    <h2 align="center" style="margin:20px;"> <?= strtoupper($row_get_survey['name']); ?> </h2>
     <?php 
     record_set("get_loc_dep", "select locationid,groupid,roleid,departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);
     $row_get_loc_dep = mysqli_fetch_assoc($get_loc_dep);
@@ -367,7 +367,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
         </table>
       <?php } ?>
       <?php if(isset($_GET['score'])){ ?> 
-        <h2 class="text-center" style="margin-top:20px;">Survey Score: <?=$_GET['score'] ?>%</h2>
+        <h2 class="text-center" style="margin-top:20px;">SURVEY SCORE: <?=$_GET['score'] ?>%</h2>
       <?php } ?>
     </div>
     
