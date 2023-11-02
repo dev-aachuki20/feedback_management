@@ -98,4 +98,14 @@ foreach($row_excel_data as $data){
 	}
 	echo implode("\t", array_values($data)) . "\r\n";	
 }
+
+// $zipArchive = new ZipArchive();
+// $zipFile = "./example-zip-file.zip";
+// if ($zipArchive->open($zipFile, ZipArchive::CREATE) !== TRUE) {
+//     exit("Unable to open file.");
+// }
+// $folder = 'preview-document/';
+// createZip($zipArchive, $folder);
+// $zipArchive->close();
+// echo 'Zip file created.';
 ?>

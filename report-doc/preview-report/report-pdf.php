@@ -147,18 +147,12 @@ if ($totalRows_get_entry) {
 ksort($survey_data);
 //export csv in survey static
 
-// echo "<pre>";
-// print_r($_POST);
-// echo "</pre>";
-// die('hjhj');
-
-if (isset($_POST['export_csv']) and $_POST['export_csv'] == 1) {
+if (isset($_POST['export_document']) and $_POST['export_document'] == 1) {
     $survey_name = getSurvey()[$survey_id];
     export_csv_file($survey_data, $data_type, $survey_name);
 }
 
-if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
-
+if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
     $counter = 1;
     $j = 6;
     $html = '<!DOCTYPE html>

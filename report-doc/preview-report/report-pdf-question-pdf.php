@@ -2,6 +2,7 @@
 include('../../function/function.php');
 
 $filter = $_POST;
+
 $data_type = $filter['sch_template_field_name'];
 $surveyid   = $filter['survey'];
 $field_value = implode(',', $filter['template_field']);
@@ -18,7 +19,6 @@ if (isset($surveyid)) {
   echo 'Missing survey ID.';
   exit;
 }
-
 $ans_filter_query = '';
 if ($data_type == 'location' && $field_value != '') {
   $ans_filter_query .= " and locationid IN($field_value)";
@@ -60,12 +60,15 @@ record_set("get_location", "select name from locations where id = '" . $row_get_
 $row_get_location = mysqli_fetch_assoc($get_location);
 
 
-if (isset($_POST['export_csv']) and $_POST['export_csv'] == 1) {
+
+//if (isset($_POST['export_csv']) and $_POST['export_csv'] == 1) {
+if (isset($_POST['export_document']) and $_POST['export_document'] == 1) {  
   $survey_name = getSurvey()[$survey_id];
   export_csv_file($survey_data, $data_type, $survey_name);
 }
 
-if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
+//if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
+if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
   <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
     <table width="100%">
@@ -251,5 +254,5 @@ if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
     }
     $message .= '</div>';
   }
-  create_mpdf($message, 'report.pdf', 'I');
+  create_mpdf($message, 'report.pdf', 'D');
 }

@@ -118,6 +118,7 @@ if (isset($_POST['schedule_btn'])) {
           <input type="hidden" id="sch_template_id" name="sch_template_id" value="">
           <input type="hidden" id="sch_template_field_name" name="sch_template_field_name" value="">
           <input type="hidden" id="template_filter" name="template_filter" value="">
+          <input type="hidden" id="report_type_data" value=""/>
           <div class="form-group row schedule-field">
             <label for="report-name" class="col-sm-4 col-form-label">Report Name</label>
             <div class="col-sm-8">
@@ -166,8 +167,8 @@ if (isset($_POST['schedule_btn'])) {
               </select>
             </div>
           </div>
-
-          <div class="form-group row export-checkboxes text-center" style="display:none;">
+          <!-- csv export old -->
+          <!-- <div class="form-group row export-checkboxes text-center" style="display:none;">
             <div class="form-check">
               <input class="form-check-input preview-file-type" name="export_pdf" id="chk-export-pdf" type="checkbox" value="1" id="flexCheckDefault">
               <label class="form-check-label" for="flexCheckDefault">
@@ -180,9 +181,11 @@ if (isset($_POST['schedule_btn'])) {
                 CSV
               </label>
             </div>
-          </div>
-
+          </div> -->
+          <input type="hidden" name="export_document" id="chk-export-csv" value="">       
           <div class="modal-footer">
+            <button type="submit" class="btn btn-primary export-doc"  data-type="pdf">DOWNLOAD PDF</button>
+            <button type="submit" class="btn btn-primary export-doc"  data-type="csv">DOWNLOAD CSV</button>
             <button type="submit" class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
             <button type="button" class="btn btn-danger closes" data-dismiss="modal" aria-label="Close" style="background-color:#ff1c00 !important;"> Cancel</button>
           </div>
@@ -191,7 +194,6 @@ if (isset($_POST['schedule_btn'])) {
     </div>
   </div>
 </div>
-
 
 <script type="text/javascript">
   let activeReportType = 0;
@@ -221,11 +223,14 @@ if (isset($_POST['schedule_btn'])) {
       } else if (report_type == 2) {
         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
       }
+      $('.export-doc').show();
+      $('#schedule_btn').hide();
 
       //$('.second_form').attr("target", "_blank");
 
     } else {
-
+      $('.export-doc').hide();
+      $('#schedule_btn').show();
       $('.export-checkboxes').hide();
       $('#start_date').prop('required', true);
       $('#end_date').prop('required', true);
@@ -242,7 +247,7 @@ if (isset($_POST['schedule_btn'])) {
     $("#sch_template_id").val(template_id);
     $("#sch_template_field_name").val(template_field);
     $("#template_filter").val(template_filter);
-
+    $("#report_type_data").val(report_type);
     $("#label_template_field").text(template_field.toUpperCase());
     $.ajax({
       url: "ajax/common_file.php",
@@ -309,37 +314,75 @@ if (isset($_POST['schedule_btn'])) {
     }
   });
 
-  $(document).ready(function() {
-    $('input.form-check-input').on('change', function() {
-      if (activeReportType === 2) {
-        if ($(this).attr('name') === "export_pdf") {
-          $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
-        }
-        if ($(this).attr('name') === "export_csv") {
-          $('.second_form').attr('action', './report-doc/preview-report/report-question-csv.php');
-        }
+  // csv export old
+  // $(document).ready(function() {
+  //   $('input.form-check-input').on('change', function() {
+  //     if (activeReportType === 2) {
+  //       if ($(this).attr('name') === "export_pdf") {
+  //         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
+  //       }
+  //       if ($(this).attr('name') === "export_csv") {
+  //         $('.second_form').attr('action', './report-doc/preview-report/report-question-csv.php');
+  //       }
+  //     }
+  //     $('input.form-check-input').not(this).prop('checked', false);
+  //   });
+
+  //   $("#schedule_btn").on('click', function(event) {
+  //     if (activeModalType === "preview") {
+  //         if ($('#template_survey').val() === '' || $('#template_survey').val() === null) {
+  //           alert('Please select a survey!');
+  //           return false;
+  //         }
+  //       let flag = $('.preview-file-type').is(':checked');
+  //       if (flag == false) {
+  //         alert('Please select a preview format!');
+  //         return false;
+  //       } else {
+  //         $(".second_form").submit();
+  //       }
+  //     } 
+  //   });
+  // });
+
+  $('.export-doc').click(function(event){
+    event.preventDefault();
+    let type = $(this).data('type');
+    let reportType = $('#report_type_data').val();
+    let value = (type == 'pdf') ? 2: 1;
+    let isSurvey = $('#template_survey').val();
+    let templateField = $('#template_field').val();
+
+
+    $('#chk-export-csv').val(value);
+    if(reportType == 1){
+    }else{
+      if(type =='pdf'){
+        $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
+      }else{
+        $('.second_form').attr('action', './report-doc/preview-report/report-question-csv.php');
       }
+    }
+    if(isSurvey == null){
+      isSurvey = [];
+    }
+    if(templateField !== undefined && templateField == null){
+      console.log("case 1");
+      templateField = [];
+    }
+    console.log(templateField,'isSurvey');
 
-
-      $('input.form-check-input').not(this).prop('checked', false);
-    });
-
-    $("#schedule_btn").on('click', function(event) {
-      if (activeModalType === "preview") {
-          if ($('#template_survey').val() === '' || $('#template_survey').val() === null) {
-            alert('Please select a survey!');
-            return false;
-          }
-        let flag = $('.preview-file-type').is(':checked');
-        if (flag == false) {
-          alert('Please select a preview format!');
-          return false;
-        } else {
-          $(".second_form").submit();
-        }
-      } 
-    });
-
-
-  });
+    if(isSurvey.length == 0){
+      alert('Survey is required');
+      return false; 
+    }else if(templateField !== undefined && templateField.length ==0){
+      let text = $('.filter_data').find("#label_survey_field").text();
+      text = text.toLowerCase();
+      
+      alert(`${text[0].toUpperCase()+ text.substring(1)} is required`);
+      return false;
+    }else{
+      $('.second_form').submit();
+    }
+  })
 </script>

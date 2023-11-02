@@ -11,11 +11,16 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require_once dirname(__DIR__). '/vendor/autoload.php';
 
-// define('SMTP_HOST', "ssl://mail.dgam.app");
-// define('SMTP_USER', "noreply@dgam.app");
-// define('SMTP_PASS', "x%k*&]ulld]~");
-// define('SMTP_PORT', "465");
+define('SMTP_HOST', "mail.dgfm.app");
+define('SMTP_USER', "web@dgfm.app");
+define('SMTP_PASS', "eKI?pbTRvuj3");
+define('SMTP_PORT', "995");
 
+// define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+// define('SMTP_USER', "9bb50416f293ea");
+// define('SMTP_PASS', "a28f5c4d4023f2");
+// define('SMTP_PORT', "2525");
+// define('SMTPAuth', true);
 //mail trap
 
 // end 
@@ -1302,4 +1307,50 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
     } catch (Exception $e) {
         //echo "Message could not be sent. Mailer Error: {$e}";
     }
+}
+
+function createZip($zipArchive, $folder){
+    if (is_dir($folder)) {
+        if ($f = opendir($folder)) {
+            while (($file = readdir($f)) !== false) {
+                if (is_file($folder . $file)) {
+                    if ($file != '' && $file != '.' && $file != '..') {
+                        $zipArchive->addFile($folder . $file);
+                    }
+                } else {
+                    if (is_dir($folder . $file)) {
+                        if ($file != '' && $file != '.' && $file != '..') {
+                            $zipArchive->addEmptyDir($folder . $file);
+                            $folder = $folder . $file . '/';
+                            createZip($zipArchive, $folder);
+                        }
+                    }
+                }
+            }
+            closedir($f);
+        } else {
+            exit("Unable to open directory " . $folder);
+        }
+    } else {
+        exit($folder . " is not a directory.");
+    }
+}
+
+function downloadZip($filename,$absoluteFilePath ){
+	if (file_exists($filename)) {
+		// adjust the below absolute file path according to the folder you have downloaded
+		// the zip file
+		// I have downloaded the zip file to the current folder
+		header('Pragma: public');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Cache-Control: private', false);
+		// content-type has to be defined according to the file extension (filetype)
+		header('Content-Type: application/zip');
+		header('Content-Disposition: attachment; filename="' . basename($filename) . '";');
+		header('Content-Transfer-Encoding: binary');
+		header('Content-Length: ' . filesize($absoluteFilePath));
+		readfile($absoluteFilePath);
+		// exit();
+	}
 }
