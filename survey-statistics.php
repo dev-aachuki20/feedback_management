@@ -116,29 +116,29 @@ p {
                                 </div>
                             <!-- </form>     -->
                         </div>
-                        <div class="row" style="text-align: center;">
-                            <div class="col-md-2 custum-btn">
+                        <div class="survey-statistics-btns" style="text-align: center;">
+                            <div class="custum-btn">
                                 <button type="button" class="btn btn-success btn-big btn-green large-btn schedule_btn" data-type="schedule">SCHEDULE NOW</button>
                             </div>
-                            <div class="col-md-2 custum-btn">
+                            <div class="custum-btn">
                                 <a href="?page=view-schedule-report&type=<?=$_GET['type']?>">
                                     <button type="button" class="btn btn-success btn-big btn-green large-btn">VIEW SCHEDULE</button>
                                 </a>
                             </div>
-                            <div class="col-md-4"style="width: 33.33333333%" >
+                            <div>
                                 <form action="" id="document_form" method="post">
                                     <input type="hidden" name="survey" id="survey_id" value="">
                                     <input type="hidden" name="sdate"  id="start_date" value="">
                                     <input type="hidden" name="edate"  id="end_date" value="">
                                     <input type="hidden" name="data_type" id="survey_data_type" value="">
                                     <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
-                                    <div class="row">
-                                    <div class="col-md-6 custum-btn">
-                                        <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">VIEW PDF</button>
-                                    </div>
-                                    <div class="col-md-6 custum-btn">
-                                        <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">DOWNLOAD CSV</button>
-                                    </div>
+                                    <div class="form-right-btns">
+                                        <div class="custum-btn">
+                                            <button type="button" id="view-pdf" class="btn btn-big btn-primary large-btn" data-type="pdf">VIEW PDF</button>
+                                        </div>
+                                        <div class="custum-btn">
+                                            <button type="button" id="download-csv" class="btn btn-big btn-primary large-btn" data-type="csv">DOWNLOAD CSV</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>

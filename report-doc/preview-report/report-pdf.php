@@ -164,7 +164,7 @@ if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
     $html = '<!DOCTYPE html>
             <html lang="en">
             <head>
-                <title>Test</title>
+                <title>REPORT PDF</title>
                 <style>
                     * {
                         margin: 0;
@@ -390,5 +390,5 @@ if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
 
     // echo $html;
     // die();
-    create_mpdf($html, 'report.pdf', 'I');
+    create_mpdf($html, 'report.pdf', 'D');
 }

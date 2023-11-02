@@ -140,10 +140,10 @@
 
       <div class="row">
         <div class="col-md-3 custum-btn">
-          <a class="btn btn-xs btn-info export" id="exportPDF" href="#" data-action="export">VIEW PDF</a>
+          <a class="btn btn-primary" id="exportPDF" href="#" data-action="export">VIEW PDF</a>
         </div>
         <div class="col-md-6 custum-btn">
-          <a class="btn btn-xs btn-info export" id="exportCSV" href="#" data-action="csv">DOWNLOAD CSV</a>
+          <a class="btn btn-primary" id="exportCSV" href="#" data-action="csv">DOWNLOAD CSV</a>
         </div>
       </div>
     </form>

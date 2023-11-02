@@ -239,13 +239,13 @@ if(isset($_POST['submit'])){
 	    	sendNotificationThreshold($_GET['surveyid'],$_POST);
 	}
 
-	if(!empty($row_get_survey['alter_email']) and $row_get_survey['contact_requested'] == $row_get_survey['isEnableContacted']){
+	if(!empty($row_get_survey['alter_email']) and (($to_be_contacted == 1 && $row_get_survey['contact_requested']==1) || ($to_be_contacted == 0 && $row_get_survey['contact_requested']==2))){
 		$to_mail['name'] = 'User';
 		$to_mail['email'] = $row_get_survey['alter_email'];
 	}
 	if(count($to_mail) > 0){
 		//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
-		$contacted = $row_get_survey['isEnableContacted'];
+		$contacted = $to_be_contacted;
 		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $contacted );
 	}
 	$msg = "Question Submitted Successfully";

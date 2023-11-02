@@ -247,22 +247,22 @@ array_multisort($key_values, SORT_DESC, $current_data);
 // send data with table
 if(count($current_data)>0){
 
-    $html ='<div class="row">
-            <div class="col-md-8">
-                <h2 class="survey-title text-right">'.$surveyName.'</h2>
-            </div>
-            <div class="col-md-4">
-                <div class="col-md-6 text-right">
-                <a href="./Export-Pdf/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
-                    <button class="btn btn-primary pdf-download">VIEW PDF</button>
-                </a>
+    $html ='<div class="leagues-inner-table">
+                <div class="leagues-inner-title">
+                    <h2 class="survey-title">'.$surveyName.'</h2>
                 </div>
-                <div class="col-md-6" style="padding-left: 5px;">
-                <a href="./Export-Csv/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
-                    <button class="btn btn-primary pdf-download">DOWNOAD CSV</button>
-                </a>
+                <div class="leagues-inner-bbtn">
+                    <div class="leagues_inbtn">
+                        <a href="./Export-Pdf/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
+                            <button class="btn btn-primary pdf-download">VIEW PDF</button>
+                        </a>
+                    </div>
+                    <div class="leagues_inbtn">
+                        <a href="./Export-Csv/view-league.php?survey='.$surveyid .'&fdate='.$fdate.'&sdate='.$sdate.'&survey_type='.$survey_type.'">
+                            <button class="btn btn-primary pdf-download">DOWNOAD CSV</button>
+                        </a>
+                    </div>
                 </div>
-            </div>
         </div>';
     $html .='<div id="table-containerr">    
             <div class="pdf-head" style="display: none;">

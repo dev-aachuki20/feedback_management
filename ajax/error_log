@@ -25,3 +25,5 @@ Stack trace:
 #0 {main}
   thrown in /home/dataguk/psurvey.datagroup.uk/ajax/ajaxOnSelectClientLocation.php on line 8
 [03-Feb-2021 10:26:35 UTC] PHP Parse error:  syntax error, unexpected 'echo' (T_ECHO) in /home/dataguk/psurvey.datagroup.uk/ajax/ajaxOnSelectClientLocation.php on line 20
+[01-Nov-2023 07:43:03 UTC] PHP Parse error:  syntax error, unexpected 'Source' (T_STRING) in /home/dgfm/demo.dgfm.app/ajax/view-league-data.php on line 286
+[01-Nov-2023 07:43:06 UTC] PHP Parse error:  syntax error, unexpected 'Source' (T_STRING) in /home/dgfm/demo.dgfm.app/ajax/view-league-data.php on line 286

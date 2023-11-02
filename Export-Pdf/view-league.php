@@ -261,7 +261,7 @@ if(count($current_data)>0){
             </style>
         </head>
         <body>';
-            $html .='<table class="text-left " style="width:100%;" cellspacing="0" cellpadding="4">
+            $html .='<table class="text-left" style="width:100%;font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;" cellspacing="0" cellpadding="4">
             <tbody>
                 <tr>
                     <td  colspan="3" style="text-align:center;margin-top:50px;"> <img src="'.getHomeUrl().MAIN_LOGO.'" width="200"></td>
@@ -274,9 +274,9 @@ if(count($current_data)>0){
                 </tr> 
                 
                 <tr class="add-border">
-                    <td class="add-border" scope="col" >'.$title.'</td>
-                    <td class="add-border"  scope="col" >Number of Surveys</td>
-                    <td class="add-border" scope="col">Average Score</td>
+                    <td class="add-border" scope="col" style="text-align:center;font-weight: bold;padding: 10px;font-size: 14px;">'.$title.'</td>
+                    <td class="add-border" scope="col" style="text-align:center;font-weight: bold;padding: 10px;font-size: 14px;">Number of Surveys</td>
+                    <td class="add-border" scope="col" style="text-align:center;font-weight: bold;padding: 10px;font-size: 14px;">Average Score</td>
                 </tr>
                 ';
                 foreach($current_data as $key =>$datasurvey){ 
@@ -297,9 +297,9 @@ if(count($current_data)>0){
                         $titleName = getRole()[$datasurvey['id']];
                     }
                 $html .='<tr class="add-border" >
-                    <td class="add-border">'.$titleName.'</td>
-                    <td class="add-border" style="text-align:center;">'.$datasurvey['count'].'</td>
-                    <td class="add-border" style="text-align:center;">'.$total.' %</td>
+                    <td class="add-border" style="padding: 10px;font-size: 14px;">'.$titleName.'</td>
+                    <td class="add-border" style="text-align:center;padding: 10px;font-size: 14px;">'.$datasurvey['count'].'</td>
+                    <td class="add-border" style="text-align:center;padding: 10px;font-size: 14px;">'.$total.' %</td>
                 </tr>';
                 }
             $html .='</tbody></table></div>';

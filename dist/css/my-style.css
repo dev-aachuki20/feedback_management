@@ -515,6 +515,54 @@ td.show_smily_.smile-block.rating-type-number {
     margin-top: 2rem;
 } */
 
+
+/*01-11-2023*/
+.survey-statistics-btns{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-right-btns{
+    display: flex;
+    align-items: center;
+}
+.survey-statistics-btns .custum-btn{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.survey-statistics-btns .custum-btn .btn{
+    min-width: 150px;
+    border: none;
+    min-height: 34px;
+}
+.leagues-inner-table{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.leagues-inner-table h2{
+    margin: 0;
+}
+.leagues-inner-bbtn{
+    display: flex;
+}
+.leagues-inner-bbtn .leagues_inbtn{
+    margin-left: 10px;
+}
+
+@media screen and (max-width: 991px){
+    .survey-statistics-btns{
+        flex-wrap: wrap;
+    }
+    .survey-statistics-btns .custum-btn{
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+    .survey-statistics-btns .custum-btn .btn{
+        min-width: 130px;
+    }
+}
+
 @media(max-width:600px){
     .renderTable {
         margin-top: 2.5rem;
@@ -523,6 +571,19 @@ td.show_smily_.smile-block.rating-type-number {
         top: -50px ;
         left: 50%;
     } */
+    .leagues-inner-table{
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        padding-left: 20px;
+    }
+    .leagues-inner-bbtn{
+        flex: 0 0 100%;
+        margin-top: 15px;
+    }
+    .leagues-inner-bbtn .leagues_inbtn{
+        margin-left: 0;
+        margin-right: 10px;
+    }
 }
 
 .datatable_buttontd{

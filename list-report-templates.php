@@ -222,7 +222,7 @@ if (isset($_POST['schedule_btn'])) {
         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
       }
 
-      $('.second_form').attr("target", "_blank");
+      //$('.second_form').attr("target", "_blank");
 
     } else {
 
@@ -233,7 +233,7 @@ if (isset($_POST['schedule_btn'])) {
       $('#report_name').prop('required', true);
       //$('#send_to').prop('required',true);
       $('.second_form').removeAttr('action');
-      $('.second_form').removeAttr('target');
+      //$('.second_form').removeAttr('target');
       $('.schedule-field').show();
       // $('.modal-content').css("height", "430px");
     }
