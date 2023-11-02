@@ -1244,11 +1244,11 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
         $mail = new PHPMailer(true);
         $mail = new PHPMailer();
         $mail->isSMTP();
-        $mail->Host = 'sandbox.smtp.mailtrap.io';
+        $mail->Host = SMTP_HOST;
         $mail->SMTPAuth = true;
-        $mail->Port = 2525;
-        $mail->Username = '9bb50416f293ea';
-        $mail->Password = 'a28f5c4d4023f2';
+        $mail->Port = SMTP_PORT;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
         
         $mail->setFrom($from_mail, $name);
         $mail->addAddress($to);  
