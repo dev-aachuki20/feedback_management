@@ -7,6 +7,7 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 record_set("get_scheduled_report", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
 
+
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
     $mpdf = new \Mpdf\Mpdf();
 

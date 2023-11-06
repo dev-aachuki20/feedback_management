@@ -286,7 +286,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 							<div class="col-md-3">
 								<select class="form-control skip_to_question" name="skip_to_question[]">
 									<?php 
-										record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' ");
+										record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' order by dposition asc ");
 										if($totalRows_get_question>0){	
 
 										while($row_get_question = mysqli_fetch_assoc($get_question)){ ?>
@@ -816,4 +816,20 @@ function tickCrossOptionsAppendHtml(text,selectedValues=''){
 	html +=`</select></div>`;
 	$('.rating-type-option').last().html(html);
 }
+
+
+// $(document).on('keyup','.canval',function(){
+// 	let allVal = $('.canval').map(function(){
+// 		return $(this).val();
+// 	}).get();
+// 	let currVal = $(this).val();
+// 	// console.log( $(this).prop('disabled'));
+// 		console.log(allVal,currVal);
+
+// 	if(allVal.includes(currVal)){
+// 		alert('The answer value is already used.');
+// 		$(this).val('');
+// 	}
+// });
+
 </script>

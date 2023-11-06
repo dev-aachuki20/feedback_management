@@ -232,7 +232,7 @@ if(isset($_POST['submit'])){
 		
 
 	}else{
-		$msg = "Some Error Occourd. Please try again..";
+		$msg = "Some Error Occurred. Please try again..";
 	}
 	$to_mail = array();
 	if($row_get_survey['notification_threshold'] == 1){
@@ -1417,7 +1417,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	                    		    <div class="form-check contact">
 
-									<input class="form-check-input"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
+									<input class="form-check-input to_be_contacted_radio"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
 
 									  <label class="form-check-label" for="to_be_contact_yes">
 
@@ -1429,7 +1429,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 									<div class="form-check">
 
-									<input class="form-check-input" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
+									<input class="form-check-input to_be_contacted_radio" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
 
 									  <label class="form-check-label" for="to_be_contact_no">
 
@@ -2078,6 +2078,10 @@ $(".rating-img").click(function(){
 	for(let i=1; i<=index; i++){
 		$('.question-'+qid).find('.image-'+i).attr('src', './dist/img/star-yellow.png');
 	}
+})
+$('.to_be_contacted_radio').click(function(){
+	$('.to_be_contacted_radio').next().removeClass('active');
+	$(this).next().addClass('active');
 })
 </script>
 <div style="text-align: center;">

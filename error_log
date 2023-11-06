@@ -1,0 +1,8 @@
+[02-Nov-2023 14:59:58 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 129 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:236
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(129): send_survey_email('donnab.dgs@gmai...', '2nd test', 59)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 236
+[03-Nov-2023 09:20:26 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/dgfm/demo.dgfm.app/survey-result.php on line 659
+[03-Nov-2023 09:55:35 UTC] PHP Parse error:  syntax error, unexpected end of file, expecting ']' in /home/dgfm/demo.dgfm.app/survey-form.php on line 1214

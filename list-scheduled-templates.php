@@ -20,6 +20,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
             <th>Report Name</th>
             <th>Report Template</th>
             <th>Created By</th>
+            <th>Sent To</th>
             <th>Frequency</th>
             <th>Start Date</th>
             <th>Next Due Date</th>
@@ -28,12 +29,23 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
         </thead>
         <tbody>
         <?php $i = 0; ?>
-        <?php while($scheduled_report_template = mysqli_fetch_assoc($scheduled_report_templates)){ ?>
+        <?php while($scheduled_report_template = mysqli_fetch_assoc($scheduled_report_templates)){ 
+          
+           if($scheduled_report_template['send_to']){
+              $users = explode(',',$scheduled_report_template['send_to']);
+              $send_to_user = [];
+              foreach($users as $u){
+                $send_to_user[] = get_user_datails($u)['name'];
+              }
+              $all_users = implode(', ',$send_to_user);
+           }
+        ?>
           <tr>
             <td><?= ++$i ?></td>
             <td><?=$scheduled_report_template['report_name']?></td>
             <td><?=$scheduled_report_template['name']?></td>
             <td><?=get_user_datails($scheduled_report_template['cby'])['name']?></td>
+            <td><?=$all_users?></td>
             <td><?=ucfirst(service_type()[$scheduled_report_template['sch_interval']])?></td>
             <td><?=date('d-m-Y', strtotime($scheduled_report_template['start_date']))?></td>
             <td><?=date('d-m-Y ', strtotime($scheduled_report_template['next_date']))?></td>

@@ -73,7 +73,7 @@ $languages = explode(',',$row_get_survey_details['language']);
       <div class="box-body">
         <div class="row">
           <?php 
-            record_set("get_questions", "select * from questions where surveyid='".$_REQUEST['surveyid']."'  and id='".$_REQUEST['questionid']."'");				
+            record_set("get_questions", "select * from questions where surveyid='".$_REQUEST['surveyid']."'  and id='".$_REQUEST['questionid']."' order by dposition asc");				
             $row_get_questions = mysqli_fetch_assoc($get_questions);
             $isWeighted = $row_get_questions['is_weighted'];
           ?>
@@ -280,7 +280,7 @@ $languages = explode(',',$row_get_survey_details['language']);
                   <select class="form-control" name="conditional_answer[]" id="conditional_answer">
                     <?php 
                     foreach($answerOptions as $answerValue){ ?>
-                      <option value="<?=$answerValue['answer']?>" <?=($row_get_questions_conditional_detail['conditional_answer'] == $answerValue['answer'])?'selected':''?>><?=$answerValue['description']?></option>
+                      <option value="<?=$answerValue['answer']?>" <?=($row_get_questions_conditional_detail['answer'] == $answerValue['answer'])?'selected':''?>><?=$answerValue['description']?></option>
                     <?php }?>
                   </select>	
                 </div>

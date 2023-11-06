@@ -537,7 +537,8 @@ td.show_smily_.smile-block.rating-type-number {
 }
 .leagues-inner-table{
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
+    justify-content: center;
     margin-bottom: 20px;
 }
 .leagues-inner-table h2{
@@ -593,4 +594,11 @@ td.show_smily_.smile-block.rating-type-number {
 }
 .datatable_buttontd button{
     min-height: 22px;
+}
+label.form-check-label.active {
+    border-radius: 25px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #3c3e3e;
+    box-shadow: 7px 1px 7px #8a8686;
 }

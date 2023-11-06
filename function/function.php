@@ -11,15 +11,15 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require_once dirname(__DIR__). '/vendor/autoload.php';
 
-define('SMTP_HOST', "mail.dgfm.app");
-define('SMTP_USER', "web@dgfm.app");
-define('SMTP_PASS', "eKI?pbTRvuj3");
-define('SMTP_PORT', "995");
+// define('SMTP_HOST', "mail.dgfm.app");
+// define('SMTP_USER', "web@dgfm.app");
+// define('SMTP_PASS', "eKI?pbTRvuj3");
+// define('SMTP_PORT', "465");
 
-// define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-// define('SMTP_USER', "9bb50416f293ea");
-// define('SMTP_PASS', "a28f5c4d4023f2");
-// define('SMTP_PORT', "2525");
+define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+define('SMTP_USER', "9bb50416f293ea");
+define('SMTP_PASS', "a28f5c4d4023f2");
+define('SMTP_PORT', "2525");
 // define('SMTPAuth', true);
 //mail trap
 
@@ -293,7 +293,7 @@ function sendNotificationThreshold($surveyId, $data){
 	$response = round($result,2);
 
 	## send Threshold Notification mail
-	$subject = 'Threshold Notification';
+	$subject = $row_get_survey_details['name'].' - Threshold Notification';
 
 	if($response < $thresholdPercentage){
 		$users = explode(',',$thresholdUsers);
@@ -321,7 +321,7 @@ function sendNotificationThreshold($surveyId, $data){
                 
                 			<tr>
                 				<td><p style="font-size:15px;margin:10px;">Hello '.$uname.'</p> <br>
-                					<p style="font-size:15px;margin:10px;">A Survey Response has been submitted and the respondent score is '.$response.'% </p>
+                					<p style="font-size:15px;margin:10px;">A Survey Response has been submitted for '.$row_get_survey_details['name'].' and the score is '.$response.'% which is below the preset notification threshold of '.$thresholdPercentage.'%</p>
                 				</td>
                 			</tr>
                 			<tr>
@@ -333,6 +333,9 @@ function sendNotificationThreshold($surveyId, $data){
                 			<tr>
                 			<td height="20px;">&nbsp;</td>
                 			</tr>
+							<tr>
+							<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
+							</tr>
                 			</table>
                 		</td>
                 	</tr>
@@ -363,7 +366,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 	}
 
 	## send Threshold Notification mail
-	$subject = 'NEW SURVEY RESPONSE';
+	$subject = $row_get_survey_details['name'].' - New Response';
 	$body ='<table width="100%" style="background-color:#dbdbdb;">
 	<tr>
 	<td>
@@ -1239,10 +1242,8 @@ function mail_attachment($path, $to, $from_mail, $from_name,$subject,$message){
  
  
 function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
-	$mail = new PHPMailer(true);
     try {
-        $mail = new PHPMailer(true);
-        $mail = new PHPMailer();
+		$mail = new PHPMailer(true);
         $mail->isSMTP();
         $mail->Host = SMTP_HOST;
         $mail->SMTPAuth = true;
@@ -1296,15 +1297,16 @@ function cron_emails($attachments,$to,$from_mail,$name,$subject,$message){
             $mail->Body = $body;
 
         // Add the attachments to the email
-		
         foreach ($attachments as $key => $filePath) {
             $mail->addAttachment($filePath);
         }
-        
-        //$mail->SMTPDebug = 4;
+
+        // $mail->SMTPDebug = 4;
         $mail->send();  
+		
         return true;
     } catch (Exception $e) {
+		return false;
         //echo "Message could not be sent. Mailer Error: {$e}";
     }
 }
