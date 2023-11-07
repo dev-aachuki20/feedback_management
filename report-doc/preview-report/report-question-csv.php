@@ -1,5 +1,6 @@
 <?php 
 require('../../function/function.php');
+require('../../function/get_data_function.php');
 $filename = $_GET["name"].date(" Y-m-d-H-i-s").".xls"; 
 
 $filter = $_POST;
@@ -47,7 +48,12 @@ if($totalRows_getdata>0){
 		$row_excel_data[$i]['Last Name'] 	= ''; 
 		$row_excel_data[$i]['Phone Number'] = ''; 
 		$row_excel_data[$i]['Email'] 		= ''; 
-		//$row_excel_data[$i]['School'] 		= ''; 
+
+		$row_excel_data[$i]['Group'] 	    = getGroup()[$row_getdata['groupid']] ; 
+		$row_excel_data[$i]['Location']     = getLocation()[$row_getdata['locationid']]; 
+		$row_excel_data[$i]['Department']   = getDepartment()[$row_getdata['departmentid']]; 
+		$row_excel_data[$i]['Role']         = getRole()[$row_getdata['roleid']]; 
+		//$row_excel_data[$i]['School'] 	= '';  
 	
 		$sub_query ="SELECT * FROM questions LEFT JOIN answers ON questions.id = answers.questionid and answers.cdate ='".$row_getdata['cdate']."' where questions.surveyid =$surveyid and questions.cstatus=1 order by questions.id ASC,questions.dposition asc";
 
