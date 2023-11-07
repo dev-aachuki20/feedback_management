@@ -270,7 +270,7 @@ if($row_get_survey['isStep'] == 1){
 
 //Survey Questions
 
-record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by dposition asc");
+record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by id asc");
 
 $questions = array();
 

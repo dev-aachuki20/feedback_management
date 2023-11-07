@@ -290,7 +290,7 @@ $languages = explode(',',$row_get_survey_details['language']);
                 <div class="col-md-3">
                   <select class="form-control skip_to_question" name="skip_to_question[]">
                     <?php 
-                      record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$_GET['questionid']);
+                      record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$_GET['questionid']." order by dposition asc");
                       if($totalRows_get_questions>0){	
                       while($row_get_questionss = mysqli_fetch_assoc($get_questions)){ 
 
