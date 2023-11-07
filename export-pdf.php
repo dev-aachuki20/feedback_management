@@ -105,13 +105,12 @@ $message .= '<table width="100%" style="text-align:center;" >
   </table>';
 
 if(count($survey_steps)>0){
- 
   $mainCount = 1; 
   foreach($survey_steps AS $key => $value) { 
-    $message .= '<div class="container" style="page-break-after: always;height: 100%;">
+    $message .= '<div class="container">
       <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
+
       foreach($questions[$key] AS $question){
-      
         $questionid   = $question['id'];
         $answer_type  = $question['answer_type'];
         $totalRows_get_child_questions = 0;

@@ -78,14 +78,15 @@ $languages = explode(',',$row_get_survey_details['language']);
             $isWeighted = $row_get_questions['is_weighted'];
           ?>
       
-          <?php if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
+          <?php 
+          record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");       
+          if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
             <div class="col-md-6">
               <div class="form-group">
                 <label>Survey Steps</label>
                 <select class="form-control survey_step" name="survey_step">
                   <option value="">Select Step</option>
                   <?php 
-                      record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");       
                       while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps))
                       {
                   ?>

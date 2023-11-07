@@ -160,10 +160,12 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                           <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
                         </tr>';
           $total = 0;
+          $sum_of_count = array_sum(array_column($table_display_data, "count"));
+          $perResponsePercentage = 100/$sum_of_count;
           foreach ($table_display_data as $key => $val) {
             $message .= '<tr>
                             <td style="border: 1px solid">' . $key . '</td>
-                            <td style="text-align:center;border: 1px solid">' . round($val['percantage'], 2) . '%</td>
+                            <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
                             <td style="text-align:center;border: 1px solid">' . $val['count'] . '</td>
                           </tr>';
             $total += $val['count'];

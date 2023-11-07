@@ -975,9 +975,95 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<!-- End Roles -->
 
 								</div>
+								<?php if(($value['number'] == 1 || $value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
+	                    		<h4><?=($row_get_survey['contacted_request_label'] != '') ? $row_get_survey['contacted_request_label'] :'Can HATS Group contact you about your comments/feedback?'?></h4>
 
+	                    		<div class="form-group">
+
+	                    		    <div class="form-check contact">
+
+									<input class="form-check-input to_be_contacted_radio"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
+
+									  <label class="form-check-label" for="to_be_contact_yes">
+
+									    <img style="width:40px" class="smily_icon" src="dist/img/yes.png">
+
+									  </label>
+
+									</div>
+
+									<div class="form-check">
+
+									<input class="form-check-input to_be_contacted_radio" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
+
+									  <label class="form-check-label" for="to_be_contact_no">
+
+									   <img style="width:40px" class="smily_icon" src="dist/img/no.png">
+
+									  </label>
+
+									</div>
+
+								    
+
+								</div>
+
+
+
+								<div class="form-group" id="to_be_contact_mail_div">
+
+									<div class="row">
+
+										<div class="col-md-6">
+
+											<input type="text" class="form-control fname" id="fname" name="first_name" placeholder="Your first name" required>
+
+										</div>
+
+										<div class="col-md-6">
+
+											<input type="text" class="form-control" id="lname" name="last_name" placeholder="Your last name" required>
+
+										</div>
+
+									</div>
+
+									<div class="row">
+
+										<div class="col-md-6">
+
+											<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail" required> 
+
+										</div>
+
+										<div class="col-md-6">
+
+											<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number" required>
+
+										</div>
+
+									</div> 
+
+									<div class="row">
+
+										<div class="col-md-12">
+											<input type="checkbox" id="accept_privacy" name="accept_privacy" value="agree">
+											<!--<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>-->
+										    <label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>
+											<br>
+										</div>
+
+									</div> 
+
+								</div>
+
+	                        	<?php } 
+								// echo '<pre>';
+								// print_r($survey_steps);
+								// echo '</pre>';
+								?>
 	                        	<?php } ?>
-
+								
 	                        	<?php 
 
 	                        	$eachindex = 0;
@@ -1367,98 +1453,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	                        	?>
 
-	                        	<?php if(($value['number'] == 1 || $value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
-
-	               
-
-	                    		<h4><?=($row_get_survey['contacted_request_label'] != '') ? $row_get_survey['contacted_request_label'] :'Can HATS Group contact you about your comments/feedback?'?></h4>
-
-	                    		<div class="form-group">
-
-	                    		    <div class="form-check contact">
-
-									<input class="form-check-input to_be_contacted_radio"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
-
-									  <label class="form-check-label" for="to_be_contact_yes">
-
-									    <img style="width:40px" class="smily_icon" src="dist/img/yes.png">
-
-									  </label>
-
-									</div>
-
-									<div class="form-check">
-
-									<input class="form-check-input to_be_contacted_radio" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
-
-									  <label class="form-check-label" for="to_be_contact_no">
-
-									   <img style="width:40px" class="smily_icon" src="dist/img/no.png">
-
-									  </label>
-
-									</div>
-
-								    
-
-								</div>
-
-
-
-								<div class="form-group" id="to_be_contact_mail_div">
-
-									<div class="row">
-
-										<div class="col-md-6">
-
-											<input type="text" class="form-control fname" id="fname" name="first_name" placeholder="Your first name" required>
-
-										</div>
-
-										<div class="col-md-6">
-
-											<input type="text" class="form-control" id="lname" name="last_name" placeholder="Your last name" required>
-
-										</div>
-
-									</div>
-
-									<div class="row">
-
-										<div class="col-md-6">
-
-											<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail" required> 
-
-										</div>
-
-										<div class="col-md-6">
-
-											<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number" required>
-
-										</div>
-
-									</div> 
-
-									<div class="row">
-
-										<div class="col-md-12">
-											<input type="checkbox" id="accept_privacy" name="accept_privacy" value="agree">
-											<!--<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>-->
-										    <label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>
-											<br>
-										</div>
-
-									</div> 
-
-								</div>
-
-	                        	<?php } 
-								// echo '<pre>';
-								// print_r($survey_steps);
-								// echo '</pre>';
-								?>
+	                        	
 									
-	                        	<?php if(count($survey_steps) > 0){ ?>
+	                        	<?php if(count($survey_steps) > 1){ ?>
 
                                 <ul class="list-inline text-center">
 
