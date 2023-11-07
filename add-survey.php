@@ -19,7 +19,8 @@
             "contact_requested"             => $_POST['contact_requested'],
             "start_date"                    => $_POST['sdate'],
             "end_date"                      => $_POST['edate'],
-            "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            // "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            "isStep"                        => 1,
             "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "contacted_request_label"       => $_POST['contacted_request_label'],
             "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
@@ -46,19 +47,25 @@
         }
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
         if(!empty($updte)){
-            if(isset($_POST['isStep']) && isset($_POST['numberOfStep'])){
-                for($step = 0; $step < $_POST['numberOfStep']; $step++){
+            $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
+            //if(isset($_POST['isStep'])){
+                for($step = 0; $step < $numberOfStep; $step++){
+                    if($numberOfStep == 1){
+                        $step_title = 'Step 1';
+                    }else{
+                        $step_title = $_POST['stepstitle'][$step];
+
+                    }
                     record_set("get_old_steps", "select * from surveys_steps where survey_id='".$_GET['id']."' and step_number='".intval($step+1)."'");
                     if($totalRows_get_old_steps > 0){   
                         $step_data = array("step_title" => $_POST['stepstitle'][$step]);
-                       
                         $updte_steps= dbRowUpdate("surveys_steps", $step_data, "where survey_id=".$_GET['id']." and step_number=".intval($step+1));
                     }else{
-                        $step_data = array("survey_id" => $_GET['id'], "step_number" => $step+1, "step_title" => $_POST['stepstitle'][$step],'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
+                        $step_data = array("survey_id" => $_GET['id'], "step_number" => $step+1, "step_title" => $step_title ,'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
                         $insert_steps =  dbRowInsert("surveys_steps",$step_data);
                     }
                 }
-        }
+            //}
             $msg = "Survey Updated Successfully";  
             alertSuccess($msg,'?page=view-survey');
         }else{
@@ -76,7 +83,6 @@
         $original_string = implode("", $original_string);
         $string1=  substr(str_shuffle($original_string), 0, $length);
         $randomCode = $string1.$string;  
-       	
         $dataCol =  array(
   			"name"                          => $_POST['name'],
   			"survey_needed"                 => $_POST['survey_needed'],
@@ -91,7 +97,8 @@
             "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
             "alter_email"                   => $_POST['alter_email'],
             "contact_requested"             => $_POST['contact_requested'],
-            "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+           // "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            "isStep"                        => 1,
             "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "contacted_request_label"       => $_POST['contacted_request_label'],
             "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
@@ -117,12 +124,19 @@
 
         if(!empty($insert_value)){	
             //Insert Survey Steps
-            if(isset($_POST['isStep']) && isset($_POST['numberOfStep'])){
-                for($step = 0; $step < $_POST['numberOfStep']; $step++){
-                    $step_data_col = array("survey_id" => $insert_value, "step_number" => $step+1, "step_title" => $_POST['stepstitle'][$step], 'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
+            $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
+            //if(isset($_POST['isStep'])){
+                for($step = 0; $step < $numberOfStep; $step++){
+                    if($numberOfStep == 1){
+                        $step_title = 'Step 1';
+                    }else{
+                        $step_title = $_POST['stepstitle'][$step];
+
+                    }
+                    $step_data_col = array("survey_id" => $insert_value, "step_number" => $step+1, "step_title" => $step_title, 'cby'=> $_SESSION['user_id'], 'cdate'=> date("Y-m-d H:i:s"));
                     $insert_steps =  dbRowInsert("surveys_steps",$step_data_col);
                 }
-            }
+            //}
   	        $msg = "Survey Added Successfully";
             alertSuccess($msg,'?page=view-survey');
             if(!empty($_POST['alter_email'])){
@@ -446,16 +460,17 @@ span.select2.select2-container.select2-container--default {
                                     </div>
                                 </div>  
                             </div>
-                            <div class="col-md-12" style="padding-top:20px;">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="isStep" name="isStep" <?php echo ($row_get_surveys['isStep'] == 1) ? "checked" : ""; ?>>
-                                    <label class="form-check-label" for="isStep"> Will have steps </label>
-                                </div>
-                            </div>
                             <?php 
                                 record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
                                 $old_steps_titles = "testing";
                             ?>
+                            <div class="col-md-12" style="padding-top:20px;">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="isStep" name="isStep" <?php echo ($row_get_surveys['isStep'] == 1 && $totalRows_get_surveys_steps >1) ? "checked" : ""; ?>>
+                                    <label class="form-check-label" for="isStep"> Will have steps </label>
+                                </div>
+                            </div>
+                          
                             <div class="col-md-12 whenStepAllow">
                                 <div class="form-group">
                                     <label for="numberOfStep">How many steps</label>

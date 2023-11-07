@@ -256,7 +256,6 @@ if(isset($_POST['submit'])){
 
 $survey_steps = array();
 
-
 if($row_get_survey['isStep'] == 1){
 	record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$surveyid."' order by step_number asc");
 	while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
@@ -756,7 +755,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                         	<?php 
 
                         	$new_survey_steps = $survey_steps;
-
                         	if(count($survey_steps) <= 0){
 
                         	$new_survey_steps = array("0" => array("number" => 1, "title" => ""));
@@ -774,44 +772,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                                 <?php if($value['number'] == 1){ ?>
 
                                 <div class="row">	
-
-
-
-									<!-- Start Schools -->
-
-									<?php
-
-										if($row_get_survey['isSchoolAllowed'] == 1){
-
-									?>
-
-										<!-- <div class="col-md-3"></div>
-
-										<div class="col-md-6">
-
-											<div class="form-group">
-
-												<label for="locationid">
-
-													<?php echo 'Please tell us the name of the school or <br> other educational establishment travelled to or from?'?>
-
-												</label>
-
-												<input type="text" name="school_name" id="school_name" class="form-control form-control-lg school_autocomplete" required>
-
-												<input type="hidden" name="locationid"  class="form-control form-control-lg school_value">
-
-											</div>
-
-										</div>
-
-										<div class="col-md-3"></div> -->
-
-									<?php
-										}
-									?>
-									<!-- Ends Schools -->
-
 									<!-- Start groups -->
 									<?php 
 									if(!empty($row_get_survey['groups'])){ 
@@ -1021,8 +981,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	                        	<?php 
 
 	                        	$eachindex = 0;
-
+								
 	                        	foreach($questions[$key] AS $question){
+									
 	                        	  $questionid = $question['id'];  ?>
 
 	                        	<div class="question-div question_container_<?php echo $questionid; ?>">
@@ -1030,7 +991,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 								  <h4><?php echo $question['question'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
 								</div>	
 	                        	
-
 	                        	<!-- When Answer Type 1 -->
 	                        	<?php 
 									if($question['answer_type'] == 1){  
@@ -1492,34 +1452,30 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 								</div>
 
-	                        	<?php } ?>
-
+	                        	<?php } 
+								// echo '<pre>';
+								// print_r($survey_steps);
+								// echo '</pre>';
+								?>
+									
 	                        	<?php if(count($survey_steps) > 0){ ?>
 
                                 <ul class="list-inline text-center">
 
                                     <?php if($value['number'] == 1){ ?>
-
 		                            <li>
-
 										<button type="button" class="default-btn next-step">
 											Continue to next step
 										</button>
-
 									</li>
-
 		                        	<?php } ?>
-
 		                        	<?php if($value['number'] > 1){ ?>
 		                            <li>
 										<button type="button" class="default-btn prev-step">
 										Back
 										</button>
-
 									</li>
-
 		                        	<?php } ?>
-
 		                        	<?php if($value['number'] == count($survey_steps)) { ?>
 
 		                            <li><input type="submit" name="submit" class="default-btn finalSubmit submitform" id="submit" value="Finish"></li>

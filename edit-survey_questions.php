@@ -78,7 +78,7 @@ $languages = explode(',',$row_get_survey_details['language']);
             $isWeighted = $row_get_questions['is_weighted'];
           ?>
       
-          <?php if($row_get_survey_details['isStep'] == 1){ ?>
+          <?php if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
             <div class="col-md-6">
               <div class="form-group">
                 <label>Survey Steps</label>
@@ -94,7 +94,11 @@ $languages = explode(',',$row_get_survey_details['language']);
                 </select>
               </div>
             </div>
-          <?php } ?>
+          <?php } else{ 
+						$row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps);
+					?>
+						<input type="hidden" name="survey_step" value="<?=$row_get_surveys_steps['id']?>">
+					<?php } ?>
 
           <div class="col-md-6">
             <div class="form-group">

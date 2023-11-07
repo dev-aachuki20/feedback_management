@@ -109,14 +109,15 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 				<div class="row">
 					<!-- Start Survey Steps Section -->
 					<?php 
-					if($row_get_survey_details['isStep'] == 1){ ?>
+					record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");	
+					if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
 						<div class="col-md-6">
 							<div class="form-group">
 								<label>Survey Steps</label>
 								<select class="form-control survey_step" name="survey_step" required>
 									<option value="">Select Step</option>
 									<?php 
-										record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");				
+												
 										while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps))
 										{
 									?>
@@ -125,6 +126,10 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 								</select>
 							</div>
 						</div>
+					<?php }else{ 
+						$row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps);
+					?>
+						<input type="hidden" name="survey_step" value="<?=$row_get_surveys_steps['id']?>">
 					<?php } ?>
 					
 					<!-- End Survey Steps Section -->
