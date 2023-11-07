@@ -78,15 +78,11 @@ $languages = explode(',',$row_get_survey_details['language']);
             $isWeighted = $row_get_questions['is_weighted'];
           ?>
       
-<<<<<<< Updated upstream
-          <?php 
-          record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");       
-          if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
-=======
+ 
+
           <?php
               record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_REQUEST['surveyid']."'");       
            if($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps>1){ ?>
->>>>>>> Stashed changes
             <div class="col-md-6">
               <div class="form-group">
                 <label>Survey Steps</label>

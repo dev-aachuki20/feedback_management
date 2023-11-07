@@ -42,7 +42,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			);
 			
 			//print_r($data1); exit;
-			$insert_value1 =  dbRowInsert("questions_detail",$data_head,2);
+			$insert_value1 =  dbRowInsert("questions_detail",$data_head);
 		}
 		record_set("get_quest", "select id from questions order by id desc limit 1");				
 		$row_get_quest = mysqli_fetch_assoc($get_quest);

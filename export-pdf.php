@@ -192,10 +192,14 @@ if(count($survey_steps)>0){
                       $sum_of_count = array_sum(array_column($table_display_data, "count"));
                       $perResponsePercentage = 100/$sum_of_count;
                       foreach($table_display_data as $key=>$val){ 
+                        $scoreValue = round($perResponsePercentage*$val['count'],2);
+                        if(is_nan($scoreValue)){
+                          $scoreValue = 0;
+                        }
                         $response = ($val['count'])?$val['count']:0;
                         $message .='<tr>
                           <td style="border: 1px solid">'.$key.'</td>
-                          <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
+                          <td style="text-align:center;border: 1px solid">'.$scoreValue.'%</td>
                           <td style="text-align:center;border: 1px solid">'.$response.'</td>
                         </tr>';
                         $total +=$val['count'];
