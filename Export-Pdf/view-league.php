@@ -264,13 +264,13 @@ if(count($current_data)>0){
             $html .='<table class="text-left" style="width:100%;font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;" cellspacing="0" cellpadding="4">
             <tbody>
                 <tr>
-                    <td  colspan="3" style="text-align:center;margin-top:50px;"> <img src="'.getHomeUrl().MAIN_LOGO.'" width="200"></td>
+                    <td  colspan="3" style="text-align:center;margin-top:-30px;"> <img src="'.getHomeUrl().MAIN_LOGO.'" width="200"></td>
                 </tr>
                 <tr class="add-border" style="border-left:none;border-right:none;">
                     <td  colspan="3" style="text-align:center;font-size:20px;"><span>'.$surveyName.'</span></td>
                 </tr>
                 <tr>
-                    <td style="height:50px;" colspan="3"></td>
+                    <td style="height:38px;" colspan="3"></td>
                 </tr> 
                 
                 <tr class="add-border">
@@ -311,10 +311,16 @@ $html = '';
 $footer = '<div style="text-align: center;"> '.POWERED_BY.'
 <center><img  src="'.BASE_URL.FOOTER_LOGO.'" alt="" width="150"/></center>
 </div>';
-//echo $html; die();
-$mpdf->WriteHTML($html);
-$mpdf->SetHTMLFooter($footer);   // This will display footer for last page
 
-return $mpdf->Output($file_name,'D');
+$mpdf->AddPageByArray([
+    'margin-left' => '15px',
+    'margin-right' => '15px',
+    'margin-top' => '15px',
+    'margin-bottom' => '25px',
+]);
+$mpdf->SetHTMLFooter($footer);   // This will display footer for last page
+$mpdf->WriteHTML($html);
+
+return $mpdf->Output('Survey League-' . date('Y-m-d-H-i-s') . '.pdf','D');
 
 ?>

@@ -281,6 +281,7 @@
       var canvas = locationChart.canvas;
       var dataUrl = canvas.toDataURL();
       $("#canvasData").val(dataUrl);
+      $('.export').show();
     }
   }
 </script>
@@ -478,7 +479,7 @@
 
           return;
         } else {
-          $('.export').show();
+
           $('.data-available').show();
           $('.data-notAvailable').hide();
           $('.listing').html(response.html);

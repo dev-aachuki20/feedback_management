@@ -60,17 +60,26 @@ if(!empty($_GET['location']) and $_GET['location']!=4){
 }else{
      $location_name ="All";
 }
-$message = '<!DOCTYPE html><html lang="en">
+$message = '<!DOCTYPE html>
+<html lang="en">
 <head>
 <style>
+@page{
+  margin: 1cm;
+  margin-bottom: 1cm;
+}
+body{
+  padding-bottom: 20px;
+}
 footer {
   position: fixed;
-  bottom: 50px;
+  bottom: 30px;
   width: 100%;
   text-align: center;
 }
 </style>
 </head>
+    <body>
     <table width="100%">
       <thead>
         <tr>
@@ -87,7 +96,7 @@ footer {
     </table>';
 
 
-$message .= '<table width="100%" style="text-align:center;" >
+$message .= '<table width="100%" style="text-align:center;">
       <thead>
         <tr>
           <td">Total Survey</td>
@@ -103,6 +112,14 @@ $message .= '<table width="100%" style="text-align:center;" >
         </tr>
       </tbody>
   </table>';
+
+$message .='<footer style="page-break-inside: avoid;">
+<div style="text-align: center;margin-bottom:10px;" >
+<span style="font-size:14px;">'.POWERED_BY.'</span>
+<center><img  src="'.FOOTER_LOGO.'" alt="" width="150" style="background-color: #fff;"/></center>
+</div>
+</footer>';
+
 
 if(count($survey_steps)>0){
   $mainCount = 1; 
@@ -153,7 +170,7 @@ if(count($survey_steps)>0){
             record_set("get_child_questions", $get_child_questions);
           }
           if(empty($totalRows_get_child_questions)){
-              $message .='<table width="505px" h align="center" style="page-break-inside: avoid; ">
+              $message .='<table width="505px" align="center" style="page-break-inside: avoid;">
                 <tr>
                   <td align="center" colspan="3">
                   <h4 colspan="2" style="margin-top:10px;text-align:center;">'.$question['question'].'</h4>
@@ -288,7 +305,7 @@ if(count($survey_steps)>0){
           $message .= '</table>';
         }
       } 
-
+    $message .='</div>';
   }
 
 }else{
@@ -394,7 +411,10 @@ if(count($survey_steps)>0){
                 <td colspan="2" style="height:40px;">&nbsp;</td>
               </tr>
             </table>';
+          
         } else{ 
+         
+
         $message .= '<table width="505px" align="center">
           <tr>
             <td align="center" colspan="3">
@@ -469,16 +489,10 @@ if(count($survey_steps)>0){
 
 }
 
-     
-$message .='<footer>
-<div style="text-align: center;margin-bottom:10px;" >
-<span style="font-size:14px;">'.POWERED_BY.'</span>
-<center><img  src="'.FOOTER_LOGO.'" alt="" width="150"/></center>
-</div>
-</footer></div>';
 
+$message .='</body></html>';
 
-// Include autoloader 
+// Include auto loader 
 require_once 'dompdf/autoload.inc.php'; 
 // Reference the Dompdf namespace 
 use Dompdf\Dompdf; 

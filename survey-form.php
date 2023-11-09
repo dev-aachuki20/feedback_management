@@ -89,31 +89,18 @@ if(isset($_POST['submit'])){
 				}
 
 				$data = array(
-
 					"locationid"=> $locationid,
-
 					"groupid"=> $groupid,
-
 					"departmentid"=> $departmentid,
-
 					"roleid"	  => $roleid,
-
 					"questionid"=> $key,
-
 					"answerid" => $ansttxtvaluearray[0],
-
 					"surveyid"=>$surveyid,
-
 					"answertext" => $ansttxtvaluearray[1],
-
 					"answerval" => $answerval,
-
 					"cstatus" => "1",
-
 					'cip'=>ipAddress(),
-
 					'cby'=>$_SESSION['maxid'],
-
 					'cdate'=>date("Y-m-d H:i:s")
 				);
 
@@ -135,33 +122,19 @@ if(isset($_POST['submit'])){
 				$key = 0;
 			}
 			$data = array(
-
 				"locationid"	=> $locationid,
-
 				"groupid"		=> $groupid,
-
 				"departmentid"	=> $departmentid,
-
 				"roleid"	  	=> $roleid,
-
 				"questionid"	=> $questionid,
-
 				"answerid" 		=> $ansid,
-
 				"surveyid"		=>	$surveyid,
-
 				"answertext" 	=> $ansttxt,
-
 				"answerval" 	=> $answerval,
-
 				"cstatus" 		=> "1",
-
 				'cip'			=>	ipAddress(),
-
 				'cby'			=>	$_SESSION['maxid'],
-
 				'cdate'			=>	date("Y-m-d H:i:s")
-
 			);
 			//print_r($data);
 			
@@ -181,33 +154,19 @@ if(isset($_POST['submit'])){
 	if(isset($_POST['to_be_contact']) && $_POST['to_be_contact'] == 1){
 
 		$data_to_be_contact = array(
-
 			"locationid"=> $locationid,
-
 			"groupid"=> $groupid,
-
 			"departmentid"=> $departmentid,
-
 			"roleid"	  => $roleid,
-
 			"questionid"=> 0,
-
 			"answerid" => -2,
-
 			"surveyid"=>$surveyid,
-
 			"answertext" => $contact,
-
 			"answerval" => 100,
-
 			"cstatus" => "1",
-
 			'cip'=>ipAddress(),
-
 			'cby'=>$_SESSION['maxid'],
-
 			'cdate'=>date("Y-m-d H:i:s")
-
 		);
 		$insert_to_be_contact =  dbRowInsert("answers",$data_to_be_contact);
 		if($insert_to_be_contact){
@@ -229,8 +188,6 @@ if(isset($_POST['submit'])){
 		// 		$i++;
 		// 	}
 		// }
-		
-
 	}else{
 		$msg = "Some Error Occurred. Please try again..";
 	}
@@ -251,48 +208,28 @@ if(isset($_POST['submit'])){
 	$msg = "Question Submitted Successfully";
 	reDirect("survey-thankyou.php?msg=".$msg."&surveyid=".$_REQUEST['surveyid']);
 }
-
 //Survey Steps 
-
 $survey_steps = array();
-
 if($row_get_survey['isStep'] == 1){
 	record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$surveyid."' order by step_number asc");
 	while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
 		$survey_steps[$row_get_surveys_steps['id']]['number'] = $row_get_surveys_steps['step_number'];
 		$survey_steps[$row_get_surveys_steps['id']]['title'] = $row_get_surveys_steps['step_title'];
-
 	}
 }
-
-
-
 //Survey Questions
-
 record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by id asc");
-
 $questions = array();
-
 while($row_get_questions = mysqli_fetch_assoc($get_questions)){
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['question'] = $row_get_questions['question'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['ifrequired'] = $row_get_questions['ifrequired'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['conditional_logic'] = $row_get_questions['conditional_logic'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['conditional_answer'] = $row_get_questions['conditional_answer'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['skip_to_question_id'] = $row_get_questions['skip_to_question_id'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
-
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['rating_type'] = $row_get_questions['rating_type'];
-	
-} 	
-	
+} 		
 ?>
 <!DOCTYPE HTML>
 <html lang="en" class="notranslate" translate="no">
@@ -307,1212 +244,757 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<meta name="google" content="notranslate" />
 		<style>
-
 		select{
 			font-size: 50px;
-			}
-			h2 {
-				border-bottom:1px solid #000;
-				padding:0 0 5px 0;
-			}
-
-			table, h4, .form-check{
-
-				text-transform:uppercase;
-
-			}
-
-			body{
-
-				font-family: 'Comfortaa', arial;
-
-			}
-
-
-
-			@import url('https://fonts.googleapis.com/css?family=Roboto');
-
-
-
-			.signup-step-container{
-
-				padding: 35px 0px;
-
-				padding-bottom: 60px;
-
-			}
-
-			button:focus{
-
-			    outline: 0;
-
-			}
-
-			.wizard .nav-tabs {
-
-			    position: relative;
-
-			    margin-bottom: 0;
-
-			    border-bottom-color: transparent;
-
-			    display: flex;
-
-			    flex-wrap: wrap;
-
-			    margin-top: 3em;
-
-			}
-
-
-
-			.wizard > div.wizard-inner {
-
-			    position: relative;
-
-			    margin-bottom: 50px;
-
-			    text-align: center;
-
-			}
-
-			.wizard .nav-tabs li:not(:last-child):after {
-
-			    height: 2px;
-
-			    background: #e0e0e0;
-
-			    position: absolute;
-
-			    width: 100%;
-
-			    left: 0;
-
-			    content: '';
-
-			    z-index: 1;
-
-			    bottom: 0;
-
-			    margin: auto auto;
-
-			    top: 0;
-
-			}
-
-
-
-			.wizard .nav-tabs > li.active > a, .wizard .nav-tabs > li.active > a:hover, 
-
-			.wizard .nav-tabs > li.active > a:focus {
-
-			    color: #555555;
-
-			    cursor: default;
-
-			    border: 0;
-
-			    border-bottom-color: transparent;
-
-			}
-
-			span.round-tab {
-
-			    width: 30px;
-
-			    height: 30px;
-
-			    line-height: 30px;
-
-			    display: inline-block;
-
-			    border-radius: 50%;
-
-			    background: #fff;
-
-			    z-index: 2;
-
-			    position: absolute;
-
-			    left: 0;
-
-			    text-align: center;
-
-			    font-size: 16px;
-
-			    color: #0e214b;
-
-			    font-weight: 500;
-
-			    border: 1px solid #ddd;
-
-			}
-
-			span.round-tab i{
-
-			    color:#555555;
-
-			}
-
-			.wizard li.active span.round-tab {
-
-			    background: #0d90b7;
-
-			    color: #fff;
-
-			    border-color: #0d90b7;
-
-			}
-
-			.wizard li.active span.round-tab i{
-
-			    color: #5bc0de;
-
-			}
-
-			.wizard .nav-tabs > li.active > a i {
-
-			    color: #0d90b7;
-
-			}
-
-
-
-			.wizard .nav-tabs > li {
-
-			    flex: auto;
-
-			}
-
-			.wizard .nav-tabs > li:last-child {
-
-			    flex: none;
-
-			}
-
-			.nav-tabs>li{
-
-				float: unset !important;
-
-			}
-
-			.wizard .nav-tabs > li a {
-
-			    width: 30px;
-
-			    height: 30px;
-
-			    margin: 20px 0;
-
-			    border-radius: 100%;
-
-			    padding: 0;
-
-			    background-color: transparent;
-
-			    position: relative;
-
-			    top: 0;
-
-			}
-
-			.wizard .nav-tabs > li a i {
-
-			    position: absolute;
-
-			    top: -15px;
-
-			    font-style: normal;
-
-			    font-weight: 400;
-
-			    white-space: nowrap;
-
-			    left: 50%;
-
-			    transform: translate(-50%, -50%);
-
-			    font-size: 16px;
-
-			    font-weight: 500;
-
-			    color: #0d90b7;
-
-			}
-
-			.wizard .tab-pane {
-
-			    position: relative;
-
-			    padding-top: 20px;
-
-			}
-
-
-
-			.prev-step,
-
-			.next-step{
-
-			    font-size: 13px;
-
-			    padding: 8px 24px;
-
-			    border: none;
-
-			    border-radius: 4px;
-
-			    margin-top: 30px;
-
-			}
-
-			.next-step {
-
-			    background-color: #0d90b7;
-
-			    color: #fff;
-
-			}
-
-			.skip-btn{
-
-				background-color: #cec12d;
-
-			}
-
-			.signup-logo-header .nav > li{
-
-				padding: 0;
-
-			}
-
-			.list-inline li{
-
-			    display: inline-block;
-
-			}
-
-			.error{
-
-				color:red !important;
-
-			}
-
-			.finalSubmit {
-
-				background-color: #0d90b7;
-
-				color: #fff;
-
-				font-size: 13px;
-
-				padding: 8px 24px;
-
-				border: none;
-
-				border-radius: 4px;
-
-				margin-top: 30px;
-
-			}
-
-			.smile-block.active .smily_icon {
-
-				border-radius: 25px;
-
-				border-style: solid;
-
-				border-width: 5px;
-
-				border-color: #3c3e3e;
-
-				box-shadow: 7px 1px 7px #8a8686;
-
-			}
-
-			
-
-@media only screen and (max-width: 800px) {
-
-.langselect {
-
-    margin-top: 1rem;
-
+		}
+		h2 {
+			border-bottom:1px solid #000;
+			padding:0 0 5px 0;
+		}
+		table, h4, .form-check{
+			text-transform:uppercase;
+		}
+		body{
+			font-family: 'Comfortaa', arial;
+		}
+		@import url('https://fonts.googleapis.com/css?family=Roboto');
+		.signup-step-container{
+			padding: 35px 0px;
+			padding-bottom: 60px;
+		}
+		button:focus{
+			outline: 0;
+		}
+		.wizard .nav-tabs {
+			position: relative;
+			margin-bottom: 0;
+			border-bottom-color: transparent;
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 3em;
+		}
+
+
+
+		.wizard > div.wizard-inner {
+			position: relative;
+			margin-bottom: 50px;
+			text-align: center;
+		}
+
+		.wizard .nav-tabs li:not(:last-child):after {
+			height: 2px;
+			background: #e0e0e0;
+			position: absolute;
+			width: 100%;
+			left: 0;
+			content: '';
+			z-index: 1;
+			bottom: 0;
+			margin: auto auto;
+			top: 0;
+		}
+		.wizard .nav-tabs > li.active > a, .wizard .nav-tabs > li.active > a:hover, 
+		.wizard .nav-tabs > li.active > a:focus {
+			color: #555555;
+			cursor: default;
+			border: 0;
+			border-bottom-color: transparent;
+		}
+		span.round-tab {
+			width: 30px;
+			height: 30px;
+			line-height: 30px;
+			display: inline-block;
+			border-radius: 50%;
+			background: #fff;
+			z-index: 2;
+			position: absolute;
+			left: 0;
+			text-align: center;
+			font-size: 16px;
+			color: #0e214b;
+			font-weight: 500;
+			border: 1px solid #ddd;
+		}
+
+		span.round-tab i{
+			color:#555555;
+		}
+		.wizard li.active span.round-tab {
+			background: #0d90b7;
+			color: #fff;
+			border-color: #0d90b7;
+		}
+		.wizard li.active span.round-tab i{
+			color: #5bc0de;
+		}
+		.wizard .nav-tabs > li.active > a i {
+			color: #0d90b7;
+		}
+		.wizard .nav-tabs > li {
+			flex: auto;
+		}
+
+		.wizard .nav-tabs > li:last-child {
+			flex: none;
+		}
+		.nav-tabs>li{
+			float: unset !important;
+		}
+		.wizard .nav-tabs > li a {
+			width: 30px;
+			height: 30px;
+			margin: 20px 0;
+			border-radius: 100%;
+			padding: 0;
+			background-color: transparent;
+			position: relative;
+			top: 0;
+		}
+
+		.wizard .nav-tabs > li a i {
+			position: absolute;
+			top: -15px;
+			font-style: normal;
+			font-weight: 400;
+			white-space: nowrap;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 16px;
+			font-weight: 500;
+			color: #0d90b7;
+		}
+
+		.wizard .tab-pane {
+			position: relative;
+			padding-top: 20px;
+		}
+		.prev-step,.next-step{
+			font-size: 13px;
+			padding: 8px 24px;
+			border: none;
+			border-radius: 4px;
+			margin-top: 30px;
+		}
+
+		.next-step {
+			background-color: #0d90b7;
+			color: #fff;
+		}
+		.skip-btn{
+			background-color: #cec12d;
+		}
+		.signup-logo-header .nav > li{
+			padding: 0;
+		}
+
+		.list-inline li{
+			display: inline-block;
+		}
+		.error{
+			color:red !important;
+		}
+		.finalSubmit {
+			background-color: #0d90b7;
+			color: #fff;
+			font-size: 13px;
+			padding: 8px 24px;
+			border: none;
+			border-radius: 4px;
+			margin-top: 30px;
+		}
+		.smile-block.active .smily_icon {
+			border-radius: 25px;
+			border-style: solid;
+			border-width: 5px;
+			border-color: #3c3e3e;
+			box-shadow: 7px 1px 7px #8a8686;
+		}
+	@media only screen and (max-width: 800px) {
+	.langselect {
+		margin-top: 1rem;
+	}
 }
-
-}
-
 @media only screen and (min-width: 800px) {
-
-.langselect {
-
-    max-width: 130px;
-
-    float: right;
-
+	.langselect {
+		max-width: 130px;
+		float: right;
+	}
 }
-
-}
-
-			<?php echo $row_get_survey['css_txt']; ?>
-
+		<?php //echo $row_get_survey['css_txt']; ?>
 		</style>
-
 	</head>
-
 <body>
-
-
-
 <section class="signup-step-container">
-
     <div class="container">
-
-
-
     	<div align="center">
     		<img src="<?=MAIN_LOGO?>" width="200">
     	</div>
 		<h2 align="center">
-
 			<?php echo $row_get_survey['name']?>
-
 		</h2>
-
 	  	<?php
-
 		  	$survey_needed = $row_get_survey['survey_needed'];
-
 			if(empty($survey_needed)){
-
 				$survey_needed = 9999999999999999999999999999999999;
-
 			}
-
-			  
-
 			if($row_survey_entry>$survey_needed){
-
 				echo '<div class="alert alert-danger" role="alert"> Survey closed.</div>'; exit;
-
 			}
-
-
-
-			if(isset($_GET['msg']))
-
-			{
-
-		  	?>
-
+			if(isset($_GET['msg'])){ ?>
 		  	<div class="alert alert-success" role="alert"> <?php echo $_GET['msg']; ?> </div>
-
 		  	<?php 
-
 		  	} 
-
-	  	?>
-
+			// remove the step if they dont have any question
+			  $commonKeys = array_intersect_key($survey_steps, $questions);
+			  $survey_steps = $commonKeys;
+	  		?>
         <div class="row">
-
             <div class="col-lg-12">
-
                 <div class="wizard">
-
                 	<?php if(count($survey_steps) > 1){ ?>
-
-                    <div class="wizard-inner">
-
-                    	
-
-                        <div class="connecting-line"></div>
-
-                        <ul class="nav nav-tabs" role="tablist">
-
-                    		<?php 
-							foreach($survey_steps AS $survey_step){ ?>
-
-		                    <li role="presentation" class="<?php if($survey_step['number'] == 1){ ?>active<?php } ?>">
-
-		                        <a href="#step<?php echo $survey_step['number']; ?>" data-toggle="tab" aria-controls="step<?php echo $survey_step['number']; ?>" role="tab" aria-expanded="true"><span class="round-tab <?php echo ($survey_step['number']>1)?'tab-next':'tab-prev'; ?>"><?php echo $survey_step['number']; ?></span> <i class="<?php echo ($survey_step['number']>1)?'tab-next':'tab-prev'; ?>">Step <?php echo $survey_step['number']; ?></i></a>
-
-		                    </li>
-
-		                	<?php } ?>
-
-                        </ul>
-
-                    </div>
-
+                    	<div class="wizard-inner">
+                      		<div class="connecting-line"></div>
+							<ul class="nav nav-tabs" role="tablist">
+								<?php 
+								foreach($survey_steps AS $survey_step){ ?>
+									<li role="presentation" class="<?php if($survey_step['number'] == 1){ ?>active<?php } ?>">
+										<a href="#step<?php echo $survey_step['number']; ?>" data-toggle="tab" aria-controls="step<?php echo $survey_step['number']; ?>" role="tab" aria-expanded="true"><span class="round-tab <?php echo ($survey_step['number']>1)?'tab-next':'tab-prev'; ?>"><?php echo $survey_step['number']; ?></span> <i class="<?php echo ($survey_step['number']>1)?'tab-next':'tab-prev'; ?>">Step <?php echo $survey_step['number']; ?></i></a>
+									</li>
+								<?php } ?>
+							</ul>
+						</div>
     				<?php } ?>
-
-
-
                     <form id="surveyForm" role="form" method="POST" class="login-box">
-
                         <div class="tab-content" id="main_form">
-
                         	<?php 
-
-                        	$new_survey_steps = $survey_steps;
-                        	if(count($survey_steps) <= 0){
-
-                        	$new_survey_steps = array("0" => array("number" => 1, "title" => ""));
-
-                        	}
-
+								$new_survey_steps = $survey_steps;
+								if(count($survey_steps) <= 0){
+									$new_survey_steps = array("0" => array("number" => 1, "title" => ""));
+								}
                         	?>
-
                         	<?php foreach($new_survey_steps AS $key => $value) { ?>
-
-                            <div class="tab-pane <?php if($value['number'] == 1){ ?>active<?php } ?>" role="tabpanel" id="step<?php echo $value['number']; ?>">
-
-                                <h4 class="text-center"><?php echo $value['title']; ?></h4>
-
-                                <?php if($value['number'] == 1){ ?>
-
-                                <div class="row">	
-									<!-- Start groups -->
-									<?php 
-									if(!empty($row_get_survey['groups'])){ 
-										if($_SESSION['user_type']>2){
-											record_set("get_assign_group", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='group'");
-											$assignGroupId = [];
-											while($row_get_assign_group = mysqli_fetch_assoc($get_assign_group)){
-												$assignGroupId[] = $row_get_assign_group['table_id'];
-											}
-											if(count($assignGroupId)>0){
-												$GroupId = implode(',',$assignGroupId);
-											}else{
-												$GroupId = 0;
-											}
-										}else{
-											$GroupId = $row_get_survey['groups'];
-										}
-										record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
-										if($totalRows_get_group == 1){
-											while($row_get_group = mysqli_fetch_assoc($get_group)){
-												echo '<input type="hidden" name="groupid" value="'.$row_get_group['id'].'">';
-											}
-										}else{ 
-											echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label for="groupid">Group</label>
-													<select name="groupid" id="groupid" class="form-control form-control-lg" required>
-														<option value="">Please select</option>
-														<?php	
-															while($row_get_group = mysqli_fetch_assoc($get_group)){	?>
-														<option value="<?php echo $row_get_group['id'];?>"><?php echo $row_get_group['name']?></option>
-														<?php  } ?>
-													</select>
-												</div>
-											</div>	
-											<?php echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
-											<?php
-										}
-									} 
-									?>	
-									<!-- End Group -->
-
-									<!-- Start Locations -->
-									<?php 
-									if(!empty($row_get_survey['locations'])){ 
-										if($_SESSION['user_type']>2){
-											record_set("get_assign_location", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='location'");
-											$assignLocationId = [];
-											while($row_get_assign_location = mysqli_fetch_assoc($get_assign_location)){
-												$assignLocationId[] = $row_get_assign_location['table_id'];
-											}
-											if(count($assignLocationId)>0){
-												$LocationId = implode(',',$assignLocationId);
-											}else{
-												$LocationId = 0;
-											}
-										}else{
-											$LocationId = $row_get_survey['locations'];
-										}
-
-										record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc");	
-										if($totalRows_get_location == 1){
-											while($row_get_location = mysqli_fetch_assoc($get_location)){
-												echo '<input type="hidden" name="locationid" value="'.$row_get_location['id'].'">';
-											}
-										}else{ 
-											echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label for="locationid">Location</label>
-													<select name="locationid" id="locationid" class="form-control form-control-lg" required>
-														<option value="">Please select</option>
-														<?php	
-															while($row_get_location = mysqli_fetch_assoc($get_location)){	
-
-														?>
-														<option value="<?php echo $row_get_location['id'];?>"><?php echo $row_get_location['name']?></option>
-														<?php  } ?>
-													</select>
-												</div>
-											</div>	
-											<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
-											<?php
-										}
-									} 
-									?>	
-									<!-- End Locations -->
-									<!-- Start Department -->
-									<?php 
-										if(!empty($row_get_survey['departments'])){
-											if($_SESSION['user_type']>2){
-												record_set("get_assign_department", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='department'");
-												$assignDepartmentId = [];
-												while($row_get_assign_department = mysqli_fetch_assoc($get_assign_department)){
-													$assignDepartmentId[] = $row_get_assign_department['table_id'];
-												}
-												if(count($assignDepartmentId)>0){
-													$DepartmentId = implode(',',$assignDepartmentId);
-												}else{
-													$DepartmentId = 0;
-												}
-											}else{
-												$DepartmentId = $row_get_survey['departments'];
-											}
-
-											record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1 and id != 4");	
-
-											//record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc",2);
-
-											if($totalRows_get_department == 1){
-												while($row_get_department = mysqli_fetch_assoc($get_department)){
-													echo '<input type="hidden" name="departmentid" value="'.$row_get_department['id'].'">';
-												}
-											}else{
-												echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
-												<div class="col-md-6">
-
-													<div class="form-group">
-
-														<label for="departmentid">Department</label>
-
-														<select name="departmentid" id="departmentid" class="form-control form-control-lg" required>
-															<option value="">Please select</option>
-															<?php
-
-																while($row_get_department = mysqli_fetch_assoc($get_department)){	
-
-															?>
-
-																<option value="<?php echo $row_get_department['id'];?>"><?php echo $row_get_department['name'];?></option>
-
-															<?php } ?>
-
-														</select>
-
-													</div>
-
-												</div>
-												<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';
-											} 
-										}
-									?>
-									<!-- End Department -->
-
-									<!-- Start Roles -->
-									<?php 
-									
-										if(!empty($row_get_survey['roles'])){
-											if($_SESSION['user_type']>2){
-												record_set("get_assign_role", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='role'");
-												$assignRoleId = [];
-												while($row_get_assign_role = mysqli_fetch_assoc($get_assign_role)){
-													$assignRoleId[] = $row_get_assign_role['table_id'];
-												}
-												if(count($assignRoleId)>0){
-													$RoleId = implode(',',$assignRoleId);
-												}else{
-													$RoleId = 0;
-												}
-											}else{
-												$RoleId = $row_get_survey['roles'];
-											}
-
-											record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1 and id != 4");				
-											// record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
-
-											if($totalRows_get_roles == 1){
-												while($row_get_role = mysqli_fetch_assoc($get_role)){
-													echo '<input type="hidden" name="roleid" value="'.$row_get_role['id'].'">';
-												}
-											}else{
-												echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';?>
-												<div class="col-md-6">
-
-													<div class="form-group">
-
-														<label for="roleid">Role</label>
-
-														<select name="roleid" id="roleid" class="form-control form-control-lg" required>
-															<option value="">Please select</option>
-															<?php
-
-																while($row_get_role = mysqli_fetch_assoc($get_role)){	
-
-															?>
-
-																<option value="<?php echo $row_get_role['id'];?>"><?php echo $row_get_role['name'];?></option>
-
-															<?php } ?>
-
-														</select>
-
-													</div>
-
-												</div>
-												<?php echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';
-											} 
-										}
-									?>
-									<!-- End Roles -->
-
-								</div>
-								<?php if(($value['number'] == 1 || $value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
-	                    		<h4><?=($row_get_survey['contacted_request_label'] != '') ? $row_get_survey['contacted_request_label'] :'Can HATS Group contact you about your comments/feedback?'?></h4>
-
-	                    		<div class="form-group">
-
-	                    		    <div class="form-check contact">
-
-									<input class="form-check-input to_be_contacted_radio"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
-
-									  <label class="form-check-label" for="to_be_contact_yes">
-
-									    <img style="width:40px" class="smily_icon" src="dist/img/yes.png">
-
-									  </label>
-
-									</div>
-
-									<div class="form-check">
-
-									<input class="form-check-input to_be_contacted_radio" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
-
-									  <label class="form-check-label" for="to_be_contact_no">
-
-									   <img style="width:40px" class="smily_icon" src="dist/img/no.png">
-
-									  </label>
-
-									</div>
-
-								    
-
-								</div>
-
-
-
-								<div class="form-group" id="to_be_contact_mail_div">
-
-									<div class="row">
-
-										<div class="col-md-6">
-
-											<input type="text" class="form-control fname" id="fname" name="first_name" placeholder="Your first name" required>
-
-										</div>
-
-										<div class="col-md-6">
-
-											<input type="text" class="form-control" id="lname" name="last_name" placeholder="Your last name" required>
-
-										</div>
-
-									</div>
-
-									<div class="row">
-
-										<div class="col-md-6">
-
-											<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail" required> 
-
-										</div>
-
-										<div class="col-md-6">
-
-											<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number" required>
-
-										</div>
-
-									</div> 
-
-									<div class="row">
-
-										<div class="col-md-12">
-											<input type="checkbox" id="accept_privacy" name="accept_privacy" value="agree">
-											<!--<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>-->
-										    <label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>
-											<br>
-										</div>
-
-									</div> 
-
-								</div>
-
-	                        	<?php } 
-								// echo '<pre>';
-								// print_r($survey_steps);
-								// echo '</pre>';
-								?>
-	                        	<?php } ?>
-								
-	                        	<?php 
-
-	                        	$eachindex = 0;
-								
-	                        	foreach($questions[$key] AS $question){
-									
-	                        	  $questionid = $question['id'];  ?>
-
-	                        	<div class="question-div question_container_<?php echo $questionid; ?>">
-								<div class="col-md-12">
-								  <h4><?php echo $question['question'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
-								</div>	
-	                        	
-	                        	<!-- When Answer Type 1 -->
-	                        	<?php 
-									if($question['answer_type'] == 1){  
-
-									//get Questions
-
-									record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus='1'");
-
-									//get Questions
-									record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-									if($totalRows_get_child_questions>0){ ?>
-										<table class="table table-hover table-bordered">
-
-											<tbody>
-
-												<tr align="center">
-
-												<?php
-
-												$child_answer = array();
-
-												$sub_answer = array();
-
-												$tdloop = 0;
-
-												while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ $tdloop++; ?>
-
-													<td>
-
-													<?php
-
-													$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
-													echo $row_get_questions_detail['description'];?>	
-													</td>
-												<?php } ?>
-
-												</tr>
-
-											<?php while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
-
-											<tr>
-												<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
-											</tr>
-											<tr align="center">
+								<div class="tab-pane <?php if($value['number'] == 1){ ?>active<?php } ?>" role="tabpanel" id="step<?php echo $value['number']; ?>">
+									<h4 class="text-center"><?php echo $value['title']; ?></h4>
+									<?php if($value['number'] == 1){ ?>
+										<div class="row">	
+											<!-- Start groups -->
 											<?php 
-											if($row_get_child_questions['parendit'] == 0){
-											record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
+											if(!empty($row_get_survey['groups'])){ 
+												if($_SESSION['user_type']>2){
+													record_set("get_assign_group", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='group'");
+													$assignGroupId = [];
+													while($row_get_assign_group = mysqli_fetch_assoc($get_assign_group)){
+														$assignGroupId[] = $row_get_assign_group['table_id'];
+													}
+													if(count($assignGroupId)>0){
+														$GroupId = implode(',',$assignGroupId);
+													}else{
+														$GroupId = 0;
+													}
+												}else{
+													$GroupId = $row_get_survey['groups'];
+												}
+												record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
+												if($totalRows_get_group == 1){
+													while($row_get_group = mysqli_fetch_assoc($get_group)){
+														echo '<input type="hidden" name="groupid" value="'.$row_get_group['id'].'">';
+													}
+												}else{ 
+													echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
+													<div class="col-md-6">
+														<div class="form-group">
+															<label for="groupid">Group</label>
+															<select name="groupid" id="groupid" class="form-control form-control-lg" required>
+																<option value="">Please select</option>
+																<?php	
+																	while($row_get_group = mysqli_fetch_assoc($get_group)){	?>
+																<option value="<?php echo $row_get_group['id'];?>"><?php echo $row_get_group['name']?></option>
+																<?php  } ?>
+															</select>
+														</div>
+													</div>	
+													<?php echo ($totalRows_get_location==1)?'<div class="col-md-3"></div>':'';?>
+													<?php
+												}
+											} 
+											?>	
+											<!-- End Group -->
 
-											if($totalRows_get_answer_detail>0){
-
-												echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
-
-												while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
-													// echo $row_get_answer_detail['description'];
-													$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
+											<!-- Start Locations -->
+											<?php 
+											if(!empty($row_get_survey['locations'])){ 
+												if($_SESSION['user_type']>2){
+													record_set("get_assign_location", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='location'");
+													$assignLocationId = [];
+													while($row_get_assign_location = mysqli_fetch_assoc($get_assign_location)){
+														$assignLocationId[] = $row_get_assign_location['table_id'];
+													}
+													if(count($assignLocationId)>0){
+														$LocationId = implode(',',$assignLocationId);
+													}else{
+														$LocationId = 0;
+													}
+												}else{
+													$LocationId = $row_get_survey['locations'];
 												}
 
-											?>
-
-											<?php
-
-												foreach($sub_answer as $key=>$child_answer_option){
-
-											?>
-
-
-
-											<td colspan="<?php echo count($sub_answer); ?>"><input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" 
-											value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
-											> <?php echo $child_answer_option; ?></td>
-
-
-
-											<?php
-
+												record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc");	
+												if($totalRows_get_location == 1){
+													while($row_get_location = mysqli_fetch_assoc($get_location)){
+														echo '<input type="hidden" name="locationid" value="'.$row_get_location['id'].'">';
+													}
+												}else{ 
+													echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
+													<div class="col-md-6">
+														<div class="form-group">
+															<label for="locationid">Location</label>
+															<select name="locationid" id="locationid" class="form-control form-control-lg" required>
+																<option value="">Please select</option>
+																<?php while($row_get_location = mysqli_fetch_assoc($get_location)){	?>
+																	<option value="<?php echo $row_get_location['id'];?>"><?php echo $row_get_location['name']?></option>
+																<?php  } ?>
+															</select>
+														</div>
+													</div>	
+													<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
+													<?php
 												}
+											} 
+											?>	
+											<!-- End Locations -->
+											<!-- Start Department -->
+											<?php 
+												if(!empty($row_get_survey['departments'])){
+													if($_SESSION['user_type']>2){
+														record_set("get_assign_department", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='department'");
+														$assignDepartmentId = [];
+														while($row_get_assign_department = mysqli_fetch_assoc($get_assign_department)){
+															$assignDepartmentId[] = $row_get_assign_department['table_id'];
+														}
+														if(count($assignDepartmentId)>0){
+															$DepartmentId = implode(',',$assignDepartmentId);
+														}else{
+															$DepartmentId = 0;
+														}
+													}else{
+														$DepartmentId = $row_get_survey['departments'];
+													}
 
-											}
+													record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1 and id != 4");	
 
+													//record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc",2);
 
-
-											}else{
-
-
-
+													if($totalRows_get_department == 1){
+														while($row_get_department = mysqli_fetch_assoc($get_department)){
+															echo '<input type="hidden" name="departmentid" value="'.$row_get_department['id'].'">';
+														}
+													}else{
+														echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';?>
+														<div class="col-md-6">
+															<div class="form-group">
+																<label for="departmentid">Department</label>
+																<select name="departmentid" id="departmentid" class="form-control form-control-lg" required>
+																	<option value="">Please select</option>
+																	<?php while($row_get_department = mysqli_fetch_assoc($get_department)){	?>
+																		<option value="<?php echo $row_get_department['id'];?>"><?php echo $row_get_department['name'];?></option>
+																	<?php } ?>
+																</select>
+															</div>
+														</div>
+														<?php echo ($totalRows_get_department==1)?'<div class="col-md-3"></div>':'';
+													} 
+												}
 											?>
+											<!-- End Department -->
+											<!-- Start Roles -->
+											<?php 
+												if(!empty($row_get_survey['roles'])){
+													if($_SESSION['user_type']>2){
+														record_set("get_assign_role", "select * from relation_table where user_id=".$_SESSION['user_id']." and table_name='role'");
+														$assignRoleId = [];
+														while($row_get_assign_role = mysqli_fetch_assoc($get_assign_role)){
+															$assignRoleId[] = $row_get_assign_role['table_id'];
+														}
+														if(count($assignRoleId)>0){
+															$RoleId = implode(',',$assignRoleId);
+														}else{
+															$RoleId = 0;
+														}
+													}else{
+														$RoleId = $row_get_survey['roles'];
+													}
 
-											<?php
+													record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1 and id != 4");				
+													// record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
 
-											foreach($child_answer as $key=>$child_answer_option){ ?>
-
-											<td><input type="radio" class="form-check-input" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"></td>
-
-
-
-											<?php } ?>
-
-
-
-											<?php } ?>
-
-											</tr>
-
-											<?php } ?>
-
-											</tbody>
-
-										</table>
-										<?php 
-									}else {
-										while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-										$langRadioAnsVal= $row_get_questions_detail['description'];	
-										?>
-										
-										<div class="form-check col-md-2">
-											<label class="form-check-label">
-												<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
-												data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
-												data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
-												data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-												data-currentanswer="<?=$row_get_questions_detail['answer']?>"
-												>
-												<?php echo $row_get_questions_detail['description'];?> 
-											</label>
+													if($totalRows_get_roles == 1){
+														while($row_get_role = mysqli_fetch_assoc($get_role)){
+															echo '<input type="hidden" name="roleid" value="'.$row_get_role['id'].'">';
+														}
+													}else{
+														echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';?>
+														<div class="col-md-6">
+															<div class="form-group">
+																<label for="roleid">Role</label>
+																<select name="roleid" id="roleid" class="form-control form-control-lg" required>
+																	<option value="">Please select</option>
+																	<?php
+																		while($row_get_role = mysqli_fetch_assoc($get_role)){ ?>
+																		<option value="<?php echo $row_get_role['id'];?>"><?php echo $row_get_role['name'];?></option>
+																	<?php } ?>
+																</select>
+															</div>
+														</div>
+														<?php echo ($totalRows_get_role==1)?'<div class="col-md-3"></div>':'';
+													} 
+												}
+											?>
+											<!-- End Roles -->
 										</div>
 									<?php } ?>
-									<?php } ?>	
+									<?php 
+									$eachindex = 0;
+									foreach($questions[$key] AS $question){
+									$questionid = $question['id'];  ?>
+										<div class="question-div question_container_<?php echo $questionid; ?>">
+											<div class="col-md-12">
+											<h4><?php echo $question['question'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
+											</div>	
+										
+											<!-- When Answer Type 1 -->
+											<?php if($question['answer_type'] == 1){  
+												//get Questions
+												record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus='1'");
 
-									<span class="viewQuestion<?php echo $questionid;?>"></span>
-									<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-								<?php } ?>
+												//get Questions
+												record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 
-	                        	<!-- End Answer Type 1 -->
+												if($totalRows_get_child_questions>0){ ?>
+													<table class="table table-hover table-bordered">
+														<tbody>
+															<tr align="center">
+																<?php
+																$child_answer = array();
+																$sub_answer = array();
+																$tdloop = 0;
+																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
+																	$tdloop++; ?>
+																	<td>
+																		<?php
+																			$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
+																			echo $row_get_questions_detail['description'];
+																		?>	
+																	</td>
+																<?php } ?>
+															</tr>
+														<?php 
+															while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
+															<tr>
+																<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
+															</tr>
+															<tr align="center">
+																<?php 
+																if($row_get_child_questions['parendit'] == 0){
+																	record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
+																	if($totalRows_get_answer_detail>0){
+																		echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
+																		while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
+																			// echo $row_get_answer_detail['description'];
+																			$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
+																		}
+																		foreach($sub_answer as $key=>$child_answer_option){ ?>
+																			<td colspan="<?php echo count($sub_answer); ?>"><input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" 
+																			value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
+																			> <?php echo $child_answer_option; ?></td>
+																		<?php  }
+																	}
+																}else{ 
+																	foreach($child_answer as $key=>$child_answer_option){ ?>
+																	<td><input type="radio" class="form-check-input" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"></td>
+																	<?php } ?>
+																<?php } ?>
+															</tr>
+														<?php } ?>
+														</tbody>
+													</table>
+													<?php 
+												}else {
+													while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+													$langRadioAnsVal= $row_get_questions_detail['description'];	?>
+														<div class="form-check col-md-2">
+															<label class="form-check-label">
+																<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
+																data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
+																data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
+																data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
+																data-currentanswer="<?=$row_get_questions_detail['answer']?>"
+																>
+																<?php echo $row_get_questions_detail['description'];?> 
+															</label>
+														</div>
+													<?php } ?>
+												<?php } ?>	
+												<span class="viewQuestion<?php echo $questionid;?>"></span>
+												<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+											<?php } ?>
 
-	                        	<!-- When Answer Type 2 -->
+											<!-- End Answer Type 1 -->
 
-	                        	<?php if($question['answer_type'] == 2){ ?>
+											<!-- When Answer Type 2 -->
+											<?php if($question['answer_type'] == 2){ ?>
+												<div class="form-group">
+													<input type="text" name="answerid[<?php echo $questionid; ?>]" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>>
+													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+												</div>	
+											<?php } ?>
+											<!-- End Answer Type 2 -->
 
-									<div class="form-group">
+											<!-- When Answer Type 3 -->
+											<?php if($question['answer_type'] == 3){ ?>
+												<div class="form-group">
+													<textarea name="answerid[<?php echo $questionid; ?>]"  id="answerid_<?php echo $eachindex; ?>" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>></textarea>
+													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+												</div>
+											<?php } ?>
+											<!-- End Answer Type 3 -->
 
-										<input type="text" name="answerid[<?php echo $questionid; ?>]" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>>
-
-										<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-
-									</div>	
-
-	                        	<?php } ?>
-
-	                        	<!-- End Answer Type 2 -->
-
-	                        	<!-- When Answer Type 3 -->
-
-	                        	<?php if($question['answer_type'] == 3){ ?>
-
-									<div class="form-group">
-
-										<textarea name="answerid[<?php echo $questionid; ?>]"  id="answerid_<?php echo $eachindex; ?>" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>></textarea>
-
-									<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-
-									</div>
-
-	                        	<?php } ?>
-
-	                        	<!-- End Answer Type 3 -->
-
-	                        	<!-- When Answer Type 4 -->
-
-	                        	<?php 
-
-	                        	if($question['answer_type'] == 4){ 
-									//get Questions
-									record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-									if($totalRows_get_questions_detail>0){
-										$child_answer = array();
-										 $tdloop = 0;
-
-											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-												$tdloop++; 
-												$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
-												$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
-												$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
-												$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
-												$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
-												$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
-											}
-									?>
-									<table class="table table-hover table-bordered">
-									<tbody>
-									    <?php if($question['rating_type'] == 1){ 
-											 $emoticonsRatingImages = emoticonsRatingImages();
-											?>
-											<tr align="center">
-												<?php 
-												
-												foreach($child_answer as $key=>$child_answer_option){ ?>
-													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
-													<div>
-														<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
-													</div>	
-													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-													data-currentanswer="<?=$child_answer_option['answer']?>"
-													>
-													</label>	
-												<?php } ?>
-											</tr>
-										<?php }else if($question['rating_type'] == 2){ ?>
-											<tr align="center" class="question-<?=$questionid?>">
-												<?php $i=0; foreach($child_answer as $key=>$child_answer_option){  $i++; ?>
-													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
-													<div>
-														<img style="width:40px" data-qid="<?=$questionid?>" data-index="<?=$i?>" class="smily_icon rating-img image-<?=$i?>" src="./dist/img/star-gray.png">
-													</div>	
-													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-													data-currentanswer="<?=$child_answer_option['answer']?>"
-													>
-													</label>	
-												<?php } ?>
-											</tr>
-										<?php } else if($question['rating_type'] == 3){ ?>
-											<tr align="center" class="question-<?=$questionid?>" >
-												<?php foreach($child_answer as $key=>$child_answer_option){  ?>
-													<td style="padding:0px;" class="show_smily_<?php echo $show_smily; ?> smile-block rating-type-number" data-qid="<?=$questionid?>"><label style=" width: 100%;height: 100%;padding:8px;">
-													<div class="number-grid">
-													<?=$child_answer_option['rating_option_type']+1?>
-													</div>	
-													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-													data-currentanswer="<?=$child_answer_option['answer']?>"
-													>
-													</label>	
-												<?php } ?>
-											</tr>
-										<?php } else if($question['rating_type']== 4){ 
-											$tickCrossRatingImages = tickCrossRatingImages();
-										?> 
-											<tr align="center">
-												<?php 
-												foreach($child_answer as $key=>$child_answer_option){  ?>
-													<td class="show_smily_<?php echo $show_smily; ?> smile-block"><label>
-													<div>
-														<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
-													</div>	
-													<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-													data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-													data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-													data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-													data-currentanswer="<?=$child_answer_option['answer']?>"
-													>
-													</label>	
-												<?php } ?>
-											</tr>
-										<?php } ?>
-									</tbody>
-									</table>
-									<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-
-									<span class="viewQuestion<?php echo $questionid;?>"></span>
-									<?php
-									}
-	                        	} ?>
-
-	                        	<!-- End Answer Type 4 -->
-
-	                        	<!-- When Answer Type 5 -->
-
-	                        	<?php 
-
-	                        	if($question['answer_type'] == 5){ 
-
-		                        	record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-									if($totalRows_get_questions_detail>0){
-
-										while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-
-	                        	 ?>
-
-									<h5>
-
-										<?php
-
-											 echo $row_get_questions_detail['description']; 
-
-										?>
-
-									</h5>
-
-	                        	<?php 
-
-				                        }
-
-				                    }
-
-	                        	}
-
-	                        	?>
-
-	                        	<!-- End Answer Type 5 -->
-
-	                        	<!-- When Answer Type 6 -->
-
-	                        	<?php 
-
-	                        	if($question['answer_type'] == 6){
-
-	                        	?>
-
-									<div class="form-group">
-
-										<select name="answerid[<?php echo $question['id']; ?>]" <?php if($question['ifrequired'] == 1){ ?> required <?php } ?> class="form-control subque_select" data-questionid="<?php echo $question['id']; ?>">
-
-											<option value="">Select</option>
-
+											<!-- When Answer Type 4 -->
 											<?php 
+											if($question['answer_type'] == 4){ 
+												//get Questions
+												record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+												if($totalRows_get_questions_detail>0){
+													$child_answer = array();
+													$tdloop = 0;
+														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+															$tdloop++; 
+															$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
+															$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
+															$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
+															$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
+															$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
+															$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
+														}
+													?>
+												<table class="table table-hover table-bordered">
+													<tbody>
+														<?php if($question['rating_type'] == 1){ 
+															$emoticonsRatingImages = emoticonsRatingImages();
+															?>
+															<tr align="center">
+																<?php 
+																foreach($child_answer as $key=>$child_answer_option){ ?>
+																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																	<label>
+																		<div>
+																			<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
+																		</div>	
+																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																		data-currentanswer="<?=$child_answer_option['answer']?>"
+																		>
+																	</label>	
+																<?php } ?>
+															</tr>
+														<?php }else if($question['rating_type'] == 2){ ?>
+															<tr align="center" class="question-<?=$questionid?>">
+																<?php 
+																	$i=0; foreach($child_answer as $key=>$child_answer_option){  
+																	$i++; ?>
+																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																	<label>
+																		<div>
+																			<img style="width:40px" data-qid="<?=$questionid?>" data-index="<?=$i?>" class="smily_icon rating-img image-<?=$i?>" src="./dist/img/star-gray.png">
+																		</div>	
+																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																		data-currentanswer="<?=$child_answer_option['answer']?>"
+																		>
+																	</label>	
+																<?php } ?>
+															</tr>
+														<?php } else if($question['rating_type'] == 3){ ?>
+															<tr align="center" class="question-<?=$questionid?>" >
+																<?php 
+																	foreach($child_answer as $key=>$child_answer_option){  ?>
+																		<td style="padding:0px;" class="show_smily_<?php echo $show_smily; ?> smile-block rating-type-number" data-qid="<?=$questionid?>">
+																		<label style=" width: 100%;height: 100%;padding:8px;">
+																			<div class="number-grid">
+																			<?=$child_answer_option['rating_option_type']+1?>
+																			</div>
+																				
+																			<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+																			data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+																			data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																			data-currentanswer="<?=$child_answer_option['answer']?>"
+																			>
+																		</label>	
+																<?php } ?>
+															</tr>
+														<?php } else if($question['rating_type']== 4){ 
+															$tickCrossRatingImages = tickCrossRatingImages(); ?> 
+															<tr align="center">
+																<?php 
+																foreach($child_answer as $key=>$child_answer_option){  ?>
+																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																	<label>
+																		<div>
+																			<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
+																		</div>
 
-											record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-											if($totalRows_get_questions_detail>0){
-
-											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-
-											?>
-											<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
-											data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
-											data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-											data-currentanswer="<?=$row_get_questions_detail['answer']?>"
-											><?php echo $row_get_questions_detail['description']; ?></option>
-
-											<?php 
-
+																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
+																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
+																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
+																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																		data-currentanswer="<?=$child_answer_option['answer']?>"
+																		>
+																	</label>	
+																<?php } ?>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+												<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+												<span class="viewQuestion<?php echo $questionid;?>"></span>
+												<?php
 												}
+											} ?>
+											<!-- End Answer Type 4 -->
 
-											}
+											<!-- When Answer Type 5 -->
+											<?php 
+												if($question['answer_type'] == 5){ 
+													record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 
+													if($totalRows_get_questions_detail>0){
+														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
+															<h5> <?php echo $row_get_questions_detail['description']; ?> </h5>
+															<?php 
+														}
+													}
+												}
 											?>
+											<!-- End Answer Type 5 -->
 
-										</select>
+											<!-- When Answer Type 6 -->
+											<?php if($question['answer_type'] == 6){ ?>
+												<div class="form-group">
+													<select name="answerid[<?php echo $question['id']; ?>]" <?php if($question['ifrequired'] == 1){ ?> required <?php } ?> class="form-control subque_select" data-questionid="<?php echo $question['id']; ?>">
+														<option value="">Select</option>
+														<?php 
+														record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 
-										<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+														if($totalRows_get_questions_detail>0){
+															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
+																<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
+																data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
+																data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
+																data-currentanswer="<?=$row_get_questions_detail['answer']?>"
+																><?php echo $row_get_questions_detail['description']; ?></option>
+															<?php }
+														} ?>
+													</select>
+													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+												</div>
+											<span class="viewQuestion<?php echo $questionid;?>"></span>
+											<?php  } ?>
 
+											<!-- End Answer Type 6 -->
+											<?php $eachindex++;  ?>	
+										</div>	
+									<?php 
+									} 
+									if(($value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
+										<h4><?=($row_get_survey['contacted_request_label'] != '') ? $row_get_survey['contacted_request_label'] :'Can HATS Group contact you about your comments/feedback?'?></h4>
+										<div class="form-group">
+											<div class="form-check contact">
+												<input class="form-check-input to_be_contacted_radio"  type="radio" name="to_be_contact" id="to_be_contact_yes" value="1" style="visibility:hidden;"  required>Yes
+												<label class="form-check-label" for="to_be_contact_yes">
+													<img style="width:40px" class="smily_icon" src="dist/img/yes.png">
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input to_be_contacted_radio" type="radio" name="to_be_contact" id="to_be_contact_no" value="0" style="visibility:hidden;"  required>No
+												<label class="form-check-label" for="to_be_contact_no">
+													<img style="width:40px" class="smily_icon" src="dist/img/no.png">
+												</label>
+											</div>
+										</div>
+
+									<div class="form-group" id="to_be_contact_mail_div">
+										<div class="row">
+											<div class="col-md-6">
+												<input type="text" class="form-control fname" id="fname" name="first_name" placeholder="Your first name" required>
+											</div>
+											<div class="col-md-6">
+												<input type="text" class="form-control" id="lname" name="last_name" placeholder="Your last name" required>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+												<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail" required> 
+											</div>
+											<div class="col-md-6">
+												<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number" required>
+											</div>
+										</div> 
+										<div class="row">
+											<div class="col-md-12">
+												<input type="checkbox" id="accept_privacy" name="accept_privacy" value="agree">
+												<!--<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>-->
+												<label for="accept_privacy">Please confirm you agree with <a href="./privacy-policy-pdf/DGFM Privacy Policy.pdf" target="_blank">our privacy policy</a>  </label>
+												<br>
+											</div>
+										</div> 
 									</div>
-
-								  <span class="viewQuestion<?php echo $questionid;?>"></span>
-
-	                        	<?php 
-
-	                        	}
-
-	                        	?>
-
-	                        	<!-- End Answer Type 6 -->
-
-	                        	<?php
-
-	                        	$eachindex++; 
-
-	                        	?>	
-
-	                        	</div>	
-
-	                        	<?php 
-
-	                        	} 
-
-	                        	?>
-
-	                        	
-									
-	                        	<?php if(count($survey_steps) > 1){ ?>
-
-                                <ul class="list-inline text-center">
-
-                                    <?php if($value['number'] == 1){ ?>
-		                            <li>
-										<button type="button" class="default-btn next-step">
-											Continue to next step
-										</button>
-									</li>
-		                        	<?php } ?>
-		                        	<?php if($value['number'] > 1){ ?>
-		                            <li>
-										<button type="button" class="default-btn prev-step">
-										Back
-										</button>
-									</li>
-		                        	<?php } ?>
-		                        	<?php if($value['number'] == count($survey_steps)) { ?>
-
-		                            <li><input type="submit" name="submit" class="default-btn finalSubmit submitform" id="submit" value="Finish"></li>
-
-		                            <?php }else if($value['number'] > 1 && $value['number'] < count($survey_steps)){ ?>
-
-		                            <li>
-
-										<button type="button" class="default-btn next-step">
-											Continue
-										</button>
-									</li>
-		                            <?php } ?>
-                                </ul>
-
-                            <?php }else{ ?>
-								<div class="col-md-12">
-								<input type="submit" name="submit" class="default-btn submit-survey-btn" id="submit" value="Finish">
+									<?php } ?>
+									<?php if(count($survey_steps) > 1){ ?>
+										<ul class="list-inline text-center">
+											<?php if($value['number'] == 1){ ?>
+												<li>
+													<button type="button" class="default-btn next-step">
+														Continue to next step
+													</button>
+												</li>
+											<?php }
+											if($value['number'] > 1){ ?>
+												<li>
+													<button type="button" class="default-btn prev-step">
+													Back
+													</button>
+												</li>
+											<?php } ?>
+											<?php if($value['number'] == count($survey_steps)) { ?>
+												<li><input type="submit" name="submit" class="default-btn finalSubmit submitform" id="submit" value="Finish"></li>
+											<?php }else if($value['number'] > 1 && $value['number'] < count($survey_steps)){ ?>
+												<li>
+													<button type="button" class="default-btn next-step">
+														Continue
+													</button>
+												</li>
+											<?php } ?>
+										</ul>
+									<?php }else{ ?>
+										<div class="col-md-12">
+											<input type="submit" name="submit" class="default-btn submit-survey-btn" id="submit" value="Finish">
+										</div>
+									<?php } ?>
 								</div>
-
                             <?php } ?>
-
-                            </div>
-
-                            <?php } ?>
-
                             <div class="clearfix"></div>
-
                         </div>
-
                     </form>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 <!-- partial script-->

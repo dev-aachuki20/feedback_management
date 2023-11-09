@@ -261,5 +261,5 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
     }
     $message .= '</div>';
   }
-  create_mpdf($message, 'report.pdf', 'D');
+  create_mpdf($message, 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.pdf', 'D');
 }

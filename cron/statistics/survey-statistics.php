@@ -386,7 +386,13 @@ while($row_get_report= mysqli_fetch_assoc($get_report)){
                     </div>
                 </body>
             </html>';
-            // echo $html; die();
+
+
+            $footer = '<div style="text-align: center;"> ' . POWERED_BY . '
+            <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
+            </div>';
+
+            $mpdf->SetHTMLFooter($footer);
             $mpdf->WriteHTML($html);
             $pdf = $mpdf->Output('', 'S');
             

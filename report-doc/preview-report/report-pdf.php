@@ -381,8 +381,6 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
             </body>
             </html>';
 
-
-    // echo $html;
-    // die();
-    create_mpdf($html, 'report.pdf', 'D');
+    create_mpdf($html, 'Survey Report -' . date('Y-m-d-H-i-s') . '.pdf', 'D');
 }
+?>

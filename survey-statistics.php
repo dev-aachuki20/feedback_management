@@ -486,7 +486,11 @@ $(document).on('click', '.large-btn', function(){
         $('#end_date').val(edate);
         $('#survey_data_type').val(data_type);
         if(document_type == 'pdf'){
-            export_pdf(sdate,edate,data_type,survey);
+            console.log('pdf sdzsffffffffff');
+            // export_pdf(sdate,edate,data_type,survey);
+            $('#document_form').attr('action', './Export-Pdf/survey-statistics-pdf.php');
+            $('#document_form').submit();
+
         }else if(document_type == 'csv'){
             $('#document_form').attr('action','./ajax/ajaxOn_survey_statistics.php?export=csv&data_type='+data_type);
             $('#document_form').submit();
@@ -554,10 +558,6 @@ function export_pdf(sdate,edate,data_type ='',survey){
     $('.survey_name').show();
 }
 </script>
-
-
-
-
 
 
 <!-- <div id="element">

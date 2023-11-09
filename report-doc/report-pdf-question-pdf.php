@@ -245,5 +245,5 @@ $message = '<div align="center">
         } 
       $message .='</div>';
   }
-  create_mpdf($message,'report.pdf','I');
+  create_mpdf($message,'Survey Report Question -' . date('Y-m-d-H-i-s') . '.pdf','I');
 ?>

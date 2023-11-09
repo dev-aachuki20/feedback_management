@@ -408,8 +408,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
         </div>';
 
-        $mpdf->WriteHTML($html);
         $mpdf->SetHTMLFooter($footer);
+        $mpdf->WriteHTML($html);
         $mpdf->Output($dir, 'F');
 
         $attachments = array('document/survey-report-' . $row_get_report['id'] . '.csv', 'document/survey-report-' . $row_get_report['id'] . '.pdf');

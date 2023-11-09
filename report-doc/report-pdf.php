@@ -162,7 +162,10 @@ if(isset($_GET['export']) and $_GET['export']=='csv'){
     $survey_name = getSurvey()[$survey_id];
     export_csv_file($survey_data,$data_type,$survey_name); die();
 }
- $counter = 0;
+
+$counter = 1;
+$j = 6;
+
 $html = '<!DOCTYPE html>
 <html lang="en">
     <head>
@@ -362,10 +365,16 @@ $html = '<!DOCTYPE html>
                                     </div>
                                 </div>';
                             }
-                        $counter++;
-                    if($counter % 6==0){
-                        $html .='<pagebreak>';
-                    }
+                            if ($counter == 6 && count($survey_data) > 6) {
+                                $j = $j + 9;
+                                $html .= '<pagebreak/>';
+                            }
+                
+                            if ($j > 14 && $counter == $j && $counter < count($survey_data)) {
+                                $j = $j + 9;
+                                $html .= '<pagebreak/>';
+                            }
+                            $counter++;
                     }
                 }
         $html .= '</div>
@@ -373,5 +382,5 @@ $html = '<!DOCTYPE html>
     </body>
 </html>';
 // create pdf
-create_mpdf($html,'report.pdf','I');
+create_mpdf($html,'Survey Report -' . date('Y-m-d-H-i-s') . '.pdf','I');
 ?>

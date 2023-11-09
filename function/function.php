@@ -1139,8 +1139,9 @@ function create_mpdf($html='',$file_name='',$output){
 	$footer = '<div style="text-align: center;"> '.POWERED_BY.'
 	<center><img  src="'.BASE_URL.FOOTER_LOGO.'" alt="" width="150"/></center>
 	</div>';
-	$mpdf->WriteHTML($html);
+
 	$mpdf->SetHTMLFooter($footer); 
+	$mpdf->WriteHTML($html);
 	return $mpdf->Output($file_name,$output);
 }
 
