@@ -12,7 +12,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 	$condition_yes_no=$_POST['condition_yes_no'];
 	$data_que =  array(
 		"parendit"		=> $_POST['parent'],
-		"question" 		=> $_POST['question'],
+		"question" 		=> str_replace("'","",$_POST['question']) ,
 		"surveyid"		=>$surveyid,
 		"answer_type" 	=> $_POST['atype'],
 		"rating_type" 	=> $_POST['rating_type'],
@@ -42,7 +42,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 			);
 			
 			//print_r($data1); exit;
-			$insert_value1 =  dbRowInsert("questions_detail",$data_head);
+			$insert_value1 =  dbRowInsert("questions_detail",$data_head,2);
 		}
 		record_set("get_quest", "select id from questions order by id desc limit 1");				
 		$row_get_quest = mysqli_fetch_assoc($get_quest);
@@ -75,7 +75,7 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 					);
 					if($condition_yes_no == 1){
 						$data_correct['conditional_logic']   = $conditional_logic[$i];
-						$data_correct['conditional_answer']  = $conditional_answer[$i];
+						$data_correct['conditional_order']  = $conditional_answer[$i];
 						$data_correct['skip_to_question_id'] = $skip_to_question_id[$i];
 					}
 					$insert_value2 =  dbRowInsert("questions_detail",$data_correct);
@@ -180,14 +180,14 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 								<input type="number" class="form-control" name="dposition" min="0" value="1" />
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-4 weighted-radio-btn">
 							<label>Weighted</label>
 							<div class="form-group">	
 								<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="1" data-count="0"/>  Yes
 								<input type="radio" class="form-check-input weighted_yes_no" name="weighted_yes_no" data-id="2334edff" value="0" data-count="0" checked/>  No
 							</div>
 						</div>
-						<div class="col-md-4 conditional-radio-btn" style="display:none;">
+						<div class="col-md-4 conditional-radio-btn">
 							<label>Conditional</label>
 							<div class="form-group">	
 								<input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no"   value="1" data-count="0"/>  Yes
@@ -293,7 +293,6 @@ $row_get_survey_details = mysqli_fetch_assoc($get_survey_details);
 									<?php 
 										record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' order by dposition asc ");
 										if($totalRows_get_question>0){	
-
 										while($row_get_question = mysqli_fetch_assoc($get_question)){ ?>
 										<option value="<?=$row_get_question['id']?>"><?=$row_get_question['question']?></option>
 									<?php
@@ -368,6 +367,7 @@ var lcode = new Array();
 			}	
 		}
 		let uniqueId = Math.random().toString(36).substr(2, 9);
+		let index = $('.opt-div').length;
 		$(".options").append('<div class="col-md-12 opt-div new-appended-option"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval '+uniqueId+'" value="0" name="cans[]" readonly/></div></div><div class="col-md-3 rating-type-option"></div><div class="col-md-2"><label></label><button class="btn btn-danger remove-field" type="button">Remove</div></div></div>');
 		$(".options_other").append('<div class="col-md-6"><div class="form-group"><label>New Option</label><input type="text" class="form-control new-option" ></div></div></div>');
 
@@ -515,12 +515,15 @@ $(document).ready(function(){
 		$('.rating_type').attr('required',false);
 		$(".answer_type_5").hide();
 		$('.rating-type-form').remove();
+		$('.conditional-radio-btn').show();
+		$('.weighted-radio-btn').show();
         if(atype == "2" || atype == "3" || atype == "5"){
 			$(".answer_type_other").show();
 			$(".options").hide();
 			$(".options_other").hide();
 			$(".conditional_questions").hide();
 			$('.conditional-radio-btn').hide();
+			$('.weighted-radio-btn').hide();
 			$(".btnopt").hide();
 			$(".answer_type_5").hide();
 			$(".question_label").text("Question");
@@ -538,9 +541,7 @@ $(document).ready(function(){
 		}else{
 			
 			$(".answer_type_other").show();
-			if(isWeighted == 1){
-				$('.conditional-radio-btn').show();
-			}
+			
 			$(".conditional_questions").show();
 			var  parent = $('.parent').val();
 			$(".question_label").text("Question");
@@ -660,17 +661,9 @@ $(document).ready(function(){
 	});
 	 
 });
+
 $(document).on('change', '.weighted_yes_no', function() {
-	setWeighted();
-	let weightedValue = $(this).val();
-	if(weightedValue == 1){
-		$('.conditional-radio-btn').attr('disable',false);
-		$('.conditional-radio-btn').show();
-	}else{
-		$('.conditional-radio-btn').attr('disable',true);
-		$('.conditional-radio-btn').hide();
-	}
-	
+	setWeighted();	
 });
 
 $(document).on("blur", ".correct_answer, .canval", function() {
@@ -679,10 +672,9 @@ $(document).on("blur", ".correct_answer, .canval", function() {
 	$('#options > .opt-div').each(function() {
 		let text = $(this).find('.correct_answer').val();
 		let value = $(this).find('.canval').val();
-		console.log('text :'+ text ,'value :'+ value);
+		let index = parseInt($(this).index())+1;
 		if(text){
-			option = `<option value="${value}">${text}</option>`;
-			$('.conditional_answer')
+			option = `<option value=${index}>${text}</option>`;
 			$('.conditional_answer').each(function() {
 				$(this).append(option);
 			});
@@ -731,22 +723,35 @@ function getConditionalQuestion(mode='addQuestion'){
     QuestionArray.push(Qid);
   });
   QuestionArray.sort();
-  console.log(QuestionArray);
+
+	// get conditional logic answer 
+	const options = [];
+	$(".conditional_answer").last().find("option").each(function() {
+		if ($(this).prop("selected") === false) {
+		options.push({
+			value: $(this).val(),
+			label: $(this).text().trim()
+		});
+		}
+	});
+  	console.log(options, 'options');
+
   $.ajax({
 	type: "POST",
 	url: 'ajax/ajaxGetConditionalQuestionOnSelect.php',
 	data: {
 		surveyid: surveyid,
 		skipQid : QuestionArray,
+		options:options,
 		mode:mode,
 	}, 
 	success: function(response)
 	{
-	//console.log(response);
+	console.log(response);
 		if (response == '') {
 		}else{
 			$(".logicSection").append(response);
-			$('.correct_answer').trigger('blur');
+			//$('.correct_answer').trigger('blur');
 		}
 	}
   })
@@ -823,18 +828,29 @@ function tickCrossOptionsAppendHtml(text,selectedValues=''){
 }
 
 
-// $(document).on('keyup','.canval',function(){
-// 	let allVal = $('.canval').map(function(){
-// 		return $(this).val();
-// 	}).get();
-// 	let currVal = $(this).val();
-// 	// console.log( $(this).prop('disabled'));
-// 		console.log(allVal,currVal);
+$(document).on('keyup','.canval',function(){
+	let allVal = $('.canval').not(this).map(function(){
+		return $(this).val();
+	}).get();
+	let currVal = $(this).val();
+		console.log(allVal,currVal);
+		console.log(allVal.includes(currVal));
+	if(allVal.includes(currVal)){
+		alert('The answer value is already used.');
+		$(this).val('');
+	}
+});
 
-// 	if(allVal.includes(currVal)){
-// 		alert('The answer value is already used.');
-// 		$(this).val('');
-// 	}
-// });
-
+$(document).on('keyup','.correct_answer',function(){
+	let allVal = $('.correct_answer').not(this).map(function(){
+		return $(this).val().trim().toLowerCase();
+	}).get();
+	let currVal = $(this).val().trim().toLowerCase();
+		console.log(allVal,currVal);
+		console.log(allVal.includes(currVal));
+	if(allVal.includes(currVal)){
+		alert('The answer value is already used.');
+		$(this).val('');
+	}
+});
 </script>

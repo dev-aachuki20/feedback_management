@@ -2,6 +2,7 @@
 include('../function/function.php');
 $surveyid   = $_REQUEST['surveyid'];
 $skipedQid  = $_REQUEST['skipQid'];
+$options= $_REQUEST['options'];
 if(isset($_REQUEST['questionid'])){
   $questionid = $_REQUEST['questionid'];
 }else {
@@ -29,6 +30,7 @@ if($count == 1){
         $max = $questionid;
     }
 }
+
 if($_REQUEST['mode']=='editQuestion'){
     $html = '<div class="col-md-12 conditional_logic" style="margin-top: 10px;">
     <div class="col-md-2">
@@ -42,11 +44,11 @@ if($_REQUEST['mode']=='editQuestion'){
     </div>
     <div class="col-md-3">
     <select class="form-control conditional_answer" name="conditional_answer[]" id="conditional_answer">';
-    record_set("get_questions_detail", "select * from questions_detail where surveyid='".$surveyid."'  and questionid='".$questionid."'");		
-    while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail))
-    {
-    $html .= '<option value="'.$row_get_questions_detail['answer'].'">'.$row_get_questions_detail['description'].'</option>';
-    }
+    // record_set("get_questions_detail", "select * from questions_detail where surveyid='".$surveyid."'  and questionid='".$questionid."'");		
+    // while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+        foreach($options as $option){
+            $html .= '<option value="'.$option['value'].'">'.$option['label'].'</option>';
+        }
     $html .='</select>	
     </div>
     <div class="col-md-1">
@@ -54,7 +56,7 @@ if($_REQUEST['mode']=='editQuestion'){
     </div>
     <div class="col-md-3">
     <select class="form-control skip_to_question" name="skip_to_question[]">';
-    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id !=".$questionid."");
+    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and id Not IN(".$newIds.") and id <".$questionid."");
     if($totalRows_get_question>0){
         while($row_get_question = mysqli_fetch_assoc($get_question)){
         $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
@@ -65,7 +67,6 @@ if($_REQUEST['mode']=='editQuestion'){
     </div>';
     echo $html; die();
 }else if($_REQUEST['mode']=='addQuestion'){
-
     $html = '<div class="col-md-12 conditional_logic" style="margin-top: 10px;">
     <div class="col-md-2">
     <label for="">If answer</label>		
@@ -77,18 +78,21 @@ if($_REQUEST['mode']=='editQuestion'){
     </select>		
     </div>
     <div class="col-md-3">
-    <select class="form-control conditional_answer" name="conditional_answer[]" id="conditional_answer">
-    </select>	
+    <select class="form-control conditional_answer" name="conditional_answer[]" id="conditional_answer">';
+        foreach($options as $option){
+            $html .= '<option value="'.$option['value'].'">'.$option['label'].'</option>';
+        }
+    $html .= '</select>	
     </div>
     <div class="col-md-1">
     <label for="">Skip to</label>
     </div>
     <div class="col-md-3">
     <select class="form-control skip_to_question" name="skip_to_question[]">';
-    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and cstatus='1' order by dposition asc");
+    record_set("get_question", "select * from questions where surveyid='".$surveyid."' and id Not IN(".$newIds.") and cstatus='1' order by dposition asc");
     if($totalRows_get_question>0){
         while($row_get_question = mysqli_fetch_assoc($get_question)){
-        $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
+            $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
         }
     }
     $html .='</select>	

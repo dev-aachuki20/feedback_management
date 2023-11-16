@@ -218,7 +218,7 @@ if($row_get_survey['isStep'] == 1){
 	}
 }
 //Survey Questions
-record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by id asc");
+record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by id desc");
 $questions = array();
 while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
@@ -229,7 +229,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['skip_to_question_id'] = $row_get_questions['skip_to_question_id'];
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['rating_type'] = $row_get_questions['rating_type'];
-} 		
+} 
 ?>
 <!DOCTYPE HTML>
 <html lang="en" class="notranslate" translate="no">
@@ -658,257 +658,268 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									$eachindex = 0;
 									foreach($questions[$key] AS $question){
 									$questionid = $question['id'];  ?>
-										<div class="question-div question_container_<?php echo $questionid; ?>">
-											<div class="col-md-12">
-											<h4><?php echo $question['question'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
-											</div>	
-										
-											<!-- When Answer Type 1 -->
-											<?php if($question['answer_type'] == 1){  
-												//get Questions
-												record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus='1'");
-
-												//get Questions
-												record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-												if($totalRows_get_child_questions>0){ ?>
-													<table class="table table-hover table-bordered">
-														<tbody>
-															<tr align="center">
-																<?php
-																$child_answer = array();
-																$sub_answer = array();
-																$tdloop = 0;
-																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
-																	$tdloop++; ?>
-																	<td>
-																		<?php
-																			$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
-																			echo $row_get_questions_detail['description'];
-																		?>	
-																	</td>
-																<?php } ?>
-															</tr>
-														<?php 
-															while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
-															<tr>
-																<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
-															</tr>
-															<tr align="center">
-																<?php 
-																if($row_get_child_questions['parendit'] == 0){
-																	record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
-																	if($totalRows_get_answer_detail>0){
-																		echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
-																		while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
-																			// echo $row_get_answer_detail['description'];
-																			$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
-																		}
-																		foreach($sub_answer as $key=>$child_answer_option){ ?>
-																			<td colspan="<?php echo count($sub_answer); ?>"><input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" 
-																			value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
-																			> <?php echo $child_answer_option; ?></td>
-																		<?php  }
-																	}
-																}else{ 
-																	foreach($child_answer as $key=>$child_answer_option){ ?>
-																	<td><input type="radio" class="form-check-input" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"></td>
-																	<?php } ?>
-																<?php } ?>
-															</tr>
-														<?php } ?>
-														</tbody>
-													</table>
-													<?php 
-												}else {
-													while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-													$langRadioAnsVal= $row_get_questions_detail['description'];	?>
-														<div class="form-check col-md-2">
-															<label class="form-check-label">
-																<input type="radio" class="form-check-input subque" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $questionid;?>"
-																data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
-																data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
-																data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-																data-currentanswer="<?=$row_get_questions_detail['answer']?>"
-																>
-																<?php echo $row_get_questions_detail['description'];?> 
-															</label>
-														</div>
-													<?php } ?>
-												<?php } ?>	
-												<span class="viewQuestion<?php echo $questionid;?>"></span>
-												<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-											<?php } ?>
-
-											<!-- End Answer Type 1 -->
-
-											<!-- When Answer Type 2 -->
-											<?php if($question['answer_type'] == 2){ ?>
-												<div class="form-group">
-													<input type="text" name="answerid[<?php echo $questionid; ?>]" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>>
-													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+										<fieldset class="fieldset_<?=$questionid?>">
+											<div class="question-div question_container_<?php echo $questionid; ?>">
+												<div class="col-md-12">
+												<h4>
+													<?php echo $question['question'].'::'.$question['id'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
 												</div>	
-											<?php } ?>
-											<!-- End Answer Type 2 -->
+											
+												<!-- When Answer Type 1 -->
+												<?php if($question['answer_type'] == 1){  
+													//get Questions
+													record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus=1");
 
-											<!-- When Answer Type 3 -->
-											<?php if($question['answer_type'] == 3){ ?>
-												<div class="form-group">
-													<textarea name="answerid[<?php echo $questionid; ?>]"  id="answerid_<?php echo $eachindex; ?>" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>></textarea>
-													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-												</div>
-											<?php } ?>
-											<!-- End Answer Type 3 -->
-
-											<!-- When Answer Type 4 -->
-											<?php 
-											if($question['answer_type'] == 4){ 
-												//get Questions
-												record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-												if($totalRows_get_questions_detail>0){
-													$child_answer = array();
-													$tdloop = 0;
-														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-															$tdloop++; 
-															$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
-															$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
-															$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
-															$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
-															$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
-															$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
-														}
-													?>
-												<table class="table table-hover table-bordered">
-													<tbody>
-														<?php if($question['rating_type'] == 1){ 
-															$emoticonsRatingImages = emoticonsRatingImages();
-															?>
-															<tr align="center">
-																<?php 
-																foreach($child_answer as $key=>$child_answer_option){ ?>
-																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
-																	<label>
-																		<div>
-																			<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
-																		</div>	
-																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																		data-currentanswer="<?=$child_answer_option['answer']?>"
-																		>
-																	</label>	
-																<?php } ?>
-															</tr>
-														<?php }else if($question['rating_type'] == 2){ ?>
-															<tr align="center" class="question-<?=$questionid?>">
-																<?php 
-																	$i=0; foreach($child_answer as $key=>$child_answer_option){  
-																	$i++; ?>
-																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
-																	<label>
-																		<div>
-																			<img style="width:40px" data-qid="<?=$questionid?>" data-index="<?=$i?>" class="smily_icon rating-img image-<?=$i?>" src="./dist/img/star-gray.png">
-																		</div>	
-																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																		data-currentanswer="<?=$child_answer_option['answer']?>"
-																		>
-																	</label>	
-																<?php } ?>
-															</tr>
-														<?php } else if($question['rating_type'] == 3){ ?>
-															<tr align="center" class="question-<?=$questionid?>" >
-																<?php 
-																	foreach($child_answer as $key=>$child_answer_option){  ?>
-																		<td style="padding:0px;" class="show_smily_<?php echo $show_smily; ?> smile-block rating-type-number" data-qid="<?=$questionid?>">
-																		<label style=" width: 100%;height: 100%;padding:8px;">
-																			<div class="number-grid">
-																			<?=$child_answer_option['rating_option_type']+1?>
-																			</div>
-																				
-																			<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-																			data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-																			data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																			data-currentanswer="<?=$child_answer_option['answer']?>"
-																			>
-																		</label>	
-																<?php } ?>
-															</tr>
-														<?php } else if($question['rating_type']== 4){ 
-															$tickCrossRatingImages = tickCrossRatingImages(); ?> 
-															<tr align="center">
-																<?php 
-																foreach($child_answer as $key=>$child_answer_option){  ?>
-																	<td class="show_smily_<?php echo $show_smily; ?> smile-block">
-																	<label>
-																		<div>
-																			<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
-																		</div>
-
-																		<input style="visibility:hidden;" type="radio" class="form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  <?php if($question['ifrequired']==1){ ?> required <?php } ?> data-questionid="<?php echo $question['id']; ?>" 
-																		data-condlogic="<?php echo $child_answer_option['conditional_logic'];?>"
-																		data-condans="<?php echo $child_answer_option['conditional_answer'];?>"
-																		data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																		data-currentanswer="<?=$child_answer_option['answer']?>"
-																		>
-																	</label>	
-																<?php } ?>
-															</tr>
-														<?php } ?>
-													</tbody>
-												</table>
-												<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-												<span class="viewQuestion<?php echo $questionid;?>"></span>
-												<?php
-												}
-											} ?>
-											<!-- End Answer Type 4 -->
-
-											<!-- When Answer Type 5 -->
-											<?php 
-												if($question['answer_type'] == 5){ 
+													//get Questions
 													record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 
-													if($totalRows_get_questions_detail>0){
-														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-															<h5> <?php echo $row_get_questions_detail['description']; ?> </h5>
+													if($totalRows_get_child_questions>0){ ?>
+														<table class="table table-hover table-bordered">
+															<tbody>
+																<tr align="center">
+																	<?php
+																	$child_answer = array();
+																	$sub_answer = array();
+																	$tdloop = 0;
+																	while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
+																		$tdloop++; ?>
+																		<td>
+																			<?php
+																				$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
+																				echo $row_get_questions_detail['description'];
+																			?>	
+																		</td>
+																	<?php } ?>
+																</tr>
 															<?php 
-														}
-													}
-												}
-											?>
-											<!-- End Answer Type 5 -->
-
-											<!-- When Answer Type 6 -->
-											<?php if($question['answer_type'] == 6){ ?>
-												<div class="form-group">
-													<select name="answerid[<?php echo $question['id']; ?>]" <?php if($question['ifrequired'] == 1){ ?> required <?php } ?> class="form-control subque_select" data-questionid="<?php echo $question['id']; ?>">
-														<option value="">Select</option>
+																while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){ ?>
+																<tr>
+																	<td colspan="<?php echo count($child_answer); ?>"><strong><?php echo $row_get_child_questions['question'];?></strong></td>
+																</tr>
+																<tr align="center">
+																	<?php 
+																	if($row_get_child_questions['parendit'] == 0){
+																		record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
+																		if($totalRows_get_answer_detail>0){
+																			echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
+																			while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
+																				// echo $row_get_answer_detail['description'];
+																				$sub_answer[$row_get_answer_detail['id']]= $row_get_answer_detail['description'];
+																			}
+																			foreach($sub_answer as $key=>$child_answer_option){ ?>
+																				<td colspan="<?php echo count($sub_answer); ?>">
+																					<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>][<?=$row_get_child_questions['id'];?>]" 
+																					value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1)?'required':''?> data-questionid="<?php echo $questionid;?>"
+																					> <?php echo $child_answer_option; ?>
+																				</td>
+																			<?php  }
+																		}
+																	}else{ 
+																		foreach($child_answer as $key=>$child_answer_option){ ?>
+																		<td><input type="radio" class="form-check-input skip-question" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1) ? 'required':'' ?> data-questionid="<?=$questionid?>"></td>
+																		<?php } 
+																	} ?>
+																</tr>
+															<?php } ?>
+															</tbody>
+														</table>
 														<?php 
-														record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+													}else {
+														$maxCount = 99999;
+														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+														$langRadioAnsVal= $row_get_questions_detail['description'];	
+															if($maxCount>$row_get_questions_detail['skip_to_question_id']){
+																$maxCount = $row_get_questions_detail['skip_to_question_id'];
+															}
+														?>
+															<div class="form-check col-md-2">
+																<label class="form-check-label">
+																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
+																	data-skiptoquestion="<?=$row_get_questions_detail['skip_to_question_id'];?>"
+																	data-maxqid ='<?=$maxCount?>'
+																	>
+																	<?php echo $row_get_questions_detail['description'];?> 
+																</label>
+															</div>
+														<?php } ?>
+													<?php } ?>	
+													<span class="viewQuestion<?php echo $questionid;?>"></span>
+													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+												<?php } ?>
 
+												<!-- End Answer Type 1 -->
+
+												<!-- When Answer Type 2 -->
+												<?php if($question['answer_type'] == 2){ ?>
+													<div class="form-group">
+														<input type="text" name="answerid[<?php echo $questionid; ?>]" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>>
+														<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+													</div>	
+												<?php } ?>
+												<!-- End Answer Type 2 -->
+
+												<!-- When Answer Type 3 -->
+												<?php if($question['answer_type'] == 3){ ?>
+													<div class="form-group">
+														<textarea name="answerid[<?php echo $questionid; ?>]"  id="answerid_<?php echo $eachindex; ?>" value="" class="form-control" <?php if($question['ifrequired']==1){ ?> required <?php } ?>></textarea>
+														<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+													</div>
+												<?php } ?>
+												<!-- End Answer Type 3 -->
+
+												<!-- When Answer Type 4 -->
+												<?php 
+												if($question['answer_type'] == 4){ 
+													//get Questions
+													record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+													if($totalRows_get_questions_detail>0){
+														$child_answer = array();
+														$tdloop = 0;
+														$maxCount = 99999;
+															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+																$tdloop++; 
+																if($maxCount>$row_get_questions_detail['skip_to_question_id']){
+																	$maxCount = $row_get_questions_detail['skip_to_question_id'];
+																}
+																$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
+																$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
+																$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
+																$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
+																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
+																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
+																$child_answer[$row_get_questions_detail['id']]['max_qid']= $maxCount;
+															}
+														?>
+													<table class="table table-hover table-bordered">
+														<tbody>
+															<?php if($question['rating_type'] == 1){ 
+																$emoticonsRatingImages = emoticonsRatingImages();
+																?>
+																<tr align="center">
+																	<?php 
+																	foreach($child_answer as $key=>$child_answer_option){ ?>
+																		<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																		<label>
+																			<div>
+																				<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
+																			</div>	
+																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
+																			<?=($question['ifrequired']==1) ? 'required':''?> 
+																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			>
+																		</label>	
+																	<?php } ?>
+																</tr>
+															<?php }else if($question['rating_type'] == 2){ ?>
+																<tr align="center" class="question-<?=$questionid?>">
+																	<?php 
+																		$i=0; foreach($child_answer as $key=>$child_answer_option){  
+																		$i++; ?>
+																		<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																		<label>
+																			<div>
+																				<img style="width:40px" data-qid="<?=$questionid?>" data-index="<?=$i?>" class="smily_icon rating-img image-<?=$i?>" src="./dist/img/star-gray.png">
+																			</div>	
+																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
+																			<?=($question['ifrequired']==1) ? 'required':''?> 
+																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			>
+																		</label>	
+																	<?php } ?>
+																</tr>
+															<?php } else if($question['rating_type'] == 3){ ?>
+																<tr align="center" class="question-<?=$questionid?>" >
+																	<?php 
+																		foreach($child_answer as $key=>$child_answer_option){  ?>
+																			<td style="padding:0px;" class="show_smily_<?php echo $show_smily; ?> smile-block rating-type-number" data-qid="<?=$questionid?>">
+																			<label style=" width: 100%;height: 100%;padding:8px;">
+																				<div class="number-grid">
+																				<?=$child_answer_option['rating_option_type']+1?>
+																				</div>
+																					
+																				<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
+																				<?=($question['ifrequired']==1) ? 'required':''?> 
+																				data-questionid="<?php echo $question['id']; ?>" 
+																				data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																				data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																				>
+																			</label>	
+																	<?php } ?>
+																</tr>
+															<?php } else if($question['rating_type']== 4){ 
+																$tickCrossRatingImages = tickCrossRatingImages(); ?> 
+																<tr align="center">
+																	<?php 
+																	foreach($child_answer as $key=>$child_answer_option){  ?>
+																		<td class="show_smily_<?php echo $show_smily; ?> smile-block">
+																		<label>
+																			<div>
+																				<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
+																			</div>
+
+																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" 
+																			<?=($question['ifrequired']==1) ? 'required':''?> 
+																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
+																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			>
+																		</label>	
+																	<?php } ?>
+																</tr>
+															<?php } ?>
+														</tbody>
+													</table>
+													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+													<span class="viewQuestion<?php echo $questionid;?>"></span>
+													<?php
+													}
+												} ?>
+												<!-- End Answer Type 4 -->
+
+												<!-- When Answer Type 5 -->
+												<?php 
+													if($question['answer_type'] == 5){ 
+														record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 														if($totalRows_get_questions_detail>0){
 															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-																<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" data-condlogic="<?php echo $row_get_questions_detail['conditional_logic'];?>"
-																data-condans="<?php echo $row_get_questions_detail['conditional_answer'];?>"
-																data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-																data-currentanswer="<?=$row_get_questions_detail['answer']?>"
-																><?php echo $row_get_questions_detail['description']; ?></option>
-															<?php }
-														} ?>
-													</select>
-													<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
-												</div>
-											<span class="viewQuestion<?php echo $questionid;?>"></span>
-											<?php  } ?>
+																<h5> <?php echo $row_get_questions_detail['description']; ?> </h5>
+																<?php 
+															}
+														}
+													}
+												?>
+												<!-- End Answer Type 5 -->
 
-											<!-- End Answer Type 6 -->
-											<?php $eachindex++;  ?>	
-										</div>	
+												<!-- When Answer Type 6 -->
+												<?php if($question['answer_type'] == 6){ ?>
+													<div class="form-group">
+														<select name="answerid[<?=$question['id']; ?>]" <?=($question['ifrequired'] == 1) ? 'required':''?> class="form-control subque_select skip-question" data-questionid="<?php echo $question['id']; ?>">
+															<option value="">Select</option>
+															<?php 
+															record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'");
+
+															if($totalRows_get_questions_detail>0){
+																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
+																	<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" 
+																
+																	data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
+																	><?php echo $row_get_questions_detail['description']; ?></option>
+																<?php }
+															} ?>
+														</select>
+														<input type="hidden" name="questionid[]" value="<?php echo $questionid; ?>">
+													</div>
+												<span class="viewQuestion<?php echo $questionid;?>"></span>
+												<?php  } ?>
+
+												<!-- End Answer Type 6 -->
+												<?php $eachindex++;  ?>	
+											</div>
+										</fieldset>	
 									<?php 
 									} 
 									if(($value['number'] == count($survey_steps)) && $row_get_survey['isEnableContacted'] == 1){ ?>
@@ -1247,264 +1258,233 @@ if($row_get_survey['isSchoolAllowed'] == 1){
 <?php } ?>
 
 $(document).ready(function() {
-
   $(window).keydown(function(event){
-
     if(event.keyCode == 13) {
-
       event.preventDefault();
-
       return false;
-
     }
-
   });
-
 });
 
 
 
-$('.subque').change(function(){
-	//if($(this).is(':checked')){
-		var view_question_id = $(this).data('questionid');
-		var questionDetailId =$(this).val();
-		var questionCurrentValue =$(this).data('currentanswer');
-		var surveyId = <?php echo $surveyid;?>;
-		var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
-		//var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
-		var skiptoquestion = $(this).data('skiptoquestion');
-		var condans = $(this).data('condans');
-		var condlogic = $(this).data('condlogic');
-		let min_id = view_question_id;
-		let max_id = skiptoquestion;
+// $('.subque').change(function(){
+// 	//if($(this).is(':checked')){
+// 		var view_question_id = $(this).data('questionid');
+// 		var questionDetailId =$(this).val();
+// 		var questionCurrentValue =$(this).data('currentanswer');
+// 		var surveyId = <?php echo $surveyid;?>;
+// 		var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
+// 		//var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
+// 		var skiptoquestion = $(this).data('skiptoquestion');
+// 		var condans = $(this).data('condans');
+// 		var condlogic = $(this).data('condlogic');
+// 		let min_id = view_question_id;
+// 		let max_id = skiptoquestion;
 		
-		if(min_id>max_id){
-			min_id = max_id;
-			max_id = view_question_id;
-		}
-		let counter = max_id-min_id;
-		let startId = parseInt(min_id)  + 1;
-		//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
-		//  console.log('questionCurrentValue',questionCurrentValue);
-		$('.question-div').show();
-		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
-			for(let i = startId; i<max_id; i++){
-				//alert("hello ");
-				// let values = $(".question_container_"+i).find('input').val();
-				// if(values !=undefined){
-				// 	const myArray = values.split("--");
-				// 	const cleanArray = myArray.filter((a) => a);
-				// 	let newValues = cleanArray.join("--");
-				// 	newValues = '--'+newValues;
-				// 	$(".question_container_"+i).find('input').prop('required',false);
-				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-				// 	$(".question_container_"+i).hide();
-				// }
+// 		if(min_id>max_id){
+// 			min_id = max_id;
+// 			max_id = view_question_id;
+// 		}
+// 		let counter = max_id-min_id;
+// 		let startId = parseInt(min_id)  + 1;
+// 		//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+// 		//  console.log('questionCurrentValue',questionCurrentValue);
+// 		$('.question-div').show();
+// 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
+// 			for(let i = startId; i<max_id; i++){
+// 				//alert("hello ");
+// 				// let values = $(".question_container_"+i).find('input').val();
+// 				// if(values !=undefined){
+// 				// 	const myArray = values.split("--");
+// 				// 	const cleanArray = myArray.filter((a) => a);
+// 				// 	let newValues = cleanArray.join("--");
+// 				// 	newValues = '--'+newValues;
+// 				// 	$(".question_container_"+i).find('input').prop('required',false);
+// 				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 				// 	$(".question_container_"+i).hide();
+// 				// }
 
-				var div = $(".question_container_"+i);
-				$(".option_"+i).each(function() {
-				let values = $(this).data('value');
-					if(values !=undefined){
-						const myArray = values.split("--");
-						const cleanArray = myArray.filter((a) => a);
-						let newValues = cleanArray.join("--");
-						newValues = '--'+newValues;
-						$(".question_container_"+i).find('input').prop('required',false);
-						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-						$(".question_container_"+i).hide();
-					}
-				})
+// 				var div = $(".question_container_"+i);
+// 				$(".option_"+i).each(function() {
+// 				let values = $(this).data('value');
+// 					if(values !=undefined){
+// 						const myArray = values.split("--");
+// 						const cleanArray = myArray.filter((a) => a);
+// 						let newValues = cleanArray.join("--");
+// 						newValues = '--'+newValues;
+// 						$(".question_container_"+i).find('input').prop('required',false);
+// 						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 						$(".question_container_"+i).hide();
+// 					}
+// 				})
 				
-			}
-		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
-			//alert("hello2 ");
-			for(let i = startId; i<max_id; i++){
-				// let values = $(".question_container_"+i).find('input').val();
-				// if(values !=undefined){
-				// 	const myArray = values.split("--");
-				// 	const cleanArray = myArray.filter((a) => a);
-				// 	let newValues = cleanArray.join("--");
-				// 	newValues = '--'+newValues;
-				// 	$(".question_container_"+i).find('input').prop('required',false);
-				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-				// 	$(".question_container_"+i).hide();
-				// }
-				var div = $(".question_container_"+i);
-				$(".option_"+i).each(function() {
-				let values = $(this).data('value');
-					if(values !=undefined){
-						const myArray = values.split("--");
-						const cleanArray = myArray.filter((a) => a);
-						let newValues = cleanArray.join("--");
-						newValues = '--'+newValues;
-						$(".question_container_"+i).find('input').prop('required',false);
-						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-						$(".question_container_"+i).hide();
-					}
-				})
+// 			}
+// 		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+// 			//alert("hello2 ");
+// 			for(let i = startId; i<max_id; i++){
+// 				// let values = $(".question_container_"+i).find('input').val();
+// 				// if(values !=undefined){
+// 				// 	const myArray = values.split("--");
+// 				// 	const cleanArray = myArray.filter((a) => a);
+// 				// 	let newValues = cleanArray.join("--");
+// 				// 	newValues = '--'+newValues;
+// 				// 	$(".question_container_"+i).find('input').prop('required',false);
+// 				// 	$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 				// 	$(".question_container_"+i).hide();
+// 				// }
+// 				var div = $(".question_container_"+i);
+// 				$(".option_"+i).each(function() {
+// 				let values = $(this).data('value');
+// 					if(values !=undefined){
+// 						const myArray = values.split("--");
+// 						const cleanArray = myArray.filter((a) => a);
+// 						let newValues = cleanArray.join("--");
+// 						newValues = '--'+newValues;
+// 						$(".question_container_"+i).find('input').prop('required',false);
+// 						$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 						$(".question_container_"+i).hide();
+// 					}
+// 				})
 				
-			}
-		}else {
-			//alert("hello3 ");
-			for(let i = startId; i<max_id; i++){
-				var div = $(".question_container_"+i);
-				$(".option_"+i).each(function() {
-					let values = $(this).data('value');
-					if(values !=undefined){
-						const myArray = values.split("--");
-						const cleanArray = myArray.filter((a) => a);
-						let newValues = cleanArray.join("--");
-						$(this).prop('required',true);
-						$(this).val(newValues);
-						$(".question_container_"+i).show();
-					}
-				});
-			}
-		}
+// 			}
+// 		}else {
+// 			//alert("hello3 ");
+// 			for(let i = startId; i<max_id; i++){
+// 				var div = $(".question_container_"+i);
+// 				$(".option_"+i).each(function() {
+// 					let values = $(this).data('value');
+// 					if(values !=undefined){
+// 						const myArray = values.split("--");
+// 						const cleanArray = myArray.filter((a) => a);
+// 						let newValues = cleanArray.join("--");
+// 						$(this).prop('required',true);
+// 						$(this).val(newValues);
+// 						$(".question_container_"+i).show();
+// 					}
+// 				});
+// 			}
+// 		}
 		
-		// old conditional Question
+// 		// old conditional Question
 
-		// $.ajax({
-		// 	type: "POST",
-		// 	url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
-		// 	data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
-		// 	success: function(response)
-		// 	{
-		// 		if (response != '') {
-		// 			$('.viewQuestion'+view_question_id).html(response);
-		// 		}else{
-		// 			$('.viewQuestion'+view_question_id).html('');
-		// 		}
-		// 	}
-		// });
-		$.ajax({
-			type: "POST",
-			url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
-			data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
-			success: function(response)
-			{
-				// if (response != '') {
-				// 	$('.viewQuestion'+view_question_id).html(response);
-				// }else{
-				// 	$('.viewQuestion'+view_question_id).html('');
-				// }
-			}
-		});
+// 		// $.ajax({
+// 		// 	type: "POST",
+// 		// 	url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
+// 		// 	data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
+// 		// 	success: function(response)
+// 		// 	{
+// 		// 		if (response != '') {
+// 		// 			$('.viewQuestion'+view_question_id).html(response);
+// 		// 		}else{
+// 		// 			$('.viewQuestion'+view_question_id).html('');
+// 		// 		}
+// 		// 	}
+// 		// });
+// 		$.ajax({
+// 			type: "POST",
+// 			url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
+// 			data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid}, 
+// 			success: function(response)
+// 			{
+// 				// if (response != '') {
+// 				// 	$('.viewQuestion'+view_question_id).html(response);
+// 				// }else{
+// 				// 	$('.viewQuestion'+view_question_id).html('');
+// 				// }
+// 			}
+// 		});
 
-	//}
-});
+// 	//}
+// });
 
+// $('.subque_select').change(function(){
+// 	var view_question_id = $(this).data('questionid');
+// 	var questionDetailId =$(this).val();
+// 	var surveyId = <?php echo $surveyid;?>;
+// 	var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
+// 	var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
 
+// 	//-----------------------------
+// 	var skiptoquestion = $(this).find(':selected').data('skiptoquestion');
+// 	var condans = $(this).find(':selected').data('condans');
+// 	var questionCurrentValue =$(this).find(':selected').data('currentanswer');
+// 	var condlogic = $(this).find(':selected').data('condlogic');
+// 	let min_id = view_question_id;
+// 	let max_id = skiptoquestion;
 
-$('.subque_select').change(function(){
-
-	var view_question_id = $(this).data('questionid');
-
-	var questionDetailId =$(this).val();
-
-	var surveyId = <?php echo $surveyid;?>;
-
-	var parentqueid = <?php echo (isset($questionid))?$questionid:'0';?>;
-
-	var langId = <?php echo (!empty($_GET['langid']))?$_GET['langid']:'0'; ?>;
-
-
-	//-----------------------------
-
-	var skiptoquestion = $(this).find(':selected').data('skiptoquestion');
-	var condans = $(this).find(':selected').data('condans');
-	var questionCurrentValue =$(this).find(':selected').data('currentanswer');
-	var condlogic = $(this).find(':selected').data('condlogic');
-	let min_id = view_question_id;
-	let max_id = skiptoquestion;
-
-	if(min_id>max_id){
-	min_id = max_id;
-	max_id = view_question_id;
-	}
-	let counter = max_id-min_id;
-	let startId = parseInt(min_id)  + 1;
-	//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
-	//  console.log('questionCurrentValue',questionCurrentValue);
-	$('.question-div').show();
-		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
-			console.log(startId,max_id);
-			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					newValues = '--'+newValues;
-					$(".question_container_"+i).find('input').prop('required',false);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).hide();
-				}
+// 	if(min_id>max_id){
+// 	min_id = max_id;
+// 	max_id = view_question_id;
+// 	}
+// 	let counter = max_id-min_id;
+// 	let startId = parseInt(min_id)  + 1;
+// 	//  console.log("skipto : ",skiptoquestion,"condans : ",condans,"condlogic : ",condlogic);
+// 	//  console.log('questionCurrentValue',questionCurrentValue);
+// 	$('.question-div').show();
+// 		if(condlogic == 1 && questionCurrentValue == condans && skiptoquestion>0){
+// 			console.log(startId,max_id);
+// 			for(let i = startId; i<max_id; i++){
+// 				let values = $(".question_container_"+i).find('input').val();
+// 				if(values !=undefined){
+// 					const myArray = values.split("--");
+// 					const cleanArray = myArray.filter((a) => a);
+// 					let newValues = cleanArray.join("--");
+// 					newValues = '--'+newValues;
+// 					$(".question_container_"+i).find('input').prop('required',false);
+// 					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 					$(".question_container_"+i).hide();
+// 				}
 				
-			}
-		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
-			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					newValues = '--'+newValues;
-					$(".question_container_"+i).find('input').prop('required',false);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).hide();
-				}
-			}
-		}else {
-			for(let i = startId; i<max_id; i++){
-				let values = $(".question_container_"+i).find('input').val();
-				if(values !=undefined){
-					const myArray = values.split("--");
-					const cleanArray = myArray.filter((a) => a);
-					let newValues = cleanArray.join("--");
-					$(".question_container_"+i).find('input').prop('required',true);
-					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
-					$(".question_container_"+i).show();
-				}
-			}
-		}
-	//-----------------------------
-
-	$.ajax({
-
-		type: "POST",
-
-		url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
-
-		data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid,langId: langId}, 
-
-		success: function(response)
-
-		{
-
-			if (response != '') {
-
-				$('.viewQuestion'+view_question_id).html(response);
-
-			}else{
-				$('.viewQuestion'+view_question_id).html('');
-			}
-		}
-	});
-});
+// 			}
+// 		}else if(condlogic == 2 && questionCurrentValue != condans && skiptoquestion>0){
+// 			for(let i = startId; i<max_id; i++){
+// 				let values = $(".question_container_"+i).find('input').val();
+// 				if(values !=undefined){
+// 					const myArray = values.split("--");
+// 					const cleanArray = myArray.filter((a) => a);
+// 					let newValues = cleanArray.join("--");
+// 					newValues = '--'+newValues;
+// 					$(".question_container_"+i).find('input').prop('required',false);
+// 					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 					$(".question_container_"+i).hide();
+// 				}
+// 			}
+// 		}else {
+// 			for(let i = startId; i<max_id; i++){
+// 				let values = $(".question_container_"+i).find('input').val();
+// 				if(values !=undefined){
+// 					const myArray = values.split("--");
+// 					const cleanArray = myArray.filter((a) => a);
+// 					let newValues = cleanArray.join("--");
+// 					$(".question_container_"+i).find('input').prop('required',true);
+// 					$(".question_container_"+i).find("input[name='answerid["+i+"]']").val(newValues);
+// 					$(".question_container_"+i).show();
+// 				}
+// 			}
+// 		}
+// 		//-----------------------------
+// 		$.ajax({
+// 			type: "POST",
+// 			url: 'ajax/ajaxGetQuestionOnSelectAnswer.php',
+// 			data: {questionDetailId: questionDetailId,surveyId: surveyId,parentqueid: parentqueid,langId: langId}, 
+// 			success: function(response){
+// 				if (response != '') {
+// 					$('.viewQuestion'+view_question_id).html(response);
+// 				}else{
+// 					$('.viewQuestion'+view_question_id).html('');
+// 				}
+// 			}
+// 		});
+// });
 
 
-
-$('#langid').change(function(){
-
-	window.location.replace(window.location.origin+window.location.pathname+'?surveyid='+<?=$surveyid ?>+'&langid='+$(this).val());
-
-});
 $(".rating-type-number").click(function(){
 	let qid = $(this).data("qid");
 	$('.question-'+qid).find('.rating-type-number').removeClass('active');
 	$(this).addClass('active');
 });
+
 $(".rating-img").click(function(){
 	let qid = $(this).data("qid");
 	let index = $(this).data("index");
@@ -1514,15 +1494,34 @@ $(".rating-img").click(function(){
 		$('.question-'+qid).find('.image-'+i).attr('src', './dist/img/star-yellow.png');
 	}
 })
+
 $('.to_be_contacted_radio').click(function(){
 	$('.to_be_contacted_radio').next().removeClass('active');
 	$(this).next().addClass('active');
 })
-</script>
-<div style="text-align: center;">
-<?php echo POWERED_BY; ?>
-<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="150"/></center>
-</div>
-</body>
 
+/** ------------conditional logic ------------ */
+ $('.skip-question').click(function(){
+	console.log('enter!!');
+	let currentQuestionId = $(this).data('questionid');
+	let skipToQuestionId = $(this).data('skiptoquestion');
+	let maxQid = $(this).data('maxqid');
+
+	let startIndex = parseInt(currentQuestionId)-1;
+	console.log('currentQuestionId',currentQuestionId,'skipToQuestionId',skipToQuestionId,'startIndex',startIndex);
+
+	for(let i=startIndex; i>maxQid; i--){
+		$(`.fieldset_${i}`).attr('disabled', false).css('display', 'block');
+	}
+	for(let i = startIndex; i>skipToQuestionId; i--){
+		console.log(i,'startIndex');
+		$(`.fieldset_${i}`).attr('disabled', true).css('display', 'none');
+	}
+ })
+</script>
+	<div style="text-align: center;">
+		<?php echo POWERED_BY; ?>
+		<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="150"/></center>
+	</div>
+</body>
 </html>
