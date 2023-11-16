@@ -3,6 +3,8 @@
 if (isset($_GET['deleted'])) {
   $questionid = $_GET['deleted'];
   $filter = " questionid in($questionid)";
+
+  dbRowDelete('conditional_logic_questions', $filter);
   dbRowDelete('questions_detail', $filter);
   dbRowDelete('questions', " id=$questionid");
   $msg = "Question deleted Successfully";

@@ -3,6 +3,8 @@ include('../function/function.php');
 $surveyid   = $_REQUEST['surveyid'];
 $skipedQid  = $_REQUEST['skipQid'];
 $options= $_REQUEST['options'];
+
+$lastSelectedAnswer  = $_REQUEST['last_selected_option'];
 if(isset($_REQUEST['questionid'])){
   $questionid = $_REQUEST['questionid'];
 }else {
@@ -37,7 +39,7 @@ if($_REQUEST['mode']=='editQuestion'){
     <label for="">If answer</label>		
     </div>
     <div class="col-md-3">
-    <select class="form-control" name="conditional_logic[]">
+    <select class="form-control conditional_logic_dropdown" name="conditional_logic[]">
         <option value="1" >Equal To</option>
         <option value="2">Not Equal To</option>
     </select>		
