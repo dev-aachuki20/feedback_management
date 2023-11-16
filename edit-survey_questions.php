@@ -46,6 +46,8 @@ if (!empty($_POST['submit'])) {
     $rating_option_type = $_POST['rating_option_type'];
     $condition_question = $_POST['condition_question'];
     $i = 0;
+    $filter = "surveyid =$surveyid AND questionid=$questionid";
+    dbRowDelete('conditional_logic_questions', $filter);
     foreach ($correct as $key => $value) {
       $answer = $value;
       if ($answer != "") {
@@ -81,19 +83,15 @@ if (!empty($_POST['submit'])) {
           $skip_to_question = $_POST['skip_to_question'];
           $conditional_data = array();
 
-          $filter = "surveyid =$surveyid AND questionid=$questionid";
-          dbRowDelete('conditional_logic_questions', $filter);
+          $conditional_data['surveyid'] = $surveyid;
+          $conditional_data['questionid'] = $questionid;
+          $conditional_data['question_detail_id'] = $key;
+          $conditional_data['conditional_logic']   = $conditional_logic[$i];
+          $conditional_data['conditional_answer']  = $conditional_answer[$i];
+          $conditional_data['skip_to_question_id'] = $skip_to_question[$i];
 
-          foreach ($conditionalAnswers as $key => $value) {
-            $conditional_data['surveyid'] = $surveyid;
-            $conditional_data['questionid'] = $questionid;
-            $conditional_data['question_detail_id'] = $key;
-            $conditional_data['conditional_logic']   = $conditional_logic[$key];
-            $conditional_data['conditional_answer']  = $conditional_answer[$key];
-            $conditional_data['skip_to_question_id'] = $skip_to_question[$key];
-
-            $insert_value3 =  dbRowInsert("conditional_logic_questions", $conditional_data);
-          }
+          $insert_value3 =  dbRowInsert("conditional_logic_questions", $conditional_data);
+        
         } else {
           dbRowDelete('conditional_logic_questions', $filter);
         }
