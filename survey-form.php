@@ -671,7 +671,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 													record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus=1");
 
 													//get Questions
-													record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+													// record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+
+													record_set("get_questions_detail", "select questions_detail.description as question_description, questions_detail.answer as question_answer, questions_detail.rating_option_type as question_rating_option_type, questions_detail.condition_yes_no as question_condition_yes_no, conditional_logic_questions.* FROM questions_detail INNER JOIN conditional_logic_questions ON questions_detail.id = conditional_logic_questions.question_detail_id where questions_detail.questionid='".$questionid."' and questions_detail.surveyid='".$surveyid."' and cstatus='1'", 2);
+
 
 													if($totalRows_get_child_questions>0){ ?>
 														<table class="table table-hover table-bordered">
@@ -685,8 +688,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																		$tdloop++; ?>
 																		<td>
 																			<?php
-																				$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
-																				echo $row_get_questions_detail['description'];
+																				$child_answer[$row_get_questions_detail['question_detail_id']]=$row_get_questions_detail['question_description'];
+																				echo $row_get_questions_detail['question_description'];
 																			?>	
 																		</td>
 																	<?php } ?>
@@ -727,18 +730,18 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 													}else {
 														$maxCount = 99999;
 														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-														$langRadioAnsVal= $row_get_questions_detail['description'];	
+														$langRadioAnsVal= $row_get_questions_detail['question_description'];	
 															if($maxCount>$row_get_questions_detail['skip_to_question_id']){
 																$maxCount = $row_get_questions_detail['skip_to_question_id'];
 															}
 														?>
 															<div class="form-check col-md-2">
 																<label class="form-check-label">
-																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
+																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['questions_detail_id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
 																	data-skiptoquestion="<?=$row_get_questions_detail['skip_to_question_id'];?>"
 																	data-maxqid ='<?=$maxCount?>'
 																	>
-																	<?php echo $row_get_questions_detail['description'];?> 
+																	<?php echo $row_get_questions_detail['question_description'];?> 
 																</label>
 															</div>
 														<?php } ?>
@@ -781,12 +784,12 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																if($maxCount>$row_get_questions_detail['skip_to_question_id']){
 																	$maxCount = $row_get_questions_detail['skip_to_question_id'];
 																}
-																$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
+																$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['question_description'];
 																$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
 																$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
 																$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
-																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
-																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
+																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['question_answer'];
+																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['question_rating_option_type'];
 																$child_answer[$row_get_questions_detail['id']]['max_qid']= $maxCount;
 															}
 														?>
@@ -886,7 +889,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 														record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 														if($totalRows_get_questions_detail>0){
 															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-																<h5> <?php echo $row_get_questions_detail['description']; ?> </h5>
+																<h5> <?php echo $row_get_questions_detail['question_description']; ?> </h5>
 																<?php 
 															}
 														}
@@ -904,10 +907,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 															if($totalRows_get_questions_detail>0){
 																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-																	<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" 
+																	<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['question_answer']; ?>" 
 																
 																	data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-																	><?php echo $row_get_questions_detail['description']; ?></option>
+																	><?php echo $row_get_questions_detail['question_description']; ?></option>
 																<?php }
 															} ?>
 														</select>
