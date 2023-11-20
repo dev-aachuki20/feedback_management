@@ -394,3 +394,28 @@ if(isset($_POST['mode']) and $_POST['mode']=='load_role'){
   }
   echo json_encode($data); die();
 }
+
+if(isset($_POST['mode']) and $_POST['mode']=='survey_question_by_step'){
+  $step = '';
+  $surveyid = $_POST['surveyid'];
+  if($_POST['step_id'] !=''){
+      $step = " and survey_step_id >= ".$_POST['step_id'];
+  }
+
+  $html = '<select class="form-control skip_to_question" name="skip_to_question[]">';
+  $step = '';
+  if($_POST['step_id'] !=''){
+    $step = " and survey_step_id = ".$_POST['step_id'];
+  }
+  if(isset($_POST['questionId']) && $_POST['questionId'] !=''){
+    $step  .= " and id != ".$_POST['questionId'];
+  }
+  record_set("get_question", "select * from questions where surveyid= $surveyid $step and cstatus=1 order by dposition asc");
+  if($totalRows_get_question>0){
+      while($row_get_question = mysqli_fetch_assoc($get_question)){
+          $html .= '<option value="'.$row_get_question['id'].'" >'.$row_get_question['question'].'</option>' ; 
+      }
+  }
+    $html .='</select>';
+    echo $html; die();
+}

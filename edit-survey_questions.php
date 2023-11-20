@@ -16,6 +16,8 @@ if (!empty($_POST['submit'])) {
   // echo '<pre>';
   // print_r($_POST);
   // die();
+  $filterConditionalLogic = "surveyid =$surveyid AND questionid=$questionid";
+  dbRowDelete('conditional_logic_questions', $filterConditionalLogic);
   $condition_yes_no = (isset($_POST['condition_yes_no']) ? $_POST['condition_yes_no'] : '0');
   $data =  array(
     "survey_step_id" => $_POST['survey_step'],
@@ -46,8 +48,7 @@ if (!empty($_POST['submit'])) {
     $rating_option_type = $_POST['rating_option_type'];
     $condition_question = $_POST['condition_question'];
     $i = 0;
-    $filter = "surveyid =$surveyid AND questionid=$questionid";
-    dbRowDelete('conditional_logic_questions', $filter);
+   
     foreach ($correct as $key => $value) {
       $answer = $value;
       if ($answer != "") {
@@ -61,49 +62,51 @@ if (!empty($_POST['submit'])) {
           // 'cby'=>$_SESSION['user_id'],
           // 'cdate'=>date("Y-m-d H:i:s")
         );
-
-
-        /*
-          if($condition_yes_no == 1){
-						$data_correct['conditional_logic']   = $conditional_logic[$answer];
-						$data_correct['conditional_order']  = $conditional_answer[$i];
-						$data_correct['skip_to_question_id'] = $skip_to_question[$answer];
-					}else {
-            $data_correct['conditional_logic']   = 0;
-            $data_correct['conditional_order']  = 0;
-            $data_correct['skip_to_question_id'] = 0;
-          }
-          */
-
+        
         $insert_value2 =  dbRowUpdate("questions_detail", $data_correct, " where id=$key");
-        
-        if ($condition_yes_no == 1) {
-          $conditionalAnswers = $_POST['conditional_answer'];
-          $conditional_logic = $_POST['conditional_logic'];
-          $skip_to_question = $_POST['skip_to_question'];
-          $conditional_data = array();
-
-          $conditional_data['surveyid'] = $surveyid;
-          $conditional_data['questionid'] = $questionid;
-          $conditional_data['question_detail_id'] = $key;
-          $conditional_data['conditional_logic']   = $conditional_logic[$i];
-          $conditional_data['conditional_answer']  = $conditional_answer[$i];
-          $conditional_data['skip_to_question_id'] = $skip_to_question[$i];
-
-          $insert_value3 =  dbRowInsert("conditional_logic_questions", $conditional_data);
-        
-        } else {
-          dbRowDelete('conditional_logic_questions', $filter);
-        }
         $i++;
       }
     }
+
+    $questionDetailsArray = array();
+			record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid  ."' and surveyid='".$surveyid."' and cstatus=1");
+			while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+				$questionDetailsArray[$row_get_questions_detail['description']] = $row_get_questions_detail['id'];
+			}
+			// echo '<pre>';
+			// print_r($questionDetailsArray);
+			// print_r($_POST['conditional_answer']);
+			// echo '</pre>';
+
+			// echo '<hr/>';
+			// conditional logic
+			
+			if ($condition_yes_no == 1) {
+				$j=0;
+				foreach($conditional_logic as $condition_loc){
+					$conditionalAnswers = $_POST['conditional_answer'];
+					$conditional_logic = $_POST['conditional_logic'];
+					$skip_to_question = $_POST['skip_to_question'];
+					$conditional_data = array();
+					$conditional_data['surveyid'] = $surveyid;
+					$conditional_data['questionid'] = $questionid;
+					$conditional_data['question_detail_id'] = $questionDetailsArray[$conditionalAnswers[$j]];
+					$conditional_data['conditional_logic']   = $conditional_logic[$j];
+					$conditional_data['conditional_answer']  = $questionDetailsArray[$conditionalAnswers[$j]];
+					$conditional_data['skip_to_question_id'] = $skip_to_question[$j];
+					$insert_value3 =  dbRowInsert("conditional_logic_questions", $conditional_data);
+					// echo '<pre>';
+					// print_r($conditional_data);
+					// echo '</pre>';
+					$j++;
+
+				}
+			} else if ($condition_yes_no == 0){
+          dbRowDelete('conditional_logic_questions', $filterConditionalLogic);
+        }
   }
 
-
-
-
-
+// die("exitt");
   if (!empty($updte)) {
     $msg = "Question Updated Successfully";
   } else {
@@ -126,11 +129,7 @@ if (!empty($_POST['submit'])) {
           record_set("get_questions", "select * from questions where surveyid='" . $_REQUEST['surveyid'] . "'  and id='" . $_REQUEST['questionid'] . "' order by dposition asc");
           $row_get_questions = mysqli_fetch_assoc($get_questions);
           $isWeighted = $row_get_questions['is_weighted'];
-          ?>
 
-
-
-          <?php
           record_set("get_surveys_steps", "select * from surveys_steps where survey_id='" . $_REQUEST['surveyid'] . "'");
           if ($row_get_survey_details['isStep'] == 1 && $totalRows_get_surveys_steps > 1) { ?>
             <div class="col-md-6">
@@ -139,7 +138,7 @@ if (!empty($_POST['submit'])) {
                 <select class="form-control survey_step" name="survey_step">
                   <option value="">Select Step</option>
                   <?php
-                  while ($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)) {
+                    while ($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)) {
                   ?>
                     <option value="<?php echo $row_get_surveys_steps['id']; ?>" <?php echo ($row_get_questions['survey_step_id'] == $row_get_surveys_steps['id']) ? "selected" : "" ?>><?php echo $row_get_surveys_steps['step_title']; ?></option>
                   <?php } ?>
@@ -216,16 +215,16 @@ if (!empty($_POST['submit'])) {
           record_set("get_questions_logic", "select * from questions_detail where   surveyid='" . $_REQUEST['surveyid'] . "'  and questionid='" . $_REQUEST['questionid'] . "'");
           $row_get_conditional_logic = mysqli_fetch_assoc($get_questions_logic);
           $condLogic = $row_get_conditional_logic['condition_yes_no'];
-          ?>
-          <div class="col-md-2 conditional-radio-btn">
-            <label>Conditional</label>
-            <div class="form-group">
-              <input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no" value="1" data-count="0" <?= ($condLogic == 1) ? 'checked' : '' ?> /> Yes
-              <input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no" value="0" data-count="0" <?= ($condLogic == 0) ? 'checked' : '' ?> /> No
+          if(in_array($row_get_questions['answer_type'],array(1,4,6))){ ?>
+            <div class="col-md-2 conditional-radio-btn">
+              <label>Conditional</label>
+              <div class="form-group">
+                <input type="radio" class="form-check-input condition_yes_no" name="condition_yes_no" value="1" data-count="0" <?= ($condLogic == 1) ? 'checked' : '' ?> /> Yes
+                <input type="radio" class="form-check-input condition_yes_no noCondition" name="condition_yes_no" value="0" data-count="0" <?= ($condLogic == 0) ? 'checked' : '' ?> /> No
+              </div>
             </div>
           </div>
-        </div>
-
+        <?php } ?>
         <div class="row" id="options">
           <?php
           $i = 0;
@@ -234,7 +233,7 @@ if (!empty($_POST['submit'])) {
             $ansId = $row_get_questions_detail['id'];
             $answerOptions[$row_get_questions_detail['id']]['description'] = $row_get_questions_detail['description'];
             $answerOptions[$row_get_questions_detail['id']]['answer'] = $row_get_questions_detail['answer'];
-            $answerOptions[$row_get_questions_detail['id']]['conditional_order'] = $row_get_questions_detail['conditional_order'];
+            $answerOptions[$row_get_questions_detail['id']]['questions_detail_id'] = $row_get_questions_detail['id'];
             $i++;
           ?>
             <?php
@@ -300,7 +299,7 @@ if (!empty($_POST['submit'])) {
                   </div>
                 </div>
                 <div class="col-md-2">
-                  <label></label>
+                  <label>&nbsp; </label>
                   <button data-id="<?= $row_get_questions_detail['id'] ?>" class="btn btn-danger remove-answer-field" type="button">Remove
                   </button>
                 </div>
@@ -317,6 +316,7 @@ if (!empty($_POST['submit'])) {
             <?php
             $i = 0;
             $conditionalCount = 0;
+            $selectedQuestionId = array();
             record_set("get_questions_conditional_detail", "select * from conditional_logic_questions where   surveyid='" . $_REQUEST['surveyid'] . "'  and questionid='" . $_REQUEST['questionid'] . "'");
             if ($totalRows_get_questions_conditional_detail > 0) {
               while ($row_get_questions_conditional_detail = mysqli_fetch_assoc($get_questions_conditional_detail)) {
@@ -340,7 +340,7 @@ if (!empty($_POST['submit'])) {
                       foreach ($answerOptions as $answerValue) {
                         $i++;
                       ?>
-                        <option value="<?= $i ?>" <?= ($i == $row_get_questions_conditional_detail['conditional_answer']) ? 'selected' : '' ?>><?= $answerValue['description'] ?></option>
+                        <option value="<?= $answerValue['description'] ?>" <?= ($answerValue['questions_detail_id'] == $row_get_questions_conditional_detail['conditional_answer']) ? 'selected' : '' ?>><?= $answerValue['description'] ?></option>
                       <?php } ?>
                     </select>
                   </div>
@@ -348,9 +348,18 @@ if (!empty($_POST['submit'])) {
                     <label for="">Skip to</label>
                   </div>
                   <div class="col-md-3">
-                    <select class="form-control skip_to_question" name="skip_to_question[]">
+                    <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">
                       <?php
-                      record_set("get_questions", "select * from questions where surveyid='" . $surveyid . "' and cstatus='1' and id !=" . $_GET['questionid'] . " order by dposition asc");
+
+                      if($row_get_questions['survey_step_id'] !=''){
+                        $stepQuestion = " and survey_step_id = ".$row_get_questions['survey_step_id']  ;
+                      }
+                      $filterQuestion = '';
+                      if(count($selectedQuestionId) > 0 ){
+                        $selQid = implode(',',$selectedQuestionId);
+                        $filterQuestion = " and id not In ($selQid)";
+                      }
+                      record_set("get_questions", "select * from questions where surveyid='" . $surveyid . "' $stepQuestion and id <".$questionid." and cstatus='1' and id !=" . $_GET['questionid'] . "  $filterQuestion order by dposition asc");
                       if ($totalRows_get_questions > 0) {
                         while ($row_get_questionss = mysqli_fetch_assoc($get_questions)) {
                           // echo $row_get_questions_conditional_detail['skip_to_question_id'].'=='.$row_get_questionss['id'];
@@ -364,7 +373,9 @@ if (!empty($_POST['submit'])) {
                   </div>
                   <input type="hidden" name="conditional_order_status[]" class="conditional_order_status" value="<?= $conditionalCount ?>">
                 </div>
-              <?php }
+              <?php
+              array_push($selectedQuestionId,$row_get_questions_conditional_detail['skip_to_question_id']);
+               }
             } else { ?>
               <div class="col-md-12 conditional_logic" style="margin-top:10px;">
                 <div class="col-md-2">
@@ -382,7 +393,7 @@ if (!empty($_POST['submit'])) {
                     $i = 0;
                     foreach ($answerOptions as $answerValue) {
                       $i++; ?>
-                      <option value="<?= $i ?>" <?= ($row_get_questions_conditional_detail['conditional_answer'] == $answerValue['answer']) ? 'selected' : '' ?>><?= $answerValue['description'] ?></option>
+                      <option value="<?= $answerValue['description'] ?>" <?= ($row_get_questions_conditional_detail['conditional_answer'] == $answerValue['questions_detail_id']) ? 'selected' : '' ?>><?= $answerValue['description'] ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -390,13 +401,14 @@ if (!empty($_POST['submit'])) {
                   <label for="">Skip to</label>
                 </div>
                 <div class="col-md-3">
-                  <select class="form-control skip_to_question" name="skip_to_question[]">
+                  <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">
                     <?php
-                    record_set("get_questions", "select * from questions where surveyid='" . $surveyid . "' and cstatus='1' and id !=" . $_GET['questionid']);
+                    if($row_get_questions['survey_step_id'] !=''){
+                      $stepQuestion = " and survey_step_id = ".$row_get_questions['survey_step_id']  ;
+                    }
+                    record_set("get_questions", "select * from questions where surveyid='" . $surveyid . "' $stepQuestion and cstatus='1' and id <" . $_GET['questionid']);
                     if ($totalRows_get_questions > 0) {
-                      while ($row_get_questionss = mysqli_fetch_assoc($get_questions)) {
-
-                    ?>
+                      while ($row_get_questionss = mysqli_fetch_assoc($get_questions)) { ?>
                         <option value="<?= $row_get_questionss['id'] ?>" <?= ($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questionss['id']) ? 'selected' : '' ?>><?= $row_get_questionss['question'] ?></option>
                     <?php
                       }
@@ -415,7 +427,7 @@ if (!empty($_POST['submit'])) {
 
 
 
-        <div class="row">
+        <div class="row" style="margin:0px;">
           <?php if (!empty($surveyid) && empty($questionid)) { ?>
             <div class="col-md-12 text-right">
               <a href="JavaScript:Void(0);" id="btnaddoption11" class="btn btn-info">Add New Option</a>
@@ -460,7 +472,14 @@ if (!empty($_POST['submit'])) {
 
   $(".condition_yes_no").change(function() {
     var selectArr1 = new Array();
+    var numOptions = $('.skip_to_question').children('option').length;
+
     if ($(this).val() == 1) {
+      if(numOptions == 0 ){
+        alert("Sorry no question available to skip for this step");
+        $('.noCondition').trigger('click');
+        return false;
+      }
       $('#conditional_questions_skip').show();
     }
     if ($(this).val() == 0) {
@@ -477,7 +496,7 @@ if (!empty($_POST['submit'])) {
       let value = $(this).find('.canval').val();
       let index = parseInt($(this).index()) + 1;
       if (text) {
-        option = `<option value="${value}">${text}</option>`;
+        option = `<option value="${text}">${text}</option>`;
         // $('#conditional_answer').append(option);
         $('.conditional_answer').each(function() {
           $(this).append(option);
@@ -507,17 +526,28 @@ if (!empty($_POST['submit'])) {
     // let conditionalAnswer = $(this).closest('.conditional_logic').find('.conditional_answer option:selected').text();
     // let skipToQid = $(this).val();
     // dataObject.push({[conditionalAnswer]:skipToQid})
-    // console.log(conditionalAnswer,'conditionalAnswer');
+   console.log(currentIndex,'conditionalAnswer',totalLength);
     for (let i = 0; i < totalLength; i++) {
       if (i >= currentIndex) {
         $('.conditional_logic').eq(currentIndex + 1).remove();
       }
     }
-    console.log(dataObject, 'dataObject');
+    // console.log(dataObject, 'dataObject');
   })
 
+  $(document).on('change', '.conditional_answer', function() {
+    let totalLength = $('.conditional_answer').length;
+    let currentIndex = $('.conditional_answer').index($(this));
+    for (let i = 0; i < totalLength; i++) {
+      if (i >= currentIndex) {
+        $('.conditional_logic').eq(currentIndex + 1).remove();
+      }
+    }
+  })
   function getConditionalQuestion(mode = 'editQuestion') {
     let questionid = '<?= $_GET['questionid'] ?>';
+    let currentStep = $('.survey_step').val();
+
     let questionid23 = $('.skip_to_question').val();
     let surveyid = '<?= $_GET['surveyid'] ?>';
     var possibleAnswerCount = $('.correct_answer').length;
@@ -549,6 +579,7 @@ if (!empty($_POST['submit'])) {
       type: "POST",
       url: 'ajax/ajaxGetConditionalQuestionOnSelect.php',
       data: {
+        step: currentStep,
         questionid: questionid,
         surveyid: surveyid,
         skipQid: QuestionArray,
@@ -556,8 +587,10 @@ if (!empty($_POST['submit'])) {
         mode: mode,
       },
       success: function(response) {
-        //console.log(response);
-        if (response == '') {} else {
+        console.log(response);
+        if (response == 'false') {
+          alert("Sorry no more question available to skip for this step");
+        } else {
           $(".logicSection").append(response);
         }
       }
@@ -570,8 +603,32 @@ if (!empty($_POST['submit'])) {
     $('.removed_question_option').val(questionId);
     $(this).closest('.answer-fields').remove();
   });
+  $(".survey_step").change(function(e) {
+			var $s = $(e.target);
+			getSurveyQuestionBystep($s.val());
+		});
 
-
+function getSurveyQuestionBystep(stepId =1){
+  let questionId = '<?= $_GET['questionid'] ?>';
+	let surveyid = '<?= $_GET['surveyid'] ?>';
+	$.ajax({
+        type: "POST",
+        url: 'ajax/common_file.php',
+        data: {
+			step_id: stepId,
+			surveyid:surveyid,
+      questionId:questionId,
+			mode:'survey_question_by_step'
+		}, 
+        success: function(response){
+			console.log(response,'response');
+			if(response !=''){
+				$('.skipQuestionDiv').html(response);
+				$('.conditional_logic').not(':first').remove();
+			}
+        }
+    });
+}
   // $(document).on('change', '.conditional_answer', function() {
   //   let conditionalAns = $(this).find(":selected").text();
   //   $(this).closest('.conditional_logic').find('.conditional_logic_dropdown').attr('name', `conditional_logic[${conditionalAns}]`);
@@ -581,4 +638,6 @@ if (!empty($_POST['submit'])) {
   //   let conditionalAns = $(this).find(":selected").text();
   //   $(this).closest('.conditional_logic').find('.skip_to_question').attr('name', `skip_to_question[${conditionalAns}]`);
   // });
+
+
 </script>

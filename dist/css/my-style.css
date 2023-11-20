@@ -498,7 +498,7 @@ td.show_smily_.smile-block.rating-type-number {
     background: #f3f3f3 !important;
 }
 .remove-answer-div{
-    margin-top: 25px;
+    /* margin-top: 25px; */
 }
 
  /*  16-10-23  Adnan*/
@@ -608,4 +608,11 @@ label.form-check-label.active {
     border-width: 5px;
     border-color: #3c3e3e;
     box-shadow: 7px 1px 7px #8a8686;
+}
+.remove-answer-field{
+    margin-top: 27px;
+}
+#to_be_contact_mail_div .col-md-6 {
+    width: 50%;
+    margin-bottom: 10px;
 }

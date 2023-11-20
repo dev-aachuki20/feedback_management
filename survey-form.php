@@ -657,24 +657,35 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 									<?php 
 									$eachindex = 0;
 									foreach($questions[$key] AS $question){
+										// for condition type not equal to
+										$result_get_conditional_type =  record_set_single("get_conditional_type", "SELECT * FROM conditional_logic_questions where questionid =".$question['id']." order by conditional_logic desc");
+										$conditionType = ($result_get_conditional_type['conditional_logic']) ? $result_get_conditional_type['conditional_logic']: 0;
+										$conditionAnswerIdd = ($result_get_conditional_type['conditional_answer']) ? $result_get_conditional_type['conditional_answer']: 0;
+										$conditionNotEqualTo = ($result_get_conditional_type['skip_to_question_id']) ? $result_get_conditional_type['skip_to_question_id'] : 0;
+
 									$questionid = $question['id'];  ?>
 										<fieldset class="fieldset_<?=$questionid?>">
 											<div class="question-div question_container_<?php echo $questionid; ?>">
+											 	<input type="hidden" class="conditional_logic_type" value="<?=$conditionType ?>"/>
+											 	<input type="hidden" class="conditional_logic_answer_id" value="<?=$conditionAnswerIdd ?>"/>
+											 	<input type="hidden" class="conditional_logic_type_skip_to" value="<?=$conditionNotEqualTo?>"/>
+
 												<div class="col-md-12">
 												<h4>
-													<?php echo $question['question'].'::'.$question['id'];?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
+													<?php echo $question['question']?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?></h4>
 												</div>	
-											
 												<!-- When Answer Type 1 -->
-												<?php if($question['answer_type'] == 1){  
+												<?php 
+												//get Questions
+												record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+
+												// get min conditional question
+												$result_conditional_logic_min_questions =  record_set_single("get_conditional_logic_min_questions", "SELECT * FROM conditional_logic_questions where  questionid=$questionid and surveyid=$surveyid order by skip_to_question_id asc");
+												$maxCount = $result_conditional_logic_min_questions['skip_to_question_id'];
+													
+												if($question['answer_type'] == 1){  
 													//get Questions
 													record_set("get_child_questions", "select * from questions where parendit='".$questionid."' and cstatus=1");
-
-													//get Questions
-													// record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-
-													record_set("get_questions_detail", "select questions_detail.description as question_description, questions_detail.answer as question_answer, questions_detail.rating_option_type as question_rating_option_type, questions_detail.condition_yes_no as question_condition_yes_no, conditional_logic_questions.* FROM questions_detail INNER JOIN conditional_logic_questions ON questions_detail.id = conditional_logic_questions.question_detail_id where questions_detail.questionid='".$questionid."' and questions_detail.surveyid='".$surveyid."' and cstatus='1'", 2);
-
 
 													if($totalRows_get_child_questions>0){ ?>
 														<table class="table table-hover table-bordered">
@@ -688,8 +699,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																		$tdloop++; ?>
 																		<td>
 																			<?php
-																				$child_answer[$row_get_questions_detail['question_detail_id']]=$row_get_questions_detail['question_description'];
-																				echo $row_get_questions_detail['question_description'];
+																				$child_answer[$row_get_questions_detail['id']]=$row_get_questions_detail['description'];
+																				echo $row_get_questions_detail['description'];
 																			?>	
 																		</td>
 																	<?php } ?>
@@ -702,7 +713,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																<tr align="center">
 																	<?php 
 																	if($row_get_child_questions['parendit'] == 0){
-																		record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
+																		// record_set("get_answer_detail", "select * from questions_detail where questionid='".$row_get_child_questions['id']."' and surveyid='".$surveyid."' and cstatus='1'  ");
 																		if($totalRows_get_answer_detail>0){
 																			echo'<input type="hidden" name="questionid[]" value="'.$row_get_child_questions['id'].'">';
 																			while($row_get_answer_detail = mysqli_fetch_assoc($get_answer_detail)){
@@ -728,20 +739,24 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 														</table>
 														<?php 
 													}else {
-														$maxCount = 99999;
+														$skipQid = 0 ;
 														while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-														$langRadioAnsVal= $row_get_questions_detail['question_description'];	
-															if($maxCount>$row_get_questions_detail['skip_to_question_id']){
-																$maxCount = $row_get_questions_detail['skip_to_question_id'];
+															$langRadioAnsVal= $row_get_questions_detail['description'];	
+
+															// get conditional question details
+															$result_conditional_logic_questions =  record_set_single("get_conditional_logic_questions", "SELECT * FROM conditional_logic_questions where question_detail_id =".$row_get_questions_detail['id']);
+															$skipQid = $result_conditional_logic_questions['skip_to_question_id'];
+															if($skipQid ==''){
+																$skipQid = 0;
 															}
 														?>
 															<div class="form-check col-md-2">
 																<label class="form-check-label">
-																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['questions_detail_id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
-																	data-skiptoquestion="<?=$row_get_questions_detail['skip_to_question_id'];?>"
+																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
+																	data-skiptoquestion="<?=$skipQid?>"
 																	data-maxqid ='<?=$maxCount?>'
 																	>
-																	<?php echo $row_get_questions_detail['question_description'];?> 
+																	<?php echo $row_get_questions_detail['description'];?> 
 																</label>
 															</div>
 														<?php } ?>
@@ -774,23 +789,24 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 												<?php 
 												if($question['answer_type'] == 4){ 
 													//get Questions
-													record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+													//record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 													if($totalRows_get_questions_detail>0){
 														$child_answer = array();
 														$tdloop = 0;
-														$maxCount = 99999;
 															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
-																$tdloop++; 
-																if($maxCount>$row_get_questions_detail['skip_to_question_id']){
-																	$maxCount = $row_get_questions_detail['skip_to_question_id'];
+																// get conditional question details
+																$result_conditional_logic_questions =  record_set_single("get_conditional_logic_questions", "SELECT * FROM conditional_logic_questions where question_detail_id =".$row_get_questions_detail['id']);
+																$skipQid = $result_conditional_logic_questions['skip_to_question_id'];
+																if($skipQid ==''){
+																	$skipQid = 0;
 																}
-																$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['question_description'];
+																$tdloop++; 
+																$child_answer[$row_get_questions_detail['id']]['description']= $row_get_questions_detail['description'];
 																$child_answer[$row_get_questions_detail['id']]['conditional_logic']= $row_get_questions_detail['conditional_logic'];
 																$child_answer[$row_get_questions_detail['id']]['conditional_answer']= $row_get_questions_detail['conditional_answer'];
-																$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $row_get_questions_detail['skip_to_question_id'];
-																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['question_answer'];
-																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['question_rating_option_type'];
-																$child_answer[$row_get_questions_detail['id']]['max_qid']= $maxCount;
+																$child_answer[$row_get_questions_detail['id']]['skip_to_question_id']= $skipQid;
+																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
+																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
 															}
 														?>
 													<table class="table table-hover table-bordered">
@@ -806,11 +822,11 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			<div>
 																				<img style="width:40px" class="smily_icon" src="<?=$emoticonsRatingImages[$child_answer_option['rating_option_type']]?>">
 																			</div>	
-																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
+																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description'];  ?>"  
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
 																			data-questionid="<?php echo $question['id']; ?>" 
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			data-maxqid = "<?=$maxCount?>"
 																			>
 																		</label>	
 																	<?php } ?>
@@ -829,7 +845,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
 																			data-questionid="<?php echo $question['id']; ?>" 
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			data-maxqid = "<?=$maxCount?>"
 																			>
 																		</label>	
 																	<?php } ?>
@@ -848,7 +864,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																				<?=($question['ifrequired']==1) ? 'required':''?> 
 																				data-questionid="<?php echo $question['id']; ?>" 
 																				data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																				data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																				data-maxqid = "<?=$maxCount?>"
 																				>
 																			</label>	
 																	<?php } ?>
@@ -868,7 +884,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
 																			data-questionid="<?php echo $question['id']; ?>" 
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
-																			data-maxqid = "<?=$child_answer_option['max_qid']?>"
+																			data-maxqid = "<?=$maxCount?>"
 																			>
 																		</label>	
 																	<?php } ?>
@@ -886,10 +902,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 												<!-- When Answer Type 5 -->
 												<?php 
 													if($question['answer_type'] == 5){ 
-														record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
+														//record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
 														if($totalRows_get_questions_detail>0){
 															while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-																<h5> <?php echo $row_get_questions_detail['question_description']; ?> </h5>
+																<h5> <?php echo $row_get_questions_detail['description']; ?> </h5>
 																<?php 
 															}
 														}
@@ -900,17 +916,24 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 												<!-- When Answer Type 6 -->
 												<?php if($question['answer_type'] == 6){ ?>
 													<div class="form-group">
-														<select name="answerid[<?=$question['id']; ?>]" <?=($question['ifrequired'] == 1) ? 'required':''?> class="form-control subque_select skip-question" data-questionid="<?php echo $question['id']; ?>">
+														<select name="answerid[<?=$question['id']; ?>]" <?=($question['ifrequired'] == 1) ? 'required':''?> class="form-control subque_select skip-question" data-questionid="<?php echo $question['id']; ?>" data-maxqid = "<?=$maxCount?>">
 															<option value="">Select</option>
 															<?php 
-															record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'");
+															//record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'");
 
 															if($totalRows_get_questions_detail>0){
-																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ ?>
-																	<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['question_answer']; ?>" 
-																
-																	data-skiptoquestion="<?php echo $row_get_questions_detail['skip_to_question_id'];?>"
-																	><?php echo $row_get_questions_detail['question_description']; ?></option>
+																while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
+																// get conditional question details
+																	$result_conditional_logic_questions =  record_set_single("get_conditional_logic_questions", "SELECT * FROM conditional_logic_questions where question_detail_id =".$row_get_questions_detail['id']);
+
+																	$skipQid = $result_conditional_logic_questions['skip_to_question_id'];
+																	if($skipQid ==''){
+																		$skipQid = 0;
+																	}
+															?>
+																	<option value="<?php echo $row_get_questions_detail['id'].'--'.$row_get_questions_detail['answer']; ?>" 
+																	data-skiptoquestion="<?php echo $skipQid;?>"
+																	><?php echo $row_get_questions_detail['description']; ?></option>
 																<?php }
 															} ?>
 														</select>
@@ -1088,6 +1111,16 @@ $(document).ready(function () {
     });
 
     $(".next-step,.submit-survey-btn, .tab-next").click(function (e) {
+		// $("#surveyForm").validate({
+		// 	errorPlacement: function(error, element) {
+		// 		console.log(element,'element');
+		// 	// Identify the target div
+		// 	var targetDiv = element.find(".question-div");
+
+		// 	// Append the error message after the target div
+		// 	error.insertAfter(targetDiv);
+		// 	}
+		// });
     	$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
         if($("#surveyForm").valid()){
         	var active = $('.wizard .nav-tabs li.active');
@@ -1104,58 +1137,31 @@ $(document).ready(function () {
 
     });
 
-
-
-	
-
 	$('.next-step, .prev-step').click(function(){
-
 		$('html, body').animate({scrollTop:0});
-
 		return false;
-
 	});
-
-
 
 	$('.finalSubmit').click(function(){
-
 		$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
-
         if($("#surveyForm").valid()){
-
         	var active = $('.wizard .nav-tabs li.active');
-
 	        active.next().removeClass('disabled');
-
 	        nextTab(active);
-
         }else{
-
         	return false;
-
         }
-
 	});
-
-
 
 	$.extend($.validator.messages, {
-
 	    required: "This field is required"
-
 	});
-
-
-
 });
 
 
 
 function nextTab(elem) {
-
     $(elem).next().find('a[data-toggle="tab"]').click();
-
 }
 
 function prevTab(elem) {
@@ -1504,22 +1510,45 @@ $('.to_be_contacted_radio').click(function(){
 })
 
 /** ------------conditional logic ------------ */
- $('.skip-question').click(function(){
-	console.log('enter!!');
+$(document).on('click, change','.skip-question', function(){
+ //$('.skip-question').click(function(){
 	let currentQuestionId = $(this).data('questionid');
-	let skipToQuestionId = $(this).data('skiptoquestion');
 	let maxQid = $(this).data('maxqid');
 
+	let isDropdown = $(this).hasClass("subque_select");
+	let skipToQuestionId = $(this).data('skiptoquestion');
+	let currentAnswer = $(this).val();
+
+	let checkConditionalLogicType = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_type').val();
+	let skipQuestionNotEqualTo = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_type_skip_to').val();
+	let matchAnswerId = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_answer_id').val();
+
+	if(isDropdown){
+		skipToQuestionId = $(this).find(':selected').data('skiptoquestion');
+		currentAnswer = $(this).find(':selected').val();
+	}
+	let ansCheck =currentAnswer.split('--')[0];
+	if(checkConditionalLogicType == 2){
+		if(ansCheck !==matchAnswerId){
+			skipToQuestionId = skipQuestionNotEqualTo;
+		}else{
+			skipToQuestionId = currentQuestionId;
+		}
+	}
 	let startIndex = parseInt(currentQuestionId)-1;
 	console.log('currentQuestionId',currentQuestionId,'skipToQuestionId',skipToQuestionId,'startIndex',startIndex);
 
 	for(let i=startIndex; i>maxQid; i--){
+			console.log(i,'startIndex2323');
 		$(`.fieldset_${i}`).attr('disabled', false).css('display', 'block');
 	}
-	for(let i = startIndex; i>skipToQuestionId; i--){
-		console.log(i,'startIndex');
-		$(`.fieldset_${i}`).attr('disabled', true).css('display', 'none');
+	if(skipToQuestionId !=0 ){
+		for(let i = startIndex; i>skipToQuestionId; i--){
+			// console.log(i,'startIndex');
+			$(`.fieldset_${i}`).attr('disabled', true).css('display', 'none');
+		}
 	}
+
  })
 </script>
 	<div style="text-align: center;">

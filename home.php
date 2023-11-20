@@ -345,7 +345,7 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
                                         $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_response['questionid']);
                                         if($result_question){
                                             if(!in_array($result_question['answer_type'],array(2,3,5))){
-                                                
+                                                // echo $row_get_survey_response['questionid'].'::'.$row_get_survey_response['answerval'].'<br>';
                                                 $total_result_val = ($i+1)*100;
                                                 $achieved_result_val += $row_get_survey_response['answerval'];
                                                 $i++;

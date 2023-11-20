@@ -56,7 +56,7 @@ if (isset($_GET['deleted'])) {
   </div>
   <div class="box">
     <div class="box-body">
-      <table id="common-table" class="table table-bordered table-striped">
+      <table id="common-tabless" class="table table-bordered table-striped">
         <thead>
           <tr>
             <th>Questions</th>
@@ -134,4 +134,9 @@ if (isset($_GET['deleted'])) {
     });
   }
 
+  $(document).ready( function() {
+    $('#common-tabless').dataTable({
+        "aaSorting": []
+    });
+})
 </script>
