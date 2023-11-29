@@ -35,6 +35,12 @@ if ($_POST['data_type'] == 'location') {
 if (!empty($_POST['fdate']) and !empty($_POST['fdate'])) {
     $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['sdate']))) . "'";
 }
+
+if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
+    $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
+}
+
+
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
@@ -196,14 +202,19 @@ if ($_POST['data_type'] == 'survey' || $_POST['data_type'] == '') {
 }
 ksort($survey_data);
 //export csv in survey static
-// echo '<pre>';
-// print_r($survey_data);
-// die();
+
+
 $survey_name = getSurvey()[$_POST['survey']];
 if (isset($_GET['export']) and $_GET['export'] == 'csv') {
     export_csv_file($survey_data, $_GET['data_type'], $survey_name);
     die();
 }
+
+// echo "<pre>";
+// print_r($survey_data);
+// echo "</pre>";
+// die();
+
 //$html.='<h2 class="survey_name text-center" style="margin:0px;font-size:20px;">'.strtoupper($survey_name).'</h2>';
 if (count($survey_data) > 0) {
     foreach ($survey_data as $key => $datasurvey) {

@@ -2,10 +2,11 @@
 <?php
 // submit modal to schedule report
 if(isset($_POST['schedule_btn'])){
+
     $start = $_POST['start_date'];
     $next_date =  date('Y-m-d H:i:s',strtotime('+'.$_POST['interval'] .'hour',strtotime($start)));
 
-    $filter  = array('survey_hidden'=>$_POST['survey_hidden'],'data_type_hidden'=>$_POST['data_type_hidden']);
+    $filter  = array('survey_hidden'=>$_POST['survey_hidden'],'data_type_hidden'=>$_POST['data_type_hidden'],'start_date'=>$_POST['st_date_hidden'],'end_date'=>$_POST['end_date_hidden']);
 
     $dataCol =  array(
         "temp_name"         => $_POST['report_name'],
@@ -17,6 +18,7 @@ if(isset($_POST['schedule_btn'])){
         'cby'               => $_SESSION['user_id'],
         'created_at'        => date("Y-m-d H:i:s")
     );
+
     $insert_value =  dbRowInsert("schedule_report_new",$dataCol);
     if( $insert_value){
         $msg = "Report Created Successfully";
@@ -39,24 +41,24 @@ if(isset($_POST['schedule_btn'])){
     .btn:focus {
         outline: none !important;
     }
-.graph-body {
+    .graph-body {
     background: #ecf0f5;
     border: 1px solid #c8bfbf;
     margin:30px 0 0px ;
-}
-.graph-btn.active {
+    }
+    .graph-btn.active {
     background: #a020f0;
     color: #fff;
-}
-.chartjs-render-monitor{
+    }
+    .chartjs-render-monitor{
     width:100% !important;
-}
-.large-btn{
+    }
+    .large-btn{
     padding: 5px !important;
-}
-p {
+    }
+    p {
     margin: 0px !important;
-}
+    }
 </style>
 
 <section class="content-header">
@@ -106,7 +108,7 @@ p {
                                     </div>
                                 </div>
                                 <div class="ajaxData" style="width:25%;display: none;">
-                                <span>This Field is required</span>
+                                    <span>This Field is required</span>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
@@ -128,8 +130,8 @@ p {
                             <div>
                                 <form action="" id="document_form" method="post">
                                     <input type="hidden" name="survey" id="survey_id" value="">
-                                    <input type="hidden" name="sdate"  id="start_date" value="">
-                                    <input type="hidden" name="edate"  id="end_date" value="">
+                                    <input type="hidden" name="sdate"  id="st_date" value="">
+                                    <input type="hidden" name="edate"  id="ed_date" value="">
                                     <input type="hidden" name="data_type" id="survey_data_type" value="">
                                     <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
                                     <div class="form-right-btns">
@@ -232,10 +234,13 @@ p {
             <div class="modal-body">
             <div class="form-group">
                 <form class="second_form" method="post">
-                    <!-- <input type="hidden" name="start_date_hidden" id="start_date_hidden" value="">
-                    <input type="hidden" name="end_date_hidden" id="end_date_hidden" value=""> -->
+
                     <input type="hidden" name="survey_hidden" id="survey_hidden" value="">
                     <input type="hidden" name="data_type_hidden" id="data_type_hidden" value="">
+                    <input type="hidden" name="st_date_hidden" id="st_date_hidden" value="">
+                    <input type="hidden" name="end_date_hidden" id="end_date_hidden" value="">
+
+
                     <div class="form-group row">
                         <input type="hidden" name="template_id" value="" class="template_id">
                         <label for="staticEmail" class="col-sm-4 col-form-label">Report Name</label>
@@ -298,6 +303,14 @@ $(document).on('click','.search',function(){
     let fdate       = $('.start_data').val();
     let sdate       = $('.end_date').val();
     let survey      = $('.survey').val();
+
+    $('#st_date').val(fdate);
+    $('#ed_date').val(sdate);
+
+    
+    $('#st_date_hidden').val(fdate);
+    $('#end_date_hidden').val(sdate);
+        
     if(survey==''){
         $('.error').show();
         return;
@@ -394,6 +407,7 @@ $(document).on('click','.search',function(){
         }
     })
  }
+
 //ajax to load button
 function ajx_report_type(type){
     $(this).addClass('active');
@@ -473,6 +487,7 @@ function mychart(val,classes,color){
 $(".closes").click(function() {
     $('#schedule_statistics_popup').hide();
 });
+
 $(document).on('click', '.large-btn', function(){
         let sdate           = $('.start_data').val();
         let edate           = $('.end_date').val();
@@ -482,11 +497,10 @@ $(document).on('click', '.large-btn', function(){
 
         //put value in form
         $('#survey_id').val(survey);
-        $('#start_date').val(edate);
-        $('#end_date').val(edate);
+        $('#st_date').val(sdate);
+        $('#edate').val(edate);
         $('#survey_data_type').val(data_type);
         if(document_type == 'pdf'){
-            console.log('pdf sdzsffffffffff');
             // export_pdf(sdate,edate,data_type,survey);
             $('#document_form').attr('action', './Export-Pdf/survey-statistics-pdf.php');
             $('#document_form').submit();
@@ -496,7 +510,7 @@ $(document).on('click', '.large-btn', function(){
             $('#document_form').submit();
         }else if(document_type == 'schedule'){
             // $("#start_date_hidden").val(sdate);
-            // $("#end_date_hidden").val(edate);
+
             $("#data_type_hidden").val(data_type);
             $("#survey_hidden").val(survey);
             $('#schedule_statistics_popup').show();

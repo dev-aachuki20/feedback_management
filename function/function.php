@@ -12,14 +12,16 @@ use PHPMailer\PHPMailer\Exception;
 require_once dirname(__DIR__). '/vendor/autoload.php';
 
 // define('SMTP_HOST', "mail.dgfm.app");
-// define('SMTP_USER', "web@dgfm.app");
-// define('SMTP_PASS', "eKI?pbTRvuj3");
+// define('SMTP_USER', "system@dgfm.app");
+// define('SMTP_PASS', "RiehO7]aS*Fe");
 // define('SMTP_PORT', "465");
+// define('SMTPAuth', true);
 
 define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
 define('SMTP_USER', "9bb50416f293ea");
 define('SMTP_PASS', "a28f5c4d4023f2");
 define('SMTP_PORT', "2525");
+define('SMTPAuth', true);
 // define('SMTPAuth', true);
 //mail trap
 
@@ -64,7 +66,6 @@ define('DEFAULT_FROM_EMAIL', 'mail@datagroup.dev');
         //Recipients
         $mail->setFrom($email_to, $user_name);
         $mail->addAddress($email_to, $user_name);  
-        $mail->addBCC('bcc@example.com');
     
         //Attachment
         $mail->addStringAttachment($pdf, $pdf_name);
@@ -72,7 +73,45 @@ define('DEFAULT_FROM_EMAIL', 'mail@datagroup.dev');
         // Content
         $mail->isHTML(true);
         $mail->Subject = $subject;
-        $mail->Body    = $body;
+        $body ='<table width="100%" style="background-color:#dbdbdb;">
+                	<tr>
+                	<td>
+                	<table align="center" width="690" border="">
+                		<tr>
+                			<td style="background-color:#fff;" width="94%">
+                			<table width="100%;">
+                			<tr>
+                			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/dgs-logo.png" /></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                			<tr>
+                			<td align="center"><h2> SURVEY REPORT</h2></td>
+                			</tr>
+                			<tr> <td height="20px;">&nbsp;</td> </tr>
+                
+                			<tr>
+                				<td><p style="font-size:15px;margin:10px;">Hello '.$user_name.',</p> <br>
+                					<p style="font-size:15px;margin:10px;">You have received schedule report with attachment.</p>
+                				</td>
+                			</tr>
+                			<tr>
+                				<td></td>
+                			</tr>
+                			<tr>
+                			<td height="20px;">&nbsp;</td>
+                			</tr>
+                			</table>
+                		</td>
+                	</tr>
+                		<tr>
+                		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="'.getHomeUrl().'upload_image/Data-Group-footer.png" />
+                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		</td>
+                		</tr>
+                		</table></td>
+                	</tr>
+                	</table>';
+        $mail->Body = $body;
         $mail->AltBody = strip_tags($body);
         $mail->send();
        // echo 'Message has been sent';

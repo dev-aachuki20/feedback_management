@@ -32,9 +32,10 @@ if ($_POST['data_type'] == 'location') {
     $groupBy = 'surveyid';
 }
 
-if (!empty($_POST['fdate']) and !empty($_POST['fdate'])) {
-    $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['sdate']))) . "'";
+if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
+    $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
 }
+
 
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
