@@ -418,7 +418,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             //send mail
             $user_details = get_user_datails($userId);
             $to = $user_details['email'];
-            $from_mail = "dgs@gmail.com";
+            $from_mail = ADMIN_EMAIL;
             $name = $user_details['name'];
             $subject = "Schedule Report";
             $message = 'Hello ' . $name . ' you have schedule report';

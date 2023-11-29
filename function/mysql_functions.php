@@ -1,6 +1,6 @@
 <?php 
 //set logo
-define('ADMIN_EMAIL', 'system@dgam.app');
+define('ADMIN_EMAIL', 'system@dgfm.app');
 define('MAIN_LOGO', 'upload_image/dgs-logo-2.jpg');
 define('MAIN_LOGO_2', 'upload_image/dgs-logo-3-new.jpg');
 
