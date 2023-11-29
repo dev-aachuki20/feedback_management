@@ -411,7 +411,7 @@ if (!empty($_POST['submit'])) {
 		}
 		let uniqueId = Math.random().toString(36).substr(2, 9);
 		let index = $('.opt-div').length;
-		$(".options").append('<div class="col-md-12 opt-div new-appended-option"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]"></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval ' + uniqueId + '" value="0" name="cans[]" readonly/></div></div><div class="col-md-3 rating-type-option"></div><div class="col-md-2"><label></label><button class="btn btn-danger remove-field" type="button">Remove</div></div></div>');
+		$(".options").append('<div class="col-md-12 opt-div new-appended-option"><div class="col-md-3"><div class="form-group"><label>New Option</label><input type="text" class="form-control correct_answer" name="correct[]" required></div></div><div class="col-md-2"><div class="form-group"><label>Value</label><input type="number" class="form-control canval ' + uniqueId + '" value="0" name="cans[]" readonly/></div></div><div class="col-md-3 rating-type-option"></div><div class="col-md-2"><label></label><button class="btn btn-danger remove-field" type="button">Remove</div></div></div>');
 		$(".options_other").append('<div class="col-md-6"><div class="form-group"><label>New Option</label><input type="text" class="form-control new-option" ></div></div></div>');
 
 		if (aType == 4) {
@@ -564,7 +564,9 @@ if (!empty($_POST['submit'])) {
 			$('.rating-type-form').remove();
 			$('.conditional-radio-btn').show();
 			$('.weighted-radio-btn').show();
+			$('.correct_answer').prop('required', true);
 			if (atype == "2" || atype == "3" || atype == "5") {
+				$('.correct_answer').prop('required', false);
 				$(".answer_type_other").show();
 				$(".options").hide();
 				$(".options_other").hide();

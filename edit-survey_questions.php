@@ -278,7 +278,7 @@ if (!empty($_POST['submit'])) {
                   </select>
                 </div>
                 <div class="col-md-3 remove-answer-div">
-                  <label>&nbsp;</label>
+                  <!-- <label>&nbsp;</label> -->
                   <button data-id="<?= $row_get_questions_detail['id'] ?>" class="btn btn-danger remove-answer-field" type="button">Remove
                   </button>
                 </div>
@@ -299,7 +299,7 @@ if (!empty($_POST['submit'])) {
                   </div>
                 </div>
                 <div class="col-md-2">
-                  <label>&nbsp; </label>
+                  <!-- <label>&nbsp; </label> -->
                   <button data-id="<?= $row_get_questions_detail['id'] ?>" class="btn btn-danger remove-answer-field" type="button">Remove
                   </button>
                 </div>
