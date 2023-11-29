@@ -588,9 +588,7 @@ if (!empty($_POST['submit'])) {
 				$('.rating_type').attr('required', true);
 				$('.rating_type').attr('disabled', false);
 			} else {
-
 				$(".answer_type_other").show();
-
 				$(".conditional_questions").show();
 				var parent = $('.parent').val();
 				$(".question_label").text("Question");

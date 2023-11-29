@@ -24,6 +24,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
             <th>Frequency</th>
             <th>Start Date</th>
             <th>Next Due Date</th>
+            <th>End Date</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
             <td><?=ucfirst(service_type()[$scheduled_report_template['sch_interval']])?></td>
             <td><?=date('d-m-Y', strtotime($scheduled_report_template['start_date']))?></td>
             <td><?=date('d-m-Y ', strtotime($scheduled_report_template['next_date']))?></td>
+            <td><?=date('d-m-Y ', strtotime($scheduled_report_template['end_date']))?></td>
             <td class="datatable_buttontd">
               <?php if($scheduled_report_template['report_type']==1){ ?> 
                 <a href="report-doc/report-pdf.php?report_id=<?=$scheduled_report_template['id']?>">

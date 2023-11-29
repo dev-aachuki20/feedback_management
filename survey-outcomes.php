@@ -37,7 +37,7 @@
     $surveys_ids = implode(',',$assign_survey);
 
     // get table data
-    if(!empty($_POST['surveys'])){
+
         $dateflag= false;
         $query = 'SELECT * FROM answers where id !=0 ';
         if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
@@ -123,7 +123,7 @@
             $departments[$row_get_departments['id']] = $row_get_departments['name'];
         }
         record_set("get_recent_entry",$query);
-    }
+    
 
 ?>
 <style>

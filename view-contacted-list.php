@@ -114,7 +114,7 @@ if($_SESSION['user_type'] == 4){
 }
 
 //fetch data in table 
-if(!empty($_POST['surveys'])){
+
     $query = 'SELECT * FROM answers where id !=0 ';
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
@@ -151,10 +151,6 @@ if(!empty($_POST['surveys'])){
             $query .= "and locationid = '".$_POST['locationid']."'";
         }
     }
-    
-    if(!empty($_POST['surveys'])){
-        $query .= " and surveyid =".$_POST['surveys'];
-    }
     if(!empty($_POST['groupid'])){
         if($_POST['groupid'] == 4){
             $query .= " and groupid in (select id from `groups` where cstatus=1)";  
@@ -162,7 +158,11 @@ if(!empty($_POST['surveys'])){
             $query .= " and groupid = '".$_POST['groupid']."'";
         }
     }
-    
+    if(!empty($_POST['surveys'])){
+        $query .= " and surveyid =".$_POST['surveys'];
+    }else{
+        $query .= " and surveyid IN  ($surveys_ids)";
+    }
     if($loggedIn_user_type == 3){
         record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id ".$filter_status);
 
@@ -185,11 +185,10 @@ if(!empty($_POST['surveys'])){
                 $query .= " and surveyid IN (0)";
             }
         }
-
         $query .= " and cby IN (".$task_id.")";
     }
     
-    $query .= " GROUP by cby";
+    $query .= " and  answerid =-2 and answerval=100 GROUP by cby";
     record_set("get_recent_entry",$query);
 
      // record_set("get_departments", "SELECT * FROM departments");	
@@ -197,7 +196,7 @@ if(!empty($_POST['surveys'])){
     // while($row_get_departments = mysqli_fetch_assoc($get_departments)){
     //     $departments[$row_get_departments['id']] = $row_get_departments['name'];
     // }
-}
+
 ?>
 <style>
 .d-none{
@@ -209,85 +208,7 @@ if(!empty($_POST['surveys'])){
 </section>
 <section class="content">
     <!-- top box container start-->
-    <div class="row">
-        <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=contact requests&aid=-2&avl=10"> 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa-solid fa-image-portrait"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Contact Requests</span>
-                        <span class="info-box-number">
-                            <?php 
-                                $reqCount =0; 
-                                $filtr = '';
-                                //if($_SESSION['user_type']>2){
-                                    if($surveys_ids){
-                                        $filtr = " and surveyid IN ($surveys_ids )";
-                                    }else {
-                                        $filtr = " and surveyid IN (0)";
-                                    }
-                                    
-                                //}
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition $filtr GROUP BY cby");
-                                while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                    // record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                    // if($totalRows_get_action == 0){
-                                    //     ++$reqCount;
-                                    // }
-                                     ++$reqCount;
-                                }
-                                echo $reqCount;
-                            ?>
-                        </span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a> 
-   
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=in progress&task_status=3"> 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-aqua"><i class="fa-solid fa-spinner"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">In Progress</span>
-                        
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=void&task_status=4">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-gray"><i class="fa-solid fa-trash"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Void</span>
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved postive&task_status=5">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Resolved</span>
-                        <span class="info-box-number"><?=get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>  
-    </div>
+    <?php include ('./section/top-box-container-count.php');?>
     <!-- top box container start-->
     <div class="box box-default">
         <form action="" method="POST" id="viewReportcsv">
@@ -457,9 +378,9 @@ if(!empty($_POST['surveys'])){
                                                 }
                                             }
                                             // for showing only contacted yes data
-                                            if($to_bo_contacted == 0){
-                                                continue;
-                                            }
+                                            // if($to_bo_contacted == 0){
+                                            //     continue;
+                                            // }
                                             $result_response = $achieved_result_val*100/$total_result_val;
                                             if($achieved_result_val==0 and $total_result_val==0){
                                                 $result_response=100;

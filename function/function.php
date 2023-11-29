@@ -1155,12 +1155,33 @@ function export_csv_file($data, $type, $survey_name)
 	$output = fopen("php://output", "w");
 
 	$excel_data = array();
-	$i = 0;
-	foreach ($data as $key => $datasurvey) {
-		$total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
-		$total =  round($total, 2);
+	$excel_heading = array();
 
-		if ($type == 'location') {
+	if($type == 'location'){
+		$excel_heading[] = 'Location Name';
+	}
+	else if($type == 'group'){
+		$excel_heading[]= 'Group Name';
+	}
+	else if($type == 'department'){
+		$excel_heading[]= 'Department Name';
+	}
+	else if($type == 'role'){
+		$excel_heading[]= 'Role Name';
+	}
+	else {
+		$excel_heading[]	= 'Survey id';
+		$excel_heading[]	= 'Survey Name';
+	}
+	$excel_heading[]	= 'Survey Responses';
+	$excel_heading[]	= 'Contact Requests';
+	$excel_heading[] 	= 'Average Survey Score';
+	$i=0;
+	foreach($data as $key =>$datasurvey){
+		$total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
+        $total =  round($total, 2);
+		
+		if($type == 'location'){
 			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
 		} else if ($type == 'group') {
 			$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
@@ -1186,7 +1207,7 @@ function export_csv_file($data, $type, $survey_name)
 
 	// replace '_' with " " in array keys
 
-	$replacedKeys = str_replace('_', ' ', array_keys($excel_data[0]));
+	$replacedKeys = str_replace('_', ' ', $excel_heading);
 
 	fputcsv($output, $replacedKeys);
 	foreach ($excel_data as $csv) {

@@ -110,8 +110,8 @@ if (isset($_POST['schedule_btn'])) {
   <div class="modal-dialog">
     <div class="modal-content" style="height:auto;">
       <div class="modal-header">
-        <h5 id="sch_modal_title" class="modal-title"> </h5>
         <button type="button" class="close closes" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        <h5 id="sch_modal_title" class="modal-title"> </h5>
       </div>
       <div class="modal-body">
         <form class="second_form" method="post">
@@ -132,14 +132,14 @@ if (isset($_POST['schedule_btn'])) {
           <div class="form-group row filter_data">
           </div>
 
-          <div class="form-group row schedule-field">
+          <div class="form-group row">
             <label for="start_date" class="col-sm-4 col-form-label">Start Date</label>
             <div class="col-sm-8">
               <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
             </div>
           </div>
 
-          <div class="form-group row schedule-field">
+          <div class="form-group row">
             <label for="end_date" class="col-sm-4 col-form-label">End Date</label>
             <div class="col-sm-8">
               <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
@@ -147,9 +147,20 @@ if (isset($_POST['schedule_btn'])) {
           </div>
 
           <div class="form-group row schedule-field">
-            <label for="interval" class="col-sm-4 col-form-label">Interval</label>
+            <label for="interval" class="col-sm-4 col-form-label">Report Frequency</label>
             <div class="col-sm-8">
               <select class="form-control" id="interval" name="interval" required>
+                <?php foreach (service_type() as $key => $value) { ?>
+                  <option value="<?php echo $key; ?>"><?= $value ?></option>
+                <?php } ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="interval" class="col-sm-4 col-form-label">Time Period</label>
+            <div class="col-sm-8">
+              <select class="form-control" id="time_period" name="time_period" required>
                 <?php foreach (service_type() as $key => $value) { ?>
                   <option value="<?php echo $key; ?>"><?= $value ?></option>
                 <?php } ?>
@@ -214,6 +225,7 @@ if (isset($_POST['schedule_btn'])) {
       $('#end_date').prop('required', false);
       $('#interval').prop('required', false);
       $('#report_name').prop('required', false);
+      $('#start_date').removeAttr('min');
 
 
       //$('#send_to').prop('required',false);
@@ -232,6 +244,8 @@ if (isset($_POST['schedule_btn'])) {
       $('.export-doc').hide();
       $('#schedule_btn').show();
       $('.export-checkboxes').hide();
+      let minDate = '<?= date('Y-m-d') ?>';
+      $('#start_date').attr('min', minDate);
       $('#start_date').prop('required', true);
       $('#end_date').prop('required', true);
       $('#interval').prop('required', true);

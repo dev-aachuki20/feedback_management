@@ -13,13 +13,16 @@ if(is_array($surveyid)){
 }
 
 if($data_type == 'location'){
-	$ans_filter_query .= " and locationid = ".$field_value ;
+	$ans_filter_query .= " and locationid IN ($field_value)" ;
 }
 if($data_type == 'department'){
-	$ans_filter_query .= " and departmentid = ".$field_value ;
+	$ans_filter_query .= " and departmentid IN ($field_value)" ;
 }
 if($data_type == 'group'){
-	$ans_filter_query .= " and groupid = ".$field_value ;
+	$ans_filter_query .= " and groupid IN ($field_value)";
+}
+if(!empty($sdate) and !empty($edate)){
+    $ans_filter_query .= " and  cdate between '".date('Y-m-d', strtotime($sdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($edate)))."'";
 }
 if(!empty($surveyid)){
 	$query = "SELECT * FROM answers  where surveyid in($surveyid) ".$ans_filter_query." group by cdate order by cdate DESC;";
@@ -35,6 +38,25 @@ while ($row_ques_query = mysqli_fetch_assoc($Questions)) {
 }
 header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Content-Type: application/vnd.ms-excel");
+
+/** Csv Heading  */
+$csv_heading = array();
+$questionQuery ="SELECT * FROM questions where surveyid =$surveyid and cstatus=1 order by id ASC,dposition asc";
+record_set('getquestionQuery',$questionQuery);
+$csv_heading[] 		= 'Date'; 
+$csv_heading[]		= 'Survey ID'; 
+$csv_heading[]		= 'First Name'; 
+$csv_heading[] 		= 'Last Name'; 
+$csv_heading[]  	= 'Phone Number'; 
+$csv_heading[]		= 'Email'; 
+$csv_heading[]	    = 'Group';
+$csv_heading[]		= 'Location';
+$csv_heading[]   	= 'Department';
+$csv_heading[]      = 'Role';
+
+while ($row_getquestionQuery = mysqli_fetch_assoc($getquestionQuery)) {
+	$csv_heading[] = $row_getquestionQuery['question']; 
+}
 
 $flag = false;
 record_set('getdata',$query);
@@ -93,17 +115,20 @@ if($totalRows_getdata>0){
 			}
 		}
 		$i++;
-	}	
-}
-arsort($row_excel_data);
-foreach($row_excel_data as $data){
-	if (!$flag) {
-		// display field/column names as first row
-		echo implode("\t", array_keys($data)) . "\r\n";
-		$flag = true;
 	}
-	echo implode("\t", array_values($data)) . "\r\n";	
+	arsort($row_excel_data);
+	foreach($row_excel_data as $data){
+		if (!$flag) {
+			// display field/column names as first row
+			echo implode("\t", array_keys($data)) . "\r\n";
+			$flag = true;
+		}
+		echo implode("\t", array_values($data)) . "\r\n";	
+	}	
+}else{
+		echo implode("\t", $csv_heading) . "\r\n";
 }
+
 
 // $zipArchive = new ZipArchive();
 // $zipFile = "./example-zip-file.zip";

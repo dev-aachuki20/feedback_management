@@ -31,6 +31,9 @@ if($data_type=='department' && $field_value !=''){
 if($data_type=='group' && $field_value !=''){
 	$ans_filter_query .= " and groupid IN($field_value)";
 }
+if(!empty($sdate) and !empty($edate)){
+  $ans_filter_query .= " and  cdate between '".date('Y-m-d', strtotime($sdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($edate)))."'";
+}
 //Survey Steps 
 $survey_steps = array();
 if($row_get_survey['isStep'] == 1){

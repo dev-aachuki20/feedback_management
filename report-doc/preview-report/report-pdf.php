@@ -4,10 +4,11 @@ require('../../function/get_data_function.php');
 include('../../permission.php');
 
 $filter = $_POST;
-
 $data_type = $filter['sch_template_field_name'];
 $survey_id   = $filter['survey'];
 $field_value = implode(',', $filter['template_field']);
+$sdate = $filter['start_date'];
+$edate = $filter['end_date'];
 
 if (is_array($survey_id)) {
     $survey_id = implode(',', $survey_id);
@@ -29,11 +30,14 @@ if ($data_type == 'location') {
     $groupBy = 'surveyid';
 }
 
+if(!empty($sdate) and !empty($edate)){
+    $query .= " and  cdate between '".date('Y-m-d', strtotime($sdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($edate)))."'";
+}
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
-
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
 record_set("get_entry", $querys . $query . " GROUP by cby");
+
 if ($totalRows_get_entry) {
     $survey_data = array();
     $to_bo_contacted = 0;
