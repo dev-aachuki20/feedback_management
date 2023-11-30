@@ -299,10 +299,10 @@ $role_ids = implode(',',$assign_role);
                                             // }
                                             // for filter using contact
                                             if($_POST['contacted'] !='' and  $_POST['contacted']!=3){
-                                                if($to_bo_contacted == 1 && $_POST['contacted']!=1){
+                                                if($to_bo_contacted == 1 && $_POST['contacted'] == 2){
                                                     continue;
                                                 }
-                                                if($to_bo_contacted == 0 && $_POST['contacted']==1){
+                                                if($to_bo_contacted == 0 && $_POST['contacted'] == 1){
                                                     continue;
                                                 }
                                             }

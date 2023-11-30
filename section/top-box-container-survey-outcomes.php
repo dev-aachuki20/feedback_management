@@ -24,7 +24,8 @@ if($_SESSION['user_type']>2){
 
 
 /* ---un assigned ----*/
-record_set("get_un_assigned", "SELECT * FROM assign_task WHERE task_status = 1 $filtr ");
+record_set("get_un_assigned", "SELECT * FROM assign_task WHERE id!=0 $filtr ");
+record_set("get_total_survey_data","SELECT * FROM answers where id !=0  and surveyid IN ($surveys_ids) GROUP by cby");
 
 /* ---assigned ----*/
 record_set("get_assigned", "SELECT * FROM assign_task WHERE task_status = 2 $filtr ");
@@ -50,7 +51,7 @@ record_set("get_resolved_positive", "SELECT * FROM assign_task WHERE task_status
                 <div class="info-box-content">
                     <span class="info-box-text">UNASSIGNED</span>
                     <span class="info-box-number">
-                        <?=$totalRows_get_un_assigned?>
+                        <?=$totalRows_get_total_survey_data - $totalRows_get_un_assigned?>
                     </span>
                 </div>
                 <!-- /.info-box-content -->
