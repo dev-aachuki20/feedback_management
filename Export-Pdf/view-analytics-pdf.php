@@ -200,11 +200,16 @@ footer {
 <tbody style="border-top:1px solid gray;border-bottom:1px solid gray;">
   <tr style="">
     <td colspan="4" style="padding:10px 0; text-align:center;font-size:20px; font-weight:700;"><span>' . strtoupper(getSurvey()[$surveyid]) . '</span></td>
-  </tr>
-</tbody>
-</table>';
+  </tr>';
 
 
+if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
+    $html .= '<tr style="">
+    <td colspan="4" style="padding:10px 0; text-align:center;font-size:20px; font-weight:500;"><span>' . date('d/m/Y',strtotime($_POST['sdate'])).'-'. date('d/m/Y',strtotime($_POST['edate'])) . '</span></td>
+    </tr>';
+}
+
+$html .= '</tbody></table>';
 
 $html .= '<img src="'.$canvasChart.'" />';
 

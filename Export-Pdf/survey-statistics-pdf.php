@@ -36,7 +36,6 @@ if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
     $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
 }
 
-
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
@@ -331,8 +330,13 @@ $html = '<!DOCTYPE html>
                     </div>
                     <div class="title">
                         <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
-                        <h4>' . strtoupper(getSurvey()[$selectedSurveyId]) . '</h4>
-                    </div>
+                        <h4>' . strtoupper(getSurvey()[$selectedSurveyId]) . '</h4>';
+
+                    if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
+                        $html .= '<h4>' .  date('d/m/Y',strtotime($_POST['sdate'])).'-'. date('d/m/Y',strtotime($_POST['edate'])).'</h4>';
+                    }
+                    
+                    $html .= '</div>
                 </div>
             </div>   
             <div class="row">';

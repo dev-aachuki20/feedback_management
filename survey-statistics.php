@@ -496,9 +496,12 @@ $(document).on('click', '.large-btn', function(){
         let document_type   = $(this).data('type');
 
         //put value in form
+        console.log(sdate, "sdate");
+        console.log(edate, "edate");
+
         $('#survey_id').val(survey);
         $('#st_date').val(sdate);
-        $('#edate').val(edate);
+        $('#ed_date').val(edate);
         $('#survey_data_type').val(data_type);
         if(document_type == 'pdf'){
             // export_pdf(sdate,edate,data_type,survey);

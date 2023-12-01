@@ -10,14 +10,14 @@ record_set("get_report", "select * from schedule_report_new ORDER BY created_at 
 ");
 
 while ($row_get_report = mysqli_fetch_assoc($get_report)) {
-    $current_date   = date('Y-m-d', time());
-    $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
-    $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_schedule_date']));
-    $result_1   = check_differenceDate($current_date, $end_date, 'lte');
-    $result_2   = check_differenceDate($current_date, $next_schedule, 'lte');
+    $current_date  = date('Y-m-d', time());
+    $next_schedule = date('Y-m-d', strtotime($row_get_report['next_schedule_date']));
+    $end_date      = date('Y-m-d', strtotime($row_get_report['end_date']));
+    $result_1 = check_differenceDate($current_date, $end_date, 'lte');
+    $result_2 = check_differenceDate($current_date, $next_schedule, 'lte');
+    $result_3 = check_differenceDate($next_schedule, $end_date, 'lte');
 
-    if ($result_1 && $result_2) {
-
+    if ($result_1 && $result_2 && $result_3) {
         $filter     = json_decode($row_get_report['filter'], 1);
         $survey     = $filter['survey_hidden'];
         $data_type  = $filter['data_type_hidden'];
@@ -411,7 +411,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
         <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
         </div>';
 
-      
+
         $mpdf->SetHTMLFooter($footer);
         $mpdf->WriteHTML($html);
         $pdf = $mpdf->Output('', 'S');
@@ -423,7 +423,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
         $email       = $userDetails['email'];
         $user_name   = $userDetails['name'];
         sendEmailPdf($pdf, $filename, $email, $user_name, 'Survey Statistics', $body);
+    }else{
+        echo "Survey statistics's schedule time is over." . "<br>";
     }
 }
-//$mpdf->Output($filename,'F');
-//$mpdf->Output();

@@ -106,6 +106,7 @@ if(!empty($requestData['survey_name'])){
     if($requestData['interval'] ==168 || $requestData['interval'] ==336){
         $start = date("Y-m-d", strtotime("first monday of $startDate"));
     } 
+    
     //monthly,quarterly, 6-month,annual
     else if($requestData['interval'] ==720 || $requestData['interval'] ==2160 || $requestData['interval'] ==4320 || $requestData['interval'] ==8640){
         $start = date("Y-01-01", strtotime($startDate)); 

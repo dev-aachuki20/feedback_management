@@ -92,120 +92,119 @@ if(isset($_POST['reset_password'])){
     <![endif]-->
 
     <style type="text/css">
-    .logheading{
-        text-align: center;
-        margin: 20px 0;
-        font-size: 28px;
-        font-weight: 600;
-        color: #000;
-    }
-    .login-box .form-group .form-control-feedback{
-      left: 0;
-      background: #a020f0;
-      color: #fff;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 3px 0 0 3px;
-      padding: 5px 20px;
-    }
-    .login-box .form-group .form-control{
-      padding: 10px 15px 10px 50px;
-      height: 40px;
-      border-radius: 3px;
-    }
-    .login-box form .btn-primary{
-      background: #a020f0;
-      border-color: #a020f0;
-      color: #fff;
-      text-transform: capitalize;
-      font-weight: 500;
-      transition: all 0.3s ease-in;
-    }
-    .login-box form .btn-primary:hover{
-      background: #891acf;
-      border-color: #891acf;
-    }
-    .grayText{
-      color: #707070;
-      font-size: 14px;
-      font-weight: 400;
-      text-decoration: underline;
-      margin-top: 5px;
-      display: inline-block;
-    }
-    .grayText:hover{
-      color: #a020f0;
-    }
-    .customcheck{
-      margin:0 0 15px 0;
-      position: relative;
-    }
-    .linkText{
-      display: inline-block;
-      color: #2196F3;
-      font-size: 14px;
-    }
-    .linkText:hover{
-      text-decoration: underline;
-      color: #2196F3;
-    }
-.styled-checkbox {
-  position: absolute;
-  opacity: 0;
-}
-.styled-checkbox + label {
-  position: relative;
-  cursor: pointer;
-  padding: 0;
-  color: #707070;
-  font-size: 14px;
-  font-weight: 400; 
-}
-.styled-checkbox + label:before {
-  content: "";
-  margin-right: 5px;
-  display: inline-block;
-  vertical-align: text-top;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border: 1px solid #ccc;
-}
+      .logheading{
+          text-align: center;
+          margin: 20px 0;
+          font-size: 28px;
+          font-weight: 600;
+          color: #000;
+      }
+      .login-box .form-group .form-control-feedback{
+        left: 0;
+        background: #a020f0;
+        color: #fff;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px 0 0 3px;
+        padding: 5px 20px;
+      }
+      .login-box .form-group .form-control{
+        padding: 10px 15px 10px 50px;
+        height: 40px;
+        border-radius: 3px;
+      }
+      .login-box form .btn-primary{
+        background: #a020f0;
+        border-color: #a020f0;
+        color: #fff;
+        text-transform: capitalize;
+        font-weight: 500;
+        transition: all 0.3s ease-in;
+      }
+      .login-box form .btn-primary:hover{
+        background: #891acf;
+        border-color: #891acf;
+      }
+      .grayText{
+        color: #707070;
+        font-size: 14px;
+        font-weight: 400;
+        text-decoration: underline;
+        margin-top: 5px;
+        display: inline-block;
+      }
+      .grayText:hover{
+        color: #a020f0;
+      }
+      .customcheck{
+        margin:0 0 15px 0;
+        position: relative;
+      }
+      .linkText{
+        display: inline-block;
+        color: #2196F3;
+        font-size: 14px;
+      }
+      .linkText:hover{
+        text-decoration: underline;
+        color: #2196F3;
+      }
+      .styled-checkbox {
+        position: absolute;
+        opacity: 0;
+      }
+      .styled-checkbox + label {
+        position: relative;
+        cursor: pointer;
+        padding: 0;
+        color: #707070;
+        font-size: 14px;
+        font-weight: 400; 
+      }
+      .styled-checkbox + label:before {
+        content: "";
+        margin-right: 5px;
+        display: inline-block;
+        vertical-align: text-top;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 1px solid #ccc;
+      }
 
-
-.styled-checkbox:checked + label:before {
-  background: #a020f0;
-  border: 1px solid #a020f0;
-}
-.styled-checkbox:disabled + label {
-  color: #b8b8b8;
-  cursor: auto;
-}
-.styled-checkbox:disabled + label:before {
-  box-shadow: none;
-  background: #ddd;
-}
-.styled-checkbox:checked + label:after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 9px;
-  background: white;
-  width: 2px;
-  height: 2px;
-  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
-  transform: rotate(45deg);
-}
-.login-box-body, .register-box-body{
-  padding-bottom: 50px;
-}
-p.login-box-msg {
-    font-size: 18px;
-    color: black;
-    font-weight: 700;
-}
+      .styled-checkbox:checked + label:before {
+        background: #a020f0;
+        border: 1px solid #a020f0;
+      }
+      .styled-checkbox:disabled + label {
+        color: #b8b8b8;
+        cursor: auto;
+      }
+      .styled-checkbox:disabled + label:before {
+        box-shadow: none;
+        background: #ddd;
+      }
+      .styled-checkbox:checked + label:after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 9px;
+        background: white;
+        width: 2px;
+        height: 2px;
+        box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+        transform: rotate(45deg);
+      }
+      .login-box-body, .register-box-body{
+        padding-bottom: 50px;
+      }
+      p.login-box-msg {
+          font-size: 18px;
+          color: black;
+          font-weight: 700;
+      }
     </style>
 
   </head>
@@ -218,7 +217,7 @@ p.login-box-msg {
        
         <?=$msg?>
         <?php if($_GET['action']=='enter-otp'){ ?>
-          <p class="login-box-msg">Enter your OTP sent on your email.</p>
+          <p class="login-box-msg">Enter your OTP sent on your email</p>
           <form action="#" method="post">
           <div class="form-group has-feedback">
             <input required type="text" name="otpval" maxlength="5" class="form-control" placeholder="OTP">
@@ -235,7 +234,7 @@ p.login-box-msg {
           </div>
         </form>
         <?php }else if($_GET['action']=='enter-password'){ ?>
-          <p class="login-box-msg">Enter your new password.</p>
+          <p class="login-box-msg">Enter your new password</p>
           <form method="post" action="" name="myForm">
             <div class="form-group has-feedback">
               <input type="password" name="password" class="form-control" placeholder="Password">
@@ -254,7 +253,7 @@ p.login-box-msg {
             </div>
           </form>
         <?php }else{ ?>
-          <p class="login-box-msg">Enter Your Email To Reset Password.</p>
+          <p class="login-box-msg">Enter Your Email To Reset Password</p>
           <form method="post" action="" name="myForm">
             <div class="form-group has-feedback">
               <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

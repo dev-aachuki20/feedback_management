@@ -12,19 +12,17 @@ use PHPMailer\PHPMailer\Exception;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-define('SMTP_HOST', "mail.dgfm.app");
-define('SMTP_USER', "system@dgfm.app");
-define('SMTP_PASS', "RiehO7]aS*Fe");
-define('SMTP_PORT', "465");
-define('SMTPAuth', true);
+// define('SMTP_HOST', "mail.dgfm.app");
+// define('SMTP_USER', "system@dgfm.app");
+// define('SMTP_PASS', "3yviSGa8I?Ib");
+// define('SMTP_PORT', "587");
+// define('SMTPAuth', true);
 
-// define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-// define('SMTP_USER', "9bb50416f293ea");
-// define('SMTP_PASS', "a28f5c4d4023f2");
-// define('SMTP_PORT', "2525");
-// define('SMTPAuth', true);
-// define('SMTPAuth', true);
-//mail trap
+define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+define('SMTP_USER', "9bb50416f293ea");
+define('SMTP_PASS', "a28f5c4d4023f2");
+define('SMTP_PORT', "2525");
+define('SMTPAuth', true);
 
 // end 
 $msg = '';
@@ -121,7 +119,8 @@ function sendEmailPdf($pdf = null, $pdf_name = null, $email_to, $user_name, $sub
 		$mail->send();
 		// echo 'Message has been sent';
 	} catch (Exception $e) {
-		// echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+		echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
+		return false;
 	}
 }
 //Get Ip address
@@ -1251,6 +1250,7 @@ function download_csv_folder($data, $type, $dir)
 // different in two date 
 function check_differenceDate($date1, $date2, $type = "gt")
 {
+	
 	$curr_date = new DateTime($date1);
 	$next_date = new DateTime($date2);
 	// printr($curr_date,0);
@@ -1281,7 +1281,7 @@ function check_differenceDate($date1, $date2, $type = "gt")
 
 	// less than or equal
 	else if ($type == 'lte') {
-		if ($curr_date <= $next_date) {
+		if ($date1 <= $date2) {
 			$flg = true;
 		}
 	}
@@ -1485,6 +1485,7 @@ function cron_emails($attachments, $to, $from_mail, $name, $subject, $message)
 
 		return true;
 	} catch (Exception $e) {
+		// echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
 		return false;
 		//echo "Message could not be sent. Mailer Error: {$e}";
 	}

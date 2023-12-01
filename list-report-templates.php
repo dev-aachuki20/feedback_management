@@ -26,6 +26,7 @@ if (isset($_POST['schedule_btn'])) {
     "send_to"         => $send_to,
     "temp_id"         => $template_id,
     "sch_interval"    => $interval,
+    "time_interval"   => $_POST['time_period'],
     'start_date'      => $start,
     'end_date'        => $end,
     'next_date'       => $next_date,
@@ -133,16 +134,16 @@ if (isset($_POST['schedule_btn'])) {
           </div>
 
           <div class="form-group row">
-            <label for="start_date" class="col-sm-4 col-form-label">Start Date</label>
+            <label for="start_date" class="col-sm-4 col-form-label">Report  Start Date</label>
             <div class="col-sm-8">
-              <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" min="<?= date('Y-m-d') ?>" required>
+              <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Start Date" value="" required>
             </div>
           </div>
 
           <div class="form-group row">
-            <label for="end_date" class="col-sm-4 col-form-label">End Date</label>
+            <label for="end_date" class="col-sm-4 col-form-label">Report  End Date</label>
             <div class="col-sm-8">
-              <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value="" min="<?= date('Y-m-d') ?>" required>
+              <input type="date" class="form-control" id="end_date" name="end_date" placeholder="End Date" value=""  required>
             </div>
           </div>
 
@@ -157,7 +158,7 @@ if (isset($_POST['schedule_btn'])) {
             </div>
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row schedule-field">
             <label for="interval" class="col-sm-4 col-form-label">Time Period</label>
             <div class="col-sm-8">
               <select class="form-control" id="time_period" name="time_period" required>
@@ -215,8 +216,8 @@ if (isset($_POST['schedule_btn'])) {
   });
 
   function scheduleTemplate(template_id, template_name, template_field, template_filter, report_type, modal_type) {
+    console.log("modal_type", modal_type);
     activeModalType = modal_type;
-
     if (modal_type === 'preview') {
       $('.schedule-field').hide();
       $('.export-checkboxes').show();
@@ -226,8 +227,7 @@ if (isset($_POST['schedule_btn'])) {
       $('#interval').prop('required', false);
       $('#report_name').prop('required', false);
       $('#start_date').removeAttr('min');
-
-
+ 
       //$('#send_to').prop('required',false);
       activeReportType = report_type;
       if (report_type == 1) {
@@ -241,11 +241,12 @@ if (isset($_POST['schedule_btn'])) {
       //$('.second_form').attr("target", "_blank");
 
     } else {
+      let minDate = '<?= date('Y-m-d') ?>';
+      $('#start_date').attr('min', minDate);
       $('.export-doc').hide();
       $('#schedule_btn').show();
       $('.export-checkboxes').hide();
-      let minDate = '<?= date('Y-m-d') ?>';
-      $('#start_date').attr('min', minDate);
+     
       $('#start_date').prop('required', true);
       $('#end_date').prop('required', true);
       $('#interval').prop('required', true);
@@ -328,36 +329,37 @@ if (isset($_POST['schedule_btn'])) {
     }
   });
 
-  // csv export old
-  // $(document).ready(function() {
-  //   $('input.form-check-input').on('change', function() {
-  //     if (activeReportType === 2) {
-  //       if ($(this).attr('name') === "export_pdf") {
-  //         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
-  //       }
-  //       if ($(this).attr('name') === "export_csv") {
-  //         $('.second_form').attr('action', './report-doc/preview-report/report-question-csv.php');
-  //       }
-  //     }
-  //     $('input.form-check-input').not(this).prop('checked', false);
-  //   });
+  /* csv export old
+    // $(document).ready(function() {
+    //   $('input.form-check-input').on('change', function() {
+    //     if (activeReportType === 2) {
+    //       if ($(this).attr('name') === "export_pdf") {
+    //         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
+    //       }
+    //       if ($(this).attr('name') === "export_csv") {
+    //         $('.second_form').attr('action', './report-doc/preview-report/report-question-csv.php');
+    //       }
+    //     }
+    //     $('input.form-check-input').not(this).prop('checked', false);
+    //   });
 
-  //   $("#schedule_btn").on('click', function(event) {
-  //     if (activeModalType === "preview") {
-  //         if ($('#template_survey').val() === '' || $('#template_survey').val() === null) {
-  //           alert('Please select a survey!');
-  //           return false;
-  //         }
-  //       let flag = $('.preview-file-type').is(':checked');
-  //       if (flag == false) {
-  //         alert('Please select a preview format!');
-  //         return false;
-  //       } else {
-  //         $(".second_form").submit();
-  //       }
-  //     } 
-  //   });
-  // });
+    //   $("#schedule_btn").on('click', function(event) {
+    //     if (activeModalType === "preview") {
+    //         if ($('#template_survey').val() === '' || $('#template_survey').val() === null) {
+    //           alert('Please select a survey!');
+    //           return false;
+    //         }
+    //       let flag = $('.preview-file-type').is(':checked');
+    //       if (flag == false) {
+    //         alert('Please select a preview format!');
+    //         return false;
+    //       } else {
+    //         $(".second_form").submit();
+    //       }
+    //     } 
+    //   });
+    // });
+  */
 
   $('.export-doc').click(function(event){
     event.preventDefault();
@@ -399,4 +401,25 @@ if (isset($_POST['schedule_btn'])) {
       $('.second_form').submit();
     }
   })
+
+
+  let startDateInput = $('#start_date');
+  let endDateInput = $('#end_date');
+
+  startDateInput.change(() => validateDates());
+  endDateInput.change(() => validateDates());
+
+  function validateDates() {
+    const currentDate = new Date();
+    const startDate = startDateInput.val();
+    const endDate = Date.parse(endDateInput.val());
+    if (activeModalType === "preview") {
+        console.log('Dates are valid:', startDate, endDate);
+        $('#end_date').attr('min', startDate);
+    }else{
+      $('#end_date').attr('min', startDate);
+    }
+  }
+
+
 </script>

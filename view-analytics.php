@@ -62,6 +62,18 @@
           <input type="hidden" name="survey_type" id="survey_type" value="">
           <div class="col-md-3">
             <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" id="fdate" name="fdate" min="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control" value="<?php echo $_POST['fdate']; ?>" />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" id="sdate" name="sdate" class="form-control" min="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php echo $_POST['sdate']; ?>" />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
               <label><?= ($_GET['type']) ? ucfirst($_GET['type']) : 'Survey' ?></label>
               <select name="survey_name" class="form-control form-control-lg survey_id" id="survey_name">
                 <option value="">Select <?= ucfirst($_GET['type']) ?></option>
@@ -80,19 +92,7 @@
               </select>
               <span class="error" style="display:none ;">Please select survey</span>
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>Start Date</label>
-              <input type="date" id="fdate" name="fdate" min="2000-01-01" max="<?= date('Y-m-d'); ?>" class="form-control" value="<?php echo $_POST['fdate']; ?>" />
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-              <label>End Date</label>
-              <input type="date" id="sdate" name="sdate" class="form-control" min="2000-01-01" max="<?= date('Y-m-d'); ?>" value="<?php echo $_POST['sdate']; ?>" />
-            </div>
-          </div>
+          </div>          
           <div class="col-md-3">
             <div class="form-group">
               <label>&nbsp;</label>
@@ -222,7 +222,6 @@
               <div class="col-sm-4 listing">
               </div>
             </div>
-            <hr style="border: 0.5px solid #e8e3e3;" />
             <div class="col-sm-12 graph-listing" style="display: none;">
             </div>
             <hr style="border: 0.5px solid #e8e3e3;" />
