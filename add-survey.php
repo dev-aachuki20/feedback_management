@@ -394,71 +394,75 @@ span.select2.select2-container.select2-container--default {
                                 <?php } ?> 
                                 </select>	
                             </div>
-                            <div class="col-md-6">
-                                <div class="col-md-6">
-                                    <label for=""></label>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
-                                            <label class="form-check-label" for="isEnableContacted"> Enable To Be Contacted </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for=""></label>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="confidential" name="confidential" <?php echo ($row_get_surveys['confidential'] == 1) ? "checked" : ""; ?>>
-                                            <label class="form-check-label" for="confidencial"> Confidential </label>
-                                        </div>
-                                    </div>
-                                </div>            
-                            </div>
-                            <div class="col-md-6">
-                                <div class="col-md-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="threshold-notification" name="notification_threshold" <?php echo ($row_get_surveys['notification_threshold'] == 1) ? "checked" : ""; ?>>
-                                        <label class="form-check-label" for="threshold-notification">
-                                            Set Notification Threshold
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="col-md-12 contacted_request_section" style="<?=$row_get_surveys['isEnableContacted'] == 1 ? 'display:block;':'display:none;'?>">
                                 <label for="">Enter the label for contact request *</label>
                                     <div class="form-group">
                                         <input type="text" class="form-control" id="contacted_request_label" name="contacted_request_label" value="<?=$row_get_surveys['contacted_request_label']?>" required/>
                                     </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
+                                                <label class="form-check-label" for="isEnableContacted"> Enable Contact Requests </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="confidential" name="confidential" <?php echo ($row_get_surveys['confidential'] == 1) ? "checked" : ""; ?>>
+                                                <label class="form-check-label" for="confidencial"> Confidential </label>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>           
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="threshold-notification" name="notification_threshold" <?php echo ($row_get_surveys['notification_threshold'] == 1) ? "checked" : ""; ?>>
+                                            <label class="form-check-label" for="threshold-notification">
+                                                Set Notification Threshold
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-12 threshold-notification-section" style="<?=($row_get_surveys['notification_threshold'] ==1)? 'display:block':'display:none'?>">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Percentage</label>
-                                        <input type=number min=0 max=100 class="form-control" id="select_percentage" name="select_percentage" value="<?=$row_get_surveys['select_percentage']?>"   placeholder="insert percentage">
-                                            <?php 
-                                            // $thresholdPercentage = getThresholdPercentage();
-                                            ?>
-                                    </div>
-                                </div> 
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>Select Users</label>
-                                        <select class="form-control multiple-select" id="select_users" name="notification_threshold_users[]" multiple>
-                                            <?php 
-                                                $users = getUsers();
-                                                $thresholdUser = explode(',',$row_get_surveys['notification_threshold_users']);
-                                                foreach($users as $key => $value){ 
-                                                    $selected = '';
-                                                    if (in_array($key, $thresholdUser)){
-                                                        $selected = 'selected';
-                                                    }
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Percentage</label>
+                                            <input type=number min=0 max=100 class="form-control" id="select_percentage" name="select_percentage" value="<?=$row_get_surveys['select_percentage']?>"   placeholder="insert percentage">
+                                                <?php 
+                                                // $thresholdPercentage = getThresholdPercentage();
                                                 ?>
-                                                <option value="<?=$key?>" <?= $selected?>><?=$value?></option>      
-                                            <?php  }
-                                        ?>
-                                        </select>
-                                    </div>
-                                </div>  
+                                        </div>
+                                    </div> 
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Select Users</label>
+                                            <select class="form-control multiple-select" id="select_users" name="notification_threshold_users[]" multiple>
+                                                <?php 
+                                                    $users = getUsers();
+                                                    $thresholdUser = explode(',',$row_get_surveys['notification_threshold_users']);
+                                                    foreach($users as $key => $value){ 
+                                                        $selected = '';
+                                                        if (in_array($key, $thresholdUser)){
+                                                            $selected = 'selected';
+                                                        }
+                                                    ?>
+                                                    <option value="<?=$key?>" <?= $selected?>><?=$value?></option>      
+                                                <?php  }
+                                            ?>
+                                            </select>
+                                        </div>
+                                    </div> 
+                                </div> 
                             </div>
                             <?php 
                                 record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$_GET['id']."'");
@@ -501,15 +505,88 @@ span.select2.select2-container.select2-container--default {
                                     </div>
                                 </div>
                             </div> -->
-                            <div class="col-md-12">
-                                <p style="margin:15px 5px 20px 0px !important"><strong>Send By</strong></p>
-                                <div class="col-md-1" style="padding-left: 0px;">
-                                    <input type="radio" id="send_by" class="send_by" name="send_by" value="1" <?=($row_get_surveys['send_by']==1)?'checked':''?>>  <strong> Text</strong>
-                                </div>
-                                <div class="col-md-1">
-                                    <input type="radio"id="send_by" name="send_by" class="send_by" value="2" <?=($row_get_surveys['send_by']==2)?'checked':''?>> <strong> Email</strong>
+                            <div class="col-md-12" style="margin-bottom: 12px;">
+                                <p style="margin:15px 5px 6px 0px !important"><strong>Send By</strong></p>
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <input type="radio" id="send_by" class="send_by" name="send_by" value="1" <?=($row_get_surveys['send_by']==1)?'checked':''?>>  <strong> Text</strong>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="radio"id="send_by" name="send_by" class="send_by" value="2" <?=($row_get_surveys['send_by']==2)?'checked':''?>> <strong> Email</strong>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="new-content-main">
+                                    <div class="contact-request-div">
+                                        <div class="row">
+                                            <div class="col-xs-8 col-sm-8 col-md-8">
+                                                <div class="form-group">
+                                                    <label>Alert Email (comma separation for multiple email addresses) *</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-4 col-md-4">
+                                                <div class="form-group">
+                                                    <label>Contact Requested ?</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-8 col-sm-8 col-md-8">
+                                                <div class="form-group" style="margin-bottom: 0;">
+                                                    <label>Email*</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-4 col-md-4">
+                                                <div class="row">
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label>Yes</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label>No</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row new-row">
+                                            <div class="col-xs-8 col-sm-8 col-md-8">
+                                                <div class="form-group">
+                                                <input type="email" placeholder="dummy@gmail.com" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-4 col-md-4">
+                                                <div class="row ">
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-12 text-right" style="margin-bottom: 20px;">
+                                            <span id="add-row" class="btn btn-primary">Add Row</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Alert Email (comma separation for multiple email addresses) *</label>
@@ -536,7 +613,8 @@ span.select2.select2-container.select2-container--default {
                                         </div>
                                     </div>
                                 </div>
-                            </div>             
+                            </div> 
+                            <?php if($_SESSION['user_type'] != 2) { ?>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Custom CSS</label>
@@ -563,7 +641,7 @@ span.select2.select2-container.select2-container--default {
                                     <input type="text" class="form-control" id="other_link" name="other_link" value="<?php echo $row_get_surveys['other_link']?>">
                                 </div>
                             </div>
-              
+                            <?php } ?>         
                             <!-- Start submit button -->
                             <div class="col-md-12">
                                 <div class="text-right">
@@ -755,8 +833,8 @@ $("#threshold-notification").change(function(){
     }
 })
 
-$(".contacted-checkbox").change(function(){
-    $('.contacted-checkbox').prop('checked',false);
+$(document).on('change','.contacted-checkbox', function(){
+    $(this).parents().closest('.new-row').find('.contacted-checkbox').prop('checked',false);
     $(this).prop('checked', true);
 });
 
@@ -767,4 +845,33 @@ $('#select_percentage').keyup(function(){
   }
 });
 
+$(document).on('click','.delete-row',function(){
+    $(this).parents().closest('.new-row').remove();
+})
+$("#add-row").click(function(){
+    $('.contact-request-div').append(`<div class="row new-row">
+        <div class="col-xs-8 col-sm-8 col-md-8">
+            <div class="form-group">
+            <input type="email" placeholder="dummy@gmail.com" class="form-control">
+            </div>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4">
+            <div class="row">
+                <div class="col-xs-3 col-sm-3 col-md-3">
+                    <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                        <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled">
+                    </div>
+                </div>
+                <div class="col-xs-3 col-sm-3 col-md-3">
+                    <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                        <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled">
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                    <button class="btn btn-danger delete-row"><i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>`);
+})
 </script>

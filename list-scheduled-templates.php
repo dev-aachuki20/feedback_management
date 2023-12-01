@@ -1,6 +1,6 @@
 <?php
 $filter =  '';
-if($_SESSION['user_type'] >1){
+if($_SESSION['user_type'] >2){
   $filter = "where srt.cby =".$_SESSION['user_id'];
 }
 record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* FROM report_templates AS rt INNER JOIN scheduled_report_templates AS srt ON srt.temp_id = rt.id '.$filter.' ORDER BY srt.created_at DESC');

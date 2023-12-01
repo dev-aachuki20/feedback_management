@@ -116,15 +116,13 @@
             
             }
         }
-        $query .= " GROUP by cby";
+        $query .= " and answerid=-2 AND answerval = 100 and surveyid IN ($surveys_ids) GROUP by cby";
         record_set("get_departments", "SELECT * FROM departments");	
         $departments = array();
         while($row_get_departments = mysqli_fetch_assoc($get_departments)){
             $departments[$row_get_departments['id']] = $row_get_departments['name'];
         }
         record_set("get_recent_entry",$query);
-    
-
 ?>
 <style>
     .d-none{
@@ -284,6 +282,7 @@
                             </thead>
                             <tbody>
                                 <?php 
+                                $datata = '';
                                     if($totalRows_get_recent_entry >0){
                                         while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){
                                             record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
@@ -314,9 +313,9 @@
                                                 }
                                             }
                                             // for showing only contacted yes data
-                                            if($to_bo_contacted == 0){
-                                                continue;
-                                            }
+                                            // if($to_bo_contacted == 0){
+                                            //     continue;
+                                            // }
                                             $result_response = $achieved_result_val*100/$total_result_val;
                                             if($achieved_result_val==0 and $total_result_val==0){
                                                 $result_response=100;
@@ -329,15 +328,21 @@
                                             if($result_response<75){
                                                 $label_class = 'info';
                                             }
+
                                             // get taskstatus
-                                            
-                                            record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id = ".$row_get_recent_entry['cby']);
+                                            record_set("check_assign_task", "SELECT * FROM assign_task where task_id = ".$row_get_recent_entry['cby']);
                                             $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                             $task_status = $row_check_assign_task['task_status'];
                                             $param = "&status=assign";
+                                           
                                             if(empty($task_status)){
                                                 $task_status =1;
                                                 $param = "";
+                                                // echo '<br>';
+                                                // echo $datata .= $row_get_recent_entry['cby'].",";
+
+                                                // echo '<br>';
+                                                // echo "unassignnn => ". "SELECT * FROM assign_task where task_id = ".$row_get_recent_entry['cby']."<br>";
                                             }
                                         ?>
                                             <tr>
@@ -349,7 +354,7 @@
                                                 <td><?=getGroup()[$row_get_recent_entry['groupid']];?></td>
                                                 <td><?=getRole()[$row_get_recent_entry['roleid']];?></td>
                                                 <td data-sort="<?=$result_response?>"><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>%</label></td>
-                                                <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
+                                                <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status].'  '.$row_get_recent_entry['cby']?></a></td>
                                                 <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'].$param?>&score=<?=round($result_response,2)?>&contacted=<?=$to_bo_contacted?>" target="_blank">VIEW DETAILS</a></td>
                                             </tr>
                                         <?php

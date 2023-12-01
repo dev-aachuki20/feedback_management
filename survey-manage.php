@@ -48,7 +48,7 @@
 
         $user_email = $userdata['email'];
         $user_name  = $userdata['name'];  
-           
+        
         $data_contact_action = array(
             "user_id"=> $tasks,
             "action"=> 2,
@@ -176,6 +176,8 @@
     $filter_status = '';
     if(!empty($_GET['task_status']) and $_GET['task_status']!=1){
         $filter_status = ' and task_status ='.$_GET['task_status'];
+    }else{
+        $query .= " and answerid=-2 AND answerval = 100";
     }
     $qFilter = '';
     if($_SESSION['user_type'] >2){
@@ -205,15 +207,17 @@
 
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
-        if($_GET['task_status']==1){
-            $query .= " and cby NOT IN (".$task_id.") GROUP by cby";
-        }else if($_GET['req']=='contact requests'){
-            $query .= " GROUP by cby";
-        }else {
-            $query .= " and cby IN (".$task_id.") GROUP by cby";
-        }
-        record_set("get_recent_entry",$query);
+    }else{
+        $query .= " and surveyid IN ($surveys_ids)";
     }
+    if($_GET['task_status']==1){
+        $query .= " and cby NOT IN (".$task_id.") GROUP by cby";
+    }else if($_GET['req']=='contact requests'){
+        $query .= " GROUP by cby";
+    }else {
+        $query .= " and cby IN (".$task_id.") GROUP by cby";
+    }
+    record_set("get_recent_entry",$query);
 
   
 ?>
@@ -227,87 +231,7 @@
 </section>
 <section class="content">
     <!-- top box container start-->
-    <!-- top box container start-->
-    <div class="row" >
-        <!-- Dashboard Counter -->
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=contact requests&aid=-2&avl=10"> 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa-solid fa-image-portrait"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Contact Requests</span>
-                        <span class="info-box-number">
-                            <?php 
-                                $reqCount =0; 
-                                $filtr = '';
-                                //if($_SESSION['user_type']>2){
-                                    if($surveys_ids){
-                                        $filtr = " and surveyid IN ($surveys_ids)";
-                                    }else {
-                                        $filtr = " and surveyid IN (0)";
-                                    }
-                                //}
-                                record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $locationQueryAndCondition $filtr GROUP BY cby");
-                                while($row_get_contact_request = mysqli_fetch_assoc($get_contact_request)){
-                                    // record_set("get_action", "select * from survey_contact_action where user_id=".$row_get_contact_request['cby']."");
-                                    // if($totalRows_get_action == 0){
-                                    //      ++$reqCount;
-                                    // }
-                                    ++$reqCount;
-                                }
-                            ?>
-                            <?php 
-                                echo $reqCount;
-                            ?>
-                        </span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a> 
-   
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=in progress&task_status=3" > 
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-aqua"><i class="fa-solid fa-spinner"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">In Progress</span>
-                        
-                        <span class="info-box-number"><?=(get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids) ? get_assign_task_count_by_status(3,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=void&task_status=4" >
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-gray"><i class="fa-solid fa-trash"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Void</span>
-                        <span class="info-box-number"><?=(get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?get_assign_task_count_by_status(4,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>
-        <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved postive&task_status=5" >
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Resolved</span>
-                        <span class="info-box-number"><?=(get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids)?get_assign_task_count_by_status(5,$surveys_ids,$dep_ids,$grp_ids,$loc_ids):0)?></span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
-        </a>  
-    </div>
+    <?php include ('./section/top-box-container-count.php');?>
     <!-- top box container start-->
     <div class="box box-default" style="margin-top:25px;">
         <form action="" method="POST" id="viewReportcsv">
@@ -449,7 +373,7 @@
                                         <th>RESPONDENT NUMBER</th>
                                         <th>RESULT</th>
                                         <!-- <th>Contacted</th> -->
-                                        <th>Status</th>
+                                        <!-- <th>Status</th> -->
                                         <th class="notforpdf">ACTION</th>
                                     </tr>
                                 </thead>
@@ -540,7 +464,7 @@
                                             <td><?=$row_survey_entry?></td>
                                             <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?> %</label></td>
                                             <!-- <td><?=$contacted ?></td> -->
-                                            <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
+                                            <!-- <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td> -->
                                             <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?><?=($_GET['task_status']!=1)?'&status=assign':''?>" target="_blank">VIEW DETAILS</a></td>
                                         </tr> 
                                     <?php }
@@ -555,7 +479,7 @@
                                     <th></th>
                                     <th></th>
                                     <!-- <th></th> -->
-                                    <th> </th>
+                                    <!-- <th> </th> -->
                                     <th></th>
                                     <th></th>
                                     <th style="text-align: right;">
@@ -641,10 +565,14 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');
     var checkedArray=[];
+    var checkedSurveyId=[];
     $("input[name='assign']:checked").each(function(){
         checkedArray.push($(this).val());
+        checkedSurveyId.push($(this).data('sid'));
     });
-    $('.survey_id_hidden').val(sid);
+    console.log(checkedArray,'checkedArray');
+    console.log(checkedSurveyId,'checkedSurveyId');
+    $('.survey_id_hidden').val(checkedSurveyId);
     $('.response_id_hidden').val(checkedArray);
    
 

@@ -283,7 +283,6 @@ function get_assign_task_count_by_status($status_id,$surevy_ids =null,$group_ids
 			$filter .= " and cby NOT IN ($task_ids)";
 		}
 		$user_data = getaxecuteQuery_fn("SELECT * FROM answers where id !=0 $filter group by cby");
-
 	}else {
 		if($surevy_ids){
 			$filter = " and survey_id IN ($surevy_ids)";

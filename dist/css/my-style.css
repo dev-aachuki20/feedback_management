@@ -616,3 +616,12 @@ label.form-check-label.active {
     width: 50%;
     margin-bottom: 10px;
 }
+
+@media screen and (max-width: 520px) {
+    .new-content-main{
+        overflow-x: auto;
+    }
+    .new-content-main>div{
+        width: 460px;
+    }
+}

@@ -336,8 +336,6 @@ $html = '<!DOCTYPE html>
                 </div>
             </div>   
             <div class="row">';
-
-
 if (count($survey_data) > 0) {
     foreach ($survey_data as $key => $datasurvey) {
         $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
