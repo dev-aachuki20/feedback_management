@@ -1,8 +1,47 @@
-[02-Nov-2023 14:59:58 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 129 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:236
+[08-Nov-2023 06:14:22 Europe/London] PHP Fatal error:  Uncaught Mpdf\MpdfException: WriteHTML() requires $html be an integer, float, string, boolean or an object with the __toString() magic method. in /home/dgfm/demo.dgfm.app/vendor/mpdf/mpdf/src/Mpdf.php:13213
 Stack trace:
-#0 /home/dgfm/demo.dgfm.app/add-survey.php(129): send_survey_email('donnab.dgs@gmai...', '2nd test', 59)
+#0 /home/dgfm/demo.dgfm.app/function/function.php(1143): Mpdf\Mpdf->WriteHTML(NULL)
+#1 /home/dgfm/demo.dgfm.app/export-pdf.php(475): create_mpdf(NULL, 'Survey Result-2...', 'I')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/vendor/mpdf/mpdf/src/Mpdf.php on line 13213
+[08-Nov-2023 07:31:36 Europe/London] PHP Fatal error:  Uncaught Error: Call to undefined method Dompdf\Dompdf::add_page() in /home/dgfm/demo.dgfm.app/export-pdf.php:501
+Stack trace:
+#0 {main}
+  thrown in /home/dgfm/demo.dgfm.app/export-pdf.php on line 501
+[08-Nov-2023 07:44:23 Europe/London] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home/dgfm/demo.dgfm.app/dompdf/src/FrameDecorator/AbstractFrameDecorator.php on line 187
+[21-Nov-2023 04:28:55 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 143 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:238
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(143): send_survey_email('sakshimewara.hi...', 'Test Survey', 62)
 #1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
 #2 {main}
-  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 236
-[03-Nov-2023 09:20:26 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/dgfm/demo.dgfm.app/survey-result.php on line 659
-[03-Nov-2023 09:55:35 UTC] PHP Parse error:  syntax error, unexpected end of file, expecting ']' in /home/dgfm/demo.dgfm.app/survey-form.php on line 1214
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 238
+[27-Nov-2023 10:26:07 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 143 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:238
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(143): send_survey_email('donnab.dgs@gmai...', '27.11', 63)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 238
+[29-Nov-2023 10:54:47 Europe/London] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not connect to SMTP host. in /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php:2217
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(2003): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(1662): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Wed, 29 N...', 'Dear user,<br><...')
+#2 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(1500): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/dgfm/demo.dgfm.app/function/function.php(1080): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/dgfm/demo.dgfm.app/forget-password.php(14): forgot_password_otp('rakeshjonwal.hi...', 'Q8FCK')
+#5 {main}
+  thrown in /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php on line 2217
+[29-Nov-2023 10:58:44 Europe/London] PHP Fatal error:  Uncaught PHPMailer\PHPMailer\Exception: SMTP Error: Could not connect to SMTP host. in /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php:2217
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(2003): PHPMailer\PHPMailer\PHPMailer->smtpConnect(Array)
+#1 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(1662): PHPMailer\PHPMailer\PHPMailer->smtpSend('Date: Wed, 29 N...', 'Dear user,<br><...')
+#2 /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php(1500): PHPMailer\PHPMailer\PHPMailer->postSend()
+#3 /home/dgfm/demo.dgfm.app/function/function.php(1080): PHPMailer\PHPMailer\PHPMailer->send()
+#4 /home/dgfm/demo.dgfm.app/forget-password.php(14): forgot_password_otp('rakeshjonwal.hi...', '4RU6Z')
+#5 {main}
+  thrown in /home/dgfm/demo.dgfm.app/vendor/phpmailer/phpmailer/src/PHPMailer.php on line 2217
+[29-Nov-2023 11:49:02 Europe/London] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function send_survey_email(), 3 passed in /home/dgfm/demo.dgfm.app/add-survey.php on line 143 and exactly 7 expected in /home/dgfm/demo.dgfm.app/function/function.php:276
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/add-survey.php(143): send_survey_email('donnab.dgs@gmai...', '29.11', 64)
+#1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
+#2 {main}
+  thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 276

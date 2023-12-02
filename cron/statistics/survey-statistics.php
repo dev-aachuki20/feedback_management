@@ -6,6 +6,7 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $mpdf = new \Mpdf\Mpdf();
 
+<<<<<<< Updated upstream
 record_set("get_report", "select * from schedule_report_new ORDER BY created_at DESC;
 ");
 
@@ -24,6 +25,25 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
         $sdate = $filter['start_date'];
         $edate = $filter['end_date'];
 
+=======
+record_set("get_report","select * from schedule_report_new ORDER BY created_at DESC;
+");
+
+
+while($row_get_report= mysqli_fetch_assoc($get_report)){
+    $current_date   = date('Y-m-d', time());
+    $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
+    $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_schedule_date']));
+    $result_1   = check_differenceDate($current_date,$end_date,'lte');
+    $result_2   = check_differenceDate($current_date,$next_schedule,'lte');
+    
+    if($result_1 && $result_2){
+      
+        $filter     = json_decode($row_get_report['filter'],1);
+        $survey     = $filter['survey_hidden'];
+        $data_type  = $filter['data_type_hidden'];
+        
+>>>>>>> Stashed changes
         // update next schedule date with interval
         $nextScheduledDate = $row_get_report['next_schedule_date'];
         $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['intervals'] . ' hours', strtotime($nextScheduledDate)));
@@ -401,7 +421,11 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
                 $counter++;
             }
         }
+<<<<<<< Updated upstream
 
+=======
+        
+>>>>>>> Stashed changes
         $html .= '</div>
                 </div>
             </body>
@@ -411,6 +435,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
         <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
         </div>';
 
+<<<<<<< Updated upstream
 
         $mpdf->SetHTMLFooter($footer);
         $mpdf->WriteHTML($html);
@@ -418,12 +443,24 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
 
         $body = 'Hello You Have Schedule the report';
         $filename = 'survey-statistics' . $row_get_report['id'] . '.pdf';
+=======
+        $mpdf->SetHTMLFooter($footer);
+        $mpdf->WriteHTML($html);
+        $pdf = $mpdf->Output('', 'S');
+
+        $body = 'Hello You Have Schedule the report';
+        $filename = 'survey-statistics'.$row_get_report['id'].'.pdf';
+>>>>>>> Stashed changes
         //send pdf attachment
         $userDetails = get_user_datails($row_get_report['cby']);
         $email       = $userDetails['email'];
         $user_name   = $userDetails['name'];
+<<<<<<< Updated upstream
         sendEmailPdf($pdf, $filename, $email, $user_name, 'Survey Statistics', $body);
     }else{
         echo "Survey statistics's schedule time is over." . "<br>";
+=======
+        sendEmailPdf($pdf,$filename,$email,$user_name,'Survey Statistics',$body);
+>>>>>>> Stashed changes
     }
 }

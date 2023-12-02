@@ -12,17 +12,18 @@ use PHPMailer\PHPMailer\Exception;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// define('SMTP_HOST', "mail.dgfm.app");
-// define('SMTP_USER', "system@dgfm.app");
-// define('SMTP_PASS', "3yviSGa8I?Ib");
-// define('SMTP_PORT', "587");
-// define('SMTPAuth', true);
-
-define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-define('SMTP_USER', "9bb50416f293ea");
-define('SMTP_PASS', "a28f5c4d4023f2");
-define('SMTP_PORT', "2525");
+define('SMTP_HOST', "mail.dgfm.app");
+define('SMTP_USER', "system@dgfm.app");
+define('SMTP_PASS', "3yviSGa8I?Ib");
+define('SMTP_PORT', "587");
 define('SMTPAuth', true);
+
+// define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+// define('SMTP_USER', "9bb50416f293ea");
+// define('SMTP_PASS', "a28f5c4d4023f2");
+// define('SMTP_PORT', "2525");
+// define('SMTPAuth', true);
+//mail trap
 
 // end 
 $msg = '';
@@ -1129,17 +1130,41 @@ function send_welcome_email($user_email, $user_name, $key)
 	$headers .= 'From: <' . $from . '>' . "\r\n";
 	return mail($to, $subject, $body, $headers);
 }
+function forgot_password_otp($user_email, $fkey){
+    try{
+        
+    	$from = ADMIN_EMAIL;
+    	$to = $user_email;
+    	$subject = $fkey . " is your Password Recovery OTP";
+    	$body = "Dear user,<br><br>Please enter OTP <strong>" . $fkey . "</strong> on reset password page to validate.";
+    
+        $mail = new PHPMailer(true);	
+        $mail->isSMTP();   
+        $mail->Host       = SMTP_HOST;     
+        $mail->SMTPAuth   = SMTPAuth;        
+        $mail->Port       = SMTP_PORT;  
+        $mail->Username   = SMTP_USER;     
+        $mail->Password   = SMTP_PASS;    
 
-function forgot_password_otp($user_email, $fkey)
-{
-	$from = ADMIN_EMAIL;
-	$to = $user_email;
-	$subject = $fkey . "is your Password Recovery OTP";
-	$body = "Dear user,<br><br>Please enter OTP <strong>" . $fkey . "</strong> on reset password page to validate.";
-	$headers = "MIME-Version: 1.0" . "\r\n";
-	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	$headers .= 'From: <' . $from . '>' . "\r\n";
-	return mail($to, $subject, $body, $headers);
+    	$mail->setFrom($from, $from);
+        $mail->addAddress($to, $to);  
+
+    	$mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->AltBody = strip_tags($body);
+        $mail->SMTPDebug = 0;    
+        $mail->send();
+        
+        return true;
+        
+    } catch (Exception $e) {
+       echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
+    }
+    // 	$headers = "MIME-Version: 1.0" . "\r\n";
+    // 	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    // 	$headers .= 'From: <' . $from . '>' . "\r\n";
+    //  return mail($to, $subject, $body, $headers);
 }
 
 function export_csv_file($data, $type, $survey_name)
