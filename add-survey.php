@@ -439,7 +439,6 @@ span.select2.select2-container.select2-container--default {
                                 </div>
                             </div>
                             <div class="col-md-12 threshold-notification-section" style="<?=($row_get_surveys['notification_threshold'] ==1)? 'display:block':'display:none'?>">
-<<<<<<< Updated upstream
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -447,29 +446,6 @@ span.select2.select2-container.select2-container--default {
                                             <input type=number min=0 max=100 class="form-control" id="select_percentage" name="select_percentage" value="<?=$row_get_surveys['select_percentage']?>"   placeholder="insert percentage">
                                                 <?php 
                                                 // $thresholdPercentage = getThresholdPercentage();
-=======
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Percentage *</label>
-                                        <input type=number min=0 max=100 class="form-control" id="select_percentage" name="select_percentage" value="<?=$row_get_surveys['select_percentage']?>"   placeholder="insert percentage">
-                                            <?php 
-                                            // $thresholdPercentage = getThresholdPercentage();
-                                            ?>
-                                    </div>
-                                </div> 
-                                <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>Select Users *</label>
-                                        <select class="form-control multiple-select" id="select_users" name="notification_threshold_users[]" multiple>
-                                            <?php 
-                                                $users = getUsers();
-                                                $thresholdUser = explode(',',$row_get_surveys['notification_threshold_users']);
-                                                foreach($users as $key => $value){ 
-                                                    $selected = '';
-                                                    if (in_array($key, $thresholdUser)){
-                                                        $selected = 'selected';
-                                                    }
->>>>>>> Stashed changes
                                                 ?>
                                         </div>
                                     </div> 
