@@ -422,7 +422,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_report)) {
         $userDetails = get_user_datails($row_get_report['cby']);
         $email       = $userDetails['email'];
         $user_name   = $userDetails['name'];
-        sendEmailPdf($pdf, $filename, $email, $user_name, 'Survey Statistics', $body);
+        sendEmailPdf($email, $user_name, 'Survey Statistics', $body,$pdf, $filename);
     }
 }
 //$mpdf->Output($filename,'F');

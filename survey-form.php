@@ -218,10 +218,11 @@ if($row_get_survey['isStep'] == 1){
 	}
 }
 //Survey Questions
-record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by id desc");
+record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by order_no asc");
 $questions = array();
 while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
+	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['order_no'] = $row_get_questions['order_no'];
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['question'] = $row_get_questions['question'];
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['ifrequired'] = $row_get_questions['ifrequired'];
 	$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['conditional_logic'] = $row_get_questions['conditional_logic'];
@@ -662,9 +663,11 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 										$conditionType = ($result_get_conditional_type['conditional_logic']) ? $result_get_conditional_type['conditional_logic']: 0;
 										$conditionAnswerIdd = ($result_get_conditional_type['conditional_answer']) ? $result_get_conditional_type['conditional_answer']: 0;
 										$conditionNotEqualTo = ($result_get_conditional_type['skip_to_question_id']) ? $result_get_conditional_type['skip_to_question_id'] : 0;
-
-									$questionid = $question['id'];  ?>
-										<fieldset class="fieldset_<?=$questionid?>">
+										$questionid = $question['id'];  
+										$questionOrderNo = $question['order_no'];  
+										
+										?>
+										<fieldset class="fieldset_<?=$questionOrderNo?>">
 											<div class="question-div question_container_<?php echo $questionid; ?>">
 											 	<input type="hidden" class="conditional_logic_type" value="<?=$conditionType ?>"/>
 											 	<input type="hidden" class="conditional_logic_answer_id" value="<?=$conditionAnswerIdd ?>"/>
@@ -723,14 +726,16 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			foreach($sub_answer as $key=>$child_answer_option){ ?>
 																				<td colspan="<?php echo count($sub_answer); ?>">
 																					<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>][<?=$row_get_child_questions['id'];?>]" 
-																					value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1)?'required':''?> data-questionid="<?php echo $questionid;?>"
+																					value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1)?'required':''?> 
+																					data-question-order="<?php echo $questionOrderNo;?>"
+																					data-questionid="<?php echo $questionid;?>"
 																					> <?php echo $child_answer_option; ?>
 																				</td>
 																			<?php  }
 																		}
 																	}else{ 
 																		foreach($child_answer as $key=>$child_answer_option){ ?>
-																		<td><input type="radio" class="form-check-input skip-question" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1) ? 'required':'' ?> data-questionid="<?=$questionid?>"></td>
+																		<td><input type="radio" class="form-check-input skip-question" name="answerid[<?php echo $questionid; ?>][<?php echo $row_get_child_questions['id'];?>]" value="<?php echo $key; ?>--<?php echo $child_answer_option; ?>"  <?=($question['ifrequired']==1) ? 'required':'' ?> data-questionid="<?=$questionid?>" data-question-order="<?php echo $questionOrderNo;?>"></td>
 																		<?php } 
 																	} ?>
 																</tr>
@@ -753,6 +758,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 															<div class="form-check col-md-2">
 																<label class="form-check-label">
 																	<input type="radio" class="form-check-input subque skip-question" name="answerid[<?php echo $questionid; ?>]" value="<?php echo $row_get_questions_detail['id']."--".$langRadioAnsVal?>"  <?=($question['ifrequired']==1) ?'required':'' ?> data-questionid="<?=$questionid;?>"
+																	data-question-order="<?php echo $questionOrderNo;?>"
 																	data-skiptoquestion="<?=$skipQid?>"
 																	data-maxqid ='<?=$maxCount?>'
 																	>
@@ -825,6 +831,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description'];  ?>"  
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
 																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-question-order="<?php echo $questionOrderNo;?>"
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																			data-maxqid = "<?=$maxCount?>"
 																			>
@@ -843,7 +850,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			</div>	
 																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
-																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-questionid="<?php echo $question['id']; ?>"
+																			data-question-order="<?php echo $questionOrderNo;?>" 
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																			data-maxqid = "<?=$maxCount?>"
 																			>
@@ -862,7 +870,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																					
 																				<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>"  
 																				<?=($question['ifrequired']==1) ? 'required':''?> 
-																				data-questionid="<?php echo $question['id']; ?>" 
+																				data-questionid="<?php echo $question['id']; ?>"
+																				data-question-order="<?php echo $questionOrderNo;?>" 
 																				data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																				data-maxqid = "<?=$maxCount?>"
 																				>
@@ -882,7 +891,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" 
 																			<?=($question['ifrequired']==1) ? 'required':''?> 
-																			data-questionid="<?php echo $question['id']; ?>" 
+																			data-questionid="<?php echo $question['id']; ?>"
+																			data-question-order="<?php echo $questionOrderNo;?>" 
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																			data-maxqid = "<?=$maxCount?>"
 																			>
@@ -916,7 +926,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 												<!-- When Answer Type 6 -->
 												<?php if($question['answer_type'] == 6){ ?>
 													<div class="form-group">
-														<select name="answerid[<?=$question['id']; ?>]" <?=($question['ifrequired'] == 1) ? 'required':''?> class="form-control subque_select skip-question" data-questionid="<?php echo $question['id']; ?>" data-maxqid = "<?=$maxCount?>">
+														<select name="answerid[<?=$question['id']; ?>]" <?=($question['ifrequired'] == 1) ? 'required':''?> class="form-control subque_select skip-question" data-questionid="<?php echo $question['id']; ?>" data-maxqid = "<?=$maxCount?>" data-question-order="<?php echo $questionOrderNo;?>">
 															<option value="">Select</option>
 															<?php 
 															//record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'");
@@ -1511,44 +1521,46 @@ $('.to_be_contacted_radio').click(function(){
 
 /** ------------conditional logic ------------ */
 $(document).on('click, change','.skip-question', function(){
- //$('.skip-question').click(function(){
-	let currentQuestionId = $(this).data('questionid');
-	let maxQid = $(this).data('maxqid');
-
+	let currentQuestionOrder = $(this).data('question-order');
+	let skipToQuesOrder = $(this).data('skiptoquestion');
+	let startIndex = parseInt(currentQuestionOrder)+1;
 	let isDropdown = $(this).hasClass("subque_select");
-	let skipToQuestionId = $(this).data('skiptoquestion');
 	let currentAnswer = $(this).val();
 
-	let checkConditionalLogicType = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_type').val();
-	let skipQuestionNotEqualTo = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_type_skip_to').val();
-	let matchAnswerId = $(`.fieldset_${currentQuestionId}`).find('.conditional_logic_answer_id').val();
+	const fieldset = $('.fieldset_1');
+	const skipToQuestionElements = fieldset.find('[data-skiptoquestion]');
+	const skipToQuestionValues = skipToQuestionElements.map(function(index, element) {
+		return $(element).attr('data-skiptoquestion');
+	});
+	const simpleArray = Array.from(skipToQuestionValues);
+	const maxOrder = simpleArray.reduce(function(max, current) {
+		return Math.max(max, parseInt(current));
+	});
 
 	if(isDropdown){
-		skipToQuestionId = $(this).find(':selected').data('skiptoquestion');
+		skipToQuesOrder = $(this).find(':selected').data('skiptoquestion');
 		currentAnswer = $(this).find(':selected').val();
 	}
 	let ansCheck =currentAnswer.split('--')[0];
+
+	/** check condition for not equal to questions */
+	let checkConditionalLogicType = $(`.fieldset_${currentQuestionOrder}`).find('.conditional_logic_type').val();
+	let matchAnswerId = $(`.fieldset_${currentQuestionOrder}`).find('.conditional_logic_answer_id').val();
+	let skipQuestionNotEqualTo = $(`.fieldset_${currentQuestionOrder}`).find('.conditional_logic_type_skip_to').val();
 	if(checkConditionalLogicType == 2){
-		if(ansCheck !==matchAnswerId){
-			skipToQuestionId = skipQuestionNotEqualTo;
+		if(ansCheck !== matchAnswerId){
+			skipToQuesOrder = skipQuestionNotEqualTo;
 		}else{
-			skipToQuestionId = currentQuestionId;
+			skipToQuesOrder = currentQuestionOrder;
 		}
 	}
-	let startIndex = parseInt(currentQuestionId)-1;
-	console.log('currentQuestionId',currentQuestionId,'skipToQuestionId',skipToQuestionId,'startIndex',startIndex);
 
-	for(let i=startIndex; i>maxQid; i--){
-			console.log(i,'startIndex2323');
+	for(let i = startIndex; i <=maxOrder; i++ ){
 		$(`.fieldset_${i}`).attr('disabled', false).css('display', 'block');
-	}
-	if(skipToQuestionId !=0 ){
-		for(let i = startIndex; i>skipToQuestionId; i--){
-			// console.log(i,'startIndex');
+		if(i < skipToQuesOrder){
 			$(`.fieldset_${i}`).attr('disabled', true).css('display', 'none');
 		}
 	}
-
  })
 </script>
 	<div style="text-align: center;">

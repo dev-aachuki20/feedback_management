@@ -19,6 +19,7 @@
             "contact_requested"             => $_POST['contact_requested'],
             "start_date"                    => $_POST['sdate'],
             "end_date"                      => $_POST['edate'],
+            "question_limit"                => $_POST['question_limit'],
             // "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
             "isStep"                        => 1,
             "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
@@ -93,6 +94,7 @@
             "intervals"                     => $_POST['interval'],
             "start_date"                    => $_POST['sdate'],
             "end_date"                      => $_POST['edate'],
+            "question_limit"                => $_POST['question_limit'],
             "qrcode"                        => $randomCode,
             "confidential"                  => (isset($_POST['confidential'])) ? 1 : 0,
             "alter_email"                   => $_POST['alter_email'],
@@ -212,6 +214,10 @@ span.select2.select2-container.select2-container--default {
                                         <?php } ?>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Question Limit *</label>
+                                <input type="number" class="form-control" name="question_limit" id="question_limit" value="<?php echo $row_get_surveys['question_limit'];?>" min="1"/>
                             </div>
                         </div>
                         <div class="row">

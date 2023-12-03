@@ -2,16 +2,17 @@
 if(isset($_POST['recover'])){
   if(isset($_POST['email'])){
 	$uemail = $_POST['email'];
-	record_set('admin',"SELECT id FROM  manage_users WHERE email='".$uemail."' AND cstatus='1'");   
+	record_set('admin',"SELECT id, name FROM manage_users WHERE email='".$uemail."' AND cstatus='1'");   
 		if($totalRows_admin>0){
-			 $row_user_admin=mysqli_fetch_assoc($admin);
+			 $row_user_admin = mysqli_fetch_assoc($admin);
+       $name = $row_user_admin['name'];
 			 $forget_key =random_code(5);
 			$user_data_update = array(
 				"forget_key" => $forget_key
 			);	
 			$update = dbRowUpdate('manage_users', $user_data_update, 'where id='.$row_user_admin['id']);
 			if($update){
-				forgot_password_otp($uemail,$forget_key);
+				forgot_password_otp($uemail, $name, $forget_key);
 				reDirect('forget-password.php?action=enter-otp');
 			}else{
 				alert($msg_some_error);

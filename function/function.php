@@ -14,23 +14,21 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 define('SMTP_HOST', "mail.dgfm.app");
 define('SMTP_USER', "system@dgfm.app");
-define('SMTP_PASS', "RiehO7]aS*Fe");
-define('SMTP_PORT', "465");
+define('SMTP_PASS', "3yviSGa8I?Ib");
+define('SMTP_PORT', "587");
 define('SMTPAuth', true);
 
 // define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-// define('SMTP_USER', "9bb50416f293ea");
-// define('SMTP_PASS', "a28f5c4d4023f2");
+// define('SMTP_USER', "a4675565cb1dd9");
+// define('SMTP_PASS', "4574e6f43e2c75");
 // define('SMTP_PORT', "2525");
-// define('SMTPAuth', true);
 // define('SMTPAuth', true);
 //mail trap
 
 // end 
 $msg = '';
 $active_user_id = $_SESSION['admin_id'];
-function pr($data)
-{
+function pr($data){
 	echo '<pre style="margin-left: 257px;">';
 	print_r($data);
 	echo "</pre>";
@@ -38,7 +36,9 @@ function pr($data)
 }
 // Make a safe SQL
 $invoice_prefix = 'SPPL/2019-20/';
-define('DEFAULT_FROM_EMAIL', 'mail@datagroup.dev');
+//define('DEFAULT_FROM_EMAIL', 'mail@datagroup.dev');
+define('DEFAULT_FROM_EMAIL', 'system@dgfm.app');
+
 
 function test_input($raw_data)
 {
@@ -54,7 +54,7 @@ function test_input($raw_data)
 	return $filter_data;
 }
 
-function sendEmailPdf($pdf = null, $pdf_name = null, $email_to, $user_name, $subject, $body)
+function sendEmailPdf($email_to, $user_name, $subject, $body, $pdf = null, $pdf_name = null)
 {
 	$mail = new PHPMailer(true);
 	try {
@@ -69,11 +69,13 @@ function sendEmailPdf($pdf = null, $pdf_name = null, $email_to, $user_name, $sub
 		$mail->Port       = SMTP_PORT;
 
 		//Recipients
-		$mail->setFrom(ADMIN_EMAIL, $user_name);
+		$mail->setFrom(ADMIN_EMAIL, ADMIN_NAME);
 		$mail->addAddress($email_to, $user_name);
 
 		//Attachment
-		$mail->addStringAttachment($pdf, $pdf_name);
+		if(!is_null($pdf) ){
+			$mail->addStringAttachment($pdf, $pdf_name);
+		}
 
 		// Content
 		$mail->isHTML(true);
@@ -110,7 +112,7 @@ function sendEmailPdf($pdf = null, $pdf_name = null, $email_to, $user_name, $sub
                 	</tr>
                 		<tr>
                 		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
-                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
                 		</td>
                 		</tr>
                 		</table></td>
@@ -285,8 +287,7 @@ function check_login()
 	}
 }
 
-function forgot_password($user_email, $password)
-{
+function forgot_password($user_email, $password){
 	$from = ADMIN_EMAIL;
 	$to = $user_email;
 	$subject = "Password Recovery Email";
@@ -406,7 +407,7 @@ function sendNotificationThreshold($surveyId, $data)
                 	</tr>
                 		<tr>
                 		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
-                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
                 		</td>
                 		</tr>
                 		</table></td>
@@ -475,7 +476,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 	</tr>
 		<tr>
 		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
-		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+		<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
 		</td>
 		</tr>
 		</table></td>
@@ -857,7 +858,7 @@ function survey_result_submitted_pdf_mail($email_to, $user_name)
 		</tr>
             <tr>
             <td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
-            <p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+            <p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
             </td>
             </tr>
 			</table></td>
@@ -865,7 +866,7 @@ function survey_result_submitted_pdf_mail($email_to, $user_name)
 		</table>';
 	$mpdf->WriteHTML($html);
 	$pdf = $mpdf->Output('', 'S');
-	sendEmailPdf($pdf, $pdf_name, $email_to, $user_name, $subject, $body);
+	sendEmailPdf($email_to, $user_name, $subject, $body,$pdf, $pdf_name);
 }
 
 function get_boostrap_bg_colors($status)
@@ -1107,44 +1108,138 @@ function upload_excel()
 		reDirect("?page=view-user&mess=" . $mess);
 	}
 }
+function sendEmailWithAttachment($email_to, $user_name, $subject, $body, $attachments = null, $attachments_name = null)
+{
+	$mail = new PHPMailer(true);
+	try {
+		//Server settings
+		$mail->SMTPDebug = 0;
+		$mail->isSMTP();
+		$mail->Host       = SMTP_HOST;
+		$mail->SMTPAuth   = true;
+		$mail->Username   = SMTP_USER;
+		$mail->Password   = SMTP_PASS;
+		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+		$mail->Port       = SMTP_PORT;
 
+		//Recipients
+		$mail->setFrom(ADMIN_EMAIL, ADMIN_NAME);
+		$mail->addAddress($email_to, $user_name);
+
+		//Attachment
+		if(!is_null($attachments) ){
+			$mail->addStringAttachment($pdf, $pdf_name);
+		}
+
+		// Content
+		$mail->isHTML(true);
+		$mail->Subject = $subject;
+		$mail->Body = $body;
+		$mail->AltBody = strip_tags($body);
+		$mail->send();
+		// echo 'Message has been sent';
+	} catch (Exception $e) {
+		// echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+	}
+}
 function send_welcome_email($user_email, $user_name, $key)
 {
-	$from = "noreply@dgam.app";
-	//$to = "anotheruk@gmail.com";
-	$to = $user_email;
+	$from = ADMIN_EMAIL;
 	//staticmail
 	//$to ='amitpandey.his@gmail.com';
 	$image = getHomeUrl() . "/upload_image/Data-Group-footer.png";
 	$subject = "DGS Activation Link for " . $user_name;
-	$link = getHomeUrl() . "/user-activation.php?email=$user_email&key=$key";
+	$link = getHomeUrl() . "user-activation.php?email=$user_email&key=$key";
 	//$link=urlencode($link);
-	$body = "Hi $user_name <br><br>
-	Welcome to the DGS System.  <br><br>
-	Please use the below link to set your password and access your account.
+	$body = '<table width="100%" style="background-color:#dbdbdb;">
+		<tr>
+		<td>
+		<table align="center" width="690" border="">
+			<tr>
+				<td style="background-color:#fff;" width="94%">
+				<table width="100%;">
+				<tr>
+				<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/dgs-logo.png" /></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+				<tr>
+				<td align="center"><h2> ACTIVATE YOUR ACCOUNT</h2></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+				<tr>
+					<td> <p style="font-size:15px;margin:10px;">Hi '.$user_name.'</p> </td>
+				</tr>
 
-	.<br><br>" . $link . " <br><br>
-	 '<img src=" . $image . " style='height:30px;''> <strong>Copyright <?php echo date(Y); ?> Data Group Solutions</strong> All rights reserved";
-	$headers = "MIME-Version: 1.0" . "\r\n";
-	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	$headers .= 'From: <' . $from . '>' . "\r\n";
-	return mail($to, $subject, $body, $headers);
+				<tr>
+					<td> <p style="font-size:15px;margin:10px;">Welcome to the DGS System.</p> </td>
+				</tr>
+				<tr>
+					<td> <p style="font-size:15px;margin:10px;">Please <a href="'.$link.'">click here </a>to set your password and access your account.</p> </td>
+				</tr>
+				<tr>
+					<td></td>
+				</tr>
+				
+				<tr>
+				<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+			<tr>
+			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
+			<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
+			</td>
+			</tr>
+			</table></td>
+		</tr>
+	</table>';
+	sendEmailWithAttachment($user_email, $user_name, $subject, $body);
 }
-
-function forgot_password_otp($user_email, $fkey)
-{
+function forgot_password_otp($user_email,$user_name, $fkey){
 	$from = ADMIN_EMAIL;
-	$to = $user_email;
-	$subject = $fkey . "is your Password Recovery OTP";
-	$body = "Dear user,<br><br>Please enter OTP <strong>" . $fkey . "</strong> on reset password page to validate.";
-	$headers = "MIME-Version: 1.0" . "\r\n";
-	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	$headers .= 'From: <' . $from . '>' . "\r\n";
-	return mail($to, $subject, $body, $headers);
+	$subject = "DGS Password Recovery OTP";
+	$body = '<table width="100%" style="background-color:#dbdbdb;">
+		<tr>
+		<td>
+		<table align="center" width="690" border="">
+			<tr>
+				<td style="background-color:#fff;" width="94%">
+				<table width="100%;">
+				<tr>
+				<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/dgs-logo.png" /></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+				<tr>
+				<td align="center"><h2> PASSWORD RECOVERY OTP</h2></td>
+				</tr>
+				<tr> <td height="20px;">&nbsp;</td> </tr>
+				<tr>
+					<td> <p style="font-size:15px;margin:10px;">Hi '.$user_name.'</p> </td>
+				</tr>
+
+				<tr>
+					<td> <p style="font-size:15px;margin:10px;">Please use the following One Time Password (OTP) to reset your password: <strong>'.$fkey.'</strong> . Do not share this OTP with anyone.</p> </td>
+				</tr>
+				<tr>
+					<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+			<tr>
+			<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
+			<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
+			</td>
+			</tr>
+			</table></td>
+		</tr>
+	</table>';
+	sendEmailWithAttachment($user_email, $user_name, $subject, $body);
+
 }
 
-function export_csv_file($data, $type, $survey_name)
-{
+function export_csv_file($data, $type, $survey_name){
 	if ($type == 'survey' or empty($type)) {
 		$file_name = 'Survey_Statistics-' . date('Y-m-d-H-i-s') . '.csv';
 	} else {
@@ -1467,7 +1562,7 @@ function cron_emails($attachments, $to, $from_mail, $name, $subject, $message)
                 	</tr>
                 		<tr>
                 		<td align="center" style="padding:15px 0;background:#F0F4F5;"><img width="100px" src="' . getHomeUrl() . 'upload_image/Data-Group-footer.png" />
-                		<p style="color:#a3a3a3;">copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All Rights Reserved.</p>
+                		<p style="color:#a3a3a3;">Copyright ' . date('Y') . '  <strong>Data Group Solutions</strong> All rights reserved.</p>
                 		</td>
                 		</tr>
                 		</table></td>
