@@ -5,17 +5,19 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 record_set("get_scheduled_reports", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2");
 
+
 while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
   $mpdf = new \Mpdf\Mpdf();
 
-  $current_date   = date('Y-m-d', time());
-  $end_date       = date('Y-m-d', strtotime($row_get_reports['end_date']));
-  $next_schedule  = date('Y-m-d', strtotime($row_get_reports['next_date']));
-  $result_1  = check_differenceDate($current_date, $end_date, 'lte');
-  $result_2  = check_differenceDate($current_date, $next_schedule, 'lte');
+  $current_date  = date('Y-m-d', time());
 
-  if ($result_1 && $result_2 && $row_get_reports['send_to'] != null) {
+  $next_schedule = date('Y-m-d', strtotime($row_get_reports['next_date']));
+  $end_date      = date('Y-m-d', strtotime($row_get_reports['end_date']));
+  $result_1 = check_differenceDate($current_date, $end_date, 'lte');
+  $result_2 = check_differenceDate($current_date, $next_schedule, 'lte');
+  $result_3 = check_differenceDate($next_schedule, $end_date, 'lte');
 
+  if ($result_1 && $result_2 && $result_3  && $row_get_reports['send_to'] != null) {
     $filter = json_decode($row_get_reports['filter'], 1);
     $data_type = $filter['field'];
     $surveyid   = $filter['survey_id'];
@@ -335,8 +337,8 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
     }
 
     $footer = '<div style="text-align: center;"> ' . POWERED_BY . '
-        <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
-        </div>';
+                <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
+              </div>';
 
     $mpdf->SetHTMLFooter($footer);
     $mpdf->WriteHTML($message);
@@ -374,6 +376,7 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
     $data = array(
       "next_date" => $updateSchedule,
     );
+
     $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_reports['id']);
 
     if (count($attachments) > 0) {
@@ -382,5 +385,8 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
         unlink($value);
       }
     }
+    
+  } else {
+    echo "Report question schedule time is over." . "<br>";
   }
 }

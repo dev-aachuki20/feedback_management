@@ -289,6 +289,12 @@ if($_SESSION['user_type'] == 4){
                                     <?php } ?>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
+
+                                    <th>Group</th>
+                                    <th>Location</th>
+                                    <th>Department</th>
+                                    <th>Roles</th>
+
                                     <th> RESPONDENT NUMBER</th>
                                     <th>RESULT</th>
                                     <th class="notforpdf">ACTION</th>
@@ -350,6 +356,14 @@ if($_SESSION['user_type'] == 4){
                                                 <td data-sort="<?=date("Ymdhhmmss", strtotime($row_get_recent_entry['cdate']))?>"><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
                                                 <td><?=$row_get_survey_detail['name']?></td>
+
+                                                <td><?=getGroup()[$row_get_recent_entry['groupid']];?></td>
+
+                                                <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
+
+                                                <td><?=$departments[$row_get_recent_entry['departmentid']];?></td>
+
+                                                <td><?=getRole()[$row_get_recent_entry['roleid']];?></td>
 
                                                 <td><?=$row_survey_entry?></td>
 

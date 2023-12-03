@@ -123,7 +123,8 @@ function sendEmailPdf($email_to, $user_name, $subject, $body, $pdf = null, $pdf_
 		$mail->send();
 		// echo 'Message has been sent';
 	} catch (Exception $e) {
-		// echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+		echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
+		return false;
 	}
 }
 //Get Ip address
@@ -1346,6 +1347,7 @@ function download_csv_folder($data, $type, $dir)
 // different in two date 
 function check_differenceDate($date1, $date2, $type = "gt")
 {
+	
 	$curr_date = new DateTime($date1);
 	$next_date = new DateTime($date2);
 	// printr($curr_date,0);
@@ -1376,7 +1378,7 @@ function check_differenceDate($date1, $date2, $type = "gt")
 
 	// less than or equal
 	else if ($type == 'lte') {
-		if ($curr_date <= $next_date) {
+		if ($date1 <= $date2) {
 			$flg = true;
 		}
 	}
@@ -1580,6 +1582,7 @@ function cron_emails($attachments, $to, $from_mail, $name, $subject, $message)
 
 		return true;
 	} catch (Exception $e) {
+		// echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
 		return false;
 		//echo "Message could not be sent. Mailer Error: {$e}";
 	}

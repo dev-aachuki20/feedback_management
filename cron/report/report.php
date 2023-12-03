@@ -6,18 +6,17 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 record_set("get_scheduled_report", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=1 ORDER BY srt.id DESC");
 
-
-
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
     $mpdf = new \Mpdf\Mpdf();
 
-    $current_date   = date('Y-m-d', time());
-    $end_date       = date('Y-m-d', strtotime($row_get_report['end_date']));
-    $next_schedule  = date('Y-m-d', strtotime($row_get_report['next_date']));
-    $result_1   = check_differenceDate($current_date, $end_date, 'lte');
-    $result_2   = check_differenceDate($current_date, $next_schedule, 'lte');
+    $current_date  = date('Y-m-d', time());
+    $next_schedule = date('Y-m-d', strtotime($row_get_report['next_date']));
+    $end_date      = date('Y-m-d', strtotime($row_get_report['end_date']));
+    $result_1 = check_differenceDate($current_date, $end_date, 'lte');
+    $result_2 = check_differenceDate($current_date, $next_schedule, 'lte');
+    $result_3 = check_differenceDate($next_schedule, $end_date, 'lte');
 
-    if ($result_1 && $result_2 && $row_get_report['send_to'] != null) {
+    if ($result_1 && $result_2 && $result_3  && $row_get_report['send_to'] != null) {
 
         $filter = json_decode($row_get_report['filter'], 1);
         $data_type = $filter['field'];
@@ -48,6 +47,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
         record_set("get_entry", $querys . $query . " GROUP by cby");
+
+        die('fxv');
         if ($totalRows_get_entry) {
 
             $survey_data = array();
@@ -160,7 +161,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                 }
             }
         }
-
 
         ksort($survey_data);
         //export csv in survey static
@@ -439,16 +439,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                 unlink($value);
             }
         }
+    } else {
+        echo "Report schedule time is over." . "<br>";
     }
 }
-
-// $anotherArray = array('document/survey-report-1.csv', 'document/survey-report-1.pdf', 'document/survey-report-18.csv', 'document/survey-report-27.pdf');
-
-// if (count($anotherArray) > 0) {
-//     foreach ($anotherArray as $key => $value) {
-//         if (file_exists($value)) {
-//             echo "<br>" . $value . "<br>";
-//             unlink($value);
-//         }
-//     }
-// }

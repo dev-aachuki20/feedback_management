@@ -34,7 +34,7 @@ if(!empty( $fdate) and !empty( $sdate)){
     $filter_date = " and  cdate between '".date('Y-m-d', strtotime( $fdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime( $sdate)))."'";
 }
 
-if(!empty( $fdate) and !empty( $sdate)){
+if(!empty($fdate) and !empty( $sdate)){
     $filterDate = date('Y-m-d',(strtotime ( '-7 day' , strtotime ( $fdate) ) ));
     $lastWeekData = " and DATE(cdate) <= '".$filterDate ."'";
 }else {
@@ -268,8 +268,14 @@ if(count($current_data)>0){
                 </tr>
                 <tr class="add-border" style="border-left:none;border-right:none;">
                     <td  colspan="3" style="text-align:center;font-size:20px;"><span>'.$surveyName.'</span></td>
-                </tr>
-                <tr>
+                </tr>';
+
+                if (!empty($fdate) and !empty($sdate)) {
+                    $html .='<tr>
+                            <td  colspan="3" style="text-align:center;font-size:20px;"> <span>'.date('d/m/Y', strtotime($fdate)).'-'.date('d/m/Y',strtotime($sdate)).'</span></td></tr>';
+                }        
+
+                $html .='<tr>
                     <td style="height:38px;" colspan="3"></td>
                 </tr> 
                 

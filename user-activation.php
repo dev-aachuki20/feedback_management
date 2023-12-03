@@ -73,13 +73,13 @@ if(isset($_REQUEST['set_pass'])){
         <?=$msg?>
           <form action="" method="post" name="myForm" onsubmit="return validateForm()">
               <div class="form-group has-feedback">
-                <input type="password" name="password" class="form-control" placeholder="Enter New Password">
+                <input type="password" name="password" class="form-control" placeholder="Enter New Password" required>
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span> 
               </div>
               <div class="form-group has-feedback">
                 <input type="hidden" name="uid" value="<?php echo $id; ?>">
                 <input type="hidden" name="email" value="<?php echo $email; ?>">
-                <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password">
+                <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password" required>
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span> 
               </div>
               <div class="row">
