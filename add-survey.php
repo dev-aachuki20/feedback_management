@@ -52,7 +52,7 @@
 
         $mailing_user_ids = $_POST['mailing_user_id'];
         $contact_requested = $_POST['contact_requested'];
-
+    
         if(!empty($updte)){
             $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
             //if(isset($_POST['isStep'])){
@@ -597,7 +597,9 @@ $allUsers = getUsers();
                                             </div>
                                         </div>
 
-                                        <?php if(isset($_GET['id']) && $_GET['id'] > 0){ 
+                                        <?php
+
+                                        if(isset($_GET['id']) && $_GET['id'] > 0 && $totalRows_get_mailing_users > 0){ 
                                             while ($row_mailing_user = mysqli_fetch_assoc($get_mailing_users)) {
                                             ?>
                                             <div class="row new-row">
@@ -631,7 +633,7 @@ $allUsers = getUsers();
                                                 <div class="form-group">
                                                 <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
                                                     <?php foreach($allUsers as $key => $userName) { ?>
-                                                    <option value="<?=$key?>" <?=($row_get_surveys['survey_type']==$key)? 'selected' : '' ?>><?=$userName?></option>
+                                                    <option value="<?=$key?>" ><?=$userName?></option>
                                                     <?php } ?>
                                                 </select>
                                                 </div>
