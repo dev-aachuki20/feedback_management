@@ -7,24 +7,24 @@
 if (isset($_GET['deleted'])) {
   $questionid = $_GET['deleted'];
   $order = $_GET['order'];
-
   record_set("get_order_question", "select * from conditional_logic_questions where skip_to_question_id=$order");
+
   if($totalRows_get_order_question > 0){
     if($_GET['status'] ==1){
-      // record_set("get_questions", "select * from questions where surveyid= ".$_REQUEST['surveyid']." order by id asc");
-      // $i=1;
-      // while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
-      //      $data =  array(
-      //         "order_no" =>  $i,
-      //       );
-      //     $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
-      //     $i++;
-      // }
       $filter = " questionid in($questionid)";
       $dWhere = " skip_to_question_id in ($order)";
       dbRowDelete('conditional_logic_questions', $dWhere);
       dbRowDelete('questions_detail', $filter);
       dbRowDelete('questions', " id=$questionid");
+      record_set("get_questions", "select * from questions where surveyid= ".$_REQUEST['surveyid']." order by id asc");
+      $i=1;
+      while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
+            $data =  array(
+              "order_no" =>  $i,
+            );
+          $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
+          $i++;
+      }
       $msg = "Question deleted Successfully";
       reDirect("?page=view-survey_questions&surveyid=" . $_REQUEST['surveyid'] . "&msg=" . $msg);
     }
@@ -35,6 +35,16 @@ if (isset($_GET['deleted'])) {
   dbRowDelete('conditional_logic_questions', $filter);
   dbRowDelete('questions_detail', $filter);
   dbRowDelete('questions', " id=$questionid");
+  record_set("get_questions", "select * from questions where surveyid= ".$_REQUEST['surveyid']." order by id asc");
+  $i=1;
+  while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
+        $data =  array(
+          "order_no" =>  $i,
+        );
+      $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid'],1);
+      $i++;
+  }
+
   $msg = "Question deleted Successfully";
   reDirect("?page=view-survey_questions&surveyid=" . $_REQUEST['surveyid'] . "&msg=" . $msg);
 }
