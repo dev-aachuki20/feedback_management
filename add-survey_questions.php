@@ -314,7 +314,7 @@ if (!empty($_POST['submit'])) {
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
-							<label>Required or Not ? <?=($QuestionOrder +1)?></label>
+							<label>Required or Not ?</label>
 							<select class="form-control ifrequired" name="ifrequired">
 								<?php foreach (required() as $key => $value) { ?>
 									<option <?php if ($row_update_data['ifrequired'] == $key) { ?> selected="selected" <?php  } ?> value="<?php echo $key; ?>"><?php echo $value; ?></option>

@@ -350,7 +350,7 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                     </select>
                   </div>
                   <div class="col-md-1">
-                    <label for="">Skip to 2</label>
+                    <label for="">Skip to</label>
                   </div>
                   <div class="col-md-3">
                     <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">
@@ -402,7 +402,7 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                   </select>
                 </div>
                 <div class="col-md-1">
-                  <label for="">Skip to 5</label>
+                  <label for="">Skip to</label>
                 </div>
                 <div class="col-md-3">
                   <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">

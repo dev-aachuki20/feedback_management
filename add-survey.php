@@ -217,7 +217,7 @@ span.select2.select2-container.select2-container--default {
                             </div>
                             <div class="col-md-6">
                                 <label>Question Limit *</label>
-                                <input type="number" class="form-control" name="question_limit" id="question_limit" value="<?php echo $row_get_surveys['question_limit'];?>" min="1"/>
+                                <input type="number" class="form-control" name="question_limit" id="question_limit" value="<?php echo $row_get_surveys['question_limit'];?>" min="1" required/>
                             </div>
                         </div>
                         <div class="row">
