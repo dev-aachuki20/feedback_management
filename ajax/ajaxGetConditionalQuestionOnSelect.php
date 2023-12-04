@@ -33,6 +33,12 @@ while($row_get_other_step_question = mysqli_fetch_assoc($get_other_step_question
     $skipedQid[] = $row_get_other_step_question['order_no'];
 }
 
+// to skip all the question which are assigned ::
+record_set("get_questions_conditional_detail_all", "select * from conditional_logic_questions where surveyid=" . $_REQUEST['surveyid']);
+while($row_get_questions_conditional_detail_all = mysqli_fetch_assoc($get_questions_conditional_detail_all)){
+  $skipedQid[] = $row_get_questions_conditional_detail_all['skip_to_question_id'];
+}
+
 if($_REQUEST['mode']=='editQuestion'){
         $html = '<div class="col-md-12 conditional_logic" style="margin-top: 10px;">
             <div class="col-md-2">

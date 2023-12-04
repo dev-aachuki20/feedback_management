@@ -12,7 +12,8 @@ if (isset($_GET['deleted'])) {
   if($totalRows_get_order_question > 0){
     if($_GET['status'] ==1){
       $filter = " questionid in($questionid)";
-      //dbRowDelete('conditional_logic_questions', $filter);
+      $dWhere = " skip_to_question_id in ($order)";
+      dbRowDelete('conditional_logic_questions', $dWhere);
       dbRowDelete('questions_detail', $filter);
       dbRowDelete('questions', " id=$questionid");
       $msg = "Question deleted Successfully";
@@ -28,7 +29,6 @@ if (isset($_GET['deleted'])) {
   $msg = "Question deleted Successfully";
   reDirect("?page=view-survey_questions&surveyid=" . $_REQUEST['surveyid'] . "&msg=" . $msg);
 }
-
 ?>
 
 <section class="content-header">
@@ -78,6 +78,7 @@ if (isset($_GET['deleted'])) {
         <thead>
           <tr>
             <th>Questions</th>
+            <th>Questions No.</th>
             <th>Type</th>
             <th>Status</th>
             <th>Action</th>
@@ -92,6 +93,13 @@ if (isset($_GET['deleted'])) {
           record_set("get_questions", "select * from questions where surveyid=" . $_REQUEST['surveyid'] .  $filter." order by id desc");
           while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
             $label = '';
+            $ordNumber = $row_get_questions['order_no'];
+            record_set("get_questions_dependent", "select * from conditional_logic_questions where skip_to_question_id = $ordNumber");
+
+            if($totalRows_get_questions_dependent > 0){
+              $label = '<span class="label label-success">D</span>';
+            }
+
             if ($row_get_questions['conditional_logic'] > 0) {
               $label = '<span class="label label-primary">C</span>';
             }
@@ -99,7 +107,7 @@ if (isset($_GET['deleted'])) {
             if($totalRows_get_questions_conditional_detail > 0){
               while ($row_get_questions_conditional_detail = mysqli_fetch_assoc($get_questions_conditional_detail)) {
                 if ($row_get_questions_conditional_detail['skip_to_question_id'] == $row_get_questions['id']) {
-                  $label = '<span class="label label-success">D</span>';
+                    $label = '<span class="label label-success">D</span>';
                 }
               }
             }
@@ -110,6 +118,7 @@ if (isset($_GET['deleted'])) {
                 echo $label; ?> <?= ($row_get_questions['ifrequired'] == 1) ? '' : '<strong>(Optional)</strong>'?>
                 (<strong> <?='step : '.$row_get_questions['survey_step_id']?> </strong>)
                 </td>
+              <td><?php echo $row_get_questions['order_no']; ?></td>
               <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
               <td><?= ($row_get_questions['cstatus'] == 1) ? '<span class="label label-success">' . status_data($row_get_questions['cstatus']) . '</span>' : '<span class="label label-danger">' . status_data($row_get_questions['cstatus']) . '</span>' ?></td>
               <td>

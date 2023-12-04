@@ -352,13 +352,22 @@ if (!empty($_POST['submit'])) {
 							</div>
 							<div class="col-md-1">
 								<label for="">Skip to</label>
-								
 							</div>
+							<?php 
+								// to skip all the question which are assigned ::
+								record_set("get_survey_conditional_ques", "select * from conditional_logic_questions where surveyid =$surveyid");
+								$skipedQid = array();
+								while($row_get_survey_conditional_ques = mysqli_fetch_assoc($get_survey_conditional_ques)){
+									$skipedQid[] = $row_get_survey_conditional_ques['skip_to_question_id'];
+								}
+							?>
 							<div class="col-md-3">
 								<select class="form-control skip_to_question" name="skip_to_question[]">
-									<?php for($i= $QuestionOrder; $i < $surveyQuestionLimit; $i++) { ?>
-										<option value="<?= $i+1 ?>">Question No. <?=$i+1?></option>
-									<?php } ?>
+									<?php for($i= $QuestionOrder; $i <= $surveyQuestionLimit; $i++) { 
+										if(!in_array($i , $skipedQid)){ ?>
+											<option value="<?=$i?>">Question No. <?=$i?></option>
+									<?php } }?>
+
 								</select>
 							</div>
 						</div>

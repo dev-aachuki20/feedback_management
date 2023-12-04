@@ -412,11 +412,14 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                     }
                     // get question related to other steps
                     record_set("get_other_step_question", "select id,order_no from questions where surveyid=$surveyid and survey_step_id != ".$currentStep." and cstatus=1 $where order by id");
-                        
                     while($row_get_other_step_question = mysqli_fetch_assoc($get_other_step_question)){
                       $skipedQid[] = $row_get_other_step_question['order_no'];
                     }
-
+                    // to skip all the question which are assigned ::
+                    record_set("get_questions_conditional_detail_all", "select * from conditional_logic_questions where surveyid=" . $_REQUEST['surveyid']);
+                    while($row_get_questions_conditional_detail_all = mysqli_fetch_assoc($get_questions_conditional_detail_all)){
+                      $skipedQid[] = $row_get_questions_conditional_detail_all['skip_to_question_id'];
+                    }
                       for($i=($QuestionOrderNo+1); $i <= $surveyQuestionLimit; $i++){
                         if(!in_array($i,$skipedQid)){ ?>
                           <option value="<?=$i?>" <?= ($i == $row_get_questionss['order_no']) ? 'selected' : '' ?>>Question No. <?=$i ?></option>
