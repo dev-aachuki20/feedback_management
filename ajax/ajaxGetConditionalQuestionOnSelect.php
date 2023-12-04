@@ -61,7 +61,7 @@ if($_REQUEST['mode']=='editQuestion'){
                 <label for="">Skip to</label>
             </div>
             <div class="col-md-3">';
-                $html .='<select class="form-control skip_to_question" name="skip_to_question[]">';
+                $html .='<select class="form-control skip_to_question" name="skip_to_question[]" required>';
                     for($i= $QuestionOrder; $i <= $quesLimit; $i++){
                         if(!in_array($i , $skipedQid)){
                             $html .= '<option value="'.$i.'" >Question No. '.$i.'</option>' ; 

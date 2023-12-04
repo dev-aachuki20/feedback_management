@@ -353,7 +353,7 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                     <label for="">Skip to</label>
                   </div>
                   <div class="col-md-3">
-                    <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">
+                    <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]" required>
                       <?php
                       if($row_get_questions['survey_step_id'] !=''){
                         $stepQuestion = " and survey_step_id = ".$row_get_questions['survey_step_id'];
@@ -388,7 +388,7 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                 <div class="col-md-3">
                   <select class="form-control conditional_logic_dropdown" name="conditional_logic[]">
                     <option value="1" <?= ($row_get_questions_conditional_detail['conditional_logic'] == 1) ? 'selected' : '' ?>>Equal To</option>
-                    <option value="1" <?= ($row_get_questions_conditional_detail['conditional_logic'] == 2) ? 'selected' : '' ?>>Not Equal To</option>
+                    <option value="2" <?= ($row_get_questions_conditional_detail['conditional_logic'] == 2) ? 'selected' : '' ?>>Not Equal To</option>
                   </select>
                 </div>
                 <div class="col-md-3">
@@ -405,7 +405,7 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                   <label for="">Skip to</label>
                 </div>
                 <div class="col-md-3">
-                  <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]">
+                  <select class="form-control skip_to_question skipQuestionDiv" name="skip_to_question[]" required>
                     <?php
                     if($row_get_questions['survey_step_id'] !=''){
                       $stepQuestion = " and survey_step_id = ".$row_get_questions['survey_step_id']  ;

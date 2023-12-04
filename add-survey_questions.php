@@ -25,7 +25,6 @@ if($isConditionallyAssigned > 0){
 	$step_id_no = $row_get_assigned_step_id['survey_step_id'];
 }
 if (!empty($_POST['submit'])) {
-	echo '<pre>';
 
 	if($surveyQuestionLimit == $totalRows_get_total_question){
 		$msg = "Question Limit Exceed";
