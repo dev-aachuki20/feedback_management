@@ -1,8 +1,10 @@
 
 <?php 
+
     if(!empty($_GET['id'])){
         record_set("get_surveys", "select * from surveys where id='".$_GET['id']."'");
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
+        record_set("get_mailing_users", "select * from surveys_mailing_users where survey_id='".$_GET['id']."'");
     }
     
     if($_POST['update']){
@@ -47,6 +49,10 @@
             $data = $new_data;
         }
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
+
+        $mailing_user_ids = $_POST['mailing_user_id'];
+        $contact_requested = $_POST['contact_requested'];
+
         if(!empty($updte)){
             $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
             //if(isset($_POST['isStep'])){
@@ -67,6 +73,16 @@
                     }
                 }
             //}
+
+            // insert user mails for notification
+            dbRowDelete('surveys_mailing_users', 'survey_id ='.$_GET['id']);
+            if(is_array($mailing_user_ids) && count($mailing_user_ids) > 0 && is_array($contact_requested) && count($contact_requested) > 0){
+                foreach ($mailing_user_ids as $key => $user_id){
+                    $userMailData = array("survey_id" => $_GET['id'], "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key]);
+                    $insert_steps =  dbRowInsert("surveys_mailing_users",$userMailData);
+                }
+            }
+
             $msg = "Survey Updated Successfully";  
             alertSuccess($msg,'?page=view-survey');
         }else{
@@ -77,7 +93,8 @@
     }
 
     if(!empty($_POST['submit'])){
-        //get qrcode
+
+       //get qrcode
         $length = '8';
         $string = rand(10,100);
         $original_string = array_merge(range(0,9), range('a','z'), range('A', 'Z'));
@@ -121,7 +138,11 @@
             "facebook_review_link"          => $_POST['facebook_review_link'],
             "other_link"                    => $_POST['other_link'],
   		);
- 	
+
+        $mailing_user_ids = $_POST['mailing_user_id'];
+        $contact_requested = $_POST['contact_requested'];
+        
+
         $insert_value =  dbRowInsert("surveys",$dataCol);
 
         if(!empty($insert_value)){	
@@ -139,6 +160,15 @@
                     $insert_steps =  dbRowInsert("surveys_steps",$step_data_col);
                 }
             //}
+
+            // insert user mails for notification
+            if(is_array($mailing_user_ids) && count($mailing_user_ids) > 0 && is_array($contact_requested) && count($contact_requested) > 0){
+                foreach ($mailing_user_ids as $key => $user_id){
+                    $userMailData = array("survey_id" => $insert_value, "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key]);
+                    $insert_steps =  dbRowInsert("surveys_mailing_users",$userMailData);
+                }
+            }
+            
   	        $msg = "Survey Added Successfully";
             alertSuccess($msg,'?page=view-survey');
             if(!empty($_POST['alter_email'])){
@@ -157,6 +187,9 @@
 $departmentByUsers = get_filter_data_by_user('departments');
 $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');  
+
+$allUsers = getUsers();
+
 ?>
 
 
@@ -164,33 +197,33 @@ $groupByUsers      = get_filter_data_by_user('groups');
     <h1> <?=($_GET['id'])?'EDIT SURVEY':'ADD SURVEY'?></h1>
     <a href="?page=view-survey" class="btn btn-danger pull-right" style="margin-top:-25px">Cancel</a> 
 </section>
-<style>
-.container {
-  margin-top: 20px;
-}
+    <style>
+        .container {
+        margin-top: 20px;
+        }
 
-.panel-heading {
-  font-size: larger;
-}
+        .panel-heading {
+        font-size: larger;
+        }
 
-.alert {
-  display: none;
-}
-#alter_email-error{
-    position:absolute;
-}
+        .alert {
+        display: none;
+        }
+        #alter_email-error{
+            position:absolute;
+        }
 
-/**
- * Error color for the validation plugin
- */
+        /**
+        * Error color for the validation plugin
+        */
 
-.error {
-  color: #e74c3c;
-}
-span.select2.select2-container.select2-container--default {
-    width: 100% !important;
-}
-</style>
+        .error {
+        color: #e74c3c;
+        }
+        span.select2.select2-container.select2-container--default {
+            width: 100% !important;
+        }
+    </style>
 <section class="content">
     <div class="box box-secondary">
         <?php if(isset($_GET['msg'])){ ?>
@@ -563,27 +596,62 @@ span.select2.select2-container.select2-container--default {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row new-row">
+
+                                        <?php if(isset($_GET['id']) && $_GET['id'] > 0){ 
+                                            while ($row_mailing_user = mysqli_fetch_assoc($get_mailing_users)) {
+                                            ?>
+                                            <div class="row new-row">
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
-                                                <input type="email" placeholder="dummy@gmail.com" class="form-control">
+                                                <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
+                                                    <?php foreach($allUsers as $key => $userName) { ?>
+                                                    <option value="<?=$key?>" <?=($row_mailing_user['user_id']==$key)? 'selected' : '' ?>><?=$userName?></option>
+                                                    <?php } ?>
+                                                </select>
                                                 </div>
                                             </div>
                                             <div class="col-xs-4 col-sm-4 col-md-4">
                                                 <div class="row ">
                                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                                         <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_mailing_user['is_contact_requested'] == 1) ? 'checked' : ''?>>
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                                         <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_mailing_user['is_contact_requested'] == 2) ? 'checked' : ''?>>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php } } else{?>
+                                        <div class="row new-row">
+                                            <div class="col-xs-8 col-sm-8 col-md-8">
+                                                <div class="form-group">
+                                                <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
+                                                    <?php foreach($allUsers as $key => $userName) { ?>
+                                                    <option value="<?=$key?>" <?=($row_get_surveys['survey_type']==$key)? 'selected' : '' ?>><?=$userName?></option>
+                                                    <?php } ?>
+                                                </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-4 col-sm-4 col-md-4">
+                                                <div class="row ">
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" checked id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>                             
                                     </div>
                                     <div class="row ">
                                         <div class="col-md-12 text-right" style="margin-bottom: 20px;">
@@ -593,33 +661,7 @@ span.select2.select2-container.select2-container--default {
                                 </div>
                             </div>
                             
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Alert Email (comma separation for multiple email addresses) *</label>
-                                    <textarea name="alter_email" rows="3"  class="form-control" required><?php echo $row_get_surveys['alter_email'];?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6" style="height:120px;">
-                                <label for="Email">Contact Requested ?</label>
-                                <div class="form-group">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
-                                            <label class="form-check-label" for="flexCheckDisabled">
-                                                Yes
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
-                                            <label class="form-check-label" for="flexCheckCheckedDisabled">
-                                            No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> 
+                            
                             <?php if($_SESSION['user_type'] != 2) { ?>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -787,6 +829,7 @@ $(document).ready(function(){
         //load_location(department_id,type);
     });
 })
+
 function load_location(ids,mode){
     $.ajax({
         type: "POST",
@@ -806,10 +849,12 @@ function load_location(ids,mode){
         }
     });
 }
+
 $('.send_by').change(function(){
     $('.send_by').prop('checked', false);
     $(this).prop('checked', true);
 })
+
 $("#isEnableContacted").change(function(){
     if ($(this).is(":checked")) {
         let isValue = $("#contacted_request_label").val();
@@ -827,6 +872,7 @@ $("#isEnableContacted").change(function(){
         $("#contacted_request_label").prop("required", false);
     }
 })
+
 $("#threshold-notification").change(function(){
     if($(this).is(":checked")){
         $(".threshold-notification-section").show();
@@ -844,7 +890,6 @@ $(document).on('change','.contacted-checkbox', function(){
     $(this).prop('checked', true);
 });
 
-
 $('#select_percentage').keyup(function(){
   if ($(this).val() < 1 || $(this).val() > 100){
     $(this).val(1);
@@ -854,30 +899,38 @@ $('#select_percentage').keyup(function(){
 $(document).on('click','.delete-row',function(){
     $(this).parents().closest('.new-row').remove();
 })
+
 $("#add-row").click(function(){
-    $('.contact-request-div').append(`<div class="row new-row">
-        <div class="col-xs-8 col-sm-8 col-md-8">
-            <div class="form-group">
-            <input type="email" placeholder="dummy@gmail.com" class="form-control">
-            </div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-4">
-            <div class="row">
-                <div class="col-xs-3 col-sm-3 col-md-3">
-                    <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                        <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="1" id="flexCheckDisabled">
-                    </div>
-                </div>
-                <div class="col-xs-3 col-sm-3 col-md-3">
-                    <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                        <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested" type="checkbox" value="2" id="flexCheckCheckedDisabled">
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-                    <button class="btn btn-danger delete-row"><i class="fa fa-trash"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>`);
-})
+        let selectBoxes = $('.mailing_users');
+        let selectedUserIdsArr = [];
+        selectBoxes.each(function() {
+            let selectBox = $(this);
+            let selected = selectBox.find('option:selected');
+            selected.each(function() {
+                let optionValue = $(this).val();
+                selectedUserIdsArr.push(optionValue);
+            });
+        });
+    $.ajax({
+        type: "POST",
+        url: 'ajax/common_file.php',
+        data: {
+			mode:'add_edit_survey_form',
+            excludedUserIds:selectedUserIdsArr,
+		}, 
+        success: function(responseHtml){
+			if(responseHtml !=''){
+                $('.contact-request-div').append(responseHtml);
+			} 
+        }
+    });
+});
+
+
+$(document).on('click', '.mailing_users', function() {
+    let currentIndex = $(this).parents('.new-row').closest('.new-row').index();
+    console.log(currentIndex, "console");
+    $(this).parents('.new-row').nextAll('.new-row').remove();
+}) ;
+
 </script>
