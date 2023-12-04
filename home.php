@@ -155,13 +155,17 @@ if(isset($_POST['selectSurvey']) and $_POST['selectSurvey']>0){
      //for first box
         $titleFirst = 'CONTACT REQUESTS';
         $urlFirst   = 'view-contacted-list&type=survey';
+
      //for second box
         $titleSecond = 'OVERALL RESPONSES';
         $urlSecond   = 'monthly-report&type=survey';
-     //for second box
-        $titleThird = 'CREATE REPORT';
-        $urlThird   = 'create-report&type=report';
-     //for second box
+
+     //for Third box
+        $titleThird = 'REPORT TEMPLATES';
+        $urlThird   = 'list-report-templates';
+      //  $urlThird   = 'create-report&type=report';
+
+     //for fourth box
         $titleFourth = 'STATISTICS';
         $urlFourth   = 'survey-statistics&type=survey';
     }
