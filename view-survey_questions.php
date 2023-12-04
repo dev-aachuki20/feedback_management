@@ -116,7 +116,6 @@ if (isset($_GET['deleted'])) {
               <td>
                 <?php if (empty($row_get_questions['parendit'])) { ?><strong><?php } ?><?php echo $row_get_questions['question']; ?><?php if (empty($row_get_questions['parendit'])) { ?></strong> <?php }
                 echo $label; ?> <?= ($row_get_questions['ifrequired'] == 1) ? '' : '<strong>(Optional)</strong>'?>
-                (<strong> <?='step : '.$row_get_questions['survey_step_id']?> </strong>)
                 </td>
               <td><?php echo $row_get_questions['order_no']; ?></td>
               <td><?php echo question_type_name($row_get_questions['answer_type']); ?></td>
