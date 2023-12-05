@@ -1240,7 +1240,8 @@ function forgot_password_otp($user_email,$user_name, $fkey){
 
 }
 
-function export_csv_file($data, $type, $survey_name){
+function export_csv_file($data, $type, $survey_name, $start_date= null, $end_date=null){
+
 	if ($type == 'survey' or empty($type)) {
 		$file_name = 'Survey_Statistics-' . date('Y-m-d-H-i-s') . '.csv';
 	} else {
@@ -1252,6 +1253,10 @@ function export_csv_file($data, $type, $survey_name){
 
 	$excel_data = array();
 	$excel_heading = array();
+
+	if($start_date != null && $end_date != null){
+		$excel_heading[] = 'Date';
+	}
 
 	if($type == 'location'){
 		$excel_heading[] = 'Location Name';
@@ -1277,6 +1282,10 @@ function export_csv_file($data, $type, $survey_name){
 		$total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
         $total =  round($total, 2);
 		
+		if($start_date != null && $end_date != null){
+			$excel_data[$i]['Date'] = date('d/m/Y', strtotime($start_date)) .'-'.date('d/m/Y', strtotime($end_date));
+		}
+
 		if($type == 'location'){
 			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
 		} else if ($type == 'group') {
@@ -1300,6 +1309,7 @@ function export_csv_file($data, $type, $survey_name){
 		$excel_data[$i]['Average_Survey_Score'] = $total . " %";
 		$i++;
 	}
+
 
 	// replace '_' with " " in array keys
 

@@ -33,6 +33,7 @@ if ($data_type == 'location') {
 if(!empty($sdate) and !empty($edate)){
     $query .= " and  cdate between '".date('Y-m-d', strtotime($sdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($edate)))."'";
 }
+
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
@@ -153,7 +154,7 @@ ksort($survey_data);
 
 if (isset($_POST['export_document']) and $_POST['export_document'] == 1) {
     $survey_name = getSurvey()[$survey_id];
-    export_csv_file($survey_data, $data_type, $survey_name);
+    export_csv_file($survey_data, $data_type, $survey_name, $sdate, $edate);
 }
 
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
@@ -284,8 +285,13 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                             </div>
                             <div class="title">
                                 <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
-                                <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>
-                            </div>
+                                <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>';
+
+                                if(!empty($sdate) and !empty($edate)){
+                                    $html .='<h4>' . date('d/m/Y', strtotime($sdate)) .'-'.date('d/m/Y', strtotime($edate)).'</h4>'; 
+                                }
+
+                            $html .= '</div>
                         </div>
                     </div>   
                     <div class="row">';
@@ -379,6 +385,8 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
 
             $counter++;
         }
+    }else{
+        $html.= '<div class="col-md-12"><h3 style="text-align:center;">No results are found.</h3></div>';
     }
     $html .= '</div>
                 </div>

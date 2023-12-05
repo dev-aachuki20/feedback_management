@@ -46,28 +46,18 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
-
-
-        $queryDf = 'SELECT MIN(cdate) AS min_date FROM answers where id!=0 ';
-        record_set("survey_min_date", $queryDf . "and surveyid IN($survey_id) order by cdate ASC");
-
-        $row_survey = mysqli_fetch_assoc($survey_min_date);
-        $survey_min_date = date('Y-m-d', strtotime($row_survey['min_date']));
-        $survey_max_date = date('Y-m-d', strtotime($current_date));
-
-        record_set("get_entry", $querys . $query . " and cdate BETWEEN '" . $survey_min_date . "' and '" . $survey_max_date . "' GROUP by cby", 1);
+        record_set("get_entry", $querys . $query . " GROUP by cby");
 
         if ($totalRows_get_entry) {
+
             $survey_data = array();
             $to_bo_contacted = 0;
             while ($row_get_entry = mysqli_fetch_assoc($get_entry)) {
-
                 $locId      = $row_get_entry['locationid'];
                 $depId      = $row_get_entry['departmentid'];
                 $grpId      = $row_get_entry['groupid'];
                 $surveyid   = $row_get_entry['surveyid'];
                 $cby        = $row_get_entry['cby'];
-                $surveyDate = date('Y-m-d', strtotime($row_get_entry['cdate']));
 
                 if ($data_type == 'location') {
                     $count = array();
@@ -141,49 +131,40 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     }
                     $survey_data[$grpId]['data'][$cby] = $average_value;
                 } else {
+
                     $count = array();
                     record_set("get_question", "select * from answers where surveyid=$surveyid and cby=$cby");
                     $total_answer = 0;
                     $i = 0;
                     $total_result_val = 0;
-
-                    if ($row_get_report['time_interval'] != 24) {
-                    } else {
-                        while ($row_get_question = mysqli_fetch_assoc($get_question)) {
-                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =" . $row_get_question['questionid']);
-                            if ($result_question) {
-                                if (!in_array($result_question['answer_type'], array(2, 3, 5))) {
-                                    $i++;
-                                    $total_answer += $row_get_question['answerval'];
-                                }
-                            }
-                            if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
-                                $survey_data[$surveyDate][$surveyid]['contact'] += 1;
+                    while ($row_get_question = mysqli_fetch_assoc($get_question)) {
+                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =" . $row_get_question['questionid']);
+                        if ($result_question) {
+                            if (!in_array($result_question['answer_type'], array(2, 3, 5))) {
+                                $i++;
+                                $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($total_answer == 0 and $total_result_val == 0) {
-                            $average_value = 100;
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
+                            $survey_data[$surveyid]['contact'] += 1;
                         }
-                        $average_value = ($total_answer / ($i * 100)) * 100;
-                        if (is_nan($average_value)) {
-                            $average_value = 100;
-                        }
-                        $survey_data[$surveyDate][$surveyid]['data'][$cby] = $average_value;
                     }
-
-
+                    if ($total_answer == 0 and $total_result_val == 0) {
+                        $average_value = 100;
+                    }
+                    $average_value = ($total_answer / ($i * 100)) * 100;
+                    if (is_nan($average_value)) {
+                        $average_value = 100;
+                    }
+                    $survey_data[$surveyid]['data'][$cby] = $average_value;
                 }
             }
         }
 
-        // ksort($survey_data);
-        // echo "<pre>";
-        // print_r($survey_data);
-        // echo "</pre>";
-        // die('g');
+        ksort($survey_data);
         //export csv in survey static
         // if(isset($_GET['export']) and $_GET['export']=='csv'){
-        // } 
+        // }
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -330,49 +311,32 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
 
         if (count($survey_data) > 0) {
-            $ftr = 1;
-
-            foreach ($survey_data as $key => $datasurveys) {
-                foreach ($datasurveys as $key => $datasurvey) {
-
-
-                    $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
-                    $total =  round($total, 2);
-
-                    // if($ftr == 2){
-                    //     echo "<pre>";
-                    //     print_r($datasurvey['data']);
-                    //     echo "</pre>";
-
-                    //     echo "Array sum".array_sum($datasurvey['data']);
-                    //     echo "<br>".count($datasurvey['data']);
-                    //     die('gf');
-                    // }
-
-
-                    $titleName = '';
-                    if ($data_type == 'location') {
-                        $titleId = '';
-                        $titleName = getLocation('all')[$key];
-                    } else if ($data_type == 'group') {
-                        $titleId = '';
-                        $titleName = getGroup('all')[$key];
-                    } else if ($data_type == 'department') {
-                        $titleId = '';
-                        $titleName = getDepartment('all')[$key];
-                    } else {
-                        $titleId = 'Survey ID: ' . $key;
-                        $titleName = getSurvey()[$key];
-                    }
-                    if ($datasurvey['contact']) {
-                        $contacted = $datasurvey['contact'];
-                    } else {
-                        $contacted = 0;
-                    }
-                    $i = round($total);
-                    $degree = 182 - (ceil((180 * $i) / 100));
-                    if ($counter < 6) {
-                        $html .=  '<div class="col-md-4">
+            foreach ($survey_data as $key => $datasurvey) {
+                $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
+                $total =  round($total, 2);
+                $titleName = '';
+                if ($data_type == 'location') {
+                    $titleId = '';
+                    $titleName = getLocation('all')[$key];
+                } else if ($data_type == 'group') {
+                    $titleId = '';
+                    $titleName = getGroup('all')[$key];
+                } else if ($data_type == 'department') {
+                    $titleId = '';
+                    $titleName = getDepartment('all')[$key];
+                } else {
+                    $titleId = 'Survey ID: ' . $key;
+                    $titleName = getSurvey()[$key];
+                }
+                if ($datasurvey['contact']) {
+                    $contacted = $datasurvey['contact'];
+                } else {
+                    $contacted = 0;
+                }
+                $i = round($total);
+                $degree = 182 - (ceil((180 * $i) / 100));
+                if ($counter < 6) {
+                    $html .=  '<div class="col-md-4">
                                                 <div class="metter-outer active">
                                                         <div class="circle">
                                                             <div class="top-content">
@@ -394,8 +358,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                                     </div>
                                                 </div>
                                             </div>';
-                    } else {
-                        $html .=  '
+                } else {
+                    $html .=  '
                                         <div class="col-md-4">
                                             <div class="metter-outer active">
                                                     <div class="circle">
@@ -418,21 +382,19 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                                 </div>
                                             </div>
                                         </div>';
-                    }
-
-                    if ($counter == 6 && count($survey_data) > 6) {
-                        $j = $j + 9;
-                        $html .= '<pagebreak/>';
-                    }
-
-                    if ($j > 14 && $counter == $j && $counter < count($survey_data)) {
-                        $j = $j + 9;
-                        $html .= '<pagebreak>';
-                    }
-
-                    $counter++;
                 }
-                $ftr++;
+
+                if ($counter == 6 && count($survey_data) > 6) {
+                    $j = $j + 9;
+                    $html .= '<pagebreak/>';
+                }
+
+                if ($j > 14 && $counter == $j && $counter < count($survey_data)) {
+                    $j = $j + 9;
+                    $html .= '<pagebreak>';
+                }
+
+                $counter++;
             }
         }
         $html .= '</div>
@@ -445,11 +407,9 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
         </div>';
 
-
         $mpdf->SetHTMLFooter($footer);
         $mpdf->WriteHTML($html);
-        $mpdf->Output($dir, 'I');
-
+        $mpdf->Output($dir, 'F');
 
         $attachments = array('document/survey-report-' . $row_get_report['id'] . '.csv', 'document/survey-report-' . $row_get_report['id'] . '.pdf');
         $mail_users = explode(",", $row_get_report['send_to']);

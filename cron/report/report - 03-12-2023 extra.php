@@ -61,7 +61,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             $survey_data = array();
             $to_bo_contacted = 0;
             while ($row_get_entry = mysqli_fetch_assoc($get_entry)) {
-
+                
                 $locId      = $row_get_entry['locationid'];
                 $depId      = $row_get_entry['departmentid'];
                 $grpId      = $row_get_entry['groupid'];
@@ -146,32 +146,26 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     $total_answer = 0;
                     $i = 0;
                     $total_result_val = 0;
-
-                    if ($row_get_report['time_interval'] != 24) {
-                    } else {
-                        while ($row_get_question = mysqli_fetch_assoc($get_question)) {
-                            $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =" . $row_get_question['questionid']);
-                            if ($result_question) {
-                                if (!in_array($result_question['answer_type'], array(2, 3, 5))) {
-                                    $i++;
-                                    $total_answer += $row_get_question['answerval'];
-                                }
-                            }
-                            if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
-                                $survey_data[$surveyDate][$surveyid]['contact'] += 1;
+                    while ($row_get_question = mysqli_fetch_assoc($get_question)) {
+                        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =" . $row_get_question['questionid']);
+                        if ($result_question) {
+                            if (!in_array($result_question['answer_type'], array(2, 3, 5))) {
+                                $i++;
+                                $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($total_answer == 0 and $total_result_val == 0) {
-                            $average_value = 100;
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
+                            $survey_data[$surveyDate][$surveyid]['contact'] += 1;
                         }
-                        $average_value = ($total_answer / ($i * 100)) * 100;
-                        if (is_nan($average_value)) {
-                            $average_value = 100;
-                        }
-                        $survey_data[$surveyDate][$surveyid]['data'][$cby] = $average_value;
                     }
-
-
+                    if ($total_answer == 0 and $total_result_val == 0) {
+                        $average_value = 100;
+                    }
+                    $average_value = ($total_answer / ($i * 100)) * 100;
+                    if (is_nan($average_value)) {
+                        $average_value = 100;
+                    }
+                    $survey_data[$surveyDate][$surveyid]['data'][$cby] = $average_value;
                 }
             }
         }
@@ -183,7 +177,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // die('g');
         //export csv in survey static
         // if(isset($_GET['export']) and $_GET['export']=='csv'){
-        // } 
+        // }
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -335,7 +329,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             foreach ($survey_data as $key => $datasurveys) {
                 foreach ($datasurveys as $key => $datasurvey) {
 
-
+                   
                     $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
                     $total =  round($total, 2);
 
@@ -431,6 +425,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     }
 
                     $counter++;
+                    
                 }
                 $ftr++;
             }

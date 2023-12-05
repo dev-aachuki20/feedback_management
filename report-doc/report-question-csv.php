@@ -40,6 +40,15 @@ header("Content-Type: application/vnd.ms-excel");
 
 $flag = false;
 record_set('getdata',$query);
+
+$row_excel_data = array();
+$row_excel_data[$i]['Date'] = ''; 
+$row_excel_data[$i]['Survey ID'] = '' ; 
+$row_excel_data[$i]['First Name'] = ''; 
+$row_excel_data[$i]['Last Name'] = ''; 
+$row_excel_data[$i]['Phone Number'] = ''; 
+$row_excel_data[$i]['Email'] =''; 
+
 if($totalRows_getdata>0){
 	$i=0;
 	$row_excel_data = array();

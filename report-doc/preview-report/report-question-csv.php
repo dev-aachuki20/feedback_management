@@ -4,6 +4,7 @@ require('../../function/get_data_function.php');
 $filename = $_GET["name"].date(" Y-m-d-H-i-s").".xls"; 
 
 $filter = $_POST;
+
 $data_type = $filter['sch_template_field_name'];
 $surveyid   = $filter['survey'];
 $field_value = implode(',',$filter['template_field']);
@@ -24,14 +25,22 @@ if($data_type == 'group'){
 if(!empty($sdate) and !empty($edate)){
     $ans_filter_query .= " and  cdate between '".date('Y-m-d', strtotime($sdate))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($edate)))."'";
 }
+
+if(!empty($filter['start_date']) and !empty($filter['end_date'])){
+	$ans_filter_query .= " and  cdate between '".date('Y-m-d', strtotime($filter['start_date']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($filter['end_date'])))."'";
+}
+
 if(!empty($surveyid)){
 	$query = "SELECT * FROM answers  where surveyid in($surveyid) ".$ans_filter_query." group by cdate order by cdate DESC;";
 }else{
 	echo "Invalid request"; exit;
 }
 
+
 $allQuestion = "SELECT * FROM `questions` WHERE `surveyid` = $surveyid and cstatus=1";
 record_set('Questions',$allQuestion);
+
+
 $question_array=array();
 while ($row_ques_query = mysqli_fetch_assoc($Questions)) {
 	$question_array[$row_ques_query['id']] = $row_ques_query['question'];
@@ -43,7 +52,7 @@ header("Content-Type: application/vnd.ms-excel");
 $csv_heading = array();
 $questionQuery ="SELECT * FROM questions where surveyid =$surveyid and cstatus=1 order by id ASC,dposition asc";
 record_set('getquestionQuery',$questionQuery);
-$csv_heading[] 		= 'Date'; 
+$csv_heading[]		= 'Date'; 
 $csv_heading[]		= 'Survey ID'; 
 $csv_heading[]		= 'First Name'; 
 $csv_heading[] 		= 'Last Name'; 
@@ -53,6 +62,7 @@ $csv_heading[]	    = 'Group';
 $csv_heading[]		= 'Location';
 $csv_heading[]   	= 'Department';
 $csv_heading[]      = 'Role';
+$csv_heading[] 		= 'Created Date'; 
 
 while ($row_getquestionQuery = mysqli_fetch_assoc($getquestionQuery)) {
 	$csv_heading[] = $row_getquestionQuery['question']; 
@@ -64,7 +74,10 @@ if($totalRows_getdata>0){
 	$i=0;
 	$row_excel_data = array();
 	while ($row_getdata = mysqli_fetch_assoc($getdata)) {
-		$row_excel_data[$i]['Date'] 		= $row_getdata['cdate']; 
+		if(!empty($filter['start_date']) and !empty($filter['end_date'])){
+			$row_excel_data[$i]['Date'] = date('d/m/Y', strtotime($filter['start_date'])) .'-'.date('d/m/Y', strtotime($filter['end_date']));
+		}
+
 		$row_excel_data[$i]['Survey ID'] 	= $row_getdata['surveyid']; 
 		$row_excel_data[$i]['First Name'] 	= ''; 
 		$row_excel_data[$i]['Last Name'] 	= ''; 
@@ -75,6 +88,8 @@ if($totalRows_getdata>0){
 		$row_excel_data[$i]['Location']     = getLocation()[$row_getdata['locationid']]; 
 		$row_excel_data[$i]['Department']   = getDepartment()[$row_getdata['departmentid']]; 
 		$row_excel_data[$i]['Role']         = getRole()[$row_getdata['roleid']]; 
+		$row_excel_data[$i]['Created Date'] 		= $row_getdata['cdate']; 
+
 		//$row_excel_data[$i]['School'] 	= '';  
 	
 		$sub_query ="SELECT * FROM questions LEFT JOIN answers ON questions.id = answers.questionid and answers.cdate ='".$row_getdata['cdate']."' where questions.surveyid =$surveyid and questions.cstatus=1 order by questions.id ASC,questions.dposition asc";

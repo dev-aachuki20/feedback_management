@@ -130,8 +130,8 @@ if(isset($_POST['schedule_btn'])){
                             <div>
                                 <form action="" id="document_form" method="post">
                                     <input type="hidden" name="survey" id="survey_id" value="">
-                                    <input type="hidden" name="sdate"  id="st_date" value="">
-                                    <input type="hidden" name="edate"  id="ed_date" value="">
+                                    <input type="hidden" name="fdate"  id="st_date" value="">
+                                    <input type="hidden" name="sdate"  id="ed_date" value="">
                                     <input type="hidden" name="data_type" id="survey_data_type" value="">
                                     <input type="hidden" name="survey_type" value="<?=$_GET['type']?>">
                                     <div class="form-right-btns">

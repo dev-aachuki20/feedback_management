@@ -29,6 +29,11 @@ if ($data_type == 'department' && $field_value != '') {
 if ($data_type == 'group' && $field_value != '') {
   $ans_filter_query .= " and groupid IN($field_value)";
 }
+
+if(!empty($filter['start_date']) and !empty($filter['end_date'])){
+  $ans_filter_query .= " and  cdate between '".date('Y-m-d', strtotime($filter['start_date']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($filter['end_date'])))."'";
+}
+
 //Survey Steps 
 $survey_steps = array();
 if ($row_get_survey['isStep'] == 1) {
@@ -60,14 +65,6 @@ record_set("get_location", "select name from locations where id = '" . $row_get_
 $row_get_location = mysqli_fetch_assoc($get_location);
 
 
-
-//if (isset($_POST['export_csv']) and $_POST['export_csv'] == 1) {
-if (isset($_POST['export_document']) and $_POST['export_document'] == 1) {  
-  $survey_name = getSurvey()[$survey_id];
-  export_csv_file($survey_data, $data_type, $survey_name);
-}
-
-//if (isset($_POST['export_pdf']) and $_POST['export_pdf'] == 1) {
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
   <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -75,9 +72,16 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
         <thead>
           <tr>
             <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . $row_get_survey['name'] . ' </h2></td>
-          </tr>
-        </thead>
-    </table>';
+          </tr>';
+       
+if(!empty($filter['start_date']) and !empty($filter['end_date'])){          
+    $message .=' <tr>
+    <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($filter['start_date'])) .'-'.date('d/m/Y', strtotime($filter['end_date'])). ' </h2></td>
+  </tr>';
+}
+
+  $message .='</thead></table>';
+  
 
   foreach ($survey_steps as $key => $value) {
     $message .= '<div class="container">

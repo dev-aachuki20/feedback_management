@@ -19,7 +19,7 @@ if ($_POST['data_type'] == 'location') {
     $query = " and surveyid =" . $_POST['survey'] . " and roleid in (select id from departments where cstatus=1)";
     $groupBy = 'roleid';
 } else {
-    $survey_allow = get_allowed_survey($_POST['survey_type']);
+    $survey_allow = get_allowed_survey($_POST['survey_type'],'',1);
     $survey_allow_id = implode(',', array_keys($survey_allow));
     $filterdata = '';
     if ($survey_allow_id) {
@@ -32,8 +32,8 @@ if ($_POST['data_type'] == 'location') {
     $groupBy = 'surveyid';
 }
 
-if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
-    $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
+if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
+    $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['sdate']))) . "'";
 }
 
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
@@ -187,10 +187,10 @@ $j = 6;
 
 if ($_POST['data_type'] == 'survey' || $_POST['data_type'] == '') {
     $survey_id = array_keys($survey_data);
-    $survey_id_1 = array_keys($allSurvey);
+    $survey_id_1 = array_keys($survey_allow );
     $unique_array = array_diff($survey_id_1, $survey_id);
     $remainingSurvey = [];
-    foreach ($allSurvey as $key => $value) {
+    foreach ($survey_allow as $key => $value) {
         if (!array_key_exists($key, $survey_data)) {
             $survey_data[$key]['data'][0] = 'Not-Found';
             $survey_data[$key]['contact'] = '';
@@ -332,8 +332,8 @@ $html = '<!DOCTYPE html>
                         <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
                         <h4>' . strtoupper(getSurvey()[$selectedSurveyId]) . '</h4>';
 
-                    if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
-                        $html .= '<h4>' .  date('d/m/Y',strtotime($_POST['sdate'])).'-'. date('d/m/Y',strtotime($_POST['edate'])).'</h4>';
+                    if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
+                        $html .= '<h4>' .  date('d/m/Y',strtotime($_POST['fdate'])).'-'. date('d/m/Y',strtotime($_POST['sdate'])).'</h4>';
                     }
                     
                     $html .= '</div>
