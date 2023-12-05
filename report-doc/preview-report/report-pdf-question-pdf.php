@@ -81,7 +81,6 @@ if(!empty($filter['start_date']) and !empty($filter['end_date'])){
 }
 
   $message .='</thead></table>';
-  
 
   foreach ($survey_steps as $key => $value) {
     $message .= '<div class="container">
