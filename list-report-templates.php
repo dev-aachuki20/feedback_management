@@ -406,16 +406,19 @@ if (isset($_POST['schedule_btn'])) {
   let startDateInput = $('#start_date');
   let endDateInput = $('#end_date');
 
-  startDateInput.change(() => validateDates());
-  endDateInput.change(() => validateDates());
+  startDateInput.change(() => validateDates('start'));
+  endDateInput.change(() => validateDates('end'));
 
-  function validateDates() {
+  function validateDates(type) {
     const currentDate = new Date();
     const startDate = startDateInput.val();
     const endDate = Date.parse(endDateInput.val());
     if (activeModalType === "preview") {
         console.log('Dates are valid:', startDate, endDate);
         $('#end_date').attr('min', startDate);
+        if(type == 'start'){
+          $('#end_date').val('');
+        }
     }else{
       $('#end_date').attr('min', startDate);
     }
