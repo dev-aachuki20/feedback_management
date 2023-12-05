@@ -34,7 +34,7 @@ while($row_get_other_step_question = mysqli_fetch_assoc($get_other_step_question
 }
 
 // to skip all the question which are assigned ::
-record_set("get_questions_conditional_detail_all", "select * from conditional_logic_questions where surveyid=" . $_REQUEST['surveyid']);
+record_set("get_questions_conditional_detail_all", "select * from conditional_logic_questions where questionid != $questionid && surveyid=" . $_REQUEST['surveyid']);
 while($row_get_questions_conditional_detail_all = mysqli_fetch_assoc($get_questions_conditional_detail_all)){
   $skipedQid[] = $row_get_questions_conditional_detail_all['skip_to_question_id'];
 }

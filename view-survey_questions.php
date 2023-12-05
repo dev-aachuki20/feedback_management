@@ -7,8 +7,10 @@
 if (isset($_GET['deleted'])) {
   $questionid = $_GET['deleted'];
   $order = $_GET['order'];
-  record_set("get_order_question", "select * from conditional_logic_questions where skip_to_question_id=$order");
-
+  record_set("get_order_question", "select * from conditional_logic_questions where surveyid= ".$_REQUEST['surveyid']." and  skip_to_question_id=$order");
+    $row_get_order_question = mysqli_fetch_assoc($get_order_question);
+    $rowQuestionId = $row_get_order_question['questionid'];
+    
   if($totalRows_get_order_question > 0){
     if($_GET['status'] ==1){
       $filter = " questionid in($questionid)";
@@ -16,13 +18,27 @@ if (isset($_GET['deleted'])) {
       dbRowDelete('conditional_logic_questions', $dWhere);
       dbRowDelete('questions_detail', $filter);
       dbRowDelete('questions', " id=$questionid");
+      
+      // check the question have any conditional question or not
+      record_set("checkIsConditionalQuestion", "select * from conditional_logic_questions where surveyid= ".$_REQUEST['surveyid']." and questionid =$rowQuestionId");
+          
       record_set("get_questions", "select * from questions where surveyid= ".$_REQUEST['surveyid']." order by id asc");
       $i=1;
       while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
-            $data =  array(
-              "order_no" =>  $i,
-            );
-          $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
+            // echo "<br>  sdddddddddd".$totalRows_get_order_question."fffffff" .$row_get_questions['id'].' rowww :'.$rowQuestionId.'<br>';
+            if($totalRows_checkIsConditionalQuestion == 0 && $row_get_questions['id'] == $rowQuestionId){
+                $data =  array(
+                  "order_no" =>  $i,
+                  "conditional_logic" =>  0,
+                );
+                $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
+
+            }else{
+                $data =  array(
+                  "order_no" =>  $i,
+                );
+                $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
+            } 
           $i++;
       }
       $msg = "Question deleted Successfully";
@@ -41,7 +57,7 @@ if (isset($_GET['deleted'])) {
         $data =  array(
           "order_no" =>  $i,
         );
-      $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid'],1);
+      $updte =  dbRowUpdate("questions", $data, "where id=" . $row_get_questions['id'] . " and surveyid=" . $_REQUEST['surveyid']);
       $i++;
   }
 
@@ -113,7 +129,7 @@ if (isset($_GET['deleted'])) {
           while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
             $label = '';
             $ordNumber = $row_get_questions['order_no'];
-            record_set("get_questions_dependent", "select * from conditional_logic_questions where skip_to_question_id = $ordNumber");
+             record_set("get_questions_dependent", "select * from conditional_logic_questions where surveyid=" . $_REQUEST['surveyid']."  and skip_to_question_id = $ordNumber");
 
             if($totalRows_get_questions_dependent > 0){
               $label = '<span class="label label-success">D</span>';

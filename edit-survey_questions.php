@@ -369,8 +369,14 @@ $surveyQuestionLimit = get_survey_detail($surveyid)['question_limit'];
                         while($row_get_other_step_question = mysqli_fetch_assoc($get_other_step_question)){
                           $skipedQid[] = $row_get_other_step_question['order_no'];
                         }
+                        // to skip all the question which are assigned ::
+                        record_set("get_questions_conditional_detail_all", "select * from conditional_logic_questions where questionid !=$questionid and surveyid=" . $_REQUEST['surveyid']);
+                        while($row_get_questions_conditional_detail_all = mysqli_fetch_assoc($get_questions_conditional_detail_all)){
+                          $skipedQid[] = $row_get_questions_conditional_detail_all['skip_to_question_id'];
+                        }
+                        
                         for($i=($QuestionOrderNo+1); $i <= $surveyQuestionLimit; $i++){ 
-                          if(!in_array($i,$skipedQid)){ ?>
+                          if(!in_array($i,$skipedQid) && (!in_array($i, $selectedQuestionId))){ ?>
                             <option value="<?=$i?>" <?= ($i == $row_get_questions_conditional_detail['skip_to_question_id']) ? 'selected' : '' ?>>Question No. <?=$i ?></option>
                       <?php } } ?>
                     </select>

@@ -3,6 +3,7 @@
 
     if(!empty($_GET['id'])){
         record_set("get_surveys", "select * from surveys where id='".$_GET['id']."'");
+        record_set("get_question", "select * from questions where surveyid='".$_GET['id']."'");
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
         record_set("get_mailing_users", "select * from surveys_mailing_users where survey_id='".$_GET['id']."'");
     }
@@ -250,7 +251,7 @@ $allUsers = getUsers();
                             </div>
                             <div class="col-md-6">
                                 <label>Question Limit *</label>
-                                <input type="number" class="form-control" name="question_limit" id="question_limit" value="<?php echo $row_get_surveys['question_limit'];?>" min="1" required/>
+                                <input type="number" class="form-control" name="question_limit" id="question_limit" value="<?php echo $row_get_surveys['question_limit'];?>" min="<?=($totalRows_get_question > 0 ) ? $totalRows_get_question : 1 ?>" required/>
                             </div>
                         </div>
                         <div class="row">
