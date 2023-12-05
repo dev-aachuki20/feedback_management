@@ -114,7 +114,7 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 	return $table_ids;
 }
 // only survey id and survey name
- function get_allowed_survey($survey_type='',$confidential=0){
+ function get_allowed_survey($survey_type='',$confidential=0, $active=""){
 	$arr = array();
 	$sFilter = '';
 	// get survey type
@@ -135,6 +135,9 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 		}else {
 			$sFilter .= " and id IN (0)" ;
 		}
+	}
+	if($active ==1){
+		$sFilter .= " and cstatus = 1" ;
 	}
 	//get unconfidential data
 	if($confidential == 1){
