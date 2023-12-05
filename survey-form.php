@@ -1,5 +1,7 @@
 <?php 
 include('function/function.php');
+include('function/get_data_function.php');
+
 require __DIR__ . '/translation/vendor/autoload.php';
 
 use Google\Cloud\Translate\V2\TranslateClient;
@@ -26,6 +28,8 @@ if(isset($surveyid)){
 		}
 		record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$surveyid."'");
 		$row_survey_entry = $totalRows_survey_entry;
+
+		record_set("get_mailing_users", "select * from surveys_mailing_users where survey_id='".$surveyid."'");
 	}else{
 		echo 'Wrong survey ID.'; exit;
 	}
@@ -196,10 +200,16 @@ if(isset($_POST['submit'])){
 	    	sendNotificationThreshold($_GET['surveyid'],$_POST);
 	}
 
-	if(!empty($row_get_survey['alter_email']) and (($to_be_contacted == 1 && $row_get_survey['contact_requested']==1) || ($to_be_contacted == 0 && $row_get_survey['contact_requested']==2))){
-		$to_mail['name'] = 'User';
-		$to_mail['email'] = $row_get_survey['alter_email'];
+	if($totalRows_get_mailing_users > 0){ 
+		while ($row_mailing_user = mysqli_fetch_assoc($get_mailing_users)) {
+			$user = get_user_datails($row_mailing_user['user_id']);
+			if(!empty($user) && !empty($user['email']) && (($to_be_contacted == 1 && $row_mailing_user['is_contact_requested']==1) || ($to_be_contacted == 0 && $row_mailing_user['is_contact_requested']==2))){
+				$to_mail['name'] = 'User';
+				$to_mail['email'] = $user['email'];
+			}
+		}
 	}
+	
 	if(count($to_mail) > 0){
 		//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
 		$contacted = $to_be_contacted;
