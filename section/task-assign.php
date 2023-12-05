@@ -75,10 +75,10 @@ if(isset($_POST['assign'])){
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
+        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
       </div>
         <form method="post" id="assign_form">
             <div class="modal-body">
@@ -88,7 +88,7 @@ if(isset($_POST['assign'])){
                         <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
                         <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
                         <label>User Type</label>
-                        <select class="form-control " tabindex=7 id="user_type" name="user_type" required>
+                        <select class="form-control select-box" tabindex=7 id="user_type" name="user_type" required>
                             <option value="">Select User Type</option>
                         <?php 
                             $user_types_array=user_type();  
@@ -99,7 +99,6 @@ if(isset($_POST['assign'])){
                             </option>
                             <?php 
                             }
-                        
                         ?>
                         </select>
                     </div>
@@ -125,8 +124,8 @@ $(document).on('change','#user_type',function(){
     assign_user(survey_id,user_type);
 });
 $(document).on('click','.btn-submit',function(){
-    $('#set_self_assign').val('');
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
+    $(".select-box").val($("#user_type option:first").val());
+    $('.error_1').hide();
 })
 
 $(document).on('change','.assignSurveyCheckbox',function(){
@@ -168,11 +167,13 @@ function check_selected_task(user_id,user_type,response_ids){
             user_id     : user_id,
             user_type   : user_type,
             response_ids: response_ids,
+            task_type   :"assign",
             mode:'check_assign_task_for_user'
         },
         success:function(response){
             console.log(response);
-            if(response>0){
+            if(response !=''){
+                $('.error_1').text(response);
                 $('.error_1').show();
                 $('.submit_task').hide();
             }
@@ -190,7 +191,6 @@ function assign_user(survey_id,user_type){
         },
         success:function(response){
             response = JSON.parse(response);
-            console.log(response);
             $('#users').html(response);
         }
     })

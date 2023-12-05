@@ -7,6 +7,8 @@
     $roleName = getRole(); 
     if(isset($_GET['id'])){
         $role_id = get_assigned_user_data($_GET['id'],'role');
+    }else{
+        $role_id = array_keys(getRole());
     }
     if($_SESSION['user_type']>2){
         $assignRoleId = get_assigned_user_data($_SESSION['user_id'],'role');

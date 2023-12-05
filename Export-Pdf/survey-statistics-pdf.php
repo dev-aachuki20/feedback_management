@@ -208,7 +208,7 @@ $j = 6;
 $html = '<!DOCTYPE html>
     <html lang="en">
     <head>
-        <title>Test</title>
+        <title>SURVEY STATISTICS</title>
         <style>
             * {
                 margin: 0;

@@ -384,9 +384,14 @@ if($_SESSION['user_type'] == 4){
                                     <th></th>
                                     <th></th>
                                     <th></th>
-                                    <th style="text-align: right;">
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <!-- <th style="text-align: right;">
                                         <button type="button" class="btn btn-primary self-assign-btn" style="display: none; <?=$display?>" name="self_assign">Self Assign</button>
-                                    </th>
+                                    </th> -->
                                     <th class="notforpdf">
                                         <?php include('./section/task-assign.php') ;?>
                                     </th>

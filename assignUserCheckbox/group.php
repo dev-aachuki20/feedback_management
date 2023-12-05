@@ -9,6 +9,8 @@
           $groupName = getGroup(); 
           if(isset($_GET['id'])){
             $group_id = get_assigned_user_data($_GET['id'],'group');
+          }else{
+            $group_id = array_keys(getGroup());
           }
           if($_SESSION['user_type']>2){
             $assignGroupId = get_assigned_user_data($_SESSION['user_id'],'group');

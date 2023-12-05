@@ -47,6 +47,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
 
+<<<<<<< Updated upstream
 
         $queryDf = 'SELECT MIN(cdate) AS min_date FROM answers where id!=0 ';
         record_set("survey_min_date", $queryDf . "and surveyid IN($survey_id) order by cdate ASC");
@@ -57,6 +58,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
         record_set("get_entry", $querys . $query . " and cdate BETWEEN '" . $survey_min_date . "' and '" . $survey_max_date . "' GROUP by cby", 1);
 
+=======
+>>>>>>> Stashed changes
         if ($totalRows_get_entry) {
             $survey_data = array();
             $to_bo_contacted = 0;

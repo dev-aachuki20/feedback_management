@@ -26,7 +26,7 @@
             }
         }
     }else{
-    $engagement_saved = array();
+        $engagement_saved = array_keys(get_allowed_survey('engagement','',1));
     }
     foreach($engagementByUsers as $engagementData){ 
         $engagementId    = $engagementData['id'];

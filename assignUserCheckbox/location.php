@@ -14,6 +14,8 @@
     $locationName = getLocation(); 
     if(isset($_GET['id'])){
         $location_id = get_assigned_user_data($_GET['id'],'location');
+    }else{
+        $location_id = array_keys(getLocation());
     }
     if($_SESSION['user_type']>2){
         $assignLocationId = get_assigned_user_data($_SESSION['user_id'],'location');

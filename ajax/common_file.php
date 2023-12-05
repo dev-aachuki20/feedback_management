@@ -65,7 +65,7 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'assign_users') {
   if ($title) {
     $html = '<div class="form-group">
     <label>' . $title . '</label>
-    <select class="form-control" tabindex=7 name="assing_to_user_id"  id="user_id" required>
+    <select class="form-control select-box" tabindex=7 name="assing_to_user_id"  id="user_id" required>
     <option value=""> select ' . $title . '</option></option>';
     foreach ($userData as $key => $value) {
       $html .= '<option value="' . $key . '">' . $value . '</option>';
@@ -80,9 +80,20 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'check_assign_task_for_user') {
   $user_id      = $_POST['user_id'];
   $user_type    = $_POST['user_type'];
   $response_id  = $_POST['response_ids'];
+  $task_type    = $_POST['task_type'];
   if ($user_type > 1) {
-    $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id  AND task_id IN ($response_id) AND (`task_status` IN (5,6) OR reassign_status =1)");
-    echo $totalRows_get_task;
+    if($task_type == 'assign'){
+      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id  AND task_id IN ($response_id)");
+      if($totalRows_get_task > 0){
+        echo "This task is already assign to this user please choose another task.";
+      }
+    }else{
+      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE reassign_status =1");
+      if($totalRows_get_task > 0){
+        echo "Sorry ! Re assign task can not assign to any users";
+      }
+    }
+
   }
 }
 
@@ -96,8 +107,6 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'group') {
   while ($row_get_location = mysqli_fetch_assoc($locations_data)) {
     $location_id          = $row_get_location['location_id'];
     $location_id_explode  = explode(',', $location_id);
-
-
     foreach ($location_id_explode as $loc) {
       if (!in_array($loc, $locationId)) {
         $html .= '<option value="' . $loc . '">' . getLocation()[$loc] . '</option>';

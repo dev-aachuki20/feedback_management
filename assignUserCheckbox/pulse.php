@@ -26,7 +26,7 @@
             }
         }
     }else{
-        $pulse_saved = array();
+        $pulse_saved = array_keys(get_allowed_survey('pulse','',1));
     }
     foreach($pulseByUsers as $pulseData){ 
         $pulseId    = $pulseData['id'];

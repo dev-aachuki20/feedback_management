@@ -12,17 +12,17 @@ use PHPMailer\PHPMailer\Exception;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// define('SMTP_HOST', "mail.dgfm.app");
-// define('SMTP_USER', "system@dgfm.app");
-// define('SMTP_PASS', "3yviSGa8I?Ib");
-// define('SMTP_PORT', "587");
-// define('SMTPAuth', true);
-
-define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-define('SMTP_USER', "a4675565cb1dd9");
-define('SMTP_PASS', "4574e6f43e2c75");
-define('SMTP_PORT', "2525");
+define('SMTP_HOST', "mail.dgfm.app");
+define('SMTP_USER', "system@dgfm.app");
+define('SMTP_PASS', "3yviSGa8I?Ib");
+define('SMTP_PORT', "587");
 define('SMTPAuth', true);
+
+// define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
+// define('SMTP_USER', "a4675565cb1dd9");
+// define('SMTP_PASS', "4574e6f43e2c75");
+// define('SMTP_PORT', "2525");
+// define('SMTPAuth', true);
 //mail trap
 
 // end 

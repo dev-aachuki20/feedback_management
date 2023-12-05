@@ -7,6 +7,8 @@
     $departmentName = getDepartment(); 
     if(isset($_GET['id'])){
         $department_id = get_assigned_user_data($_GET['id'],'department');
+    }else{
+        $department_id = array_keys(getDepartment());
     }
     if($_SESSION['user_type']>2){
         $assignDepartmenttId = get_assigned_user_data($_SESSION['user_id'],'department');

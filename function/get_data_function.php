@@ -127,7 +127,7 @@ function get_assing_id_dept_loc_grp_survey($table_name=null){
 	}
 	// survey assign to user 
 	$user_id = $_SESSION['user_id'];
-	if($_SESSION['user_id']>2){
+	if($_SESSION['user_type']>2){
 		$survey_id = get_assigned_user_data($user_id,$survey_type);
 		$survey_id = implode(',',$survey_id);
 		if($survey_id){

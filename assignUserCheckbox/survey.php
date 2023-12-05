@@ -8,9 +8,9 @@
         $survey_id = get_assigned_user_data($_GET['id'],'survey');
         $survey_id = implode(',',$survey_id);
         if($survey_id){
-        $filterSurvey = " where id IN($survey_id)";
+            $filterSurvey = " where id IN($survey_id)";
         }else {
-        $filterSurvey = " where id IN(0)";
+            $filterSurvey = " where id IN(0)";
         }
         record_set("get_survey_id", "select * from surveys $filterSurvey");
         $groupid_array= array();
@@ -26,7 +26,7 @@
             }
         }
     }else{
-        $survey_saved = array();
+        $survey_saved = array_keys(get_allowed_survey('survey','',1));
     }
     foreach($surveyByUsers as $suveyData){ 
         $survyId    = $suveyData['id'];
