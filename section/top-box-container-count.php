@@ -2,6 +2,7 @@
 /**  --------------show count on top start-------------------- */
 $filtr = '';
 $assignFilter ='';
+$assignFilterByUser ='';
 $surveyId = $_POST['surveys'];
 if($_SESSION['user_type']>2){
     if(!empty($_POST['surveys'])){
@@ -13,6 +14,7 @@ if($_SESSION['user_type']>2){
             $filtr = " and surveyid IN (0)";
         }
     }
+    $assignFilterByUser = " and assign_to_user_id = ".$_SESSION['user_id'];
 }else{
     if(!empty($_POST['surveys'])){
         $filtr = " and surveyid IN ($surveyId)";
@@ -22,19 +24,20 @@ if($_SESSION['user_type']>2){
         }
     }
 }
+
 $assignFilter = str_replace('surveyid','survey_id',$filtr);
 
 /* ---contact request ----*/
 record_set("get_contact_request", "SELECT * FROM answers WHERE answerid=-2 AND answerval = 100 $filtr GROUP BY cby");
 
 /* ---in progress ----*/
-record_set("get_in_progress", "SELECT * FROM assign_task WHERE task_status = 3 $assignFilter ");
+record_set("get_in_progress", "SELECT * FROM assign_task WHERE task_status = 3 $assignFilter $assignFilterByUser");
 
 /* ---in void ----*/
-record_set("get_in_void", "SELECT * FROM assign_task WHERE task_status = 4 $assignFilter ");
+record_set("get_in_void", "SELECT * FROM assign_task WHERE task_status = 4 $assignFilter $assignFilterByUser");
 
 /* ---in resolved ----*/
-record_set("get_resolved", "SELECT * FROM assign_task WHERE task_status IN (5,6) $assignFilter");
+record_set("get_resolved", "SELECT * FROM assign_task WHERE task_status IN (5,6) $assignFilter $assignFilterByUser");
 
 /** --------------show count on top end-------------------- */
 

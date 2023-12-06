@@ -1,6 +1,6 @@
 <?php
 $filtr = '';
-$assignFilter ='';
+$assignFilterByUser ='';
 $surveyId = $_POST['surveys'];
 if($_SESSION['user_type']>2){
     if(!empty($_POST['surveys'])){
@@ -12,6 +12,8 @@ if($_SESSION['user_type']>2){
             $filtr = " and survey_id IN (0)";
         }
     }
+    $assignFilterByUser = " and assign_to_user_id = ".$_SESSION['user_id'];
+
 }else{
     if(!empty($_POST['surveys'])){
         $filtr = " and survey_id IN ($surveyId)";
@@ -24,24 +26,25 @@ if($_SESSION['user_type']>2){
 $unAssignFilter = str_replace('survey_id','surveyid',$filtr);
 
 /* ---un assigned ----*/
-record_set("get_un_assigned", "SELECT * FROM assign_task WHERE id!=0 $filtr ");
+record_set("get_un_assigned", "SELECT * FROM assign_task WHERE id!=0 $filtr $assignFilterByUser ");
 record_set("get_total_survey_data","SELECT * FROM answers where answerid=-2 AND answerval = 100  $unAssignFilter GROUP by cby");
 $unAssignTask = $totalRows_get_total_survey_data - $totalRows_get_un_assigned;
 $unAssignTask = ($unAssignTask <1 )? 0 :$unAssignTask;
+
 /* ---assigned ----*/
-record_set("get_assigned", "SELECT * FROM assign_task WHERE task_status = 2 $filtr ");
+record_set("get_assigned", "SELECT * FROM assign_task WHERE task_status = 2 $filtr $assignFilterByUser");
 
 /* ---in progress ----*/
-record_set("get_in_progress", "SELECT * FROM assign_task WHERE task_status = 3 $filtr ");
+record_set("get_in_progress", "SELECT * FROM assign_task WHERE task_status = 3 $filtr $assignFilterByUser");
 
 /* ---in void ----*/
-record_set("get_in_void", "SELECT * FROM assign_task WHERE task_status = 4 $filtr ");
+record_set("get_in_void", "SELECT * FROM assign_task WHERE task_status = 4 $filtr $assignFilterByUser");
 
 /* ---in resolved negative ----*/
-record_set("get_resolved_negative", "SELECT * FROM assign_task WHERE task_status = 6 $filtr");
+record_set("get_resolved_negative", "SELECT * FROM assign_task WHERE task_status = 6 $filtr $assignFilterByUser");
 
 /* ---in resolved positive ----*/
-record_set("get_resolved_positive", "SELECT * FROM assign_task WHERE task_status = 5 $filtr");
+record_set("get_resolved_positive", "SELECT * FROM assign_task WHERE task_status = 5 $filtr $assignFilterByUser");
 ?>
 <div class="row">
     <!-- Dashboard Counter -->

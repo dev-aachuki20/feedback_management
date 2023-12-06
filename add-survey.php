@@ -6,6 +6,7 @@
         record_set("get_question", "select * from questions where surveyid='".$_GET['id']."'");
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
         record_set("get_mailing_users", "select * from surveys_mailing_users where survey_id='".$_GET['id']."'");
+        record_set("isSurveyRelatedToAssignTask", "select * from assign_task  where survey_id='".$_GET['id']."'");
     }
     
     if($_POST['update']){
@@ -445,7 +446,7 @@ $allUsers = getUsers();
                                     <div class="col-md-7">
                                         <div class="form-group">
                                             <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
+                                                <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?> <?=$totalRows_isSurveyRelatedToAssignTask > 0 ? 'disabled':''?>>
                                                 <label class="form-check-label" for="isEnableContacted"> Enable Contact Requests </label>
                                             </div>
                                         </div>

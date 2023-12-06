@@ -325,7 +325,7 @@
                                             if($_GET['task_status']==1 || empty($task_status)){
                                                 $task_status = 1;
                                             }
-
+                                            
                                             // check the task is reassigned task or not
                                             $isReassigned =  record_set("get_reassigned_task", "SELECT * FROM assign_task where reassign_status =1 and assign_to_user_id = ".$_SESSION['user_id']." and task_id =".$row_get_recent_entry['cby']);
                                             $label = "";
