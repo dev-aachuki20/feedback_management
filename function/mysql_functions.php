@@ -82,9 +82,12 @@ function dbRowInsert($table_name,$form_data,$die=0){
 	$sql = "INSERT INTO ".$table_name."
 	(`".implode('`,`', $fields)."`)
 	VALUES('".implode("','", $form_data)."')";
+	if($die==1){
+		echo $sql."<br>"; 
+	}	
 	if($die==2){
 		echo $sql; die();
-	}	
+	}
 	//echo $sql; //exit;
 	// run and return the query result resource
 	mysqli_query($connection,$sql);
@@ -225,7 +228,10 @@ function getallrow_fn($sql){
 			// 	if (isConfirm){
 			// 		window.location.href = "<?=$url?>";
 			// 	} 
-			}).then(function() { window.location.href = "<?=$url?>";});
+			}).then(function() { 
+					window.location.href = "<?=$url?>";
+				}
+				);
 		</script>
 	<?php }
 	function alertdanger($mess =null,$url ="#"){  ?>

@@ -89,10 +89,16 @@
         }
 
         // for my task
-        if(!empty($requestData['status'])){
-            $statusFilter = "SELECT * FROM assign_task where survey_id =".$requestData['surveys']." and assign_to_user_id = $loggedIn_user_id ";
+        if(!empty($_POST['status'])){
+            $statusFilter = "SELECT * FROM assign_task where id !=0";
+            if(!empty($_POST['surveys'])){
+                $statusFilter .= " and survey_id =".$_POST['surveys'];
+            }
+            if($loggedIn_user_type > 2){
+                $statusFilter .= " and assign_to_user_id = $loggedIn_user_id ";
+            }
             $task_id =array();
-            if($requestData['status'] == 1){
+            if($_POST['status'] == 1){
                 record_set("get_assign_task", $statusFilter);
                 while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
                     $task_id[] = $row_get_assign_task['task_id'];
@@ -102,7 +108,7 @@
                     $query .= " and cby NOT IN (".$task_id.")";
                 }
             }else{
-                $statusFilter .= ' and task_status = '.$requestData['status'];
+                $statusFilter .= ' and task_status = '.$_POST['status'];
                 record_set("get_assign_task", $statusFilter);	
                 while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
                     $task_id[] = $row_get_assign_task['task_id'];
@@ -113,7 +119,6 @@
                 }else {
                     $query .= " and cby = 0";
                 }
-            
             }
         }
         $query .= " and answerid=-2 AND answerval = 100 and surveyid IN ($surveys_ids) GROUP by cby";
@@ -234,10 +239,10 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Status</label>
-                            <select name="contacted" id="contacted" class="form-control form-control-lg status">
+                            <select name="status" id="status" class="form-control form-control-lg status">
                                 <option value="">Select status</option>
                             <?php foreach(assign_task_status() as $key => $value) { ?>
-                                <option value="<?=$key?>" <?=($_POST['contacted']==$key) ? 'selected':'' ?>><?=$value?></option>
+                                <option value="<?=$key?>" <?=($_POST['status']==$key) ? 'selected':'' ?>><?=$value?></option>
                             <?php } ?>
                             </select>
                         </div>
@@ -354,7 +359,7 @@
                                                 <td><?=getGroup()[$row_get_recent_entry['groupid']];?></td>
                                                 <td><?=getRole()[$row_get_recent_entry['roleid']];?></td>
                                                 <td data-sort="<?=$result_response?>"><label class="label label-<?=$label_class?>"><?=round($result_response,2)?>%</label></td>
-                                                <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status].'  '.$row_get_recent_entry['cby']?></a></td>
+                                                <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                                 <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby'].$param?>&score=<?=round($result_response,2)?>&contacted=<?=$to_bo_contacted?>" target="_blank">VIEW DETAILS</a></td>
                                             </tr>
                                         <?php

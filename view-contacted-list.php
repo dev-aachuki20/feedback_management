@@ -13,50 +13,7 @@ foreach($surveyByUsers as $survey){
 }
 $surveys_ids = implode(',',$assign_survey);
 
-//self assign task
-if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){ 
-    $survey_id           = explode(',',$_POST['survey_id_hidden']);
-    $task_id             = explode(',',$_POST['response_id_hidden']);
-    $assing_to_user_id   = $_SESSION['user_id'];
-    $i =0;
-    foreach($task_id as $tasks){
-        $data = array(
-            "assign_to_user_id"   => $assing_to_user_id,
-            "task_id"             => $tasks,
-            "survey_id"           => $survey_id[$i],
-            "survey_type"         => $survey_type_id,
-            "task_status"         => 2,
-            "assign_by_user_id"   => $assing_to_user_id,
-            "cdate"               => date("Y-m-d H:i:s")
-        );
-         // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id  and task_id = $tasks and survey_id = ".$survey_id[$i]);
-         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-         
-         if($totalRows_check_assign_task > 0 ){
-             $insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-         }else {
-             $insert_value = dbRowInsert("assign_task",$data);
-         }
 
-        $data_contact_action = array(
-            "user_id"=> $tasks,
-            "action"=> 2,
-            "cby" =>$assing_to_user_id,
-            "comment"=> 'response assigned to '.$_SESSION['user_name'],
-            'created_date'=>date("Y-m-d H:i:s")
-        );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-        $i++;
-    }
-    if(!empty($insert_value )){	
-        $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
-        die();
-    }
-        $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
-}
 
 //disable checkbox and assign button for manager
 $display = '';
@@ -111,7 +68,11 @@ if($_SESSION['user_type'] == 4){
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
     }else{
-        $query .= " and surveyid IN  ($surveys_ids)";
+        if($surveys_ids){
+            $query .= " and surveyid IN  ($surveys_ids)";
+        }else{
+            $query .= " and surveyid IN  (0)";
+        }
     }
     if($loggedIn_user_type == 3){
         record_set("get_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $loggedIn_user_id ".$filter_status);
@@ -124,18 +85,6 @@ if($_SESSION['user_type'] == 4){
         if(empty($task_id)){
             $task_id = '0';
         }
-        if($loggedIn_user_type > 1){
-            $assign_survey = array();
-            foreach($surveyByUsers as $survey){
-                $assign_survey[] = $survey['id'];
-            }
-            if($assign_survey){
-                $query .= " and surveyid IN (".implode(',',$assign_survey).")";
-            }else {
-                $query .= " and surveyid IN (0)";
-            }
-        }
-        $query .= " and cby IN (".$task_id.")";
     }
     
     $query .= " and  answerid =-2 and answerval=100 GROUP by cby";
@@ -294,7 +243,6 @@ if($_SESSION['user_type'] == 4){
                                     <th>Location</th>
                                     <th>Department</th>
                                     <th>Roles</th>
-
                                     <th> RESPONDENT NUMBER</th>
                                     <th>RESULT</th>
                                     <th class="notforpdf">ACTION</th>
@@ -306,13 +254,14 @@ if($_SESSION['user_type'] == 4){
                                     if($totalRows_get_recent_entry >0){
                                         $i=0;
                                         while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){ 
+
                                             record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
                                             $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
                                             $row_survey_entry = 1;
+
                                             record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
 
                                             $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-
                                             $total_result_val=0;
                                             record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
 
@@ -323,7 +272,6 @@ if($_SESSION['user_type'] == 4){
                                             $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
                                                 if($result_question){
                                                     if(!in_array($result_question['answer_type'],array(2,3,5))){
-
                                                         $total_result_val = ($i+1)*100;
                                                         $achieved_result_val += $row_get_survey_result['answerval'];
                                                         $i++;
@@ -348,14 +296,21 @@ if($_SESSION['user_type'] == 4){
                                             if($result_response<75){
                                                 $label_class = 'info';
                                             }
-                            
+                                            
+
+                                            // check the task is reassigned task or not
+                                            $isReassigned =  record_set("get_reassigned_task", "SELECT * FROM assign_task where reassign_status =1 and assign_to_user_id = ".$_SESSION['user_id']." and task_id =".$row_get_recent_entry['cby']);
+                                            $label = "";
+                                            if($totalRows_get_reassigned_task > 0){
+                                                $label= " <span class='label label-info' data-toggle='tooltip' data-placement='top' title='Re Assigned Task'>R</span>";
+                                            }
                                             ?>
                                             <tr>
-                                                <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
+                                                <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>" <?=$totalRows_get_reassigned_task > 0 ? 'disabled':''?>></td>
 
                                                 <td data-sort="<?=date("Ymdhhmmss", strtotime($row_get_recent_entry['cdate']))?>"><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
-                                                <td><?=$row_get_survey_detail['name']?></td>
+                                                <td><?=$row_get_survey_detail['name'] . $label ?></td>
 
                                                 <td><?=getGroup()[$row_get_recent_entry['groupid']];?></td>
 
@@ -378,7 +333,7 @@ if($_SESSION['user_type'] == 4){
                                 ?>
                              </tbody>                
                             <?php if($_SESSION['user_type'] != 4){ ?>
-                            <tfoot>
+                            <tfoot class="assign-tfoot" style="display:none;">
                                 <tr>
                                     <th></th>
                                     <th></th>
@@ -388,10 +343,7 @@ if($_SESSION['user_type'] == 4){
                                     <th></th>
                                     <th></th>
                                     <th></th>
-                                    <th></th>
-                                    <!-- <th style="text-align: right;">
-                                        <button type="button" class="btn btn-primary self-assign-btn" style="display: none; <?=$display?>" name="self_assign">Self Assign</button>
-                                    </th> -->
+                                    <th><?php include('./section/task-self-assign.php') ;?></th>
                                     <th class="notforpdf">
                                         <?php include('./section/task-assign.php') ;?>
                                     </th>
@@ -492,11 +444,11 @@ if($_SESSION['user_type'] == 4){
 
 
 // submit form when self assign the tasks 
-$(document).on('click','.self-assign-btn',function(){
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
-    $('#set_self_assign').val('set');
-    $('#assign_form').submit();
-})
+// $(document).on('click','.self-assign-btn',function(){
+//     let checkSurveyIdExist = $('.survey_id_hidden').val();
+//     $('#set_self_assign').val('set');
+//     $('#assign_form').submit();
+// })
 
 
 

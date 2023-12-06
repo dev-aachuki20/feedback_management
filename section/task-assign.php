@@ -29,13 +29,16 @@ if(isset($_POST['assign'])){
         );
 
          // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and task_id = $tasks and survey_id = ".$survey_id[$i]);
+
+         record_set("check_assign_task", "SELECT * FROM assign_task where task_id = $tasks and survey_id = ".$survey_id[$i]);
+
          $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
          if($totalRows_check_assign_task > 0 ){
-             $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-         }else {
-             $insert_value =  dbRowInsert("assign_task",$data);
+            //  $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
+             dbRowDelete('assign_task', "task_id = $tasks and survey_id = $survey_id[$i]");
          }
+        $insert_value =  dbRowInsert("assign_task",$data);
+        
         $userdata   = get_user_datails($assing_to_user_id);
 
         $user_email = $userdata['email'];
@@ -81,10 +84,9 @@ if(isset($_POST['assign'])){
         <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
       </div>
         <form method="post" id="assign_form">
-            <div class="modal-body">
+            <div class="modal-body" style="padding:0px;">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
                         <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
                         <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
                         <label>User Type</label>
@@ -128,6 +130,13 @@ $(document).on('click','.btn-submit',function(){
     $('.error_1').hide();
 })
 
+// ajax to check the task is completed or reassigned to choose user so it can not be resassign
+$(document).on('change','#user_id',function(){
+    let user_type   = $('#user_type').val();
+    let user_id     = $(this).val();
+    let response_ids = $('.response_id_hidden').val();
+    check_selected_task(user_id,user_type,response_ids);
+});
 $(document).on('change','.assignSurveyCheckbox',function(){
     var value = $(this).is(':checked');
     let sid  = $(this).data('sid');
@@ -141,20 +150,12 @@ $(document).on('change','.assignSurveyCheckbox',function(){
     $('.response_id_hidden').val(checkedArray);
 
     if(checkedArray.length >0){
+        $(".assign-tfoot").show();
         $('.btn-submit').show();
-        $('.self-assign-btn').show();
     }else{
+        $(".assign-tfoot").hide();
         $('.btn-submit').hide();
-        $('.self-assign-btn').hide();
     }
-});
-
-// ajax to check the task is completed or reassigned to choose user so it can not be resassign
-$(document).on('change','#user_id',function(){
-    let user_type   = $('#user_type').val();
-    let user_id     = $(this).val();
-    let response_ids = $('.response_id_hidden').val();
-    check_selected_task(user_id,user_type,response_ids);
 });
 
 function check_selected_task(user_id,user_type,response_ids){
@@ -190,6 +191,7 @@ function assign_user(survey_id,user_type){
             mode:'assign_users'
         },
         success:function(response){
+            console.log(response,'response');
             response = JSON.parse(response);
             $('#users').html(response);
         }

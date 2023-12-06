@@ -75,13 +75,13 @@ if(isset($_POST['reassign'])){
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
+        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
       </div>
         <form method="post" id="assign_form">
-            <div class="modal-body">
+            <div class="modal-body" style="padding:0px;">
                 <div class="col-md-12">
                     <div class="form-group">
                     <input type="hidden" class="survey_id" name="survey_id" value="">
@@ -92,9 +92,7 @@ if(isset($_POST['reassign'])){
                         <?php 
                             $user_types_array=user_type();  
                             foreach($user_types_array as $key => $value){
-                            if($_SESSION['user_type']==2){
-                                $allowed_key=2;
-                            }
+                                if($key == 1){ continue; }
                              ?>
                             <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
                             </option>
@@ -110,7 +108,7 @@ if(isset($_POST['reassign'])){
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" name="reassign">Save changes</button>
+                <button type="submit" class="btn btn-primary submit_task" name="reassign">Save changes</button>
             </div>
         </form>
     </div>
@@ -164,5 +162,38 @@ if(isset($_POST['reassign'])){
             }
         })
     }
-    
+
+    // ajax to check the task is completed or reassigned to choose user so it can not be resassign
+    $(document).on('change','#user_id',function(){
+        let user_type   = $('#user_type').val();
+        let user_id     = $(this).val();
+        let response_ids = $('.response_id_hidden').val();
+        check_selected_task(user_id,user_type,response_ids);
+    });
+    function check_selected_task(user_id,user_type,response_ids){
+        $('.error_1').hide();
+        $('.submit_task').show();
+        $.ajax({
+            method:"POST",
+            url:'<?=baseUrl()?>ajax/common_file.php',
+            data:{
+                user_id     : user_id,
+                user_type   : user_type,
+                response_ids: response_ids,
+                mode:'check_assign_task_for_user'
+            },
+            success:function(response){
+                console.log(response);
+                if(response !=''){
+                    $('.error_1').text(response);
+                    $('.error_1').show();
+                    $('.submit_task').hide();
+                }
+            }
+        })
+    }
+$(document).on('click','.btn-submit',function(){
+    $(".select-box").val($("#user_type option:first").val());
+    $('.error_1').hide();
+})
 </script>

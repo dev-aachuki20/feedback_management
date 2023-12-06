@@ -11,113 +11,28 @@
     $locationByUsers   = get_filter_data_by_user('locations');
     $groupByUsers      = get_filter_data_by_user('groups');
     $surveyByUsers     = get_survey_data_by_user($_GET['type'],1);
+    $allSurveyByUsers     = get_survey_data_by_user($_GET['type']);
     $sid               = $_GET['id'];
 
-    $assign_survey = array();
-    foreach($surveyByUsers as $survey){
-        $assign_survey[] = $survey['id'];
+    //get all id of survey in array
+    if(!empty($_GET['task_status'])){
+        $assign_survey = array_map(function($element) {
+            return $element['id'];
+        }, $allSurveyByUsers);
+    }else{
+        $assign_survey = array_map(function($element) {
+            return $element['id'];
+        }, $surveyByUsers);
     }
     $surveys_ids = implode(',',$assign_survey);
-  // assign task to user
-  if(isset($_POST['assign'])){
-    $survey_id           = $_POST['survey_id_hidden'];
-    $task_id             = explode(',',$_POST['response_id_hidden']);
-    $assing_to_user_id   = $_POST['assing_to_user_id'];
-    $assign_by_user_type = $_SESSION['user_type'];
-    $assign_by_user_id   = $_SESSION['user_id'];
-    foreach($task_id as $tasks){
-        $data = array(
-            "assign_to_user_id"   => $assing_to_user_id,
-            "task_id"             => $tasks,
-            "survey_id"           => $survey_id,
-            "survey_type"         => $survey_type_id,
-            "task_status"         => 2,
-            "assign_by_user_id"   => $assign_by_user_id,
-            "cdate"               => date("Y-m-d H:i:s")
-        );
-
-         // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id and task_id = $tasks and survey_id = $survey_id");
-         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-         if($totalRows_check_assign_task > 0 ){
-             $insert_value=	dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-         }else {
-             $insert_value =  dbRowInsert("assign_task",$data);
-         }
-        $userdata   = get_user_datails($assing_to_user_id);
-
-        $user_email = $userdata['email'];
-        $user_name  = $userdata['name'];  
-        
-        $data_contact_action = array(
-            "user_id"=> $tasks,
-            "action"=> 2,
-            "cby" =>$assing_to_user_id,
-            "comment"=> 'response assigned to '.$user_name,
-            'created_date'=>date("Y-m-d H:i:s")
-        );
-        $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-    }
-    // send mail to user assigned task
-    send_email_to_assign_user($user_name,$user_email);
-
-    if(!empty($insert_value )){	
-        $msg = "Task Assigned Successfully";
-        alertSuccess( $msg,'?page=view-report&type='.$_GET['type']);
-        die();
-    }
-        $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-report&type='.$_GET['type']);
-}
-    //self assign task
-    if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden'])){
-        $survey_id           = $_POST['survey_id_hidden'];
-        $task_id             = explode(',',$_POST['response_id_hidden']);
-        $assing_to_user_id   = $_SESSION['user_id'];
-
-        foreach($task_id as $tasks){
-            $data = array(
-                "assign_to_user_id"   => $assing_to_user_id,
-                "task_id"             => $tasks,
-                "survey_id"           => $survey_id,
-                "survey_type"         => $survey_type_id,
-                "task_status"         => 2,
-                "assign_by_user_id"   => $assing_to_user_id,
-                "cdate"               => date("Y-m-d H:i:s")
-            );
-            // check the assign task already exists for this user or not
-            record_set("check_assign_task", "SELECT * FROM assign_task where assign_to_user_id = $assing_to_user_id  and task_id = $tasks and survey_id = $survey_id");
-            $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
-            
-            if($totalRows_check_assign_task > 0 ){
-                $insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
-            }else {
-                $insert_value = dbRowInsert("assign_task",$data);
-            }
-
-            $data_contact_action = array(
-                "user_id"=> $tasks,
-                "action"=> 2,
-                "cby" =>$assing_to_user_id,
-                "comment"=> 'response assigned to '.$_SESSION['user_name'],
-                'created_date'=>date("Y-m-d H:i:s")
-            );
-            $insert_contact_action =  dbRowInsert("survey_contact_action",$data_contact_action);
-        }
-        if(!empty($insert_value )){	
-            $msg = "Task Assigned Successfully";
-            alertSuccess( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
-            die();
-        }
-            $msg = "Task Not Assigned";
-            alertdanger( $msg,'?page=survey-manage&type=survey&req=contact requests');
-    }
-
-    // end assign 
 
     $query = 'SELECT * FROM answers where id !=0';
-
     /**-----------------filter record start-----------*/
+    if(!empty($_POST['surveys'])){
+        $query .= " and surveyid =".$_POST['surveys'];
+    }else{
+        $query .= " and surveyid IN ($surveys_ids)";
+    }
 
     if(!empty($_POST['locationid'])){
         if($_POST['locationid'] == 4){
@@ -126,7 +41,6 @@
             $query .= " and locationid = '".$_POST['locationid']."'";
         }
     }
-    
     if(!empty($_POST['departmentid'])){
         if($_POST['departmentid'] == 4){
             record_set("get_all_department","select id from departments where cstatus=1");	
@@ -153,73 +67,37 @@
             $query .= " and roleid = '".$_POST['roleid']."'";
         }
     }
-    
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
     }
 
-    /**-----------------filter record end-------------*/
-    $assign_survey = array();
-    foreach($surveyByUsers as $survey){
-        $assign_survey[] = $survey['id'];
-    }
-    $surveys_ids = implode(',',$assign_survey);
-
-    if($loggedIn_user_type > 2){
-        if($assign_survey){
-            $query .= " and surveyid IN (".$surveys_ids.")";
-        }else {
-            $query .= " and surveyid IN (0)";
+    $filter_status = '';
+    if(!empty($_GET['task_status'])){
+        if($_GET['task_status'] != 1){
+            $filter_status = ' and task_status ='.$_GET['task_status'];
+        }
+        record_set("get_assign_task", "SELECT * FROM assign_task where id !='' $qFilter ".$filter_status);
+        $arr_task_id = array();
+        while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
+            $arr_task_id[] = $row_get_assign_task['task_id'];
+        }
+        $task_id = implode(",",$arr_task_id);
+        if(empty($task_id)){
+            $task_id = '0';
         }
     }
+    
+    /**-----------------filter record end-------------*/
 
-    $filter_status = '';
-    if(!empty($_GET['task_status']) and $_GET['task_status']!=1){
-        $filter_status = ' and task_status ='.$_GET['task_status'];
-    }else{
-        $query .= " and answerid=-2 AND answerval = 100";
-    }
-    $qFilter = '';
-    if($_SESSION['user_type'] >2){
-        $qFilter = " and assign_to_user_id = $loggedIn_user_id ";
-        // if($ids){
-        //     $qFilter = "and id IN (".implode(',',$ids).")"; 
-        // }else {
-        //     $qFilter = "and id IN (0)"; 
-        // }
-    }
-    record_set("get_assign_task", "SELECT * FROM assign_task where id !='' $qFilter ".$filter_status);
-
-    $arr_task_id = array();
-    while($row_get_assign_task = mysqli_fetch_assoc($get_assign_task)){
-        $arr_task_id[] = $row_get_assign_task['task_id'];
-    }
-    $task_id = implode(",",$arr_task_id);
-    if(empty($task_id)){
-        $task_id = '0';
-    }
-    // if($_SESSION['user_type']<3){
-    //     $survey_ids = get_survey_data_by_user($_GET['type']);
-    //     // get only ids
-    //     $ids = array_column($survey_ids , 'id');
-    //     $query .= " and surveyid IN (".implode(',',$ids).")";
-    // }
-
-    if(!empty($_POST['surveys'])){
-        $query .= " and surveyid =".$_POST['surveys'];
-    }else{
-        $query .= " and surveyid IN ($surveys_ids)";
-    }
     if($_GET['task_status']==1){
-        $query .= " and cby NOT IN (".$task_id.") GROUP by cby";
+        $query .= " and answerid=-2 AND answerval = 100 and  cby NOT IN (".$task_id.") GROUP by cby";
     }else if($_GET['req']=='contact requests'){
         $query .= " GROUP by cby";
     }else {
-        $query .= " and cby IN (".$task_id.") GROUP by cby";
+        $query .= " and answerid=-2 AND answerval = 100 and cby IN (".$task_id.") GROUP by cby";
     }
     record_set("get_recent_entry",$query);
 
-  
 ?>
 <style>
 .d-none{
@@ -373,7 +251,7 @@
                                         <th>RESPONDENT NUMBER</th>
                                         <th>RESULT</th>
                                         <!-- <th>Contacted</th> -->
-                                        <!-- <th>Status</th> -->
+                                        <th>Status</th>
                                         <th class="notforpdf">ACTION</th>
                                     </tr>
                                 </thead>
@@ -447,16 +325,23 @@
                                             if($_GET['task_status']==1 || empty($task_status)){
                                                 $task_status = 1;
                                             }
+
+                                            // check the task is reassigned task or not
+                                            $isReassigned =  record_set("get_reassigned_task", "SELECT * FROM assign_task where reassign_status =1 and assign_to_user_id = ".$_SESSION['user_id']." and task_id =".$row_get_recent_entry['cby']);
+                                            $label = "";
+                                            if($totalRows_get_reassigned_task > 0){
+                                                $label= " <span class='label label-info' data-toggle='tooltip' data-placement='top' title='Re Assigned Task'>R</span>";
+                                            }
                                         ?>
                                         <tr>
                                             <?php
                                             if(($_GET['req'] == 'contact requests')){ ?>
-                                                <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>"></td>
+                                                <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>" <?=$totalRows_get_reassigned_task > 0 ? 'disabled':''?>></td>
                                             <?php }
                                             ?>
                                             <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
-                                            <td><?=getSurvey()[$row_get_recent_entry['surveyid']]?></td>
+                                            <td><?=getSurvey()[$row_get_recent_entry['surveyid']] . $label?></td>
                                             <td><?=getGroup()[$row_get_recent_entry['groupid']]?></td>
                                             <td><?=getLocation()[$row_get_recent_entry['locationid']]?></td>
                                             <td><?=getDepartment()[$row_get_recent_entry['departmentid']]?></td>
@@ -464,7 +349,7 @@
                                             <td><?=$row_survey_entry?></td>
                                             <td><label class="label label-<?=$label_class?>"><?=round($result_response,2)?> %</label></td>
                                             <!-- <td><?=$contacted ?></td> -->
-                                            <!-- <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td> -->
+                                            <td><a class="btn btn-xs btn-success"><?=assign_task_status()[$task_status]?></a></td>
                                             <td><a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=<?=$row_get_recent_entry['surveyid']?>&userid=<?=$row_get_recent_entry['cby']?><?=($_GET['task_status']!=1)?'&status=assign':''?>" target="_blank">VIEW DETAILS</a></td>
                                         </tr> 
                                     <?php }
@@ -483,13 +368,11 @@
                                     <th></th>
                                     <th></th>
                                     <th style="text-align: right;">
-                                            <button type="button" class="btn btn-primary self-assign-btn" style="display: none; <?=$display?>" name="self_assign">Self Assign</button>
-                                        </th>
-                                        <th class="notforpdf">
-                                            <button type="button" class="btn btn-primary btn-submit" data-toggle="modal" value="" data-target="#exampleModalCenter" style="display: none; <?=$display?>">
-                                            Assign
-                                            </button>
-                                        </th>
+                                        <?php include('./section/task-self-assign.php') ;?>
+                                    </th>
+                                    <th class="notforpdf">
+                                        <?php include('./section/task-assign.php') ;?>
+                                    </th>
                                 </tr>
                                 
                                 </tfoot>
@@ -503,162 +386,10 @@
     </div>
    
 </section>
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Assign Task</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-        <form method="post" id="assign_form">
-            <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="hidden" name="self_assign_hidden" value="" id="set_self_assign">
-                        <input type="hidden" class="survey_id_hidden" name="survey_id_hidden" value="">
-                        <input type="hidden" class="response_id_hidden" name="response_id_hidden" value="">
-                        <label>User Type</label>
-                        <select class="form-control " tabindex=7 id="user_type" name="user_type">
-                            <option value="">Select User Type</option>
-                        <?php 
-                            $user_types_array=user_type();  
-                            foreach($user_types_array as $key => $value){
-                            // if($_SESSION['user_type']==3){
-                            //     $allowed_key=3;
-                            // } 
-                            if($key == 1){ continue; }
-                            ?>
-                            <option <?php if($type==$key){?> selected="selected"<?php  }?> value="<?php echo $key; ?>"> <?php echo $value; ?>
-                            </option>
-                            <?php 
-                            }
-                        
-                        ?>
-                        </select>
-                    </div>
-                </div>
-                <!-- select admin -->
-                <div class="col-md-12" id="users">
-                </div>                                    
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary submit_task" name="assign">Save changes</button>
-            </div>
-        </form>
-    </div>
-  </div>
-</div>
+
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <!-- Resources -->
 
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
-
-<script>
-
-$(document).on('change','.assignSurveyCheckbox',function(){
-    var value = $(this).is(':checked');
-    let sid  = $(this).data('sid');
-    var checkedArray=[];
-    var checkedSurveyId=[];
-    $("input[name='assign']:checked").each(function(){
-        checkedArray.push($(this).val());
-        checkedSurveyId.push($(this).data('sid'));
-    });
-    console.log(checkedArray,'checkedArray');
-    console.log(checkedSurveyId,'checkedSurveyId');
-    $('.survey_id_hidden').val(checkedSurveyId);
-    $('.response_id_hidden').val(checkedArray);
-   
-
-    if(checkedArray.length >0){
-        $('.btn-submit').show();
-       $('.self-assign-btn').show();
-    }else{
-        $('.btn-submit').hide();
-        $('.self-assign-btn').hide();
-    }
-});
-
-function assign_user(survey_id,user_type){
-    $.ajax({
-        method:"POST",
-        url:'<?=baseUrl()?>ajax/common_file.php',
-        data:{
-            survey_id:survey_id,
-            user_type:user_type,
-            mode:'assign_users'
-        },
-        success:function(response){
-            response = JSON.parse(response);
-            console.log(response);
-            $('#users').html(response);
-        }
-    })
-}
-// ajax on the user type change in assign task
-$(document).on('change','#user_type',function(){
-    let user_type = $(this).val();
-    let survey_id  = $('.survey_id_hidden').val();
-    assign_user(survey_id,user_type);
-});
-$(document).on('click','.btn-submit',function(){
-    
-    $('#set_self_assign').val('');
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
-})
-// submit form when self assign the tasks 
-$(document).on('click','.self-assign-btn',function(){
-    let checkSurveyIdExist = $('.survey_id_hidden').val();
-    $('#set_self_assign').val('set');
-    $('#assign_form').submit();
-})
-
-// ajax to check the task is completed or reassigned to choose user so it can not be resassign
-$(document).on('change','#user_id',function(){
-    let user_type   = $('#user_type').val();
-    let user_id     = $(this).val();
-    let response_ids = $('.response_id_hidden').val();
-    check_selected_task(user_id,user_type,response_ids);
-});
-
-function check_selected_task(user_id,user_type,response_ids){
-    $('.error_1').hide();
-    $('.submit_task').show();
-    $.ajax({
-        method:"POST",
-        url:'<?=baseUrl()?>ajax/common_file.php',
-        data:{
-            user_id     : user_id,
-            user_type   : user_type,
-            response_ids: response_ids,
-            mode:'check_assign_task_for_user'
-        },
-        success:function(response){
-            console.log(response);
-            if(response>0){
-                $('.error_1').show();
-                $('.submit_task').hide();
-            }
-        }
-    })
-}
-
-$(document).ready(function(){
-    $('.search').click(function(e){
-        e.preventDefault(); 
-        let surveyValue = $("#surveys").val();
-        if(surveyValue ==''){
-            $('.error').show();   
-        }else{
-            $('.error').hide()
-            $("#viewReportcsv").submit();
-        }
-    })
-})
-</script>

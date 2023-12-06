@@ -692,8 +692,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 											 	<input type="hidden" class="current_step" value="<?=$currentStep?>"/>
 
 												<div class="col-md-12">
-												<h4>
-													<?php  echo $question['question']?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?><br><span style="font-size: 10px;color: gray;font-weight: 500;"> Question No. <?=$questionOrderNo?></span></h4>
+    												<h4>
+    													<?php  echo $question['question']?> <?=($question['ifrequired']!=1)? "(OPTIONAL)" : ""?>
+    												</h4>
 												</div>	
 												<!-- When Answer Type 1 -->
 												<?php 
@@ -832,6 +833,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																$child_answer[$row_get_questions_detail['id']]['answer']= $row_get_questions_detail['answer'];
 																$child_answer[$row_get_questions_detail['id']]['rating_option_type']= $row_get_questions_detail['rating_option_type'];
 															}
+						
 														?>
 													<table class="table table-hover table-bordered">
 														<tbody>
@@ -853,6 +855,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																			data-maxqid = "<?=$maxCount?>"
 																			>
+																			<span style=" font-size: 10px; font-weight: 600;"><?=$child_answer_option['description']?></span>
 																		</label>	
 																	<?php } ?>
 																</tr>
@@ -873,6 +876,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																			data-skiptoquestion="<?php echo $child_answer_option['skip_to_question_id'];?>"
 																			data-maxqid = "<?=$maxCount?>"
 																			>
+                                                                            <span style=" font-size: 10px; font-weight: 600;"><?=$child_answer_option['description']?></span>
+
 																		</label>	
 																	<?php } ?>
 																</tr>

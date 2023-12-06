@@ -81,20 +81,19 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'check_assign_task_for_user') {
   $user_type    = $_POST['user_type'];
   $response_id  = $_POST['response_ids'];
   $task_type    = $_POST['task_type'];
-  if ($user_type > 1) {
+  //if ($user_type > 1) {
     if($task_type == 'assign'){
       $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id  AND task_id IN ($response_id)");
       if($totalRows_get_task > 0){
         echo "This task is already assign to this user please choose another task.";
       }
     }else{
-      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE reassign_status =1");
+      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE reassign_status =1 and  task_id IN ($response_id)");
       if($totalRows_get_task > 0){
         echo "Sorry ! Re assign task can not assign to any users";
       }
     }
-
-  }
+  //}
 }
 
 if (isset($_POST['mode']) and $_POST['mode'] == 'group') {

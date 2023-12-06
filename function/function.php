@@ -1,6 +1,6 @@
 <?php
 require('mysql_functions.php');
-// Turn off error reporting
+//Turn off error reporting
 // error_reporting(0);
 // error_reporting(E_ERROR | E_WARNING | E_PARSE);
 // error_reporting(E_ALL);

@@ -123,7 +123,7 @@
             "contacted_request_label"       => $_POST['contacted_request_label'],
             "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
             "select_percentage"             => $_POST['select_percentage'],
-            "notification_threshold_users"  => $_POST['notification_threshold_users'],
+            "notification_threshold_users"  => implode(",",$_POST['notification_threshold_users']),
             //"isSchoolAllowed"             => (isset($_POST['isSchoolAllowed'])) ? 1 : 0,
   			"css_txt"                       => $_POST['css_txt'],
   			"cstatus"                       => $_POST['status'],
@@ -562,7 +562,7 @@ $allUsers = getUsers();
                                         <div class="row">
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
-                                                    <label>Alert Email (comma separation for multiple email addresses) *</label>
+                                                    <label>Alert Email (comma separation for multiple email addresses)</label>
                                                 </div>
                                             </div>
                                             <div class="col-xs-4 col-sm-4 col-md-4">
@@ -574,7 +574,7 @@ $allUsers = getUsers();
                                         <div class="row">
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group" style="margin-bottom: 0;">
-                                                    <label>Email*</label>
+                                                    <label>Email</label>
                                                 </div>
                                             </div>
                                             <div class="col-xs-4 col-sm-4 col-md-4">
@@ -607,6 +607,7 @@ $allUsers = getUsers();
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
                                                 <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
+                                                    <option> Select Email</option>
                                                     <?php foreach($allUsers as $key => $userName) { ?>
                                                     <option value="<?=$key?>" <?=($row_mailing_user['user_id']==$key)? 'selected' : '' ?>><?=$userName?></option>
                                                     <?php } ?>
@@ -633,6 +634,7 @@ $allUsers = getUsers();
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
                                                 <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
+                                                    <option>Select Email</option>
                                                     <?php foreach($allUsers as $key => $userName) { ?>
                                                     <option value="<?=$key?>" ><?=$userName?></option>
                                                     <?php } ?>
@@ -643,12 +645,12 @@ $allUsers = getUsers();
                                                 <div class="row ">
                                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                                         <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="1" id="flexCheckDisabled" <?=($row_get_surveys['contact_requested'] == 1) ? 'checked' : ''?>>
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="1" id="flexCheckDisabled" >
                                                         </div>
                                                     </div>
                                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                                         <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
-                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" checked id="flexCheckCheckedDisabled" <?=($row_get_surveys['contact_requested'] == 2) ? 'checked' : ''?>>
+                                                            <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" id="flexCheckCheckedDisabled" >
                                                         </div>
                                                     </div>
                                                 </div>

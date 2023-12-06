@@ -20,7 +20,6 @@ $assign_location = array();
 foreach($locationByUsers as $location){
     $assign_location[] = $location['id'];
 }
-
 $assign_group = array();
 foreach($groupByUsers as $group){
     $assign_group[] = $group['id'];
@@ -87,7 +86,11 @@ $role_ids = implode(',',$assign_role);
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
     }else{
-        $query .= " and surveyid IN  ($surveys_ids)";
+        if($surveys_ids){
+            $query .= " and surveyid IN ($surveys_ids)";
+        }else{
+            $query .= " and surveyid IN (0)";
+        }
     }
     if(!empty($_POST['groupid'])){
         if($_POST['groupid'] == 4){
@@ -103,6 +106,7 @@ $role_ids = implode(',',$assign_role);
     //         $query .= " and  answerid != -2 and answerval != 100";
     //     }
     // }
+
     $query .= " GROUP by cby";
     record_set("get_departments", "SELECT * FROM departments");	
     $departments = array();
@@ -111,8 +115,6 @@ $role_ids = implode(',',$assign_role);
     }
     record_set("get_recent_entry",$query);
 //}
-
-
 ?>
 <style>
     .d-none{

@@ -21,11 +21,11 @@ if($_SESSION['user_type']>2){
         }
     }
 }
-
+$unAssignFilter = str_replace('survey_id','surveyid',$filtr);
 
 /* ---un assigned ----*/
 record_set("get_un_assigned", "SELECT * FROM assign_task WHERE id!=0 $filtr ");
-record_set("get_total_survey_data","SELECT * FROM answers where answerid=-2 AND answerval = 100  and surveyid IN ($surveys_ids) GROUP by cby");
+record_set("get_total_survey_data","SELECT * FROM answers where answerid=-2 AND answerval = 100  $unAssignFilter GROUP by cby");
 $unAssignTask = $totalRows_get_total_survey_data - $totalRows_get_un_assigned;
 $unAssignTask = ($unAssignTask <1 )? 0 :$unAssignTask;
 /* ---assigned ----*/
