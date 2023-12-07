@@ -26,65 +26,21 @@ $groupByUsers       = get_filter_data_by_user('groups');
     }
     if(!empty($_POST['departmentid'])){
         if($_POST['departmentid'] == 4){
-            record_set("get_all_department","select id from departments where cstatus=1");	
-            $all_departments = array();
-            while($row_get_all_department = mysqli_fetch_assoc($get_all_department)){
-                $all_departments[] = $row_get_all_department['id'];
-            }
-            if($dateflag == true){
-                $query .= " and departmentid in (".implode(',',$all_departments).")";
-            }else{
-                $query .= " and departmentid in (".implode(',',$all_departments).")";
-            }  
-        }else{
-            if($dateflag == true){
-                $query .= " and departmentid = '".$_POST['hidden_department_id']."'";
-            }else{
-                $query .= " and departmentid = '".$_POST['hidden_department_id']."' ";
-            }
+            $query .= " and departmentid = '".$_POST['hidden_department_id']."'";
         }
     }
     if(!empty($_POST['roleid'])){
-        if($_POST['roleid'] == 4){
-            record_set("get_all_role","select id from roles where cstatus=1");	
-            $all_roles = array();
-            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
-                $all_roles[] = $row_get_all_role['id'];
-            }
-            $query .= " and roleid in (".implode(',',$all_roles).")";
-        }else{
-            $query .= " and roleid = '".$_POST['roleid']."'";
-        }
+        $query .= " and roleid = '".$_POST['roleid']."'";
     }
 
     if(!empty($_POST['locationid'])){
-        if($_POST['locationid'] == 4){
-            $query .= " and locationid in (select id from locations where cstatus=1)";  
-        }else{
-            if($dateflag == true){
-                $query .= "and locationid = '".$_POST['locationid']."'";
-            }else{
-                $query .= " and locationid = '".$_POST['locationid']."'";
-            }
-        }
+        $query .= " and locationid = '".$_POST['locationid']."'";
     }
     if(!empty($_POST['groupid'])){
-        if($_POST['groupid'] == 4){
-            $query .= " and groupid in (select id from `groups` where cstatus=1)";  
-        }else{
-            if($dateflag == true){
-                $query .= " and groupid = '".$_POST['groupid']."'";
-            }else{
-                //$query .= " and groupid = '".$_POST['groupid']."'";
-            }
-        }
+        $query .= " and groupid = '".$_POST['groupid']."'";
     }
     if(!empty($_POST['contacted'])){
-        if($_POST['contacted']==1){
-            $que= " and  answerid =-2 and answerval=100";
-        }else {
-            $que= " and  answerid != -2 and answerval != 100";
-        }
+        $que= " and  answerid != -2 and answerval != 100";
     }
 
     $filter_status = '';
@@ -285,7 +241,9 @@ $groupByUsers       = get_filter_data_by_user('groups');
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
+                                <?php if($_SESSION['user_type'] < 4) { ?>
                                     <th style="<?=$display?>"></th>
+                                <?php } ?>
                                     <th>DATE</th>
                                     <th>SURVEY NAME</th>
                                     <th>GROUP</th>
@@ -349,8 +307,10 @@ $groupByUsers       = get_filter_data_by_user('groups');
                             
                                             ?>
                                             <tr>
+                                                <?php if($_SESSION['user_type'] < 4) { ?>
                                                 <td scope="row" style="<?=$display?>" ><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>">
                                                 </td>
+                                                <?php } ?>
 
                                                 <td><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?>
                                                 </td>

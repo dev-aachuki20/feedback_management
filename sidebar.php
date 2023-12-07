@@ -96,11 +96,9 @@
                     </ul>
                 </li>
                 <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='survey') ? 'active':''?>"><a href="?page=monthly-report&type=survey" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<4) {?>
-                    <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='survey') ? 'active':''?>">
-                        <a href="?page=survey-statistics&type=survey" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
-                    </li>
-                <?php } ?>
+                <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='survey') ? 'active':''?>">
+                    <a href="?page=survey-statistics&type=survey" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
+                </li>
                 <li class="treeview  cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='survey') ? 'active':''?>">
                     <a href="?page=view-analytics&type=survey" class="nav-link "> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
                 </li>
@@ -138,11 +136,9 @@
                 </li>  
                 
                 <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='pulse') ? 'active':''?>"><a href="?page=monthly-report&type=pulse" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
-                <?php if($_SESSION['user_type']<4) {?>
                 <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='pulse') ? 'active':''?>">
                     <a href="?page=survey-statistics&type=pulse" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
                 </li>
-                <?php }?>
                 <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='pulse') ? 'active':''?>">
                     <a href="?page=view-analytics&type=pulse" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
                 </li>
@@ -180,11 +176,9 @@
             </li>  
             <li class="treeview cusul-line <?=($_GET['page']=='monthly-report' and $_GET['type']=='engagement') ? 'active':''?>"><a href="?page=monthly-report&type=engagement" class="nav-link"> <i class="fa fa-poll"></i> <span>RESULTS</span></a> </li>
 
-            <?php if($_SESSION['user_type']<4) {?>
-                <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='engagement') ? 'active':''?>">
-                    <a href="?page=survey-statistics&type=engagement" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
-                </li>
-            <?php }?>
+            <li class="treeview cusul-line <?=($_GET['page']=='survey-statistics' and $_GET['type']=='engagement') ? 'active':''?>">
+                <a href="?page=survey-statistics&type=engagement" class="nav-link "> <i class="fa fa-pie-chart"></i> <span>STATISTICS</span> </a> 
+            </li>
             <li class="treeview cusul-line <?=($_GET['page']=='view-analytics' and $_GET['type']=='engagement') ? 'active':''?>">
                 <a href="?page=view-analytics&type=engagement" class="nav-link"> <i class="fa fa-bar-chart"></i> <span>ANALYTICS</span> </a> 
             </li>

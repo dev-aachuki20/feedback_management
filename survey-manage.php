@@ -35,37 +35,14 @@
     }
 
     if(!empty($_POST['locationid'])){
-        if($_POST['locationid'] == 4){
-            $query .= " and locationid in (select id from locations where cstatus=1)";  
-        }else{
-            $query .= " and locationid = '".$_POST['locationid']."'";
-        }
+        $query .= " and locationid = '".$_POST['locationid']."'";
     }
     if(!empty($_POST['departmentid'])){
-        if($_POST['departmentid'] == 4){
-            record_set("get_all_department","select id from departments where cstatus=1");	
-            $all_departments = array();
-            while($row_get_all_department = mysqli_fetch_assoc($get_all_department)){
-                $all_departments[] = $row_get_all_department['id'];
-            }
-            $query .= " and departmentid in (".implode(',',$all_departments).")";
-        }else{
-            $query .= " and departmentid = '".$_POST['departmentid']."'";
-        }
+        $query .= " and departmentid = '".$_POST['departmentid']."'";
     }
 
     if(!empty($_POST['roleid'])){
-        echo $_POST['roleid'].':::::';
-        if($_POST['roleid'] == 4){
-            record_set("get_all_role","select id from roles where cstatus=1");	
-            $all_roles = array();
-            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
-                $all_roles[] = $row_get_all_role['id'];
-            }
-            $query .= " and roleid in (".implode(',',$all_roles).")";
-        }else{
-            $query .= " and roleid = '".$_POST['roleid']."'";
-        }
+        $query .= " and roleid = '".$_POST['roleid']."'";
     }
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
@@ -246,7 +223,7 @@
                             <table id="datatable" class="table table-bordered table-striped" width="100%">
                                 <thead>
                                     <tr>
-                                        <?=($_GET['req']== 'contact requests') ? '<th></th>':''?>
+                                        <?=($_GET['req'] == 'contact requests' && $_SESSION['user_type'] < 4) ? '<th></th>':''?>
                                         <th>DATE</th>
                                         <th>SURVEY NAME</th>
                                         <th>GROUP</th>
@@ -340,7 +317,7 @@
                                         ?>
                                         <tr>
                                             <?php
-                                            if(($_GET['req'] == 'contact requests')){ ?>
+                                            if(($_GET['req'] == 'contact requests' && $_SESSION['user_type'] < 4)){ ?>
                                                 <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>" <?=$totalRows_get_reassigned_task > 0 ? 'disabled':''?>></td>
                                             <?php }
                                             ?>

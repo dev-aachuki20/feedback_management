@@ -9,6 +9,7 @@
     }
     
     if($_POST['update']){
+
         $dataCol = array(
             "name"                          => $_POST['name'],
             "survey_type"                   => $_POST['survey_type'],
@@ -27,9 +28,6 @@
             "isStep"                        => 1,
             "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "contacted_request_label"       => $_POST['contacted_request_label'],
-            "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
-            "select_percentage"             => $_POST['select_percentage'],
-            "notification_threshold_users"  => implode(",",$_POST['notification_threshold_users']),
             "google_review_link"            => $_POST['google_review_link'],
             "facebook_review_link"          => $_POST['facebook_review_link'],
             "other_link"                    => $_POST['other_link'],
@@ -41,18 +39,24 @@
             "locations"     => implode(",",$_POST['locationid']),
             "departments"   => implode(",",$_POST['departments']),
             "roles"         => implode(",",$_POST['roles']),
+            "notification_threshold_users"  => implode(",",$_POST['notification_threshold_users']),
+            "notification_threshold"        => (isset($_POST['notification_threshold'])) ? 1 : 0,
+            "select_percentage"             => $_POST['select_percentage'],
+
             //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
         if($_SESSION['user_type']==1){
             $data = array_merge($dataCol,$new_data);
+            $mailing_user_ids = $_POST['mailing_user_id'];
+            $contact_requested = $_POST['contact_requested'];
         }else if($_SESSION['user_type']==2) {
             $data = $new_data;
+            $mailing_user_ids = $_POST['mailing_user_id'];
+            $contact_requested = $_POST['contact_requested'];
         }
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
 
-        $mailing_user_ids = $_POST['mailing_user_id'];
-        $contact_requested = $_POST['contact_requested'];
     
         if(!empty($updte)){
             $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
@@ -607,7 +611,7 @@ $allUsers = getUsers();
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
                                                 <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
-                                                    <option> Select Email</option>
+                                                    <option value=""> Select Email</option>
                                                     <?php foreach($allUsers as $key => $userName) { ?>
                                                     <option value="<?=$key?>" <?=($row_mailing_user['user_id']==$key)? 'selected' : '' ?>><?=$userName?></option>
                                                     <?php } ?>
@@ -634,7 +638,7 @@ $allUsers = getUsers();
                                             <div class="col-xs-8 col-sm-8 col-md-8">
                                                 <div class="form-group">
                                                 <select class="form-control mailing_users" name="mailing_user_id[]" id="mailing_user_id">
-                                                    <option>Select Email</option>
+                                                    <option value="">Select Email</option>
                                                     <?php foreach($allUsers as $key => $userName) { ?>
                                                     <option value="<?=$key?>" ><?=$userName?></option>
                                                     <?php } ?>
@@ -658,11 +662,14 @@ $allUsers = getUsers();
                                         </div>
                                         <?php } ?>                             
                                     </div>
+                                    <?php if($_SESSION['user_type'] < 3) { ?>
                                     <div class="row ">
                                         <div class="col-md-12 text-right" style="margin-bottom: 20px;">
                                             <span id="add-row" class="btn btn-primary">Add Row</span>
                                         </div>
                                     </div>
+                                    <?php } ?>
+
                                 </div>
                             </div>
                             
@@ -780,6 +787,12 @@ function select_all_option(idFirst,idSecond){
         $(".multiple-select").prop("disabled", false);
         $(".multiselect").prop("disabled", false);
         $("#survey_from :submit").prop("disabled", false);
+        $("#threshold-notification").prop("disabled", false);
+        $("#select_percentage").prop("disabled", false);
+        $("#select_users").prop("disabled", false);
+        $(".mailing_users").prop("disabled", false);
+        $(".contacted-checkbox").prop("disabled", false);
+
 <?php } } ?>
 
 var $form = $("#survey_from"),
@@ -908,6 +921,10 @@ $(document).on('click','.delete-row',function(){
 $("#add-row").click(function(){
         let selectBoxes = $('.mailing_users');
         let selectedUserIdsArr = [];
+        let isValue = $("#mailing_user_id").find(":selected").val();
+        if(isValue == ''){
+            alert("Please select the Email");
+        }
         selectBoxes.each(function() {
             let selectBox = $(this);
             let selected = selectBox.find('option:selected');
@@ -934,7 +951,6 @@ $("#add-row").click(function(){
 
 $(document).on('click', '.mailing_users', function() {
     let currentIndex = $(this).parents('.new-row').closest('.new-row').index();
-    console.log(currentIndex, "console");
     $(this).parents('.new-row').nextAll('.new-row').remove();
 }) ;
 

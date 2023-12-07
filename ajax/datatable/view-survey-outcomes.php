@@ -21,46 +21,20 @@ if(!empty($_POST['surveys'])){
     }
 
     if(!empty($_POST['departmentid'])){
-        if($_POST['departmentid'] == 4){
-            record_set("get_all_department","select id from departments where cstatus=1");	
-            $all_departments = array();
-            while($row_get_all_department = mysqli_fetch_assoc($get_all_department)){
-                $all_departments[] = $row_get_all_department['id'];
-            }
-            $query .= " and departmentid in (".implode(',',$all_departments).")";
-        }else{
-            $query .= " and departmentid = '".$_POST['departmentid']."'";
-        }
+        $query .= " and departmentid = '".$_POST['departmentid']."'";
     }
 
     if(!empty($_POST['locationid'])){
-        if($_POST['locationid'] == 4){
-            $query .= " and locationid in (select id from locations where cstatus=1)";  
-        }else{
-            $query .= "and locationid = '".$_POST['locationid']."'";
-        }
+        $query .= "and locationid = '".$_POST['locationid']."'";
     }
     if(!empty($_POST['roleid'])){
-        if($_POST['roleid'] == 4){
-            record_set("get_all_role","select id from roles where cstatus=1");	
-            $all_roles = array();
-            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
-                $all_roles[] = $row_get_all_role['id'];
-            }
-            $query .= " and roleid in (".implode(',',$all_roles).")";
-        }else{
-            $query .= " and roleid = '".$_POST['roleid']."'";
-        }
+        $query .= " and roleid = '".$_POST['roleid']."'";
     }
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
     }
     if(!empty($_POST['groupid'])){
-        if($_POST['groupid'] == 4){
-            $query .= " and groupid in (select id from `groups` where cstatus=1)";  
-        }else{
-            $query .= " and groupid = '".$_POST['groupid']."'";
-        }
+        $query .= " and groupid = '".$_POST['groupid']."'";
     }
 
     // if(!empty($requestData['contact'])){

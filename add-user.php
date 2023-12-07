@@ -328,14 +328,14 @@ if(!empty($_POST['submit'])){
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Email *</label>
-                  <input type="text" class="form-control" id="email" name="email"value="<?php echo $row_get_user_id['email']?>" <?=($_GET['id'])?'disabled':''?>/>
+                  <input type="text" class="form-control" autocomplete="no-email" id="email" name="email" value="<?php echo $row_get_user_id['email']?>" <?=($_GET['id'])?'disabled':''?>/>
                 </div>
               </div>
          
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Password</label>
-                  <input type="password" class="form-control" name="password" id="password" value=""/>
+                  <input type="password" class="form-control" autocomplete="no-password" name="password" id="password" value=""/>
                 </div>
               </div>
               <!-- <div class="col-md-6 location_field" style="display:<?=($_SESSION['user_type']==3 OR $_GET['t']=='c')?'block':'none'?>">
@@ -425,6 +425,7 @@ if(!empty($_POST['submit'])){
   </div>
 </section>
 <br />
+
 <script type="text/javascript">
 jQuery(document).ready(function() {
 $(function() {

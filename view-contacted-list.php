@@ -28,42 +28,16 @@ if($_SESSION['user_type'] == 4){
     }
     
     if(!empty($_POST['departmentid'])){
-        if($_POST['departmentid'] == 4){
-            record_set("get_all_department","select id from departments where cstatus=1");	
-            $all_departments = array();
-            while($row_get_all_department = mysqli_fetch_assoc($get_all_department)){
-                $all_departments[] = $row_get_all_department['id'];
-            }
-            $query .= " and departmentid in (".implode(',',$all_departments).")";
-        }else{
-            $query .= " and departmentid = '".$_POST['departmentid']."'";
-        }
+        $query .= " and departmentid = '".$_POST['departmentid']."'";
     }
     if(!empty($_POST['roleid'])){
-        if($_POST['roleid'] == 4){
-            record_set("get_all_role","select id from roles where cstatus=1");	
-            $all_roles = array();
-            while($row_get_all_role = mysqli_fetch_assoc($get_all_role)){
-                $all_roles[] = $row_get_all_role['id'];
-            }
-            $query .= " and roleid in (".implode(',',$all_roles).")";
-        }else{
-            $query .= " and roleid = '".$_POST['roleid']."'";
-        }
+        $query .= " and roleid = '".$_POST['roleid']."'";
     }
     if(!empty($_POST['locationid'])){
-        if($_POST['locationid'] == 4){
-            $query .= " and locationid in (select id from locations where cstatus=1)";  
-        }else{
-            $query .= "and locationid = '".$_POST['locationid']."'";
-        }
+        $query .= "and locationid = '".$_POST['locationid']."'";
     }
     if(!empty($_POST['groupid'])){
-        if($_POST['groupid'] == 4){
-            $query .= " and groupid in (select id from `groups` where cstatus=1)";  
-        }else{
-            $query .= " and groupid = '".$_POST['groupid']."'";
-        }
+        $query .= " and groupid = '".$_POST['groupid']."'";
     }
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
@@ -233,7 +207,7 @@ if($_SESSION['user_type'] == 4){
                         <table id="datatable" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
-                                    <?php if($_SESSION['user_type'] != 4){ ?>
+                                    <?php if($_SESSION['user_type'] < 4){ ?>
                                     <th></th>
                                     <?php } ?>
                                     <th>DATE</th>
@@ -306,8 +280,9 @@ if($_SESSION['user_type'] == 4){
                                             }
                                             ?>
                                             <tr>
+                                                <?php if($_SESSION['user_type'] < 4) { ?>
                                                 <td><input type="checkbox" name="assign" value="<?=$row_get_recent_entry['cby'] ?>" class="assignSurveyCheckbox" task-type="" data-sid="<?=$row_get_recent_entry['surveyid']?>" <?=$totalRows_get_reassigned_task > 0 ? 'disabled':''?>></td>
-
+                                                <?php } ?>
                                                 <td data-sort="<?=date("Ymdhhmmss", strtotime($row_get_recent_entry['cdate']))?>"><?=date("d-m-Y", strtotime($row_get_recent_entry['cdate']))?></td>
 
                                                 <td><?=$row_get_survey_detail['name'] . $label ?></td>
@@ -401,14 +376,16 @@ if($_SESSION['user_type'] == 4){
         // $('#hidden_department_id').val(departmentid);
         // $('#hidden_contact').val(contacted);
 
-        if(surveys ==''){
-            $(".col-md-3").css("height", "87");
-            $('.error').show();
-            return;
-        }else {
-            $('#viewReportcsv').submit();
-            $('.error').hide();
-        }
+        // if(surveys ==''){
+        //     $(".col-md-3").css("height", "87");
+        //     $('.error').show();
+        //     return;
+        // }else {
+        //     $('#viewReportcsv').submit();
+        //     $('.error').hide();
+        // }
+        $('#viewReportcsv').submit();
+
         // this is the id of the form
         ajax_request(start_data,end_date,surveys,group,locationid,departmentid,contacted,my_task);
     });
