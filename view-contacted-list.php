@@ -171,7 +171,7 @@ if($_SESSION['user_type'] == 4){
                                     $RoleId     = $roleByUser['id'];
                                     $RoleName   = $roleByUser['name']; 
                                 ?>
-                                    <option value="<?=$RoleId?>"><?=$RoleName?></option>
+                                    <option value="<?=$RoleId?>" <?=($_POST['roleid'] == $RoleId) ? 'selected':''?> ><?=$RoleName?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -273,9 +273,13 @@ if($_SESSION['user_type'] == 4){
                                             
 
                                             // check the task is reassigned task or not
-                                            $isReassigned =  record_set("get_reassigned_task", "SELECT * FROM assign_task where reassign_status =1 and assign_to_user_id = ".$_SESSION['user_id']." and task_id =".$row_get_recent_entry['cby']);
+                                            $isReassigned =  record_set_single("get_reassigned_task", "SELECT * FROM assign_task where assign_to_user_id = ".$_SESSION['user_id']." and task_id =".$row_get_recent_entry['cby']);
+
                                             $label = "";
-                                            if($totalRows_get_reassigned_task > 0){
+                                            if($isReassigned['assign_to_user_id'] == $_SESSION['user_id'] and $isReassigned['assign_by_user_id'] == $_SESSION['user_id'] ){
+                                                $label= " <span class='label label-warning' data-toggle='tooltip' data-placement='top' title='Self Assigned Task'>S</span>";
+                                            }
+                                            if($isReassigned['reassign_status'] == 1){
                                                 $label= " <span class='label label-info' data-toggle='tooltip' data-placement='top' title='Re Assigned Task'>R</span>";
                                             }
                                             ?>

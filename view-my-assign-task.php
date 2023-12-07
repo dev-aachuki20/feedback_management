@@ -184,7 +184,7 @@ $groupByUsers       = get_filter_data_by_user('groups');
                                         $RoleId     = $roleByUser['id'];
                                         $RoleName   = $roleByUser['name']; 
                                     ?>
-                                    <option value="<?=$RoleId?>"><?=$RoleName?></option>
+                                    <option value="<?=$RoleId?>" <?=($_POST['roleid'] == $RoleId) ? 'selected':''?> ><?=$RoleName?></option>
                                     <?php } ?>
                                 </select>
                             </div>

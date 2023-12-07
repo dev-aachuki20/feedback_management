@@ -5,7 +5,6 @@
     $groupByUsers      = get_filter_data_by_user('groups');
     $surveyByUsers     = get_survey_data_by_user($_GET['type']);
     $roleByUsers       = get_filter_data_by_user('roles');
-
     $loggedIn_user_id    = $_SESSION['user_id'];
     $loggedIn_user_type  = $_SESSION['user_type'];
 
@@ -208,7 +207,7 @@
                         <div class="form-group">
                             <label>Role</label>
                             <select name="roleid" id="roleid" class="form-control form-control-lg role">
-                                <option  value="">Select Role</option>
+                                <option value="">Select Role</option>
                                 <?php 
                                 foreach($roleByUsers as $roleByUser ){ 
                                     $RoleId     = $roleByUser['id'];

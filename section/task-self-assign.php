@@ -25,9 +25,9 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
             "assign_by_user_id"   => $assing_to_user_id,
             "cdate"               => date("Y-m-d H:i:s")
         );
-         // check the assign task already exists for this user or not
-         record_set("check_assign_task", "SELECT * FROM assign_task where task_id = $tasks and survey_id = ".$survey_id[$i]);
-         $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
+        // check the assign task already exists for this user or not
+        record_set("check_assign_task", "SELECT * FROM assign_task where task_id = $tasks and survey_id = ".$survey_id[$i]);
+        $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
          
         if($totalRows_check_assign_task > 0 ){
         //  $insert_value = dbRowUpdate("assign_task", $data, "where id=".$row_check_assign_task['id']);
@@ -49,8 +49,8 @@ if(isset($_POST['self_assign_hidden']) and !empty($_POST['self_assign_hidden']))
         alertSuccess( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
         die();
     }
-        $msg = "Task Not Assigned";
-        alertdanger( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
+    $msg = "Task Not Assigned";
+    alertdanger( $msg,'?page=view-my-assign-task&type='.$_GET['type']);
 }
 ?>
 
