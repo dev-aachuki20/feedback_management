@@ -102,7 +102,7 @@
                   "user_id"    => $uid,
                   "table_name" => 'department'
               );
-              $insert =  dbRowInsert("relation_table",$data_dept,1);
+              $insert =  dbRowInsert("relation_table",$data_dept);
             }
           }
       
