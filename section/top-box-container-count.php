@@ -88,7 +88,7 @@ record_set("get_resolved", "SELECT * FROM assign_task WHERE task_status IN (5,6)
             <!-- /.info-box -->
         </div>
     </a>
-    <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved postive&task_status=5" >
+    <a class="" href="index.php?page=survey-manage&type=<?=$page_type?>&req=resolved&task_status=5" >
         <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="info-box">
                 <span class="info-box-icon bg-green"><i class="fa-solid fa-circle-check"></i></span>

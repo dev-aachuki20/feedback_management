@@ -1,6 +1,5 @@
 
 <?php 
-
     if(!empty($_GET['id'])){
         record_set("get_surveys", "select * from surveys where id='".$_GET['id']."'");
         record_set("get_question", "select * from questions where surveyid='".$_GET['id']."'");

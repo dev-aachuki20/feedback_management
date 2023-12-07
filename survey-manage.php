@@ -74,7 +74,11 @@
     $filter_status = '';
     if(!empty($_GET['task_status'])){
         if($_GET['task_status'] != 1){
-            $filter_status = ' and task_status ='.$_GET['task_status'];
+            if($_GET['req'] == 'resolved'){
+                $filter_status = ' and task_status IN(5,6)';
+            }else{
+                $filter_status = ' and task_status ='.$_GET['task_status'];
+            }
         }
         record_set("get_assign_task", "SELECT * FROM assign_task where id !='' $qFilter ".$filter_status);
         $arr_task_id = array();
@@ -318,7 +322,8 @@
                                             if(isset($_GET['task_status'])){
                                                 $fData .= " and task_status =".$_GET['task_status'];
                                             }
-                                            record_set("check_assign_task", "SELECT * FROM assign_task where task_id = ".$row_get_recent_entry['cby']."$fData");
+
+                                            record_set("check_assign_task", "SELECT * FROM assign_task where task_id = ".$row_get_recent_entry['cby']);
 
                                             $row_check_assign_task = mysqli_fetch_assoc($check_assign_task);
                                             $task_status = $row_check_assign_task['task_status'];
