@@ -9,6 +9,7 @@ record_set("get_scheduled_report", "select srt.* from scheduled_report_templates
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
     $mpdf = new \Mpdf\Mpdf();
 
+    $time_interval  = $row_get_report['time_interval'];
     $current_date  = date('Y-m-d', time());
     $next_schedule = date('Y-m-d', strtotime($row_get_report['next_date']));
     $end_date      = date('Y-m-d', strtotime($row_get_report['end_date']));
@@ -47,7 +48,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
 
-
         $queryDf = 'SELECT MIN(cdate) AS min_date FROM answers where id!=0 ';
         record_set("survey_min_date", $queryDf . "and surveyid IN($survey_id) order by cdate ASC");
 
@@ -55,19 +55,74 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $survey_min_date = date('Y-m-d', strtotime($row_survey['min_date']));
         $survey_max_date = date('Y-m-d', strtotime($current_date));
 
-        record_set("get_entry", $querys . $query . " and cdate BETWEEN '" . $survey_min_date . "' and '" . $survey_max_date . "' GROUP by cby", 1);
+        record_set("get_entry", $querys . $query . " and cdate BETWEEN '" . $survey_min_date . "' and '" . $survey_max_date . "' GROUP by cby");
 
         if ($totalRows_get_entry) {
             $survey_data = array();
             $to_bo_contacted = 0;
+            $st_date = $end_date = '';
+
+            if ($time_interval != 24) {
+                $st_date =  $survey_min_date;
+                if ($time_interval == 168) {
+                    $end_date = date('Y-m-d', strtotime("+6 days", strtotime($st_date)));
+                }
+
+                if ($time_interval == 336) {
+                    $end_date = date('Y-m-d', strtotime("+13 days", strtotime($st_date)));
+                }
+
+                if ($time_interval == 720) {
+                    $end_date = date('Y-m-d', strtotime("+1 month", strtotime($st_date)));
+                }
+
+                if ($time_interval == 2160) {
+                    $end_date = date('Y-m-d', strtotime("+2 month", strtotime($st_date)));
+                }
+
+                if ($time_interval == 4320) {
+                    $end_date = date('Y-m-d', strtotime("+5 month", strtotime($st_date)));
+                }
+
+                if ($time_interval == 8640) {
+                    $end_date = date('Y-m-d', strtotime("+11 month", strtotime($st_date)));
+                }
+            }
             while ($row_get_entry = mysqli_fetch_assoc($get_entry)) {
-                
                 $locId      = $row_get_entry['locationid'];
                 $depId      = $row_get_entry['departmentid'];
                 $grpId      = $row_get_entry['groupid'];
                 $surveyid   = $row_get_entry['surveyid'];
                 $cby        = $row_get_entry['cby'];
                 $surveyDate = date('Y-m-d', strtotime($row_get_entry['cdate']));
+
+                // time interval
+                if ($time_interval != 24 && $surveyDate > $end_date) {
+                    $st_date = $surveyDate;
+                    if ($time_interval == 168) {
+                        $end_date = date('Y-m-d', strtotime("+6 days", strtotime($st_date)));
+                    }
+
+                    if ($time_interval == 336) {
+                        $end_date = date('Y-m-d', strtotime("+13 days", strtotime($st_date)));
+                    }
+
+                    if ($time_interval == 720) {
+                        $end_date = date('Y-m-d', strtotime("+1 month", strtotime($st_date)));
+                    }
+
+                    if ($time_interval == 2160) {
+                        $end_date = date('Y-m-d', strtotime("+2 month", strtotime($st_date)));
+                    }
+
+                    if ($time_interval == 4320) {
+                        $end_date = date('Y-m-d', strtotime("+5 month", strtotime($st_date)));
+                    }
+
+                    if ($time_interval == 8640) {
+                        $end_date = date('Y-m-d', strtotime("+11 month", strtotime($st_date)));
+                    }
+                }
 
                 if ($data_type == 'location') {
                     $count = array();
@@ -83,16 +138,33 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                 $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval == 24) {
                             //$to_bo_contacted += 1;
-                            $survey_data[$locId]['contact'] += 1;
+                            $survey_data[$surveyDate][$locId]['contact'] += 1;
+                        }
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval != 24) {
+                            //$to_bo_contacted += 1;
+                            $survey_data[$st_date][$locId]['contact'] += 1;
                         }
                     }
                     $average_value = ($total_answer / ($i * 100)) * 100;
                     if ($total_answer == 0 and $total_result_val == 0) {
                         $average_value = 100;
                     }
+
                     $survey_data[$locId]['data'][$cby] = $average_value;
+
+                    // time interval $survey_data[$locId]['data'][$cby] = $average_value;
+                    if ($time_interval == 24) {
+                        $survey_data[$surveyDate][$locId]['data'][$cby] = $average_value;
+                    }
+
+                    if ($time_interval != 24) {
+                        $survey_data[$st_date][$locId]['data'][$cby] = $average_value;
+                        $survey_data[$st_date][$locId]['end_date'] =  $end_date;
+                    }
                 } else if ($data_type == 'department') {
                     $count = array();
                     record_set("get_question", "select * from answers where departmentid=$depId and cby=$cby");
@@ -108,15 +180,29 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                 $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
-                            $survey_data[$depId]['contact'] += 1;
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval == 24) {
+                            $survey_data[$surveyDate][$depId]['contact'] += 1;
+                        }
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval != 24) {
+                            $survey_data[$st_date][$depId]['contact'] += 1;
                         }
                     }
                     $average_value = ($total_answer / ($i * 100)) * 100;
                     if ($total_answer == 0 and $total_result_val == 0) {
                         $average_value = 100;
                     }
-                    $survey_data[$depId]['data'][$cby] = $average_value;
+
+                    // time interval  $survey_data[$depId]['data'][$cby] = $average_value;
+                    if ($time_interval == 24) {
+                        $survey_data[$surveyDate][$depId]['data'][$cby] = $average_value;
+                    }
+
+                    if ($time_interval != 24) {
+                        $survey_data[$st_date][$depId]['data'][$cby] = $average_value;
+                        $survey_data[$st_date][$depId]['end_date'] =  $end_date;
+                    }
                 } else if ($data_type == 'group') {
                     $count = array();
                     record_set("get_question", "select * from answers where groupid=$grpId and cby=$cby");
@@ -131,15 +217,29 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                 $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
-                            $survey_data[$grpId]['contact'] += 1;
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval == 24) {
+                            $survey_data[$surveyDate][$grpId]['contact'] += 1;
+                        }
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval != 24) {
+                            $survey_data[$st_date][$grpId]['contact'] += 1;
                         }
                     }
                     $average_value = ($total_answer / ($i * 100)) * 100;
                     if ($total_answer == 0 and $total_result_val == 0) {
                         $average_value = 100;
                     }
-                    $survey_data[$grpId]['data'][$cby] = $average_value;
+
+                    // time interval $survey_data[$grpId]['data'][$cby] = $average_value;
+                    if ($time_interval == 24) {
+                        $survey_data[$surveyDate][$grpId]['data'][$cby] = $average_value;
+                    }
+
+                    if ($time_interval != 24) {
+                        $survey_data[$st_date][$grpId]['data'][$cby] = $average_value;
+                        $survey_data[$st_date][$grpId]['end_date'] =  $end_date;
+                    }
                 } else {
                     $count = array();
                     record_set("get_question", "select * from answers where surveyid=$surveyid and cby=$cby");
@@ -154,8 +254,13 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                 $total_answer += $row_get_question['answerval'];
                             }
                         }
-                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100) {
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval == 24) {
                             $survey_data[$surveyDate][$surveyid]['contact'] += 1;
+                        }
+
+                        if ($row_get_question['answerid'] == -2 && $row_get_question['answerval'] == 100 && $time_interval != 24) {
+                            $survey_data[$st_date][$surveyid]['contact'] += 1;
                         }
                     }
                     if ($total_answer == 0 and $total_result_val == 0) {
@@ -165,19 +270,25 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     if (is_nan($average_value)) {
                         $average_value = 100;
                     }
-                    $survey_data[$surveyDate][$surveyid]['data'][$cby] = $average_value;
+
+                    // time interval
+                    if ($time_interval == 24) {
+                        $survey_data[$surveyDate][$surveyid]['data'][$cby] = $average_value;
+                    }
+
+                    if ($time_interval != 24) {
+                        $survey_data[$st_date][$surveyid]['data'][$cby] = $average_value;
+                        $survey_data[$st_date][$surveyid]['end_date'] =  $end_date;
+                    }
                 }
             }
         }
 
-        // ksort($survey_data);
+        ksort($survey_data);
+
         // echo "<pre>";
         // print_r($survey_data);
         // echo "</pre>";
-        // die('g');
-        //export csv in survey static
-        // if(isset($_GET['export']) and $_GET['export']=='csv'){
-        // }
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -186,7 +297,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         $survey_name = getSurvey()[$survey_id];
         $dir = 'document/survey-report-' . $row_get_report['id'] . '.csv';
         $path[] = $dir;
-        download_csv_folder($survey_data, $data_type, $dir);
+
+        download_csv_folder($survey_data, $data_type, $dir, $time_interval);
 
         $html = '';
         $counter = 1;
@@ -326,23 +438,11 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         if (count($survey_data) > 0) {
             $ftr = 1;
 
-            foreach ($survey_data as $key => $datasurveys) {
+            foreach ($survey_data as $mainKey => $datasurveys) {
                 foreach ($datasurveys as $key => $datasurvey) {
 
-                   
                     $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
                     $total =  round($total, 2);
-
-                    // if($ftr == 2){
-                    //     echo "<pre>";
-                    //     print_r($datasurvey['data']);
-                    //     echo "</pre>";
-
-                    //     echo "Array sum".array_sum($datasurvey['data']);
-                    //     echo "<br>".count($datasurvey['data']);
-                    //     die('gf');
-                    // }
-
 
                     $titleName = '';
                     if ($data_type == 'location') {
@@ -371,8 +471,15 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                                         <div class="circle">
                                                             <div class="top-content">
                                                                 <h5 style="height:50px;margin-top: 0;">' . $titleName  . '</h5>
-                                                                <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>
-                                                                <span style="font-size: 16px;">' . $total . '%</span>
+                                                                <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>';
+
+                        if ($time_interval == 24) {
+                            $html .= '<span style="font-size: 10px;">' . date('d/m/y', strtotime($mainKey)) . '</span><br>';
+                        } else {
+                            $html .= '<span style="font-size: 10px;">' . date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date'])) . '</span><br>';
+                        }
+
+                        $html .= '<span style="font-size: 16px;">' . $total . '%</span>
                                                             </div>                                  
                                     
                                                             <div class="circle-frame">
@@ -395,8 +502,14 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                                     <div class="circle">
                                                         <div class="top-content">
                                                             <h5 style="height:50px;margin-top: 0;">' . $titleName . '</h5>
-                                                            <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>
-                                                            <span style="font-size: 16px;">' . $total . '% </span>
+                                                            <div style="font-size: 13px;padding-bottom: 4px;"><strong>' . $titleId  . '</strong></div>';
+                        if ($time_interval == 24) {
+                            $html .= '<span style="font-size: 10px;">' . date('d/m/y', strtotime($mainKey)) . '</span><br>';
+                        } else {
+                            $html .= '<span style="font-size: 10px;">' . date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date'])) . '</span><br>';
+                        }
+
+                        $html .= '<span style="font-size: 16px;">' . $total . '% </span>
                                                         </div>                                  
                                 
                                                         <div class="circle-frame">
@@ -425,7 +538,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     }
 
                     $counter++;
-                    
                 }
                 $ftr++;
             }
@@ -440,13 +552,13 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
         </div>';
 
-
         $mpdf->SetHTMLFooter($footer);
         $mpdf->WriteHTML($html);
-        $mpdf->Output($dir, 'I');
+        $mpdf->Output($dir, 'F');
 
 
         $attachments = array('document/survey-report-' . $row_get_report['id'] . '.csv', 'document/survey-report-' . $row_get_report['id'] . '.pdf');
+
         $mail_users = explode(",", $row_get_report['send_to']);
         foreach ($mail_users as $userId) {
             //send mail

@@ -333,7 +333,7 @@ $html = '<!DOCTYPE html>
                         <h4>' . strtoupper(getSurvey()[$selectedSurveyId]) . '</h4>';
 
                     if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
-                        $html .= '<h4>' .  date('d/m/Y',strtotime($_POST['fdate'])).'-'. date('d/m/Y',strtotime($_POST['sdate'])).'</h4>';
+                        $html .= '<h4>' .  date('d/m/Y',strtotime($_POST['fdate'])).' - '. date('d/m/Y',strtotime($_POST['sdate'])).'</h4>';
                     }
                     
                     $html .= '</div>

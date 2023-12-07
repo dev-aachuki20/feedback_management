@@ -27,8 +27,8 @@ $endDate = '';
 if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
     $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
 
-    $startDate = date("d/m/Y", time());
-    $endDate = date("d/m/Y", time());
+    $startDate = date("d/m/Y",strtotime($_POST['sdate']));
+    $endDate = date("d/m/Y", strtotime($_POST['edate']));
 }
 
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");

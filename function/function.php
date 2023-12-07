@@ -28,7 +28,8 @@ define('SMTPAuth', true);
 // end 
 $msg = '';
 $active_user_id = $_SESSION['admin_id'];
-function pr($data){
+function pr($data)
+{
 	echo '<pre style="margin-left: 257px;">';
 	print_r($data);
 	echo "</pre>";
@@ -73,7 +74,7 @@ function sendEmailPdf($email_to, $user_name, $subject, $body, $pdf = null, $pdf_
 		$mail->addAddress($email_to, $user_name);
 
 		//Attachment
-		if(!is_null($pdf) ){
+		if (!is_null($pdf)) {
 			$mail->addStringAttachment($pdf, $pdf_name);
 		}
 
@@ -288,7 +289,8 @@ function check_login()
 	}
 }
 
-function forgot_password($user_email, $password){
+function forgot_password($user_email, $password)
+{
 	$from = ADMIN_EMAIL;
 	$to = $user_email;
 	$subject = "Password Recovery Email";
@@ -867,7 +869,7 @@ function survey_result_submitted_pdf_mail($email_to, $user_name)
 		</table>';
 	$mpdf->WriteHTML($html);
 	$pdf = $mpdf->Output('', 'S');
-	sendEmailPdf($email_to, $user_name, $subject, $body,$pdf, $pdf_name);
+	sendEmailPdf($email_to, $user_name, $subject, $body, $pdf, $pdf_name);
 }
 
 function get_boostrap_bg_colors($status)
@@ -1128,7 +1130,7 @@ function sendEmailWithAttachment($email_to, $user_name, $subject, $body, $attach
 		$mail->addAddress($email_to, $user_name);
 
 		//Attachment
-		if(!is_null($attachments) ){
+		if (!is_null($attachments)) {
 			$mail->addStringAttachment($pdf, $pdf_name);
 		}
 
@@ -1168,14 +1170,14 @@ function send_welcome_email($user_email, $user_name, $key)
 				</tr>
 				<tr> <td height="20px;">&nbsp;</td> </tr>
 				<tr>
-					<td> <p style="font-size:15px;margin:10px;">Hi '.$user_name.'</p> </td>
+					<td> <p style="font-size:15px;margin:10px;">Hi ' . $user_name . '</p> </td>
 				</tr>
 
 				<tr>
 					<td> <p style="font-size:15px;margin:10px;">Welcome to the DGS System.</p> </td>
 				</tr>
 				<tr>
-					<td> <p style="font-size:15px;margin:10px;">Please <a href="'.$link.'">click here </a>to set your password and access your account.</p> </td>
+					<td> <p style="font-size:15px;margin:10px;">Please <a href="' . $link . '">click here </a>to set your password and access your account.</p> </td>
 				</tr>
 				<tr>
 					<td></td>
@@ -1197,7 +1199,8 @@ function send_welcome_email($user_email, $user_name, $key)
 	</table>';
 	sendEmailWithAttachment($user_email, $user_name, $subject, $body);
 }
-function forgot_password_otp($user_email,$user_name, $fkey){
+function forgot_password_otp($user_email, $user_name, $fkey)
+{
 	$from = ADMIN_EMAIL;
 	$subject = "DGS Password Recovery OTP";
 	$body = '<table width="100%" style="background-color:#dbdbdb;">
@@ -1216,11 +1219,11 @@ function forgot_password_otp($user_email,$user_name, $fkey){
 				</tr>
 				<tr> <td height="20px;">&nbsp;</td> </tr>
 				<tr>
-					<td> <p style="font-size:15px;margin:10px;">Hi '.$user_name.'</p> </td>
+					<td> <p style="font-size:15px;margin:10px;">Hi ' . $user_name . '</p> </td>
 				</tr>
 
 				<tr>
-					<td> <p style="font-size:15px;margin:10px;">Please use the following One Time Password (OTP) to reset your password: <strong>'.$fkey.'</strong>. Do not share this OTP with anyone.</p> </td>
+					<td> <p style="font-size:15px;margin:10px;">Please use the following One Time Password (OTP) to reset your password: <strong>' . $fkey . '</strong>. Do not share this OTP with anyone.</p> </td>
 				</tr>
 				<tr>
 					<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
@@ -1237,10 +1240,10 @@ function forgot_password_otp($user_email,$user_name, $fkey){
 		</tr>
 	</table>';
 	sendEmailWithAttachment($user_email, $user_name, $subject, $body);
-
 }
 
-function export_csv_file($data, $type, $survey_name, $start_date= null, $end_date=null){
+function export_csv_file($data, $type, $survey_name, $start_date = null, $end_date = null)
+{
 
 	if ($type == 'survey' or empty($type)) {
 		$file_name = 'Survey_Statistics-' . date('Y-m-d-H-i-s') . '.csv';
@@ -1254,39 +1257,35 @@ function export_csv_file($data, $type, $survey_name, $start_date= null, $end_dat
 	$excel_data = array();
 	$excel_heading = array();
 
-	if($start_date != null && $end_date != null){
+	if ($start_date != null && $end_date != null) {
 		$excel_heading[] = 'Date';
 	}
 
-	if($type == 'location'){
+	if ($type == 'location') {
 		$excel_heading[] = 'Location Name';
-	}
-	else if($type == 'group'){
-		$excel_heading[]= 'Group Name';
-	}
-	else if($type == 'department'){
-		$excel_heading[]= 'Department Name';
-	}
-	else if($type == 'role'){
-		$excel_heading[]= 'Role Name';
-	}
-	else {
+	} else if ($type == 'group') {
+		$excel_heading[] = 'Group Name';
+	} else if ($type == 'department') {
+		$excel_heading[] = 'Department Name';
+	} else if ($type == 'role') {
+		$excel_heading[] = 'Role Name';
+	} else {
 		$excel_heading[]	= 'Survey id';
 		$excel_heading[]	= 'Survey Name';
 	}
 	$excel_heading[]	= 'Survey Responses';
 	$excel_heading[]	= 'Contact Requests';
 	$excel_heading[] 	= 'Average Survey Score';
-	$i=0;
-	foreach($data as $key =>$datasurvey){
-		$total=  array_sum($datasurvey['data'])/count($datasurvey['data']);
-        $total =  round($total, 2);
-		
-		if($start_date != null && $end_date != null){
-			$excel_data[$i]['Date'] = date('d/m/Y', strtotime($start_date)) .'-'.date('d/m/Y', strtotime($end_date));
+	$i = 0;
+	foreach ($data as $key => $datasurvey) {
+		$total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
+		$total =  round($total, 2);
+
+		if ($start_date != null && $end_date != null) {
+			$excel_data[$i]['Date'] = date('d/m/Y', strtotime($start_date)) . '-' . date('d/m/Y', strtotime($end_date));
 		}
 
-		if($type == 'location'){
+		if ($type == 'location') {
 			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
 		} else if ($type == 'group') {
 			$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
@@ -1322,27 +1321,51 @@ function export_csv_file($data, $type, $survey_name, $start_date= null, $end_dat
 	fclose($output);
 }
 
-function download_csv_folder($data, $type, $dir)
+function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 {
 	$i = 0;
-	foreach ($data as $key => $datasurvey) {
-		$total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
-		$total =  round($total, 2);
-
-		if ($type == 'location') {
-			$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
-		} else if ($type == 'group') {
-			$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
-		} else if ($type == 'department') {
-			$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
-		} else {
-			$excel_data[$i]['Survey_id']	= $key;
-			$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
-		}
-		$excel_data[$i]['Survey_Responses'] 	= count($datasurvey);
-		$excel_data[$i]['Average_Survey_Score'] = $total . " %";
-		$i++;
+	$excel_data[$i]['Time Period'] = '';
+	if ($type == 'location') {
+		$excel_data[$i]['Location_Name'] = '';
+	} else if ($type == 'group') {
+		$excel_data[$i]['Group_Name'] = '';
+	} else if ($type == 'department') {
+		$excel_data[$i]['Department_Name'] = '';
+	} else {
+		$excel_data[$i]['Survey_Name']	= '';
 	}
+
+	$excel_data[$i]['Survey_Responses'] = '';
+	$excel_data[$i]['Average_Survey_Score'] = '';
+
+	foreach ($parentData as $mainKey => $data) {
+		foreach ($data as $key => $datasurvey) {
+
+			$total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
+			$total =  round($total, 2);
+
+			if ($time_interval == 24) {
+				$excel_data[$i]['Time Period'] = date('d/m/y', strtotime($mainKey));
+			} else {
+				$excel_data[$i]['Time Period'] = date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date']));
+			}
+
+			if ($type == 'location') {
+				$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
+			} else if ($type == 'group') {
+				$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
+			} else if ($type == 'department') {
+				$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
+			} else {
+				$excel_data[$i]['Survey_id']	= $key;
+				$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
+			}
+			$excel_data[$i]['Survey_Responses'] 	= count($datasurvey['data']);
+			$excel_data[$i]['Average_Survey_Score'] = $total . " %";
+			$i++;
+		}
+	}
+
 	$csv_header = str_replace('_', ' ', array_keys($excel_data[0]));
 	$csv_data = implode(',', $csv_header);
 
@@ -1357,7 +1380,7 @@ function download_csv_folder($data, $type, $dir)
 // different in two date 
 function check_differenceDate($date1, $date2, $type = "gt")
 {
-	
+
 	$curr_date = new DateTime($date1);
 	$next_date = new DateTime($date2);
 	// printr($curr_date,0);

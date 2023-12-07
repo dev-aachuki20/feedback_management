@@ -32,11 +32,14 @@ if ($_POST['data_type'] == 'location') {
     $groupBy = 'surveyid';
 }
 
-$fdate = $sdate = ''; 
+$start_date = $end_date = null; 
 
 if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
+    $start_date = $_POST['fdate'];
+    $end_date = $_POST['sdate'];
     $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['sdate']))) . "'";
 }
+
 
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
@@ -203,7 +206,7 @@ ksort($survey_data);
 
 $survey_name = getSurvey()[$_POST['survey']];
 if (isset($_GET['export']) and $_GET['export'] == 'csv') {
-    export_csv_file($survey_data, $_GET['data_type'], $survey_name);
+    export_csv_file($survey_data, $_GET['data_type'], $survey_name, $start_date, $end_date);
     die();
 }
 
