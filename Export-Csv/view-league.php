@@ -268,12 +268,27 @@ if(count($current_data)>0){
             $title = 'Role';
             $titleName = getRole()[$datasurvey['id']];
         }
-        $arrayData[] = array(
+        if(!empty($fdate) && !empty($sdate)){
+            $startDate = date('d/m/Y', strtotime($_GET['fdate']));
+            $endDate = date('d/m/Y', strtotime($_GET['sdate']));
+
+            $arrayData[] = array(
+                "DATE" => $startDate.' - '.$endDate,
                 "SURVEY" => $surveyName,
                 "LOCATION" => $titleName,
                 "NO OF SURVEY" => $datasurvey['count'],
                 "AVERAGE SCORE" => ($total>0) ? $total.'%' : '0'.'%',
-        );
+            );
+        }else{
+            $arrayData[] = array(
+                "SURVEY" => $surveyName,
+                "LOCATION" => $titleName,
+                "NO OF SURVEY" => $datasurvey['count'],
+                "AVERAGE SCORE" => ($total>0) ? $total.'%' : '0'.'%',
+            );
+        }
+       
+
     }
 }
 

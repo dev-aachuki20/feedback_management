@@ -21,9 +21,14 @@ if ($_POST['survey_type'] == 'location') {
     $query = " and roleid in (select id from roles where cstatus=1)";
     $groupBy = 'roleid';
 }
-
+    
+$startDate = '';
+$endDate = '';
 if (!empty($_POST['sdate']) and !empty($_POST['edate'])) {
     $query .= " and  cdate between '" . date('Y-m-d', strtotime($_POST['sdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['edate']))) . "'";
+
+    $startDate = date("d/m/Y", time());
+    $endDate = date("d/m/Y", time());
 }
 
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
@@ -159,11 +164,20 @@ $filename = 'view-analytics-' . date("Y-m-d-H:i:s", time()) . ".xls"; // File Na
 header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Content-Type: application/vnd.ms-excel");
 
-$i = 1;
+$i = 0;
 ksort($survey_data);
 $graph_data = array();
 $key_values = array_column($current_data, 'avg');
 array_multisort($key_values, SORT_DESC, $current_data);
+
+if(!empty($startDate) && !empty($endDate)){
+    $arrayData[$i]["DATE"] = '';
+}
+$arrayData[$i]["SURVEY"] = '';
+$arrayData[$i][strtoupper($_POST['survey_type'])] = '';
+$arrayData[$i]["NO OF SURVEY"] = '';
+$arrayData[$i]["AVERAGE SCORE"] = '';
+
 foreach ($survey_data as $key => $datasurvey) {
     $total =  array_sum($datasurvey) / count($datasurvey);
     $total =  round($total, 2);
@@ -178,12 +192,14 @@ foreach ($survey_data as $key => $datasurvey) {
         $titleName = getRole()[$key];
     }
     $graph_data[$titleName] = $total;
-    $arrayData[] = array(
-        "SURVEY" => $surveyName,
-        strtoupper($_POST['survey_type']) => $titleName,
-        "NO OF SURVEY" => count($datasurvey),
-        "AVERAGE SCORE" => ($total > 0) ? $total . '%' : '0' . '%',
-    );
+
+    if(!empty($startDate) && !empty($endDate)){
+        $arrayData[$i]["DATE"] = $startDate ."-".$endDate;
+    }
+    $arrayData[$i]["SURVEY"] = $surveyName;
+    $arrayData[$i][strtoupper($_POST['survey_type'])] = $titleName;
+    $arrayData[$i]["NO OF SURVEY"] = count($datasurvey);
+    $arrayData[$i]["AVERAGE SCORE"] = ($total > 0) ? $total . '%' : '0' . '%';
     $i++;
 }
 

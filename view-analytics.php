@@ -313,7 +313,7 @@
       let data_type = $('.graph-btn.active').data('type');
 
       $('#survey_id').val(survey);
-      $('#start_date').val(edate);
+      $('#start_date').val(sdate);
       $('#end_date').val(edate);
       $('#survey_data_type').val(data_type);
       $('#document_form').attr('action', './Export-Csv/view-analytics.php');
