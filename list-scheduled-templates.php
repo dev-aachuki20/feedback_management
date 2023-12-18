@@ -40,6 +40,11 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
               }
               $all_users = implode(', ',$send_to_user);
            }
+            if($scheduled_report_template['next_date'] <= $scheduled_report_template['end_date']){
+              $nextDate = $scheduled_report_template['next_date'];
+            }else{
+              $nextDate = $scheduled_report_template['end_date'];
+            }
         ?>
           <tr>
             <td><?= ++$i ?></td>
@@ -49,7 +54,7 @@ record_set('scheduled_report_templates', 'SELECT rt.name,rt.report_type, srt.* F
             <td><?=$all_users?></td>
             <td><?=ucfirst(service_type()[$scheduled_report_template['sch_interval']])?></td>
             <td><?=date('d-m-Y', strtotime($scheduled_report_template['start_date']))?></td>
-            <td><?=date('d-m-Y ', strtotime($scheduled_report_template['next_date']))?></td>
+            <td><?=date('d-m-Y', strtotime($nextDate))?></td>
             <td><?=date('d-m-Y ', strtotime($scheduled_report_template['end_date']))?></td>
             <td class="datatable_buttontd">
               <?php if($scheduled_report_template['report_type']==1){ ?> 

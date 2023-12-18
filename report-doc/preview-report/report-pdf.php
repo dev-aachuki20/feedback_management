@@ -364,8 +364,8 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                                                             </div>
                                                         </div>
                                                         <div class="bottom-content">
-                                                            <h4 style="font-size: 12px;text-transform: uppercase;">Total Surveys : 20</h4>
-                                                            <h4 style="margin-top:8px;margin-bottom: 0;font-size: 12px;text-transform: uppercase;">Contact Requests : 20</h4>
+                                                            <h4 style="font-size: 12px;text-transform: uppercase;">Total Surveys : ' . count($datasurvey['data']) . '</h4>
+                                                            <h4 style="margin-top:8px;margin-bottom: 0;font-size: 12px;text-transform: uppercase;">Contact Requests : ' . ($contacted) . '</h4>
                                                         </div>
                                                 </div>
                                             </div>

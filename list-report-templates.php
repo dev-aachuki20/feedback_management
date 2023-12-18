@@ -159,18 +159,13 @@ if (isset($_POST['schedule_btn'])) {
           </div>
 
           <div class="form-group row schedule-field">
-            <label for="interval" class="col-sm-4 col-form-label">Time Period</label>
-            <div class="col-sm-8">
-              <select class="form-control" id="time_period" name="time_period" required>
-                <?php foreach (service_type() as $key => $value) { ?>
-                  <option value="<?php echo $key; ?>"><?= $value ?></option>
-                <?php } ?>
-              </select>
+            <label for="time-period" class="col-sm-4 col-form-label">Time Period</label>
+            <div class="col-sm-8 time-intervals">
             </div>
           </div>
 
           <div class="form-group row schedule-field">
-            <label for="interval" class="col-sm-4 col-form-label">Send to User</label>
+            <label for="send to user" class="col-sm-4 col-form-label">Send to User</label>
             <div class="col-sm-8">
               <select class="form-control recipients-select2" id="send_to" name="send_to[]" placeholder="Select Any User" multiple required>
                 <?php foreach (getUsers() as $key => $value) { ?>
@@ -216,7 +211,6 @@ if (isset($_POST['schedule_btn'])) {
   });
 
   function scheduleTemplate(template_id, template_name, template_field, template_filter, report_type, modal_type) {
-    console.log("modal_type", modal_type);
     activeModalType = modal_type;
     if (modal_type === 'preview') {
       $('.schedule-field').hide();
@@ -241,7 +235,7 @@ if (isset($_POST['schedule_btn'])) {
       //$('.second_form').attr("target", "_blank");
 
     } else {
-      let minDate = '<?= date('Y-m-d') ?>';
+      let minDate = '<?= date('Y-m-d', strtotime('+1 day', strtotime(date('Y-m-d')))); ?>';
       $('#start_date').attr('min', minDate);
       $('.export-doc').hide();
       $('#schedule_btn').show();
@@ -420,9 +414,37 @@ if (isset($_POST['schedule_btn'])) {
           $('#end_date').val('');
         }
     }else{
+      
+      if(type == 'start'){
+          $('#end_date').val('');
+      }
       $('#end_date').attr('min', startDate);
+
     }
   }
+
+    //onchange survey
+  $("#interval").on('change', function() {
+    let frequency = $(this).val();
+    $('.time-intervals').html('');
+
+    if (parseInt(frequency) > 0) {
+      $.ajax({
+        url: "ajax/common_file.php",
+        type: 'POST',
+        data: {
+          frequency: frequency,
+          mode: 'fetch_time_periods',
+        },
+        success: function(response) {
+          console.log(response)
+          if(response !=''){
+            $('.time-intervals').html(response);
+          }
+        },
+      })
+    }
+  });
 
 
 </script>

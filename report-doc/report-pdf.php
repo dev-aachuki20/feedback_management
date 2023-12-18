@@ -358,8 +358,8 @@ $html = '<!DOCTYPE html>
                                                     </div>
                                                 </div>
                                                 <div class="bottom-content">
-                                                    <h4>Total Surveys : 20</h4>
-                                                    <h4 style="margin-top:5px">Contact Requests : 20</h4>
+                                                    <h4>Total Surveys : ' . count($datasurvey['data']) . '</h4>
+                                                    <h4 style="margin-top:5px">Contact Requests : ' . ($contacted) . '</h4>
                                                 </div>
                                         </div>
                                     </div>

@@ -82,17 +82,17 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'check_assign_task_for_user') {
   $response_id  = $_POST['response_ids'];
   $task_type    = $_POST['task_type'];
   //if ($user_type > 1) {
-    if($task_type == 'assign'){
-      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id  AND task_id IN ($response_id)");
-      if($totalRows_get_task > 0){
-        echo "This task is already assign to this user please choose another task.";
-      }
-    }else{
-      $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE reassign_status =1 and  task_id IN ($response_id)");
-      if($totalRows_get_task > 0){
-        echo "Sorry ! Re assign task can not assign to any users";
-      }
+  if ($task_type == 'assign') {
+    $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE `assign_to_user_id` = $user_id  AND task_id IN ($response_id)");
+    if ($totalRows_get_task > 0) {
+      echo "This task is already assign to this user please choose another task.";
     }
+  } else {
+    $user_task = record_set("get_task", "SELECT * FROM `assign_task` WHERE reassign_status =1 and  task_id IN ($response_id)");
+    if ($totalRows_get_task > 0) {
+      echo "Sorry ! Re assign task can not assign to any users";
+    }
+  }
   //}
 }
 
@@ -447,7 +447,7 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'add_edit_survey_form') {
 
   if (isset($_POST['excludedUserIds']) && is_array($_POST['excludedUserIds']) && count($_POST['excludedUserIds']) > 0) {
     $excludedUserIds = implode(",", $_POST['excludedUserIds']);
-    
+
     record_set("get_users", "select id,name from manage_users where id NOT IN ($excludedUserIds) and cstatus=1 order by name ASC");
     $options = '';
 
@@ -455,7 +455,7 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'add_edit_survey_form') {
       while ($row_get_user = mysqli_fetch_assoc($get_users)) {
         $options .= '<option value="' . $row_get_user['id'] . '" >' . $row_get_user['name'] . '</option>';
       }
-        $html = '<div class="row new-row">
+      $html = '<div class="row new-row">
           <div class="col-xs-8 col-sm-8 col-md-8">
             <div class="form-group">
               <select class="form-control mailing_users" name="mailing_user_id[]">
@@ -481,11 +481,62 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'add_edit_survey_form') {
             </div>
           </div>
         </div>';
-    }else{
+    } else {
       $html = '';
     }
 
     echo $html;
     die();
   }
+}
+
+
+if (isset($_POST['mode']) and $_POST['mode'] == 'fetch_time_periods' && isset($_POST['frequency']) && $_POST['frequency'] > 0) {
+
+  $time_intervals = array();
+  if ($_POST['frequency'] == 24) {
+    $time_intervals = array(
+      '24'   => 'Daily',
+    );
+  }
+
+  if ($_POST['frequency'] == 168) {
+    $time_intervals = array(
+      '24'   => 'Daily',
+      '168'  => 'Weekly',
+    );
+  }
+
+  if ($_POST['frequency'] == 336) {
+    $time_intervals = array(
+      '24'   => 'Daily',
+      '168'  => 'Weekly',
+    );
+  }
+
+  if ($_POST['frequency'] == 720) {
+    $time_intervals = array(
+      '24'   => 'Daily',
+      '168'  => 'Weekly',
+      '720'  => 'Monthly',
+    );
+  }
+
+  if ($_POST['frequency'] == 2160 || $_POST['frequency'] == 4320 || $_POST['frequency'] == 8640) {
+    $time_intervals = array(
+      '168'  => 'Weekly',
+      '720'  => 'Monthly',
+    );
+  }
+
+  $html = '<select class="form-control" id="time_period" name="time_period" required>';
+  if (count($time_intervals) > 0) {
+    foreach ($time_intervals as $key => $val) {
+      $html .= '<option value="' . $key . '" >' . $val . '</option>';
+    }
+  }
+  $html .= '</select>';
+
+  echo $html;
+  die();
 }
