@@ -79,10 +79,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             echo 'EEE <br>';
             $survey_min_date = date('Y-m-d', strtotime('-7 day', strtotime($current_date)));
             $survey_max_date = date('Y-m-d', strtotime('+7 day', strtotime($survey_min_date)));
-        } else if ($frequency_interval == 336 &&  $time_interval == 336) {
-            echo 'FFF <br>';
-            $survey_min_date = date('Y-m-d', strtotime('-14 day', strtotime($current_date)));
-            $survey_max_date = date('Y-m-d', strtotime('+14 day', strtotime($survey_min_date)));
         }
         // echo "survey_min_date: $survey_min_date" . '<br>';
         // echo "survey_max_date in days: $survey_max_date" . '<br>';
@@ -95,8 +91,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                 $survey_temp_max_date =  date('Y-m-d', strtotime('+1 day', strtotime($survey_min_date)));
             } else if ($time_interval == 168) {
                 $survey_temp_max_date =  date('Y-m-d', strtotime('+7 day', strtotime($survey_min_date)));
-            } else if ($time_interval == 336) {
-                $survey_temp_max_date =  date('Y-m-d', strtotime('+14 day', strtotime($survey_min_date)));
             }
 
             // echo "survey_temp_max_date: $survey_temp_max_date" . '<br>';
@@ -109,10 +103,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                 $survey_min_date =  date('Y-m-d', strtotime('+1 day', strtotime($survey_min_date)));
             } else if ($time_interval == 168) {
                 $survey_min_date =  date('Y-m-d', strtotime('+7 day', strtotime($survey_min_date)));
-            } else if ($time_interval == 168) {
-                $survey_min_date =  date('Y-m-d', strtotime('+14 day', strtotime($survey_min_date)));
-            }
-
+            } 
             // echo "survey_min_date: $survey_min_date" . '<br>';
 
             if ($totalRows_get_entry) {
