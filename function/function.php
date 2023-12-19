@@ -1027,7 +1027,7 @@ function upload_excel()
 		foreach ($myArray as $arr) {
 			$rnd = rand(1000, 99999);
 			$e++;
-			if ($e < 3) {
+			if ($e < 4) {
 				continue;
 			}
 			if ($arr['A'] == '' or $arr['B'] == '' or $arr['C'] == '') {
