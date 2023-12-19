@@ -233,7 +233,7 @@ if(isset($_POST['contact_action']) && $_POST['contact_action'] != ""){
     foreach($user_data as $key => $value){
       //for super admin and admin
       if($value['user_type']==2 OR $value['user_type']==3){
-        $uemail = 'amitpandey.his@gmail.com';
+        $uemail = $value['email'];
         $uname  = $value['name'];
         survey_result_submitted_pdf_mail($uemail,$uname);
       }

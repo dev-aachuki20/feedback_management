@@ -45,3 +45,19 @@ Stack trace:
 #1 /home/dgfm/demo.dgfm.app/index.php(180): include('/home/dgfm/demo...')
 #2 {main}
   thrown in /home/dgfm/demo.dgfm.app/function/function.php on line 276
+[08-Dec-2023 11:24:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function cron_emails() in /home/dgfm/demo.dgfm.app/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/dgfm/demo.dgfm.app/index.php on line 2
+[08-Dec-2023 11:24:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function cron_emails() in /home/dgfm/demo.dgfm.app/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/dgfm/demo.dgfm.app/index.php on line 2
+[08-Dec-2023 11:25:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function cron_emails() in /home/dgfm/demo.dgfm.app/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/dgfm/demo.dgfm.app/index.php on line 2
+[08-Dec-2023 11:25:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function cron_emails() in /home/dgfm/demo.dgfm.app/index.php:2
+Stack trace:
+#0 {main}
+  thrown in /home/dgfm/demo.dgfm.app/index.php on line 2
