@@ -617,6 +617,11 @@ label.form-check-label.active {
     margin-bottom: 10px;
 }
 
+.form-group.gap-rm {
+    margin-bottom: 5px;
+}
+
+
 @media screen and (max-width: 520px) {
     .new-content-main{
         overflow-x: auto;

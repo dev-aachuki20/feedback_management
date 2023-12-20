@@ -829,8 +829,8 @@ function survey_result_submitted_pdf_mail($email_to, $user_name)
 			</table></td>
 		</tr>
 		</table>';
-// 	$mpdf->WriteHTML($html);
-// 	$pdf = $mpdf->Output('', 'S');
+	// 	$mpdf->WriteHTML($html);
+	// 	$pdf = $mpdf->Output('', 'S');
 	sendEmailPdf($email_to, $user_name, $subject, $html);
 }
 
@@ -1288,6 +1288,7 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 	$i = 0;
 	$excel_data[$i]['Date'] = '';
 	$excel_data[$i]['Survey Id']	= '';
+	$excel_data[$i]['Survey_Name']	= '';
 
 	if ($type == 'location') {
 		$excel_data[$i]['Location_Name'] = '';
@@ -1295,12 +1296,11 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 		$excel_data[$i]['Group_Name'] = '';
 	} else if ($type == 'department') {
 		$excel_data[$i]['Department_Name'] = '';
-	} else {
-		$excel_data[$i]['Survey_Name']	= '';
 	}
-	$excel_data[$i]['Survey_Responses'] = '';
-	$excel_data[$i]['Contact Requests'] = '';
-	$excel_data[$i]['Average_Survey_Score'] = '';
+
+	$excel_data[$i]['Survey_Responses'] = 0;
+	$excel_data[$i]['Contact Requests'] = 0;
+	$excel_data[$i]['Average_Survey_Score'] = '0 %';
 
 	foreach ($parentData as $mainKey => $data) {
 		foreach ($data as $key => $datasurvey) {
@@ -1313,7 +1313,13 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 				$excel_data[$i]['Date'] = date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date']));
 			}
 
-			$excel_data[$i]['Survey Id'] = $key;
+			if (isset($datasurvey['survey_id']) && $datasurvey['survey_id'] > 0) {
+				$excel_data[$i]['Survey Id'] = $datasurvey['survey_id'];
+				$excel_data[$i]['Survey_Name']	= getSurvey()[$datasurvey['survey_id']];
+			} else {
+				$excel_data[$i]['Survey Id'] = $key;
+				$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
+			}
 
 			if ($type == 'location') {
 				$excel_data[$i]['Location_Name'] = getLocation('all')[$key];
@@ -1321,21 +1327,14 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 				$excel_data[$i]['Group_Name'] = getGroup('all')[$key];
 			} else if ($type == 'department') {
 				$excel_data[$i]['Department_Name'] = getDepartment('all')[$key];
-			} else {
-				// $excel_data[$i]['Survey_id']	= $key;
-				$excel_data[$i]['Survey_Name']	= getSurvey()[$key];
 			}
-			$excel_data[$i]['Survey_Responses'] 	= count($datasurvey['data']);
-			$excel_data[$i]['Contact Requests'] = $datasurvey['contact'];
 
+			$excel_data[$i]['Survey_Responses'] 	= count($datasurvey['data']) ?? 0;
+			$excel_data[$i]['Contact Requests'] = $datasurvey['contact'] ?? 0;
 			$excel_data[$i]['Average_Survey_Score'] = $total . " %";
 			$i++;
 		}
 	}
-
-	// echo "<pre>";
-	// print_r($excel_data);
-	// echo "</pre>";
 
 	$csv_header = str_replace('_', ' ', array_keys($excel_data[0]));
 	$csv_data = implode(',', $csv_header);

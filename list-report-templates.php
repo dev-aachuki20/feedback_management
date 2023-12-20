@@ -17,22 +17,29 @@ if (isset($_POST['schedule_btn'])) {
   $start = $_POST['start_date'];
   $end = $_POST['end_date'];
   $interval = $_POST['interval'];
-  $next_date =  date('Y-m-d H:i:s', strtotime('+' . $_POST['interval'] . 'hour', strtotime($start)));
+  $time_period = $_POST['time_period'];
+  $next_date =  date('Y-m-d H:i:s', strtotime('+' . $interval . 'hour', strtotime($start)));
   $filter  = array("field" => $template_field_name, "survey_id" => $_POST['survey'], "field_value" => $_POST['template_field']);
   $mail_recipients = $_POST['send_to'];
+
 
   $dataCol =  array(
     "report_name"     => $report_name,
     "send_to"         => $send_to,
     "temp_id"         => $template_id,
     "sch_interval"    => $interval,
-    "time_interval"   => $_POST['time_period'],
+    "time_interval"   => $time_period,
     'start_date'      => $start,
     'end_date'        => $end,
     'next_date'       => $next_date,
     'filter'          => json_encode($filter),
     'cby'             => $_SESSION['user_id'],
   );
+
+  // echo '<pre>';
+  // print_r($dataCol);
+  // echo '</pre>';
+  // die('gf');
 
   $insert_value =  dbRowInsert("scheduled_report_templates", $dataCol);
   if ($insert_value) {
@@ -151,7 +158,8 @@ if (isset($_POST['schedule_btn'])) {
             <label for="interval" class="col-sm-4 col-form-label">Report Frequency</label>
             <div class="col-sm-8">
               <select class="form-control" id="interval" name="interval" required>
-                <?php foreach (service_type() as $key => $value) { ?>
+                <?php foreach (service_type() as $key => $value) { if($key == 336) continue; ?>
+                  
                   <option value="<?php echo $key; ?>"><?= $value ?></option>
                 <?php } ?>
               </select>

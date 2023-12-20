@@ -565,12 +565,12 @@ $allUsers = getUsers();
                                     <div class="contact-request-div">
                                         <div class="row">
                                             <div class="col-xs-8 col-sm-8 col-md-8">
-                                                <div class="form-group">
-                                                    <label>Alert Email (comma separation for multiple email addresses)</label>
+                                                <div class="form-group gap-rm">
+                                                    <label>Alert Email</label>
                                                 </div>
                                             </div>
                                             <div class="col-xs-4 col-sm-4 col-md-4">
-                                                <div class="form-group">
+                                                <div class="form-group gap-rm">
                                                     <label>Contact Requested ?</label>
                                                 </div>
                                             </div>
@@ -904,8 +904,14 @@ $("#threshold-notification").change(function(){
 })
 
 $(document).on('change','.contacted-checkbox', function(){
-    $(this).parents().closest('.new-row').find('.contacted-checkbox').prop('checked',false);
-    $(this).prop('checked', true);
+    isChecked = $(this).is(':checked');
+     if(isChecked){
+        $(this).parents().closest('.new-row').find('.contacted-checkbox').prop('checked',false);
+        $(this).prop('checked', true);
+    }else{
+        $(this).parents().closest('.new-row').find('.contacted-checkbox').prop('checked',false);
+        $(this).prop('checked', false);
+    }
 });
 
 $('#select_percentage').keyup(function(){

@@ -507,13 +507,6 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'fetch_time_periods' && isset($_
     );
   }
 
-  if ($_POST['frequency'] == 336) {
-    $time_intervals = array(
-      '24'   => 'Daily',
-      '168'  => 'Weekly',
-    );
-  }
-
   if ($_POST['frequency'] == 720) {
     $time_intervals = array(
       '24'   => 'Daily',
@@ -522,12 +515,20 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'fetch_time_periods' && isset($_
     );
   }
 
-  if ($_POST['frequency'] == 2160 || $_POST['frequency'] == 4320 || $_POST['frequency'] == 8640) {
+  if ($_POST['frequency'] == 2160 || $_POST['frequency'] == 4320) {
     $time_intervals = array(
       '168'  => 'Weekly',
       '720'  => 'Monthly',
     );
   }
+
+  if ($_POST['frequency'] == 8640) {
+    $time_intervals = array(
+      '720'  => 'Monthly',
+      '4320' => 'Quarterly',
+    );
+  }
+
 
   $html = '<select class="form-control" id="time_period" name="time_period" required>';
   if (count($time_intervals) > 0) {
