@@ -1313,9 +1313,9 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 				$excel_data[$i]['Date'] = date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date']));
 			}
 
-			if (isset($datasurvey['survey_id']) && $datasurvey['survey_id'] > 0) {
-				$excel_data[$i]['Survey Id'] = $datasurvey['survey_id'];
-				$excel_data[$i]['Survey_Name']	= getSurvey()[$datasurvey['survey_id']];
+			if (isset($datasurvey['data']['survey_id']) && $datasurvey['data']['survey_id'] > 0) {
+				$excel_data[$i]['Survey Id'] = $datasurvey['data']['survey_id'];
+				$excel_data[$i]['Survey_Name']	= getSurvey()[$datasurvey['data']['survey_id']];
 			} else {
 				$excel_data[$i]['Survey Id'] = $key;
 				$excel_data[$i]['Survey_Name']	= getSurvey()[$key];

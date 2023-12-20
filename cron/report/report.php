@@ -327,7 +327,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // echo '<pre>';
         // print_r($survey_data);
         // echo '</pre>';  
-        // die('YY');
+        // die('gy');
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -480,7 +480,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         if (count($survey_data) > 0) {
             foreach ($survey_data as $mainKey => $datasurveys) {
                 foreach ($datasurveys as $key => $datasurvey) {
-                    $dataSurveyCount = count($datasurveys) + $dataSurveyCount;
+                    $dataSurveyCount = count($datasurvey) + $dataSurveyCount;
                     $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
                     $total =  round($total, 2);
 
