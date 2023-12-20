@@ -327,7 +327,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // echo '<pre>';
         // print_r($survey_data);
         // echo '</pre>';  
-        // die('gy');
+
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -339,6 +339,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
         download_csv_folder($survey_data, $data_type, $dir, $time_interval);
 
+        $surveyArrayCount = array_sum(array_map('count', $survey_data));
         $html = '';
         $counter = 1;
         $j = 6;
@@ -480,7 +481,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         if (count($survey_data) > 0) {
             foreach ($survey_data as $mainKey => $datasurveys) {
                 foreach ($datasurveys as $key => $datasurvey) {
-                    $dataSurveyCount = count($datasurvey) + $dataSurveyCount;
+                    $dataSurveyCount++;
                     $total =  array_sum($datasurvey['data']) / count($datasurvey['data']);
                     $total =  round($total, 2);
 
@@ -565,12 +566,12 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                         </div>';
                     }
 
-                    if ($counter == 6 && $dataSurveyCount > 6) {
+                    if ($counter == 6 && $surveyArrayCount > 6 ) {
                         $j = $j + 9;
                         $html .= '<pagebreak/>';
                     }
 
-                    if ($j > 14 && $counter == $j && $counter < $dataSurveyCount) {
+                    if ($j > 14 && $counter == $j && $counter < $surveyArrayCount) {
                         $j = $j + 9;
                         $html .= '<pagebreak>';
                     }
