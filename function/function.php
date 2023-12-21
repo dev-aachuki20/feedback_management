@@ -1298,9 +1298,9 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 		$excel_data[$i]['Department_Name'] = '';
 	}
 
-	$excel_data[$i]['Survey_Responses'] = 0;
-	$excel_data[$i]['Contact Requests'] = 0;
-	$excel_data[$i]['Average_Survey_Score'] = '0 %';
+	$excel_data[$i]['Survey_Responses'] = '';
+	$excel_data[$i]['Contact Requests'] = '';
+	$excel_data[$i]['Average_Survey_Score'] = '';
 
 	foreach ($parentData as $mainKey => $data) {
 		foreach ($data as $key => $datasurvey) {

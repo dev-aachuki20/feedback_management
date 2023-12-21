@@ -8,6 +8,7 @@ record_set("get_scheduled_report", "select srt.* from scheduled_report_templates
 
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
     $mpdf = new \Mpdf\Mpdf();
+    $ready_to_run = $not_first_time = false;
 
     // echo '<pre>';
     // print_r($row_get_report);
@@ -15,18 +16,42 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
     $frequency_interval  = $row_get_report['sch_interval'];
     $time_interval = $row_get_report['time_interval'];
+
     $current_date  = date('Y-m-d', time());
-    $next_schedule = date('Y-m-d', strtotime($row_get_report['next_date']));
-    $end_date      = date('Y-m-d', strtotime($row_get_report['end_date']));
-    $result_1 = check_differenceDate($current_date, $end_date, 'lte');
-    $result_2 = check_differenceDate($current_date, $next_schedule, 'lte');
-    // $result_3 = check_differenceDate($next_schedule, $end_date, 'lte');
+    $schedule_start_date = date('Y-m-d', strtotime($row_get_report['start_date']));
+    $schedule_next_date = date('Y-m-d', strtotime($row_get_report['next_date']));
+    $end_date = date('Y-m-d', strtotime($row_get_report['end_date']));
 
-    // echo "result_1: $result_1" . '<br>';
-    // echo "result_2: $result_2" . '<br>';
-    // echo "result_3: $result_3" . '<br>';
+    // echo "current_date: $current_date <br>";
+    // echo "schedule_start_date: $schedule_start_date <br>";
+    // echo "schedule_next_date: $schedule_next_date <br>";
+    // echo "end_date: $end_date <br>";
 
-    if ($result_1 && $result_2 && $row_get_report['send_to'] != null) {
+    $curr_eq_st_date = check_differenceDate($current_date, $schedule_start_date, 'eq');
+    $curr_eq_nxt_date = check_differenceDate($current_date, $schedule_next_date, 'eq');
+
+    $curr_lte_nxt_date = check_differenceDate($current_date, $schedule_next_date, 'lte');
+    $curr_lte_end_date = check_differenceDate($current_date, $end_date, 'lte');
+
+    // echo "curr_eq_st_date: $curr_eq_st_date <br>";
+    // echo "curr_eq_nxt_date: $curr_eq_nxt_date <br>";
+    // echo "curr_lte_nxt_date: $curr_lte_nxt_date <br>";
+    // echo "curr_lte_end_date: $curr_lte_end_date <br>";
+
+    
+    if ($curr_eq_st_date  && $curr_lte_nxt_date && $curr_lte_end_date) {
+        $ready_to_run = true;
+    }
+   
+    if ($curr_eq_nxt_date && $curr_lte_end_date) {
+        $ready_to_run = $not_first_time = true;
+    }
+
+    // echo "ready_to_run: $ready_to_run <br>";
+    // echo "not_first_time: $not_first_time <br>";
+
+    if ($ready_to_run && $row_get_report['send_to'] != null) {
+      
         $filter = json_decode($row_get_report['filter'], 1);
         $data_type = $filter['field'];
         $survey_id   = $filter['survey_id'];
@@ -328,7 +353,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // print_r($survey_data);
         // echo '</pre>';  
 
-
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
         }
@@ -566,7 +590,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                                         </div>';
                     }
 
-                    if ($counter == 6 && $surveyArrayCount > 6 ) {
+                    if ($counter == 6 && $surveyArrayCount > 6) {
                         $j = $j + 9;
                         $html .= '<pagebreak/>';
                     }
@@ -578,6 +602,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     $counter++;
                 }
             }
+        }else{
+            $html .='<div class="col-md-12"><h3 style="text-align:center;">No records were found.</h3></div>'; 
         }
 
         $html .= '</div>
@@ -609,13 +635,15 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             $mail = cron_emails($attachments, $to, $from_mail, $name, $subject, $message);
         }
 
-        // update next schedule date with interval
-        $nextScheduledDate = $row_get_report['next_date'];
-        $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
-        $data = array(
-            "next_date" => $updateSchedule,
-        );
-        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
+        if ($not_first_time) {
+            // update next schedule date with interval
+            $nextScheduledDate = $row_get_report['next_date'];
+            $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
+            $data = array(
+                "next_date" => $updateSchedule,
+            );
+            $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
+        }
 
         if (count($attachments) > 0) {
             foreach ($attachments as $key => $value) {
@@ -623,7 +651,9 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                 unlink($value);
             }
         }
+
+        echo "ready_to_run: ".$ready_to_run." & not_first_time: ".$not_first_time." for the scheduled_report_template_id: ".$row_get_report['id']." <br>";
     } else {
-        echo "Report schedule time is over." . "<br>";
+        echo "ready_to_run: $ready_to_run <br>";
     }
 }
