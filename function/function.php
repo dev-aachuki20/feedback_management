@@ -1308,9 +1308,9 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 			$total =  round($total, 2);
 
 			if ($time_interval == 24) {
-				$excel_data[$i]['Date'] = date('d/m/y', strtotime($mainKey));
+				$excel_data[$i]['Date'] = date('d/m/Y', strtotime($mainKey));
 			} else {
-				$excel_data[$i]['Date'] = date('d/m/y', strtotime($mainKey)) . ' - ' . date('d/m/y', strtotime($datasurvey['end_date']));
+				$excel_data[$i]['Date'] = date('d/m/Y', strtotime($mainKey)) . ' - ' . date('d/m/Y', strtotime($datasurvey['end_date']));
 			}
 
 			if (isset($datasurvey['data']['survey_id']) && $datasurvey['data']['survey_id'] > 0) {
@@ -1335,7 +1335,7 @@ function download_csv_folder($parentData, $type, $dir, $time_interval = null)
 			$i++;
 		}
 	}
-
+	
 	$csv_header = str_replace('_', ' ', array_keys($excel_data[0]));
 	$csv_data = implode(',', $csv_header);
 
