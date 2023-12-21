@@ -4,12 +4,23 @@ $filtr = '';
 $assignFilter ='';
 $assignFilterByUser ='';
 $surveyId = $_POST['surveys'];
+
+$surveyByUsers     = get_survey_data_by_user($_GET['type'],1);
+
+$assign_survey = array();
+foreach($surveyByUsers as $survey){
+    $assign_survey[] = $survey['id'];
+}
+$surveys_ids_new = implode(',',$assign_survey);
+
+
 if($_SESSION['user_type']>2){
     if(!empty($_POST['surveys'])){
         $filtr = " and surveyid IN ($surveyId)";
     }else{
-        if($surveys_ids){
-            $filtr = " and surveyid IN ($surveys_ids)";
+      
+        if($surveys_ids_new){
+            $filtr = " and surveyid IN ($surveys_ids_new)";
         }else {
             $filtr = " and surveyid IN (0)";
         }
@@ -19,8 +30,8 @@ if($_SESSION['user_type']>2){
     if(!empty($_POST['surveys'])){
         $filtr = " and surveyid IN ($surveyId)";
     }else{
-        if($surveys_ids){
-            $filtr = " and surveyid IN ($surveys_ids)";
+        if($surveys_ids_new){
+            $filtr = " and surveyid IN ($surveys_ids_new)";
         }
     }
 }
