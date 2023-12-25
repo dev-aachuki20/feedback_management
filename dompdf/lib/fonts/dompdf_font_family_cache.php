@@ -101,4 +101,7 @@
     'italic' => $fontDir . '\71d4fad1ca0f22d70d8be7cc40bb76ab',
     'normal' => $fontDir . '\1c4e32da7e6c8539dd3a51af38f413be',
   ),
+  'urdu' => array(
+    'normal' => $fontDir . '\eefda64960c6afb8fa459d24caeebdb1',
+  ),
 ) ?>
