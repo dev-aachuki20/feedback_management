@@ -1,25 +1,8 @@
 <?php
-
-// $style = [
-//     'font' => [
-//         'bold' => true,
-//         'size' => 12,
-//     ],
-//     'alignment' => [
-//         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-//     ],
-// ];
-// $alignCenter = [
-//     'alignment' => [
-//         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-//     ],
-// ];
-
-// echo '<pre>';
-// print_r($style);
-// print_r($alignCenter);
-// die();
-require 'vendor/autoload.php'; // Assuming you have PhpSpreadsheet installed via Composer
+/**
+ * This is according to the time period if it is different to the frequency.
+ */
+require '../vendor/autoload.php'; 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -129,4 +112,4 @@ $activeSheet->getStyle('G7')->applyFromArray($style);
 // Save the Excel file
 
 $writer = new Xlsx($spreadsheet);
-$writer->save('survey-question-excel/Survey-Excel.xlsx');
+$writer->save('excel/TFD.xlsx');
