@@ -4,17 +4,20 @@ include('../../function/get_data_function.php');
 
 $filter = $_POST;
 
+echo '<pre>';
+print_r($filter);
+echo '</pre>';
+
 $data_type = $filter['sch_template_field_name'];
 $surveyId   = $filter['survey'];
 $field_value = '';
-$selected_template_field = array();
+$selected_template_fields = array();
 
 if (isset($filter['template_field'])) {
-  if (is_array($filter['template_field']) && count($filter['template_field']) == 1) {
-    $field_value = $filter['template_field'][0];
+  if (is_array($filter['template_field']) && count($filter['template_field']) > 1) {
+    $field_value = implode(',', $filter['template_field']);
   } else {
-    // $field_value = implode(',', $filter['template_field']);
-    echo 'CASE- Multiple Group/Location/Department is selected';
+    echo 'CASE- Single Group/Location/Department is selected';
     exit;
   }
 }
@@ -35,23 +38,29 @@ if (isset($surveyId)) {
 $ans_filter_query = '';
 if ($data_type == 'location' && $field_value != '') {
   $ans_filter_query .= " and locationid IN($field_value)";
-  record_set("get_location", "select name from locations where id = '" . $field_value . "'");
-  $selected_template_field = mysqli_fetch_assoc($get_location);
+  record_set("get_location", "select name from locations where id IN ($field_value)");
+  $selected_template_fields = mysqli_fetch_assoc($get_location);
 }
 if ($data_type == 'department' && $field_value != '') {
   $ans_filter_query .= " and departmentid IN($field_value)";
-  record_set("get_department", "select name from departments where id = '" . $field_value . "'");
-  $selected_template_field = mysqli_fetch_assoc($get_department);
+  record_set("get_department", "select name from departments where id IN ($field_value)");
+  $selected_template_fields = mysqli_fetch_assoc($get_department);
 }
 if ($data_type == 'group' && $field_value != '') {
   $ans_filter_query .= " and groupid IN($field_value)";
-  record_set("get_group", "select name from groups where id = '" . $field_value . "'");
-  $selected_template_field = mysqli_fetch_assoc($get_group);
+  record_set("get_group", "select name from groups where id IN ($field_value)");
+  $selected_template_fields = mysqli_fetch_assoc($get_group);
 }
 
 if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
   $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($filter['start_date'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filter['end_date']))) . "'";
 }
+
+echo '<pre>';
+print_r($ans_filter_query);
+echo '</pre>';
+
+
 
 // Get survey questions. 
 record_set("get_questions", "select * from questions where surveyid='" . $surveyId . "' and cstatus='1' and parendit='0' order by dposition asc");
@@ -63,8 +72,11 @@ while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
   $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['ifrequired'] = $row_get_question['ifrequired'];
   $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['answer_type'] = $row_get_question['answer_type'];
 
-  // Get answer values attempted.
-  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_question['id']);
+  foreach ($selected_template_fields as $fieldKey => $field_val) {
+      echo $filed_val.'';
+  }
+    // Get answer values attempted.
+  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_question['id'], 1);
   $answer_type = $row_get_question['answer_type'];
 
   if (!empty($totalRows_get_questions_answers)) {
@@ -109,10 +121,12 @@ while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
     }
   }
 }
+
 echo '<pre>';
 print_r($surveyQuestions);
-die();
 echo '</pre>';
+die('ASDFGH');
+
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -122,9 +136,9 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                         <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . $row_get_survey['name'] . ' </h2></td>
                       </tr>';
 
-  if (isset($selected_template_field) && is_array($selected_template_field)  && count($selected_template_field) > 0) {
+  if (isset($selected_template_fields) && is_array($selected_template_fields)  && count($selected_template_fields) > 0) {
     $message .= ' <tr>
-                        <td colspan="4" style="text-align:center; margin-top:5px;margin-bottom:5px;"><h2 align="center" style="margin:10px;">' . $selected_template_field['name'] . ' </h2></td>
+                        <td colspan="4" style="text-align:center; margin-top:5px;margin-bottom:5px;"><h2 align="center" style="margin:10px;">' . $selected_template_fields['name'] . ' </h2></td>
                       </tr>';
   }
 
