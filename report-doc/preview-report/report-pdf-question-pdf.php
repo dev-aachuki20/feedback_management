@@ -7,20 +7,17 @@ $filter = $_POST;
 $data_type = $filter['sch_template_field_name'];
 $surveyId   = $filter['survey'];
 $field_value = '';
+$selected_template_field = array();
 
-// echo "datetype is " . $data_type . " <br>";
-
-if (isset($filter['template_field']) && is_array($filter['template_field']) && count($filter['template_field']) == 1) {
-  $field_value = $filter['template_field'][0];
+if (isset($filter['template_field'])) {
+  if (is_array($filter['template_field']) && count($filter['template_field']) == 1) {
+    $field_value = $filter['template_field'][0];
+  } else {
+    // $field_value = implode(',', $filter['template_field']);
+    echo 'CASE- Multiple Group/Location/Department is selected';
+    exit;
+  }
 }
-// else {
-// $field_value = implode(',', $filter['template_field']);
-// die('CASE- Multiple Group/Location/Department is selected');
-// }
-
-// echo '<pre>';
-// print_r($filter);
-// echo '</pre>';
 
 if (isset($surveyId)) {
   record_set("get_survey", "select * from surveys where id IN ($surveyId) and cstatus=1");
@@ -35,31 +32,28 @@ if (isset($surveyId)) {
   exit;
 }
 
-// echo '<pre>';
-// print_r($row_get_survey);
-// echo '</pre>';
-
 $ans_filter_query = '';
 if ($data_type == 'location' && $field_value != '') {
   $ans_filter_query .= " and locationid IN($field_value)";
+  record_set("get_location", "select name from locations where id = '" . $field_value . "'");
+  $selected_template_field = mysqli_fetch_assoc($get_location);
 }
 if ($data_type == 'department' && $field_value != '') {
   $ans_filter_query .= " and departmentid IN($field_value)";
+  record_set("get_department", "select name from departments where id = '" . $field_value . "'");
+  $selected_template_field = mysqli_fetch_assoc($get_department);
 }
 if ($data_type == 'group' && $field_value != '') {
   $ans_filter_query .= " and groupid IN($field_value)";
+  record_set("get_group", "select name from groups where id = '" . $field_value . "'");
+  $selected_template_field = mysqli_fetch_assoc($get_group);
 }
 
 if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
   $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($filter['start_date'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filter['end_date']))) . "'";
 }
 
-// echo '<pre>';
-// print_r($ans_filter_query);
-// echo '</pre>';
-
-
-//Survey Questions
+// Get survey questions. 
 record_set("get_questions", "select * from questions where surveyid='" . $surveyId . "' and cstatus='1' and parendit='0' order by dposition asc");
 $surveyQuestions = array();
 
@@ -116,13 +110,6 @@ while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
   }
 }
 
-// echo '<pre>';
-// print_r($surveyQuestions);
-// echo '</pre>';
-
-// die('surveyQuestions');
-
-
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -131,6 +118,12 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                       <tr>
                         <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . $row_get_survey['name'] . ' </h2></td>
                       </tr>';
+
+  if (isset($selected_template_field) && is_array($selected_template_field)  && count($selected_template_field) > 0) {
+    $message .= ' <tr>
+                        <td colspan="4" style="text-align:center; margin-top:5px;margin-bottom:5px;"><h2 align="center" style="margin:10px;">' . $selected_template_field['name'] . ' </h2></td>
+                      </tr>';
+  }
 
   if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
     $message .= '<tr>
@@ -241,9 +234,9 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                 $k = 0;
                 foreach ($child_question['survey_responses'] as $child_key => $response) {
                   $sum_of_responses = $mergedSurveyResponses[$child_key];
-                  if($sum_of_responses > 0){
+                  if ($sum_of_responses > 0) {
                     $per_res_score = 100 / $sum_of_responses;
-                  }else{
+                  } else {
                     $per_res_score = 0;
                   }
                   $score = round($per_res_score * $response, 2);
@@ -294,7 +287,5 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
     $message .=  '<table width="100%"><tr><td align="center">No Answers Available.</td></tr></table>';
   }
 
-  echo $message;
-  die();
   create_mpdf($message, 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.pdf', 'D');
 }
