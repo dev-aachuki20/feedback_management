@@ -169,17 +169,17 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                         </tr>';
 
             $total = 0;
-            $sum_of_count = array_sum($question['survey_responses']);
-            if ($sum_of_count > 0) {
-              $perResponsePercentage = 100 / $sum_of_count;
-            }
 
-            if (count($question['survey_responses']) > 0) {
+            if (isset($question['survey_responses']) && is_array($question['survey_responses']) && count($question['survey_responses']) > 0) {
+              $sum_of_count = array_sum($question['survey_responses']);
+              if ($sum_of_count > 0) {
+                $perResponsePercentage = 100 / $sum_of_count;
+              }
               foreach ($question['survey_responses'] as $key => $val) {
                 $scoreValue = round($perResponsePercentage * $val, 2);
                 $questionDescriptionData = record_set_single("get_question_description_data", "SELECT description FROM questions_detail where id =" . $key);
                 $questionDescription = '';
-                if (isset($questionDescriptionData) && is_array($questionDescriptionData) && count($questionDescriptionData) > 0) {
+                if (isset($questionDescriptionData) && is_array($questionDescriptionData) && count($questionDescriptionData) > 0 && isset($questionDescriptionData['description']) && $questionDescriptionData['description'] != null) {
                   $questionDescription = $questionDescriptionData['description'];
                 }
                 $message .= '<tr>
@@ -236,13 +236,16 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
                 }
               }
 
-
               foreach ($question['children'] as $key => $child_question) {
                 $message .= '<td style="background-color:#f0f0f0;">' . $child_question['question'] . '</td>';
                 $k = 0;
                 foreach ($child_question['survey_responses'] as $child_key => $response) {
                   $sum_of_responses = $mergedSurveyResponses[$child_key];
-                  $per_res_score = 100 / $sum_of_responses;
+                  if($sum_of_responses > 0){
+                    $per_res_score = 100 / $sum_of_responses;
+                  }else{
+                    $per_res_score = 0;
+                  }
                   $score = round($per_res_score * $response, 2);
                   $message .= '<td style="background-color:#f0f0f0;">' . $score . '%</td>';
                   $message .= '<td style="background-color:#f0f0f0;">' . $response . '</td>';
@@ -273,7 +276,7 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
               </tr>';
           $sno = 0;
 
-          if (count($question['survey_responses']) > 0) {
+          if (isset($question['survey_responses']) && is_array($question['survey_responses']) && count($question['survey_responses']) > 0) {
             foreach ($question['survey_responses'] as $key => $val) {
               if (isset($val) && !empty($val) && $val != "") {
                 $message .=  '<tr><td>' . ++$sno . '</td><td>' . $val . '</td></tr>';
@@ -291,5 +294,7 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
     $message .=  '<table width="100%"><tr><td align="center">No Answers Available.</td></tr></table>';
   }
 
+  echo $message;
+  die();
   create_mpdf($message, 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.pdf', 'D');
 }
