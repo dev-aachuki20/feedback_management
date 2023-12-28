@@ -378,7 +378,7 @@ if (isset($_POST['schedule_btn'])) {
       if(type =='pdf'){
         $('.second_form').attr('action', './report-doc/preview-report/report-pdf-question-pdf.php');
       }else{
-        $('.second_form').attr('action', './report-doc/preview-report/average-survey-question-multiple-location.php');
+        $('.second_form').attr('action', './report-doc/preview-report/survey-question-overall-excel.php');
       }
     }
     if(isSurvey == null){

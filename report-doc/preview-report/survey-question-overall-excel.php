@@ -49,19 +49,50 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
   /* Get answer values attempted */
   record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id']);
-  while($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)){
-	$answer_type = $row_get_questions['answer_type'];
-	if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['answerid']] += 1;
-	}else if($answer_type == 2 || $answer_type == 3){
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
+  $answer_type = $row_get_questions['answer_type'];
+  	if (!empty($totalRows_get_questions_answers)) {
+		while($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)){
+			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['answerid']] += 1;
+			}else if($answer_type == 2 || $answer_type == 3){
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
+			}
+		}
+	}else if ($answer_type == 1) {
+		record_set("get_child_questions", "select * from questions where parendit='" . $row_get_questions['id'] . "' and cstatus='1'");
+		if (!empty($totalRows_get_child_questions)) {
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['having_child'] = true;
+
+			record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $row_get_questions['id']);
+			$options = array();
+			if (!empty($totalRows_get_parent_question_options)) {
+				while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
+				  $options[$row_parent_question_option['id']] = 0;
+				}
+			}
+			while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['id'] = $row_get_child_question['id'];
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['question'] = $row_get_child_question['question'];
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
+		
+				$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['survey_responses'] = $options;
+		
+				record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
+		
+				if (!empty($totalRows_get_child_questions_answers)) {
+				  while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
+					$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['survey_responses'][$row_get_child_questions_answer['answerid']]  += 1;
+				  }
+				}
+			  }
+		}
 	}
-  }
 } 
-// echo '<pre>';
-// print_r($questions);
-// echo '</pre>';
-// die();
+echo '<pre>';
+print_r($questions);
+echo '</pre>';
+die();
 
 /** Print Excel file start */
 $style = [

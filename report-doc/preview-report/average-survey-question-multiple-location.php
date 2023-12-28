@@ -40,7 +40,7 @@ if(!empty($surveyid)){
 
 
 //Survey Questions
-record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by dposition asc",1);
+record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by dposition asc");
 $questions = array();
 while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
@@ -89,7 +89,10 @@ $activeSheet->mergeCells('E1:G1');
 $activeSheet->setCellValue('A1', $surveyName);
 $activeSheet->setCellValue('E1', $dateParameter);
 
+$activeSheet->getColumnDimension('A')->setWidth(600, 'px');
+
 $i = 2;
+
 foreach($questions as $stepId => $question){
 	$activeSheet->setCellValue('A'.$i, '');
 	$i++;
@@ -102,32 +105,75 @@ foreach($questions as $stepId => $question){
 		$questionName = trim($data['question']);
 		$activeSheet->setCellValue('A'.$i, "$questionName");
 		$answer_type = $data['answer_type'];
+		$question_id = $data['id'];
 		$i++;
-		
-		if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-			$activeSheet->setCellValue('A'.$i, '');
-			$activeSheet->setCellValue('B'.$i, 'LOCATION 1');
-	
-			$activeSheet->getStyle('B'.$i)->applyFromArray($style);
-			$activeSheet->mergeCells("B$i:C$i");
+		$surveyResponse = $data['survey_responses'];
+		$char = "A";
+		foreach($surveyResponse as $key => $value){
+			$j= $i+1;
+			$locationName = getLocation()[$key];
+			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
+				$activeSheet->setCellValue($char.$i, '');
+				$activeSheet->setCellValue("A".$j, "");
 
-			$i++;
-			$activeSheet->setCellValue('A'.$i, '');
-			$activeSheet->setCellValue('B'.$i, 'RESULT');
-			$activeSheet->setCellValue('C'.$i, 'RESPONSE');
+				// for location names 
+				$char++;
+				$activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->getStyle($char.$i)->applyFromArray($style);
 
-			$activeSheet->getStyle('B'.$i)->applyFromArray($style);
-			$activeSheet->getStyle('C'.$i)->applyFromArray($style);
+				// for result and response heading
+				$activeSheet->setCellValue($char.$j, 'RESULT');
+				$activeSheet->getStyle($char.$j)->applyFromArray($style);
+				
+				$char = chr(ord($char) + 1);
+				$activeSheet->setCellValue($char.$j, 'RESPONSE');
+				$activeSheet->getStyle(($char).$j)->applyFromArray($style);
+				$startCell = chr(ord($char) - 1);
+				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
+				$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
+				record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id",1);
+				$k =$j+1;
+				while($row_get_question_details = mysqli_fetch_assoc($get_question_details)){
+					$totalResponse = array_sum(array_values($value));
+					$perPercentage = 100/$totalResponse;
+					$number = ($value[$row_get_question_details['id']]) ? $value[$row_get_question_details['id']] : 0;
+					$result = round($number * $perPercentage,2)."%";
+					$response = $number;
+					$answerName = $row_get_question_details['description'];
+					$activeSheet->setCellValue("A".$k, "$answerName");
+					$activeSheet->setCellValue("$startCell".$k, "$result");
+					$activeSheet->setCellValue("$char".$k, "$response");
+					$k++;
+				}
+			}else{
+				// for location names 
+				$char++;
+				$activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->getStyle($char.$i)->applyFromArray($style);
 
+				// for result and response heading
+				$activeSheet->setCellValue($char.$j, 'S.NO.');
+				$char = chr(ord($char) + 1);
+				$activeSheet->setCellValue($char.$j, 'ANSWER');
+				$startCell = chr(ord($char) - 1);
+				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
+				$counter = 1;
+				$k =$j+1;
+				foreach($value as $answer){
+					$activeSheet->setCellValue("A".$k, "");
+					$activeSheet->setCellValue("$startCell".$k, "$counter");
+					$activeSheet->setCellValue("$char".$k, "$answer");
+					$counter++;
+					$k++;
+				}
+			}
+			// echo $char++;
 		}
-		$counter = 1;
-		
+		$i = $k;	
 	}
 }
-
-
 $activeSheet->getStyle('A1')->applyFromArray($style);
-
+$activeSheet->getStyle('E1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
-$writer->save('excel/average-survey-question-multiple-location.xlsx');
+$writer->save('excel/average-survey-question-multiple-location-55.xlsx');

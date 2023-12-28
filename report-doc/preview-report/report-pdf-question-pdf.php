@@ -109,7 +109,10 @@ while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
     }
   }
 }
-
+echo '<pre>';
+print_r($surveyQuestions);
+die();
+echo '</pre>';
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
