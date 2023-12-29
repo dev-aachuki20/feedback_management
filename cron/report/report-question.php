@@ -359,7 +359,6 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
     //send mail
     $attachments = array('document/survey-report-question-' . $row_get_reports['id'] . '.pdf', 'document/survey-report-question-' . $row_get_reports['id'] . '.csv');
     $mail_users = explode(",", $row_get_reports['send_to']);
-    die("exitt");
     foreach ($mail_users as $userId) {
       $user_details = get_user_datails($userId);
       $to = $user_details['email'];
