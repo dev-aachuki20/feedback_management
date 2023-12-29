@@ -54,10 +54,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 	}
   }
 } 
-// echo '<pre>';
-// print_r($questions);
-// echo '</pre>';
-// die();
+
+
 
 /** Print Excel file start */
 $style = [
@@ -114,12 +112,14 @@ foreach($questions as $stepId => $question){
 		$activeSheet->getStyle('B'.$i)->applyFromArray($style);
 		$activeSheet->getStyle('C'.$i)->applyFromArray($style);
 		$counter = 1;
+		
+		$sum_of_count = 0;
 		foreach($data['survey_responses'] as $key => $value){
 			$i++;
 			$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
 			$answer_type = $data['answer_type'];
 			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-				$counts = array_values($data['survey_responses']);
+				$counts = array_values($value['survey_responses']);
 				$sum_of_count = array_sum($counts);
 				if ($sum_of_count > 0) {
 					$perResponsePercentage = 100 / $sum_of_count;
@@ -155,18 +155,18 @@ foreach($questions as $stepId => $question){
 $activeSheet->getStyle('A1')->applyFromArray($style);
 
 // Save the Excel file
-$writer = new Xlsx($spreadsheet);
-$writer->save('excel/survey-question-overall.xlsx');
+// $writer = new Xlsx($spreadsheet);
+// $writer->save('excel/survey-question-overall.xlsx');
 
-
-// $filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xlsx';
-// try {
-//     $writer = new Xlsx($spreadsheet);
-// 	$writer->save('excel/survey-question-overall.xlsx');
-//     $content = file_get_contents('excel/survey-question-overall.xlsx');
-// } catch(Exception $e) {
-//     exit($e->getMessage());
-// }
-// header("Content-Disposition: attachment; filename=".$filename);
-// //unlink('excel/survey-question-overall.xlsx');
-// exit($content);
+$filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xlsx';
+// $filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xls';
+try {
+    $writer = new Xlsx($spreadsheet);
+	$writer->save('excel/survey-question-overall.xlsx');
+    $content = file_get_contents('excel/survey-question-overall.xlsx');
+} catch(Exception $e) {
+    exit($e->getMessage());
+}
+header("Content-Disposition: attachment; filename=".$filename);
+unlink('excel/survey-question-overall.xlsx');
+exit($content);

@@ -1,7 +1,6 @@
 <?php
 require('../../function/function.php');
 require('../../function/get_data_function.php');
-include('../../permission.php');
 
 $reportType = $_POST['sch_template_field_name'];
 $documentType = $_POST['export_document'];
