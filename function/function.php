@@ -1,11 +1,11 @@
 <?php
 require('mysql_functions.php');
 //Turn off error reporting
-// error_reporting(0);
-// error_reporting(E_ERROR | E_WARNING | E_PARSE);
-// error_reporting(E_ALL);
-// ini_set("error_reporting", E_ALL);
-// error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(0);
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ALL);
+ini_set("error_reporting", E_ALL);
+error_reporting(E_ALL & ~E_NOTICE);
 // php mailer start
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
