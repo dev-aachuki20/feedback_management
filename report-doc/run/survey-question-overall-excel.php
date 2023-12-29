@@ -1,11 +1,7 @@
 <?php 
-require('../../function/function.php');
-require('../../function/get_data_function.php');
-require '../../vendor/autoload.php'; 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 $filter = $_POST;
 $data_type = $filter['sch_template_field_name'];
 $surveyid   = $filter['survey'];
@@ -161,6 +157,8 @@ $activeSheet->getStyle('A1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
 $writer->save('excel/survey-question-overall.xlsx');
+
+
 // $filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xlsx';
 // try {
 //     $writer = new Xlsx($spreadsheet);

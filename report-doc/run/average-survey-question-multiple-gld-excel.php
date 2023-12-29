@@ -9,6 +9,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $filter = $_POST;
 $data_type = $filter['sch_template_field_name'];
 $surveyid   = $filter['survey'];
+if($filter['template_field']!='' && count($filter['template_field']) > 0){
+	$field_value = implode(',',$filter['template_field']);
+}
 
 if(is_array($surveyid)){
     $surveyid = implode(',',$surveyid);
@@ -48,20 +51,23 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
 
   /* Get answer values attempted */
-  record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id']);
+  record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id']		);
   while($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)){
+
+
 	$answer_type = $row_get_questions['answer_type'];
 	if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['answerid']] += 1;
+		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers[$data_type.'id']][$row_get_questions_answers['answerid']] += 1;
 	}else if($answer_type == 2 || $answer_type == 3){
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
+		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers[$data_type.'id']][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
 	}
   }
 } 
-// echo '<pre>';
-// print_r($questions);
-// echo '</pre>';
-// die();
+
+echo '<pre>';
+print_r($questions);
+echo '</pre>';
+
 
 /** Print Excel file start */
 $style = [
@@ -79,17 +85,16 @@ $dateParameter = date('d/m/Y', strtotime($filter['start_date'])).' - '.date('d/m
 
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
+// Merge cells A1 to C1 (you can change the range as needed)
 $activeSheet->mergeCells('A1:C1');
-$activeSheet->mergeCells('A2:C2');
-$activeSheet->mergeCells('A5:I5');
-
+$activeSheet->mergeCells('E1:G1');
 $activeSheet->setCellValue('A1', $surveyName);
-$activeSheet->setCellValue('A2', $dateParameter);
+$activeSheet->setCellValue('E1', $dateParameter);
 
-$activeSheet->getColumnDimension('A')->setWidth(700, 'px');
-$activeSheet->getColumnDimension('B')->setWidth(100, 'px');
-$activeSheet->getColumnDimension('C')->setWidth(100, 'px');
-$i = 3;
+$activeSheet->getColumnDimension('A')->setWidth(600, 'px');
+
+$i = 2;
+
 foreach($questions as $stepId => $question){
 	$activeSheet->setCellValue('A'.$i, '');
 	$i++;
@@ -102,73 +107,75 @@ foreach($questions as $stepId => $question){
 		$questionName = trim($data['question']);
 		$activeSheet->setCellValue('A'.$i, "$questionName");
 		$answer_type = $data['answer_type'];
+		$question_id = $data['id'];
 		$i++;
-		
-		if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-			$activeSheet->setCellValue('A'.$i, '');
-			$activeSheet->setCellValue('B'.$i, 'RESULT');
-			$activeSheet->setCellValue('C'.$i, 'RESPONSES');
-		}else{
-			$activeSheet->setCellValue('A'.$i, '');
-			$activeSheet->setCellValue('B'.$i, 'S.NO.');
-			$activeSheet->setCellValue('C'.$i, 'ANSWERS');
-		}
-
-		$activeSheet->getStyle('A'.$i)->applyFromArray($style);
-		$activeSheet->getStyle('B'.$i)->applyFromArray($style);
-		$activeSheet->getStyle('C'.$i)->applyFromArray($style);
-		$counter = 1;
-		foreach($data['survey_responses'] as $key => $value){
-			$i++;
-			$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
-			$answer_type = $data['answer_type'];
+		$surveyResponse = $data['survey_responses'];
+		$char = "A";
+		foreach($surveyResponse as $key => $value){
+			$j= $i+1;
+			$locationName = getLocation()[$key];
 			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-				$counts = array_values($data['survey_responses']);
-				$sum_of_count = array_sum($counts);
-				if ($sum_of_count > 0) {
-					$perResponsePercentage = 100 / $sum_of_count;
+				$activeSheet->setCellValue($char.$i, '');
+				$activeSheet->setCellValue("A".$j, "");
+
+				// for location names 
+				$char++;
+				$activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->getStyle($char.$i)->applyFromArray($style);
+
+				// for result and response heading
+				$activeSheet->setCellValue($char.$j, 'RESULT');
+				$activeSheet->getStyle($char.$j)->applyFromArray($style);
+				
+				$char = chr(ord($char) + 1);
+				$activeSheet->setCellValue($char.$j, 'RESPONSE');
+				$activeSheet->getStyle(($char).$j)->applyFromArray($style);
+				$startCell = chr(ord($char) - 1);
+				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
+				$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
+				record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id",1);
+				$k =$j+1;
+				while($row_get_question_details = mysqli_fetch_assoc($get_question_details)){
+					$totalResponse = array_sum(array_values($value));
+					$perPercentage = 100/$totalResponse;
+					$number = ($value[$row_get_question_details['id']]) ? $value[$row_get_question_details['id']] : 0;
+					$result = round($number * $perPercentage,2)."%";
+					$response = $number;
+					$answerName = $row_get_question_details['description'];
+					$activeSheet->setCellValue("A".$k, "$answerName");
+					$activeSheet->setCellValue("$startCell".$k, "$result");
+					$activeSheet->setCellValue("$char".$k, "$response");
+					$k++;
 				}
-				$scoreValue = round($perResponsePercentage * $value, 2);
-				$answerName = $questionDetails['description'];
-				$activeSheet->setCellValue('A'.$i, $answerName);
-				$activeSheet->setCellValue('B'.$i, $scoreValue.'%');
-				$activeSheet->setCellValue('C'.$i, $value);
-
-				$activeSheet->getStyle('A'.$i)->applyFromArray(['font' => $style['font']]);
-
 			}else{
-				$activeSheet->setCellValue('A'.$i, "");
-				$activeSheet->setCellValue('B'.$i, $counter);
-				$activeSheet->setCellValue('C'.$i, "$value");
-				$counter++;
+				// for location names 
+				$char++;
+				$activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->getStyle($char.$i)->applyFromArray($style);
+
+				// for result and response heading
+				$activeSheet->setCellValue($char.$j, 'S.NO.');
+				$char = chr(ord($char) + 1);
+				$activeSheet->setCellValue($char.$j, 'ANSWER');
+				$startCell = chr(ord($char) - 1);
+				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
+				$counter = 1;
+				$k =$j+1;
+				foreach($value as $answer){
+					$activeSheet->setCellValue("A".$k, "");
+					$activeSheet->setCellValue("$startCell".$k, "$counter");
+					$activeSheet->setCellValue("$char".$k, "$answer");
+					$counter++;
+					$k++;
+				}
 			}
+			// echo $char++;
 		}
-		$i++;
-		if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-			$activeSheet->setCellValue('A'.$i, '');
-			$activeSheet->setCellValue('B'.$i, 'TOTAL');
-			$activeSheet->setCellValue('C'.$i, "$sum_of_count");
-			$activeSheet->getStyle('B'.$i)->applyFromArray(['font' => $style['font']]);
-			$activeSheet->getStyle('C'.$i)->applyFromArray(['font' => $style['font']]);
-		}
-		$i++;
+		$i = $k;	
 	}
 }
-
-
 $activeSheet->getStyle('A1')->applyFromArray($style);
-
+$activeSheet->getStyle('E1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
-$writer->save('excel/survey-question-overall.xlsx');
-// $filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xlsx';
-// try {
-//     $writer = new Xlsx($spreadsheet);
-// 	$writer->save('excel/survey-question-overall.xlsx');
-//     $content = file_get_contents('excel/survey-question-overall.xlsx');
-// } catch(Exception $e) {
-//     exit($e->getMessage());
-// }
-// header("Content-Disposition: attachment; filename=".$filename);
-// //unlink('excel/survey-question-overall.xlsx');
-// exit($content);
+$writer->save('excel/average-survey-question-multiple-location-55.xlsx');

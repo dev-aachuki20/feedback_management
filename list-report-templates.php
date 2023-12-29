@@ -233,9 +233,9 @@ if (isset($_POST['schedule_btn'])) {
       //$('#send_to').prop('required',false);
       activeReportType = report_type;
       if (report_type == 1) {
-        $('.second_form').attr('action', './report-doc/preview-report/report-pdf.php');
+        $('.second_form').attr('action', './report-doc/run/report-pdf.php');
       } else if (report_type == 2) {
-        $('.second_form').attr('action', './report-doc/preview-report/report-question-pdf.php');
+        $('.second_form').attr('action', './report-doc/run/report-question-pdf.php');
       }
       $('.export-doc').show();
       $('#schedule_btn').hide();
@@ -376,10 +376,11 @@ if (isset($_POST['schedule_btn'])) {
     if(reportType == 1){
     }else{
       if(type =='pdf'){
-        // $('.second_form').attr('action', './report-doc/preview-report/report-question-pdf.php');
-        $('.second_form').attr('action', './report-doc/preview-report/report-question-pdf-multiple-gld.php');
+        $('.second_form').attr('action', './report-doc/run/report-question-pdf.php');
+        // $('.second_form').attr('action', './report-doc/preview-report/report-question-pdf-multiple-gld.php');
       }else{
-        $('.second_form').attr('action', './report-doc/preview-report/survey-question-overall-excel.php');
+        $('.second_form').attr('action', './report-doc/run/index.php');
+        // $('.second_form').attr('action', './report-doc/preview-report/average-survey-question-multiple-location.php');
       }
     }
     if(isSurvey == null){

@@ -9,7 +9,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $filter = $_POST;
 $data_type = $filter['sch_template_field_name'];
 $surveyid   = $filter['survey'];
-$field_value = implode(',',$filter['template_field']);
+if($filter['template_field']!='' && count($filter['template_field']) > 0){
+	$field_value = implode(',',$filter['template_field']);
+}
 
 if(is_array($surveyid)){
     $surveyid = implode(',',$surveyid);
@@ -55,17 +57,17 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 	$answer_type = $row_get_questions['answer_type'];
 	if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['locationid']][$row_get_questions_answers['answerid']] += 1;
+		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers[$data_type.'id']][$row_get_questions_answers['answerid']] += 1;
 	}else if($answer_type == 2 || $answer_type == 3){
-		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['locationid']][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
+		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers[$data_type.'id']][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
 	}
   }
 } 
 
-// echo '<pre>';
-// print_r($questions);
-// echo '</pre>';
-// die();
+echo '<pre>';
+print_r($questions);
+echo '</pre>';
+
 
 /** Print Excel file start */
 $style = [

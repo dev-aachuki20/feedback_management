@@ -1,6 +1,6 @@
 <?php
-include('../../function/function.php');
-include('../../function/get_data_function.php');
+// include('../../function/function.php');
+// include('../../function/get_data_function.php');
 
 $filter = $_POST;
 
