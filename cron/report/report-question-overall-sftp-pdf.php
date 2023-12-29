@@ -15,8 +15,8 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
   }
 
   $days_to_subtract = $row_report['time_interval'] / 24;
-  $survey_start_date = date('Y-m-d', strtotime('-' . $days_to_subtract . ' days', strtotime($current_date)));
-  $survey_end_date = date('Y-m-d', strtotime('+1 day', strtotime($survey_start_date)));
+  $survey_end_date = $row_report['next_date'];
+  $survey_start_date = date('Y-m-d', strtotime('-' . $days_to_subtract . ' days', strtotime($survey_end_date)));
 
   if (!empty($survey_start_date) and !empty($next_date)) {
     $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($survey_start_date)) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($next_date))) . "'";
@@ -97,7 +97,7 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
       </tr>';
   } else {
     $message .= '<tr>
-      <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' . date('d/m/Y', strtotime($survey_end_date)) . ' </h2></td>
+      <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h2></td>
       </tr>';
   }
 

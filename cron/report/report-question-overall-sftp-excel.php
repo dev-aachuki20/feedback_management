@@ -54,7 +54,7 @@ $style = [
 ];
 
 $surveyName = getSurvey()[$surveyid];
-$dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime($nextDate));
+$dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' .date('d/m/Y', strtotime("-1 day", strtotime($nextDate)));
 
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
@@ -139,6 +139,6 @@ foreach ($questions as $stepId => $question) {
 $activeSheet->getStyle('A1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
-$writer->save('document/survey-report-question-' . $report_id . '.xlsx');
+$writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
 
-$attachments = array('document/survey-report-question-' . $report_id . '.pdf', 'document/survey-report-question-' . $report_id . '.xlsx');
+$attachments = array('document/survey-report-question-' . $row_report['id'] . '.pdf', 'document/survey-report-question-' . $row_report['id'] . '.xlsx');
