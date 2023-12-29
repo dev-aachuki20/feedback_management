@@ -35,90 +35,97 @@ if (isset($surveyId)) {
   exit;
 }
 
-$ans_filter_query = '';
 if ($data_type == 'location' && $field_value != '') {
-  $ans_filter_query .= " and locationid IN($field_value)";
-  record_set("get_location", "select name from locations where id IN ($field_value)");
-  $selected_template_fields = mysqli_fetch_assoc($get_location);
+  record_set("get_locations", "select name from locations where id IN ($field_value)", 1);
+  while ($row_get_location = mysqli_fetch_assoc($get_locations)) {
+    $selected_template_fields[] = $row_get_location['name'];
+  }
 }
 if ($data_type == 'department' && $field_value != '') {
-  $ans_filter_query .= " and departmentid IN($field_value)";
-  record_set("get_department", "select name from departments where id IN ($field_value)");
-  $selected_template_fields = mysqli_fetch_assoc($get_department);
+  record_set("get_departments", "select name from departments where id IN ($field_value)", 1);
+  while ($row_get_department = mysqli_fetch_assoc($get_departments)) {
+    $selected_template_fields[] = $row_get_department['name'];
+  }
 }
 if ($data_type == 'group' && $field_value != '') {
-  $ans_filter_query .= " and groupid IN($field_value)";
-  record_set("get_group", "select name from groups where id IN ($field_value)");
-  $selected_template_fields = mysqli_fetch_assoc($get_group);
+  record_set("get_groups", "select name from groups where id IN ($field_value)", 1);
+  while ($row_get_group = mysqli_fetch_assoc($get_groups)) {
+    $selected_template_fields[] = $row_get_group['name'];
+  }
 }
 
+$duration_filter_query = '';
 if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
-  $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($filter['start_date'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filter['end_date']))) . "'";
+  $duration_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($filter['start_date'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filter['end_date']))) . "'";
 }
+
+echo '<pre>';
+print_r($selected_template_fields);
+echo '</pre>';
 
 echo '<pre>';
 print_r($ans_filter_query);
 echo '</pre>';
 
-
-
-// Get survey questions. 
-record_set("get_questions", "select * from questions where surveyid='" . $surveyId . "' and cstatus='1' and parendit='0' order by dposition asc");
 $surveyQuestions = array();
 
-while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
-  $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['id'] = $row_get_question['id'];
-  $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['question'] = $row_get_question['question'];
-  $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['ifrequired'] = $row_get_question['ifrequired'];
-  $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['answer_type'] = $row_get_question['answer_type'];
 
-  foreach ($selected_template_fields as $fieldKey => $field_val) {
-      echo $filed_val.'';
-  }
+foreach ($selected_template_fields as $filter_id => $field_name) {
+  // Get survey questions. 
+  record_set("get_questions", "select * from questions where surveyid='" . $surveyId . "' and cstatus='1' and parendit='0' order by dposition asc");
+
+  while ($row_get_question = mysqli_fetch_assoc($get_questions)) {
+    $surveyQuestions[$filter_id][$row_get_question['survey_step_id']][$row_get_question['id']]['id'] = $row_get_question['id'];
+    $surveyQuestions[$filter_id][$row_get_question['survey_step_id']][$row_get_question['id']]['question'] = $row_get_question['question'];
+    $surveyQuestions[$filter_id][$row_get_question['survey_step_id']][$row_get_question['id']]['ifrequired'] = $row_get_question['ifrequired'];
+    $surveyQuestions[$filter_id][$row_get_question['survey_step_id']][$row_get_question['id']]['answer_type'] = $row_get_question['answer_type'];
+
     // Get answer values attempted.
-  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_question['id'], 1);
-  $answer_type = $row_get_question['answer_type'];
+    // record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_question['id'], 1);
+    // $answer_type = $row_get_question['answer_type'];
 
-  if (!empty($totalRows_get_questions_answers)) {
-    while ($row_get_questions_answer = mysqli_fetch_assoc($get_questions_answers)) {
+    // if (!empty($totalRows_get_questions_answers)) {
+    //   while ($row_get_questions_answer = mysqli_fetch_assoc($get_questions_answers)) {
+    //     $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['cdate'] = $row_get_questions_answer['cdate'];
 
-      if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['survey_responses'][$row_get_questions_answer['answerid']] += 1;
-      } else if ($answer_type == 2 || $answer_type == 3) {
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['survey_responses'][] = ($row_get_questions_answer['answertext']) ? $row_get_questions_answer['answertext'] : 'UnAnswered';
-      }
-    }
-  } else if ($answer_type == 1) {
-    record_set("get_child_questions", "select * from questions where parendit='" . $row_get_question['id'] . "' and cstatus='1'");
-    if (!empty($totalRows_get_child_questions)) {
-      $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['having_child'] = true;
+    //     if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['survey_responses'][$row_get_questions_answer[$data_type . 'id']][$row_get_questions_answer['answerid']] += 1;
+    //     } else if ($answer_type == 2 || $answer_type == 3) {
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['survey_responses'][$row_get_questions_answer[$data_type . 'id']][] = ($row_get_questions_answer['answertext']) ? $row_get_questions_answer['answertext'] : 'UnAnswered';
+    //     }
+    //   }
+    // } else if ($answer_type == 1) {
+    //   record_set("get_child_questions", "select * from questions where parendit='" . $row_get_question['id'] . "' and cstatus='1'");
+    //   if (!empty($totalRows_get_child_questions)) {
+    //     $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['having_child'] = true;
 
 
-      record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyId . "' and questionid = " . $row_get_question['id']);
-      $options = array();
-      if (!empty($totalRows_get_parent_question_options)) {
-        while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
-          $options[$row_parent_question_option['id']] = 0;
-        }
-      }
+    //     record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyId . "' and questionid = " . $row_get_question['id']);
+    //     $options = array();
+    //     if (!empty($totalRows_get_parent_question_options)) {
+    //       while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
+    //         $options[$row_parent_question_option['id']] = 0;
+    //       }
+    //     }
 
-      while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['id'] = $row_get_child_question['id'];
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['question'] = $row_get_child_question['question'];
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
+    //     while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['id'] = $row_get_child_question['id'];
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['question'] = $row_get_child_question['question'];
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
 
-        $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['survey_responses'] = $options;
+    //       $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['survey_responses'] = $options;
 
-        record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
+    //       record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
 
-        if (!empty($totalRows_get_child_questions_answers)) {
-          while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
-            $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['survey_responses'][$row_get_child_questions_answer['answerid']]  += 1;
-          }
-        }
-      }
-    }
+    //       if (!empty($totalRows_get_child_questions_answers)) {
+    //         while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
+    //           $surveyQuestions[$row_get_question['survey_step_id']][$row_get_question['id']]['children'][$row_get_child_question['id']]['survey_responses'][$row_get_child_questions_answer['answerid']]  += 1;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 }
 
@@ -126,7 +133,7 @@ echo '<pre>';
 print_r($surveyQuestions);
 echo '</pre>';
 die('ASDFGH');
-
+/*
 if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -157,53 +164,58 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
         $message .= '<div class="container">
         <h4 align="center" style="margin-top:20px;margin-bottom:10px;">' . strtoupper($surveyStep['step_title']) . '</h4>';
       }
+
+      
       foreach ($questions as $question) {
+
         if ($question['answer_type'] == 1 || $question['answer_type'] == 4 || $question['answer_type'] == 6) {
           if (!array_key_exists("having_child", $question)) {
+
             $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
+                        <thead>
                         <tr>
-                          <td align="center" colspan="3">
-                          <h4 colspan="2" style="margin-top:10px;text-align:center;">' . $question['question'] . '</h4>
-                          </td>
+                          <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">YY</th>
+                          <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">YY</th>
+                          <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">Result</th>
+                          <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">Responses</th>
                         </tr>
-                        <tr>
-                          <td width="304px;"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                              <table style="font-size:14px;" width="100%" cellspacing="0" cellpadding="4" border-bottom:none !important;>
-                                <tr>
-                              <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
-                              <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
-                              <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
-                        </tr>';
+                        </thead>';
 
-            $total = 0;
 
-            if (isset($question['survey_responses']) && is_array($question['survey_responses']) && count($question['survey_responses']) > 0) {
-              $sum_of_count = array_sum($question['survey_responses']);
-              if ($sum_of_count > 0) {
-                $perResponsePercentage = 100 / $sum_of_count;
-              }
-              foreach ($question['survey_responses'] as $key => $val) {
-                $scoreValue = round($perResponsePercentage * $val, 2);
-                $questionDescriptionData = record_set_single("get_question_description_data", "SELECT description FROM questions_detail where id =" . $key);
-                $questionDescription = '';
-                if (isset($questionDescriptionData) && is_array($questionDescriptionData) && count($questionDescriptionData) > 0 && isset($questionDescriptionData['description']) && $questionDescriptionData['description'] != null) {
-                  $questionDescription = $questionDescriptionData['description'];
+                 
+
+              if (isset($question['survey_responses']) && is_array($question['survey_responses']) && count($question['survey_responses']) > 0) {
+                foreach ($question['survey_responses'] as $filterKey => $data) {
+                  echo '<pre>';
+                  print_r($data);
+                  echo '</pre>';
+                  $total = 0;
+                  $sum_of_count = array_sum($data);
+                  if ($sum_of_count > 0) {
+                    $perResponsePercentage = 100 / $sum_of_count;
+                  }
+                  foreach ($data as $key => $val) {
+                    $scoreValue = round($perResponsePercentage * $val, 2);
+                    $questionDescriptionData = record_set_single("get_question_description_data", "SELECT description FROM questions_detail where id =" . $key);
+                    $questionDescription = '';
+                    if (isset($questionDescriptionData) && is_array($questionDescriptionData) && count($questionDescriptionData) > 0 && isset($questionDescriptionData['description']) && $questionDescriptionData['description'] != null) {
+                      $questionDescription = $questionDescriptionData['description'];
+                    }
+                    $message .= '<tr>
+                                <td style="border: 1px solid">' . $questionDescription . '</td>
+                                <td style="text-align:center;border: 1px solid">' . $scoreValue . '%</td>
+                                <td style="text-align:center;border: 1px solid">' . $val . '</td>
+                              </tr>';
+                    $total += $val;
+                  }
                 }
+              } else {
                 $message .= '<tr>
-                            <td style="border: 1px solid">' . $questionDescription . '</td>
-                            <td style="text-align:center;border: 1px solid">' . $scoreValue . '%</td>
-                            <td style="text-align:center;border: 1px solid">' . $val . '</td>
-                          </tr>';
-                $total += $val;
+                              <td style="border: 1px solid" colspan="3">NO ANSWER AVAILABLE</td>
+                            </tr>';
               }
-            } else {
-              $message .= '<tr>
-                            <td style="border: 1px solid" colspan="3">NO ANSWER AVAILABLE</td>
-                          </tr>';
             }
+
             $message .= '<tr style="border:none;">
                             <td style="border:none;"></td>
                             <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
@@ -304,5 +316,9 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
     $message .=  '<table width="100%"><tr><td align="center">No Answers Available.</td></tr></table>';
   }
 
+  echo $message;
+  die();
+
   create_mpdf($message, 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.pdf', 'D');
 }
+*/
