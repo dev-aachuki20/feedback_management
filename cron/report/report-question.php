@@ -18,16 +18,13 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
     if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $row_report['send_to'] != null) {
         include('../report/report-question-overall-sftp-pdf.php');
         include('../report/report-question-overall-sftp-excel.php');
-        
+
         // send mail
-        echo '<pre>';
-        echo '<hr/>';
-        print_r($row_report);
         $mail_users = explode(",", $row_report['send_to']);
         foreach ($mail_users as $userId) {
             $user_details = get_user_datails($userId);
             $to = $user_details['email'];
-            echo $user_details['email'].'<br>';
+            echo $user_details['email'] . '<br>';
             $from_mail = ADMIN_EMAIL;
             $name = $user_details['name'];
             $subject = "Schedule Report";
@@ -43,12 +40,12 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
             "next_date" => $updateSchedule,
         );
 
-        // $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
+        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
 
         if (count($attachments) > 0) {
             foreach ($attachments as $key => $value) {
                 // echo "<br>" . $value . "<br>";
-                // unlink($value);
+                unlink($value);
             }
         }
     } else {

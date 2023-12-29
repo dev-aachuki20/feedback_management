@@ -79,9 +79,6 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
     }
   }
 
-  // echo '<pre>';
-  // print_r($surveyQuestions);
-  // echo '</pre>';
 
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -256,8 +253,6 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
   } else {
     $message .=  '<table width="100%"><tr><td align="center">No Answers Available.</td></tr></table>';
   }
-
-  // echo $message;
 
   $footer = '<div style="text-align: center;"> ' . POWERED_BY . '
                   <center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
