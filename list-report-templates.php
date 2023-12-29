@@ -375,13 +375,7 @@ if (isset($_POST['schedule_btn'])) {
     $('#chk-export-csv').val(value);
     if(reportType == 1){
     }else{
-      if(type =='pdf'){
-        $('.second_form').attr('action', './report-doc/run/report-question-pdf.php');
-        // $('.second_form').attr('action', './report-doc/preview-report/report-question-pdf-multiple-gld.php');
-      }else{
         $('.second_form').attr('action', './report-doc/run/index.php');
-        // $('.second_form').attr('action', './report-doc/preview-report/average-survey-question-multiple-location.php');
-      }
     }
     if(isSurvey == null){
       isSurvey = [];
