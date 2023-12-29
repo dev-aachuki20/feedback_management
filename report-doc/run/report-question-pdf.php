@@ -1,7 +1,4 @@
 <?php
-include('../../function/function.php');
-include('../../function/get_data_function.php');
-
 $filter = $_POST;
 
 $data_type = $filter['sch_template_field_name'];

@@ -1,6 +1,4 @@
 <?php 
-require('../../function/function.php');
-require('../../function/get_data_function.php');
 require '../../vendor/autoload.php'; 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -64,10 +62,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   }
 } 
 
-echo '<pre>';
-print_r($questions);
-echo '</pre>';
-
+// echo '<pre>';
+// print_r($questions);
+// echo '</pre>';
+// die();
 
 /** Print Excel file start */
 $style = [

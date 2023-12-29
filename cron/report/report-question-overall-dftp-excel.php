@@ -53,16 +53,18 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
       record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id'],1);
       while($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)){
         $answer_type = $row_get_questions['answer_type'];
+        $created_date = date('d-m-Y',strtotime($row_get_questions_answers['cdate']));
+        echo $created_date.'<br>';
         if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers['answerid']] += 1;
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][$row_get_questions_answers['answerid']] += 1;
         }else if($answer_type == 2 || $answer_type == 3){
-          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
         }
       }
     }
      echo '<pre>';
      print_r($questions);
-
+      die();
     // create excel start
       /** Print Excel file start */
       $style = [
