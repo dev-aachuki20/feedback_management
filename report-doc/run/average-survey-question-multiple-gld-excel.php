@@ -49,10 +49,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
   $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
 
   /* Get answer values attempted */
-  record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id']		);
+  record_set("get_questions_answers", "select * from answers where surveyid='".$surveyid."' and cstatus='1' $ans_filter_query  and questionid = ".$row_get_questions['id']);
   while($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)){
-
-
 	$answer_type = $row_get_questions['answer_type'];
 	if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
 		$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$row_get_questions_answers[$data_type.'id']][$row_get_questions_answers['answerid']] += 1;
@@ -66,7 +64,6 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 // print_r($questions);
 // echo '</pre>';
 // die();
-
 /** Print Excel file start */
 $style = [
     'font' => [
@@ -111,14 +108,21 @@ foreach($questions as $stepId => $question){
 		$char = "A";
 		foreach($surveyResponse as $key => $value){
 			$j= $i+1;
-			$locationName = getLocation()[$key];
+			$fieldName = '';
+			if($data_type == 'location'){
+				$fieldName = getLocation()[$key];
+			}else if($data_type == 'group'){
+				$fieldName = getGroup()[$key];
+			}else if($data_type == 'department'){
+				$fieldName = getDepartment()[$key];
+			}
 			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
 				$activeSheet->setCellValue($char.$i, '');
 				$activeSheet->setCellValue("A".$j, "");
 
 				// for location names 
 				$char++;
-				$activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->setCellValue($char.$i, "$fieldName");
 				$activeSheet->getStyle($char.$i)->applyFromArray($style);
 
 				// for result and response heading
