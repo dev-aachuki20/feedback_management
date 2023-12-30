@@ -3,7 +3,7 @@ require dirname(__DIR__, 2) . '/function/function.php';
 require dirname(__DIR__, 2) . '/function/get_data_function.php';
 
 // get scheduled reports
-record_set("get_scheduled_reports", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2");
+record_set("get_scheduled_reports", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2 order by srt.id desc",1);
 
 while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
     $current_date  = date('Y-m-d', time());
@@ -26,11 +26,12 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
         }
 
         // send mail
+        $attachments = array('document/survey-report-question-' . $row_report['id'] . '.xlsx', 'document/survey-report-question-' . $row_report['id'] . '.pdf');
+        
         $mail_users = explode(",", $row_report['send_to']);
         foreach ($mail_users as $userId) {
             $user_details = get_user_datails($userId);
             $to = $user_details['email'];
-            echo $user_details['email'] . '<br>';
             $from_mail = ADMIN_EMAIL;
             $name = $user_details['name'];
             $subject = "Schedule Report";
@@ -46,12 +47,12 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
             "next_date" => $updateSchedule,
         );
 
-        // $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
+        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
 
         if (count($attachments) > 0) {
             foreach ($attachments as $key => $value) {
                 // echo "<br>" . $value . "<br>";
-                // unlink($value);
+                unlink($value);
             }
         }
     } else {

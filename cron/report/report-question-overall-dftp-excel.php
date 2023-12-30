@@ -3,13 +3,15 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-$filter = json_decode($row_get_reports['filter'], 1);
+$filter = json_decode($row_report['filter'], 1);
+
 $data_type    = $filter['field'];
 $surveyid     = $filter['survey_id'];
-$interval     = $row_get_reports['sch_interval'] / 24;
-$nextDate     = $row_get_reports['next_date'];
+$interval     = $row_report['sch_interval'] / 24;
+$nextDate     = $row_report['next_date'];
 $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nextDate)));
 
+$ans_filter_query = '';
 if (!empty($startDate) and !empty($nextDate)) {
   $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($startDate)) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($nextDate))) . "'";
 }
@@ -25,7 +27,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   $answer_type = $row_get_questions['answer_type'];
 
   /* Get answer values attempted */
-  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_questions['id'] . " order By cdate asc", 1);
+  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_questions['id'] . " order By cdate asc");
   if (!empty($totalRows_get_questions_answers)) {
     while ($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)) {
       $created_date = date('d-m-Y', strtotime($row_get_questions_answers['cdate']));
@@ -39,7 +41,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
     record_set("get_child_questions", "select * from questions where parendit='" . $row_get_questions['id'] . "' and cstatus='1'");
     if (!empty($totalRows_get_child_questions)) {
       $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['having_child'] = true;
-      record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $row_get_questions['id'], 1);
+      record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $row_get_questions['id']);
       $options = array();
       if (!empty($totalRows_get_parent_question_options)) {
         while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
@@ -131,7 +133,7 @@ foreach ($questions as $stepId => $question) {
         $activeSheet->getStyle(($char) . $j)->applyFromArray($style);
         $startCell = chr(ord($char) - 1);
         $questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =" . $key);
-        record_set("get_question_details", "select * from questions_detail where surveyid='" . $surveyid . "' and questionid=$question_id", 1);
+        record_set("get_question_details", "select * from questions_detail where surveyid='" . $surveyid . "' and questionid=$question_id");
         $k = $j + 1;
         while ($row_get_question_details = mysqli_fetch_assoc($get_question_details)) {
           $totalResponse = array_sum(array_values($value));
@@ -177,5 +179,5 @@ $activeSheet->getStyle('A1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
 $writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
-
+echo '<hr/>';
 

@@ -8,7 +8,7 @@ $filter = json_decode($row_report['filter'], 1);
 $data_type    = $filter['field'];
 $surveyId     = $filter['survey_id'];
 
-$interval     = $row_report['time_interval'] / 24;
+$interval     = $row_report['sch_interval'] / 24;
 $survey_end_date = $row_report['next_date'];
 $survey_start_date = date('Y-m-d', strtotime('-' . $interval . ' days', strtotime($survey_end_date)));
 
@@ -59,7 +59,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
         $surveyQuestions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
         $surveyQuestions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
 
-        record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
+        record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id'],1);
 
         if (!empty($totalRows_get_child_questions_answers)) {
 
@@ -74,12 +74,13 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   }
 }
 
+
 $message = '<div align="center">
     <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
       <table width="100%">
         <thead>
           <tr>
-            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . $row_get_survey['name'] . ' </h2></td>
+            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . getSurvey()[$surveyId] . ' </h2></td>
           </tr>';
 
 
