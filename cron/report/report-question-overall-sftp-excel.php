@@ -1,8 +1,6 @@
 <?php
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 
 $filter = json_decode($row_report['filter'], 1);
 $data_type    = $filter['field'];
@@ -38,8 +36,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
     }
   }
 }
-echo '<pre>';
-print_r($questions);
+
 
 // create excel start
 /** Print Excel file start */
@@ -141,4 +138,3 @@ $activeSheet->getStyle('A1')->applyFromArray($style);
 $writer = new Xlsx($spreadsheet);
 $writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
 
-$attachments = array('document/survey-report-question-' . $row_report['id'] . '.pdf', 'document/survey-report-question-' . $row_report['id'] . '.xlsx');

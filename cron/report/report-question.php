@@ -16,8 +16,14 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
     $is_curr_lte_end_date = check_differenceDate($current_date, $end_date, 'lte');
 
     if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $row_report['send_to'] != null) {
-        include('../report/report-question-overall-sftp-pdf.php');
-        include('../report/report-question-overall-sftp-excel.php');
+
+        if ($row_report['sch_interval'] == $row_report['time_interval']) {
+            include('../report/report-question-overall-sftp-pdf.php');
+            include('../report/report-question-overall-sftp-excel.php');
+        } else {
+            include('../report/report-question-overall-dftp-pdf.php');
+            include('../report/report-question-overall-dftp-excel.php');
+        }
 
         // send mail
         $mail_users = explode(",", $row_report['send_to']);
@@ -40,12 +46,12 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
             "next_date" => $updateSchedule,
         );
 
-        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
+        // $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_report['id']);
 
         if (count($attachments) > 0) {
             foreach ($attachments as $key => $value) {
                 // echo "<br>" . $value . "<br>";
-                unlink($value);
+                // unlink($value);
             }
         }
     } else {

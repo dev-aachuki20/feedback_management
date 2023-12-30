@@ -3,8 +3,6 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 $mpdf = new \Mpdf\Mpdf();
 
-if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $row_report['send_to'] != null) {
-  $is_frequency_eq_time_interval = false;
   $ans_filter_query = '';
   $filter = json_decode($row_report['filter'], 1);
   $data_type = $filter['field'];
@@ -78,7 +76,6 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
       }
     }
   }
-
 
   $message = '<div align="center">
                 <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
@@ -261,4 +258,4 @@ if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $ro
   $mpdf->SetHTMLFooter($footer);
   $mpdf->WriteHTML($message);
   $mpdf->Output('document/survey-report-question-' . $row_report['id'] . '.pdf', 'F');
-}
+
