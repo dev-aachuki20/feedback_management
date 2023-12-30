@@ -72,7 +72,6 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
             $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
             $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
 
-
             record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id'], 1);
 
             if (!empty($totalRows_get_child_questions_answers)) {
