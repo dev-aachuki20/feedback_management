@@ -8,7 +8,6 @@ record_set("get_scheduled_report", "select srt.* from scheduled_report_templates
 
 while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
     $mpdf = new \Mpdf\Mpdf();
-    $ready_to_run = $not_first_time = false;
 
     // echo '<pre>';
     // print_r($row_get_report);
@@ -19,56 +18,46 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
     $current_date  = date('Y-m-d', time());
     $schedule_start_date = date('Y-m-d', strtotime($row_get_report['start_date']));
-    $schedule_next_date = date('Y-m-d', strtotime($row_get_report['next_date']));
-    $end_date = date('Y-m-d', strtotime($row_get_report['end_date']));
+    $schedule_next_date   = date('Y-m-d', strtotime($row_get_report['next_date']));
+    $schedule_end_date   = date('Y-m-d', strtotime($row_get_report['end_date']));
 
     // echo "current_date: $current_date <br>";
     // echo "schedule_start_date: $schedule_start_date <br>";
     // echo "schedule_next_date: $schedule_next_date <br>";
-    // echo "end_date: $end_date <br>";
+    // echo "end_date: $schedule_end_date <br>";
 
-    $curr_eq_st_date = check_differenceDate($current_date, $schedule_start_date, 'eq');
-    $curr_eq_nxt_date = check_differenceDate($current_date, $schedule_next_date, 'eq');
+    $is_due_gt_start_date = check_differenceDate($schedule_next_date, $schedule_start_date, 'gt');
+    $is_today_due_date = check_differenceDate($current_date, $schedule_next_date, 'eq');
+    $is_curr_lte_end_date = check_differenceDate($current_date, $schedule_end_date, 'lte');
 
-    $curr_lte_nxt_date = check_differenceDate($current_date, $schedule_next_date, 'lte');
-    $curr_lte_end_date = check_differenceDate($current_date, $end_date, 'lte');
+    // echo $is_due_gt_start_date . ' is_due_gt_start_date <br>';
+    // echo $is_today_due_date . ' is_today_due_date <br>';
+    // echo $is_curr_lte_end_date . ' is_curr_lte_end_date <br>';
 
-    // echo "curr_eq_st_date: $curr_eq_st_date <br>";
-    // echo "curr_eq_nxt_date: $curr_eq_nxt_date <br>";
-    // echo "curr_lte_nxt_date: $curr_lte_nxt_date <br>";
-    // echo "curr_lte_end_date: $curr_lte_end_date <br>";
-
-    
-    if ($curr_eq_st_date  && $curr_lte_nxt_date && $curr_lte_end_date) {
-        $ready_to_run = true;
-    }
-   
-    if ($curr_eq_nxt_date && $curr_lte_end_date) {
-        $ready_to_run = $not_first_time = true;
-    }
-
-    // echo "ready_to_run: $ready_to_run <br>";
-    // echo "not_first_time: $not_first_time <br>";
-
-    if ($ready_to_run && $row_get_report['send_to'] != null) {
-      
+    if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $row_get_report['send_to'] != null) {
         $filter = json_decode($row_get_report['filter'], 1);
         $data_type = $filter['field'];
         $survey_id   = $filter['survey_id'];
-        $field_value = implode(',', $filter['field_value']);
+
+        $field_value = null;
+        if ($filter['field_value'] != null) {
+            $field_value = implode(',', $filter['field_value']);
+        }
+
         if (is_array($survey_id)) {
             $survey_id = implode(',', $survey_id);
         }
+
         // fetch survey data
         $querys = 'SELECT * FROM answers where id!=0 ';
         $groupBy = '';
-        if ($data_type == 'location') {
+        if ($data_type == 'location' && $field_value != null) {
             $query = " and surveyid =" . $survey_id . " and locationid in ($field_value)";
             $groupBy = 'locationid';
-        } else if ($data_type == 'group') {
+        } else if ($data_type == 'group' && $field_value != null) {
             $query = " and surveyid =" . $survey_id . " and groupid in ($field_value)";
             $groupBy = 'group';
-        } else if ($data_type == 'department') {
+        } else if ($data_type == 'department' && $field_value != null) {
             $query = " and surveyid =" . $survey_id . " and departmentid in ($field_value)";
             $groupBy = 'departmentid';
         } else {
@@ -80,8 +69,6 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
 
         $row_total_survey = mysqli_fetch_assoc($total_survey);
         $total_survey = $row_total_survey['totalCount'];
-
-        $row_survey = mysqli_fetch_assoc($survey_min_date);
 
         // time interval calculation.
         if ($frequency_interval == 24 && $time_interval == 24) {
@@ -122,8 +109,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             }
             $survey_min_date = date('Y-m-d', strtotime('-6 month', strtotime($current_date)));
             $survey_max_date = date('Y-m-d', strtotime('+6 month', strtotime($survey_min_date)));
-        } else if ($frequency_interval == 8640 && ($time_interval == 720 ||  $time_interval == 4320)) {
-            if ($time_interval == 168) {
+        } else if ($frequency_interval == 8640 && ($time_interval == 720 ||  $time_interval == 2160)) {
+            if ($time_interval == 720) {
                 // echo  '<b>F365 && T30</> <br>';
             } else {
                 // echo  '<b>F365 && T90</> <br>';
@@ -137,16 +124,17 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // echo "survey_min_date: $survey_min_date" . '<br>';
         // echo "survey_max_date: $survey_max_date" . '<br>';
 
+        $survey_start_range = $survey_min_date;
         $survey_data = array();
 
         while ($survey_min_date < $survey_max_date) {
             if ($time_interval == 24) {
                 $survey_temp_max_date =  date('Y-m-d', strtotime('+1 day', strtotime($survey_min_date)));
             } else if ($time_interval == 168) {
-                $survey_temp_max_date =  date('Y-m-d', strtotime('+8 day', strtotime($survey_min_date)));
+                $survey_temp_max_date =  date('Y-m-d', strtotime('+7 day', strtotime($survey_min_date)));
             } else if ($time_interval == 720) {
                 $survey_temp_max_date =  date('Y-m-d', strtotime('+1 month', strtotime($survey_min_date)));
-            } else if ($time_interval == 4320) {
+            } else if ($time_interval == 2160) {
                 $survey_temp_max_date =  date('Y-m-d', strtotime('+3 month', strtotime($survey_min_date)));
             }
 
@@ -156,12 +144,13 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             if ($time_interval == 24) {
                 $survey_min_date =  date('Y-m-d', strtotime('+1 day', strtotime($survey_min_date)));
             } else if ($time_interval == 168) {
-                $survey_min_date =  date('Y-m-d', strtotime('+8 day', strtotime($survey_min_date)));
+                $survey_min_date =  date('Y-m-d', strtotime('+7 day', strtotime($survey_min_date)));
             } else if ($time_interval == 720) {
                 $survey_min_date =  date('Y-m-d', strtotime('+1 month', strtotime($survey_min_date)));
-            } else if ($time_interval == 4320) {
+            } else if ($time_interval == 2160) {
                 $survey_min_date =  date('Y-m-d', strtotime('+3 month', strtotime($survey_min_date)));
             }
+
             // echo "survey_min_date: $survey_min_date" . '<br>';
 
             if ($totalRows_get_entry) {
@@ -181,12 +170,12 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     if ($time_interval == 24) {
                         $st_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_min_date)));
                     } else if ($time_interval == 168) {
-                        $st_date = date('Y-m-d', strtotime('-8 day', strtotime($survey_min_date)));
+                        $st_date = date('Y-m-d', strtotime('-7 day', strtotime($survey_min_date)));
                         $end_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_temp_max_date)));
                     } else if ($time_interval == 720) {
                         $st_date = date('Y-m-d', strtotime('-1 month', strtotime($survey_min_date)));
                         $end_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_temp_max_date)));
-                    } else if ($time_interval == 4320) {
+                    } else if ($time_interval == 2160) {
                         $st_date = date('Y-m-d', strtotime('-3 month', strtotime($survey_min_date)));
                         $end_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_temp_max_date)));
                     }
@@ -327,7 +316,11 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                         if ($total_answer == 0 and $total_result_val == 0) {
                             $average_value = 100;
                         }
-                        $average_value = ($total_answer / ($i * 100)) * 100;
+
+                        if ($i > 0) {
+                            $average_value = ($total_answer / ($i * 100)) * 100;
+                        }
+
                         if (is_nan($average_value)) {
                             $average_value = 100;
                         }
@@ -352,6 +345,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
         // echo '<pre>';
         // print_r($survey_data);
         // echo '</pre>';  
+        // die('YYY');
 
         if (!file_exists('document')) {
             mkdir('document', 0755, true);
@@ -493,10 +487,13 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                             </div>
                             <div class="title">
                                 <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
-                                <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>
-                                <h4>' . date('d/m/Y', strtotime($row_get_report['start_date'])) . '-' . date('d/m/Y', strtotime($row_get_report['end_date'])) . '</h4>
+                                <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>';
 
-                            </div>
+        if ($frequency_interval != 24) {
+            $html .= '<h4>' . date('d/m/Y', strtotime($survey_start_range)) . '-' . date('d/m/Y', strtotime('-1 day', strtotime($row_get_report['next_date']))) . '</h4>';
+        }
+
+        $html .= '</div>
                         </div>
                     </div>   
                     <div class="row">';
@@ -602,8 +599,8 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
                     $counter++;
                 }
             }
-        }else{
-            $html .='<div class="col-md-12"><h3 style="text-align:center;">No records were found.</h3></div>'; 
+        } else {
+            $html .= '<div class="col-md-12"><h3 style="text-align:center;">No records were found.</h3></div>';
         }
 
         $html .= '</div>
@@ -635,15 +632,14 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             $mail = cron_emails($attachments, $to, $from_mail, $name, $subject, $message);
         }
 
-        if ($not_first_time) {
-            // update next schedule date with interval
-            $nextScheduledDate = $row_get_report['next_date'];
-            $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
-            $data = array(
-                "next_date" => $updateSchedule,
-            );
-            $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
-        }
+        // update next schedule date with interval
+        $nextScheduledDate = $row_get_report['next_date'];
+        $updateSchedule = date('Y-m-d H:i:s', strtotime(' + ' . $row_get_report['sch_interval'] . ' hours', strtotime($nextScheduledDate)));
+        $data = array(
+            "next_date" => $updateSchedule,
+        );
+
+        $update = dbRowUpdate("scheduled_report_templates", $data, "where id=" . $row_get_report['id']);
 
         if (count($attachments) > 0) {
             foreach ($attachments as $key => $value) {
@@ -652,7 +648,7 @@ while ($row_get_report = mysqli_fetch_assoc($get_scheduled_report)) {
             }
         }
 
-        echo "ready_to_run: ".$ready_to_run." & not_first_time: ".$not_first_time." for the scheduled_report_template_id: ".$row_get_report['id']." <br>";
+        // echo "ready_to_run: " . $ready_to_run . " & not_first_time: " . $not_first_time . " for the scheduled_report_template_id: " . $row_get_report['id'] . " <br>";
     } else {
         echo "ready_to_run: $ready_to_run <br>";
     }
