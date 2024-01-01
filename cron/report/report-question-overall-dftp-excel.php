@@ -1,15 +1,34 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+// use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $filter = json_decode($row_report['filter'], 1);
 
 $data_type    = $filter['field'];
 $surveyid     = $filter['survey_id'];
 $interval     = $row_report['sch_interval'] / 24;
+$freqInterval     = $row_report['time_interval'] / 24;
 $nextDate     = $row_report['next_date'];
+
 $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nextDate)));
+
+
+if ($row_report['time_interval'] == 24) {
+  echo 'time_interval daily <br>'; 
+  $timeIntervalArray = getDaily($startDate, $nextDate);
+} else if ($row_report['time_interval'] == 168) {
+  $timeIntervalArray = array_values(getWeeklyDate($startDate, $nextDate));
+} else if ($row_report['time_interval'] == 720) {
+  $timeIntervalArray = array_values(getMonthly($startDate, $nextDate));
+} else if ($row_report['time_interval'] == 2160) {
+  echo 'sdzsdc <br>';
+  $timeIntervalArray = getQuarterly($startDate, $nextDate);
+}
+
+echo '<pre>';
+print_r($timeIntervalArray);
+echo '</pre>';
 
 $ans_filter_query = '';
 if (!empty($startDate) and !empty($nextDate)) {
@@ -27,42 +46,54 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   $answer_type = $row_get_questions['answer_type'];
 
   /* Get answer values attempted */
-  record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_questions['id'] . " order By cdate asc");
-  if (!empty($totalRows_get_questions_answers)) {
-    while ($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)) {
-      $created_date = date('d-m-Y', strtotime($row_get_questions_answers['cdate']));
-      if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][$row_get_questions_answers['answerid']] += 1;
-      } else if ($answer_type == 2 || $answer_type == 3) {
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
-      }
-    }
-  } elseif ($answer_type == 1) {
-    record_set("get_child_questions", "select * from questions where parendit='" . $row_get_questions['id'] . "' and cstatus='1'");
-    if (!empty($totalRows_get_child_questions)) {
-      $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['having_child'] = true;
-      record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $row_get_questions['id']);
-      $options = array();
-      if (!empty($totalRows_get_parent_question_options)) {
-        while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
-          $options[$row_parent_question_option['id']] = 0;
+
+  for ($i = 0; $i < count($timeIntervalArray) - 1; $i++) {
+    $fromDate = date('Y-m-d', strtotime($timeIntervalArray[$i]));
+    $toDate = date('Y-m-d', strtotime($timeIntervalArray[$i + 1]));
+
+    echo $fromDate . ' fromDate <br>';
+    echo $toDate . 'toDate <br>';
+
+    $filterData = " and  cdate between $fromDate and '" . date('Y-m-d', strtotime($toDate)) . "'";
+
+    record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $filterData  and questionid = " . $row_get_questions['id'] . " order By cdate asc", 1);
+    $created_date = $fromDate;
+
+    if (!empty($totalRows_get_questions_answers)) {
+      while ($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)) {
+        // $created_date = date('d-m-Y', strtotime($row_get_questions_answers['cdate']));
+        if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][$row_get_questions_answers['answerid']] += 1;
+        } else if ($answer_type == 2 || $answer_type == 3) {
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['survey_responses'][$created_date][] = ($row_get_questions_answers['answertext']) ? $row_get_questions_answers['answertext'] : 'UnAnswered';
         }
       }
+    } else if ($answer_type == 1) {
+      record_set("get_child_questions", "select * from questions where parendit='" . $row_get_questions['id'] . "' and cstatus='1'");
+      if (!empty($totalRows_get_child_questions)) {
+        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['having_child'] = true;
+        record_set("get_parent_question_options", "select id from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $row_get_questions['id']);
+        $options = array();
+        if (!empty($totalRows_get_parent_question_options)) {
+          while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
+            $options[$row_parent_question_option['id']] = 0;
+          }
+        }
 
-      while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+        while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['id'] = $row_get_child_question['id'];
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['question'] = $row_get_child_question['question'];
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
+          $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
 
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['id'] = $row_get_child_question['id'];
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['question'] = $row_get_child_question['question'];
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['ifrequired'] = $row_get_child_question['ifrequired'];
-        $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['answer_type'] = $row_get_child_question['answer_type'];
+          record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $filterData  and questionid = " . $row_get_child_question['id']);
 
-        record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id'], 1);
-
-        if (!empty($totalRows_get_child_questions_answers)) {
-          while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
-            $created_date = date('d-m-Y', strtotime($row_get_child_questions_answer['cdate']));
-            $options[$row_get_child_questions_answer['answerid']] += 1;
-            $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['survey_responses'][$created_date]  = $options;
+          if (!empty($totalRows_get_child_questions_answers)) {
+            while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
+              $created_date = date('d-m-Y', strtotime($row_get_child_questions_answer['cdate']));
+              $options[$row_get_child_questions_answer['answerid']] += 1;
+              $questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['children'][$row_get_child_question['id']]['survey_responses'][$created_date]  = $options;
+            }
           }
         }
       }
@@ -70,6 +101,12 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   }
 }
 
+echo '<pre>';
+echo $row_report['id'];
+
+print_r($questions);
+echo '</pre>';
+die();
 // create excel start
 /** Print Excel file start */
 $style = [
@@ -84,7 +121,6 @@ $style = [
 
 $surveyName = getSurvey()[$surveyid];
 $dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime($nextDate));
-
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
 
@@ -94,7 +130,10 @@ $activeSheet->setCellValue('A2', $dateParameter);
 $activeSheet->getColumnDimension('A')->setWidth(700, 'px');
 $activeSheet->getColumnDimension('B')->setWidth(100, 'px');
 $activeSheet->getColumnDimension('C')->setWidth(100, 'px');
-$i = 2;
+$i = 3;
+// echo '<pre>';
+// print_r($questions);
+// echo '<pre>';
 
 foreach ($questions as $stepId => $question) {
   $activeSheet->setCellValue('A' . $i, '');
@@ -114,7 +153,12 @@ foreach ($questions as $stepId => $question) {
     $char = "A";
     foreach ($surveyResponse as $key => $value) {
       $j = $i + 1;
-      $fieldName = $key;
+      if ($freqInterval == 24) {
+        $fieldName = $key;
+      } else {
+        $fieldName = $key . ' - ' . date('Y-m-d', strtotime("+" . $freqInterval . " day", strtotime($key)));
+      }
+
       if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
         $activeSheet->setCellValue($char . $i, '');
         $activeSheet->setCellValue("A" . $j, "");
@@ -123,7 +167,8 @@ foreach ($questions as $stepId => $question) {
         $char++;
         $activeSheet->setCellValue($char . $i, "$fieldName");
         $activeSheet->getStyle($char . $i)->applyFromArray($style);
-
+        $stChar = chr(ord($char) + 1);
+        $activeSheet->mergeCells("$char$i:$stChar$i");
         // for result and response heading
         $activeSheet->setCellValue($char . $j, 'RESULT');
         $activeSheet->getStyle($char . $j)->applyFromArray($style);
@@ -179,5 +224,3 @@ $activeSheet->getStyle('A1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
 $writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
-echo '<hr/>';
-
