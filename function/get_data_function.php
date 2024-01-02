@@ -423,9 +423,10 @@ function getWeeklyDate($startDate, $endDate)
 		$startDate = date('Y-m-d', strtotime("+7 day", strtotime($startDate)));
 	}
 	$lastDate = $date_range_array[count($date_range_array) - 1];
-	$is_today_due_date = check_differenceDate($lastDate, $endDates, 'eq');
+	$endDate = date('Y-m-d', strtotime($endDate));
+	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
 	if ($is_today_due_date !=1) {
-		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
+		$date_range_array[count($date_range_array)] = $endDate;
 	}
 	return $date_range_array;
 }
@@ -441,12 +442,13 @@ function getMonthly($startDate, $endDate)
 		$startDate = date('Y-m-d', strtotime("+30 day", strtotime($startDate)));
 	}
 
-	$endDates = date('Y-m-d', strtotime($endDate));
 	$lastDate = $date_range_array[count($date_range_array) - 1];
-	$is_today_due_date = check_differenceDate($lastDate, $endDates, 'eq');
+	$endDate = date('Y-m-d', strtotime($endDate));
+	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
 	if ($is_today_due_date !=1) {
-		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
+		$date_range_array[count($date_range_array)] = $endDate;
 	}
+	return $date_range_array;
 
 	return $date_range_array;
 }
