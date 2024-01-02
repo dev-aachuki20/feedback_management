@@ -422,7 +422,11 @@ function getWeeklyDate($startDate, $endDate)
 		$date_range_array[] = $startDate;
 		$startDate = date('Y-m-d', strtotime("+7 day", strtotime($startDate)));
 	}
-	$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
+	$lastDate = $date_range_array[count($date_range_array) - 1];
+	$is_today_due_date = check_differenceDate($lastDate, $endDates, 'eq');
+	if ($is_today_due_date !=1) {
+		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
+	}
 	return $date_range_array;
 }
 
@@ -437,16 +441,17 @@ function getMonthly($startDate, $endDate)
 		$startDate = date('Y-m-d', strtotime("+30 day", strtotime($startDate)));
 	}
 
-	if ($date_range_array[count($date_range_array) - 1] !=  $endDate) {
+	$endDates = date('Y-m-d', strtotime($endDate));
+	$lastDate = $date_range_array[count($date_range_array) - 1];
+	$is_today_due_date = check_differenceDate($lastDate, $endDates, 'eq');
+	if ($is_today_due_date !=1) {
 		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
 	}
 
 	return $date_range_array;
 }
 
-function getQuarterly($startDate, $endDate)
-{
-
+function getQuarterly($startDate, $endDate){
 	$date_range_array = [];
 	$endDate = date('Y-m-d', strtotime($endDate));
 	while ($startDate < $endDate) {
@@ -454,7 +459,10 @@ function getQuarterly($startDate, $endDate)
 		$startDate = date('Y-m-d', strtotime("+90 day", strtotime($startDate)));
 	}
 
-	if ($date_range_array[count($date_range_array) - 1] !=  $endDate) {
+	$endDates = date('Y-m-d', strtotime($endDate));
+	$lastDate = $date_range_array[count($date_range_array) - 1];
+	$is_today_due_date = check_differenceDate($lastDate, $endDates, 'eq');
+	if ($is_today_due_date !=1) {
 		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
 	}
 
