@@ -119,7 +119,7 @@ foreach($questions as $stepId => $question){
 			$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
 			$answer_type = $data['answer_type'];
 			if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
-				$counts = array_values($value['survey_responses']);
+				$counts = array_values($data['survey_responses']);
 				$sum_of_count = array_sum($counts);
 				if ($sum_of_count > 0) {
 					$perResponsePercentage = 100 / $sum_of_count;

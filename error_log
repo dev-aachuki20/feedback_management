@@ -61,3 +61,25 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in /home/dgfm/demo.dgfm.app/index.php on line 2
+[02-Jan-2024 10:09:28 Europe/London] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/dgfm/demo.dgfm.app/function/function.php on line 333
+[02-Jan-2024 10:22:55 Europe/London] PHP Warning:  explode() expects parameter 2 to be string, array given in /home/dgfm/demo.dgfm.app/survey-form.php on line 56
+[02-Jan-2024 10:22:55 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/survey-form.php on line 57
+[02-Jan-2024 10:27:05 Europe/London] PHP Warning:  explode() expects parameter 2 to be string, array given in /home/dgfm/demo.dgfm.app/survey-form.php on line 56
+[02-Jan-2024 10:27:05 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/survey-form.php on line 57
+[02-Jan-2024 10:27:36 Europe/London] PHP Warning:  explode() expects parameter 2 to be string, array given in /home/dgfm/demo.dgfm.app/survey-form.php on line 56
+[02-Jan-2024 10:27:36 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/survey-form.php on line 57
+[02-Jan-2024 10:28:07 Europe/London] PHP Warning:  explode() expects parameter 2 to be string, array given in /home/dgfm/demo.dgfm.app/survey-form.php on line 56
+[02-Jan-2024 10:28:07 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/survey-form.php on line 57
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/dgfm/demo.dgfm.app/function/get_data_function.php on line 276
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/dgfm/demo.dgfm.app/function/get_data_function.php on line 276
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  array_intersect(): Argument #2 is not an array in /home/dgfm/demo.dgfm.app/sidebar.php on line 24
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/sidebar.php on line 24
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  array_intersect(): Argument #2 is not an array in /home/dgfm/demo.dgfm.app/sidebar.php on line 74
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/sidebar.php on line 74
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  array_intersect(): Argument #2 is not an array in /home/dgfm/demo.dgfm.app/sidebar.php on line 112
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/sidebar.php on line 112
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  array_intersect(): Argument #2 is not an array in /home/dgfm/demo.dgfm.app/sidebar.php on line 192
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/sidebar.php on line 192
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  array_intersect(): Argument #2 is not an array in /home/dgfm/demo.dgfm.app/sidebar.php on line 228
+[02-Jan-2024 12:13:27 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/sidebar.php on line 228
+[02-Jan-2024 12:13:30 Europe/London] PHP Warning:  mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, boolean given in /home/dgfm/demo.dgfm.app/function/get_data_function.php on line 231

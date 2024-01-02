@@ -426,7 +426,7 @@ function getWeeklyDate($startDate, $endDate)
 	$endDate = date('Y-m-d', strtotime($endDate));
 	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
 	if ($is_today_due_date !=1) {
-		$date_range_array[count($date_range_array)] = $endDate;
+		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime("-1 day", strtotime($endDate)));
 	}
 	return $date_range_array;
 }

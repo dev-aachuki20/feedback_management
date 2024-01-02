@@ -49,7 +49,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
     $fromDate = date('Y-m-d', strtotime($timeIntervalArray[$i]));
     $toDate = date('Y-m-d', strtotime($timeIntervalArray[$i + 1]));
 
-    $filterData = " and  cdate between $fromDate and '" . date('Y-m-d', strtotime($toDate)) . "'";
+    $filterData = " and  cdate between '$fromDate' and '" . date('Y-m-d', strtotime($toDate)) . "'";
 
     /* Get answer values attempted */
     record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyId . "' and cstatus='1' $filterData  and questionid = " . $row_get_questions['id'] . " order By cdate asc");
@@ -100,6 +100,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
 }
 
 // echo '<pre>';
+// echo $row_report['id']. ' PDF <br>';
 // print_r($surveyQuestions);
 // echo '</pre>';
 // die('AFGH');
@@ -160,7 +161,12 @@ if (count($surveyQuestions) > 0) {
                 $temp_date = date('Y-m-d', strtotime('+' . $time_interval . ' days', strtotime($key)));
                 $new_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_date)));
                 $isNewDateExceed = check_differenceDate($new_date, $survey_end_date, 'gt');
+                // echo $new_date.' new_date <br>';
+                // echo $survey_end_date.' survey_end_date <br>';
                 if ($isNewDateExceed) {
+                  // echo $new_date.' new_date <br>';
+                  // echo $survey_end_date.' survey_end_date <br>';
+                  // die();
                   $new_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_end_date)));
                 }
 

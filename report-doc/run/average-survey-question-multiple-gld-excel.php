@@ -135,7 +135,7 @@ foreach($questions as $stepId => $question){
 				$startCell = chr(ord($char) - 1);
 				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
 				$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
-				record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id",1);
+				record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id");
 				$k =$j+1;
 				while($row_get_question_details = mysqli_fetch_assoc($get_question_details)){
 					$totalResponse = array_sum(array_values($value));
@@ -179,5 +179,18 @@ foreach($questions as $stepId => $question){
 $activeSheet->getStyle('A1')->applyFromArray($style);
 $activeSheet->getStyle('E1')->applyFromArray($style);
 // Save the Excel file
-$writer = new Xlsx($spreadsheet);
-$writer->save('excel/average-survey-question-multiple-location-55.xlsx');
+// $writer = new Xlsx($spreadsheet);
+// $writer->save('excel/average-survey-question-multiple-location-55.xlsx');
+
+$filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xlsx';
+// $filename = 'Survey Report Question -' . date('Y-m-d-H-i-s') . '.xls';
+try {
+    $writer = new Xlsx($spreadsheet);
+	$writer->save('excel/survey-question-overall.xlsx');
+    $content = file_get_contents('excel/survey-question-overall.xlsx');
+} catch(Exception $e) {
+    exit($e->getMessage());
+}
+header("Content-Disposition: attachment; filename=".$filename);
+unlink('excel/survey-question-overall.xlsx');
+exit($content);

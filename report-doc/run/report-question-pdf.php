@@ -32,17 +32,17 @@ if (isset($surveyId)) {
 $ans_filter_query = '';
 if ($data_type == 'location' && $field_value != '') {
   $ans_filter_query .= " and locationid IN($field_value)";
-  record_set("get_location", "select name from locations where id = '" . $field_value . "'");
+  record_set("get_location", "select `name` from `locations` where id = '" . $field_value . "'");
   $selected_template_field = mysqli_fetch_assoc($get_location);
 }
 if ($data_type == 'department' && $field_value != '') {
   $ans_filter_query .= " and departmentid IN($field_value)";
-  record_set("get_department", "select name from departments where id = '" . $field_value . "'");
+  record_set("get_department", "select `name` from `departments` where id = '" . $field_value . "'");
   $selected_template_field = mysqli_fetch_assoc($get_department);
 }
 if ($data_type == 'group' && $field_value != '') {
   $ans_filter_query .= " and groupid IN($field_value)";
-  record_set("get_group", "select name from groups where id = '" . $field_value . "'");
+  record_set("get_group", "select `name` from `groups` where id = '" . $field_value . "'");
   $selected_template_field = mysqli_fetch_assoc($get_group);
 }
 

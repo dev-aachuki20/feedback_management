@@ -1,0 +1,271 @@
+[02-Jan-2024 09:52:50 Europe/London] PHP Warning:  implode(): Invalid arguments passed in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 9
+[02-Jan-2024 09:53:12 Europe/London] PHP Warning:  implode(): Invalid arguments passed in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 9
+[02-Jan-2024 09:53:12 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 09:53:12 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[02-Jan-2024 09:53:39 Europe/London] PHP Warning:  implode(): Invalid arguments passed in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 9
+[02-Jan-2024 09:53:39 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 09:53:39 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:01:55 Europe/London] PHP Warning:  implode(): Invalid arguments passed in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 9
+[02-Jan-2024 10:01:55 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:01:55 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:18:39 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:18:39 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[02-Jan-2024 10:18:44 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:18:44 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:19:52 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:19:52 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[02-Jan-2024 10:19:57 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:19:57 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:20:11 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:20:11 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[02-Jan-2024 10:20:16 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:20:16 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:22:19 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:22:19 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[02-Jan-2024 10:22:27 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[02-Jan-2024 10:22:27 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/function/function.php on line 1242
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:22:58 Europe/London] PHP Warning:  fopen(excel/survey-question-overall.xlsx): failed to open stream: No such file or directory in /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/BaseWriter.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:23:44 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:24:32 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:25:04 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:28:38 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:30:53 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:30:53 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:31:20 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:31:20 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:31:42 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:31:42 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:16 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:32:50 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:33:28 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:03 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:07 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:15 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 125
+[02-Jan-2024 10:34:29 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 126
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:35:25 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:19 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_values() expects parameter 1 to be array, integer given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 122
+[02-Jan-2024 10:36:33 Europe/London] PHP Warning:  array_sum() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 123
+[02-Jan-2024 10:38:30 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 10:38:45 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php on line 109
+[02-Jan-2024 10:38:45 Europe/London] PHP Fatal error:  Uncaught PhpOffice\PhpSpreadsheet\Exception: Invalid cell coordinate A in /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Cell/Coordinate.php:42
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1302): PhpOffice\PhpSpreadsheet\Cell\Coordinate::coordinateFromString('A')
+#1 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1192): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->createNewCell('A')
+#2 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1116): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->getCell('A')
+#3 /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php(94): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->setCellValue('A', '')
+#4 /home/dgfm/demo.dgfm.app/report-doc/run/index.php(26): include('/home/dgfm/demo...')
+#5 {main}
+  thrown in /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Cell/Coordinate.php on line 42
+[02-Jan-2024 10:39:00 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php on line 109
+[02-Jan-2024 10:39:00 Europe/London] PHP Fatal error:  Uncaught PhpOffice\PhpSpreadsheet\Exception: Invalid cell coordinate A in /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Cell/Coordinate.php:42
+Stack trace:
+#0 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1302): PhpOffice\PhpSpreadsheet\Cell\Coordinate::coordinateFromString('A')
+#1 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1192): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->createNewCell('A')
+#2 /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Worksheet/Worksheet.php(1116): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->getCell('A')
+#3 /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php(94): PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->setCellValue('A', '')
+#4 /home/dgfm/demo.dgfm.app/report-doc/run/index.php(26): include('/home/dgfm/demo...')
+#5 {main}
+  thrown in /home/dgfm/demo.dgfm.app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Cell/Coordinate.php on line 42
+[02-Jan-2024 10:39:13 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 10:40:27 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/survey-question-overall-excel.php on line 117
+[02-Jan-2024 10:42:31 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[02-Jan-2024 10:46:36 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[02-Jan-2024 10:47:28 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[02-Jan-2024 10:48:12 Europe/London] PHP Warning:  file_get_contents(excel/survey-question-overall.xls): failed to open stream: No such file or directory in /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php on line 190
+[02-Jan-2024 10:48:59 Europe/London] PHP Warning:  file_get_contents(excel/survey-question-overall.xls): failed to open stream: No such file or directory in /home/dgfm/demo.dgfm.app/report-doc/run/average-survey-question-multiple-gld-excel.php on line 190
+[02-Jan-2024 10:55:11 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[02-Jan-2024 10:56:51 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 10:57:28 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 10:59:53 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:01:25 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:02:15 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:02:34 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:02:47 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:03:28 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:03:48 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:04:07 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:04:18 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:04:46 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:05:00 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:06:10 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:11:19 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
+[02-Jan-2024 11:12:15 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[02-Jan-2024 11:13:28 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86

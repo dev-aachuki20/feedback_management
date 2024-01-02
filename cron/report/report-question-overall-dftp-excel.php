@@ -14,14 +14,12 @@ $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nex
 
 
 if ($row_report['time_interval'] == 24) {
-  echo 'time_interval daily <br>'; 
   $timeIntervalArray = getDaily($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 168) {
   $timeIntervalArray = getWeeklyDate($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 720) {
   $timeIntervalArray = getMonthly($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 2160) {
-  echo 'sdzsdc <br>';
   $timeIntervalArray = getQuarterly($startDate, $nextDate);
 }
 
@@ -49,10 +47,10 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   for ($i = 0; $i < count($timeIntervalArray) - 1; $i++) {
     $fromDate = date('Y-m-d', strtotime($timeIntervalArray[$i]));
     $toDate = date('Y-m-d', strtotime($timeIntervalArray[$i + 1]));
-    
+
     $filterData = " and  cdate between '$fromDate' and '" . date('Y-m-d', strtotime($toDate)) . "'";
 
-    record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $filterData  and questionid = " . $row_get_questions['id'] . " order By cdate asc", 1);
+    record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $filterData  and questionid = " . $row_get_questions['id'] . " order By cdate asc");
     $created_date = $fromDate;
 
     if (!empty($totalRows_get_questions_answers)) {
@@ -97,11 +95,12 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   }
 }
 
-echo '<pre>';
-echo $row_report['id'];
+// echo '<pre>';
+// echo $row_report['id']. ' EXCEL <br>';
+// print_r($questions);
+// echo '</pre>';
+// die('jkjk');
 
-print_r($questions);
-echo '</pre>';
 
 // create excel start
 /** Print Excel file start */
@@ -116,7 +115,10 @@ $style = [
 ];
 
 $surveyName = getSurvey()[$surveyid];
-$dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime($nextDate));
+
+$dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime("-1 day", strtotime($nextDate)));
+
+
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
 
@@ -152,15 +154,16 @@ foreach ($questions as $stepId => $question) {
       if ($freqInterval == 24) {
         $fieldName = $key;
       } else {
-        $nextNewDate = date('Y-m-d', strtotime("+" . ($freqInterval-1) . " day", strtotime($key)));
+        $nextNewDate = date('Y-m-d', strtotime("+" . ($freqInterval - 1) . " day", strtotime($key)));
         $isNextDateExceed = check_differenceDate($nextNewDate, $nextDate, 'gt');
-        if($isNextDateExceed){
+        if ($isNextDateExceed) {
           $nextNewDate = date('Y-m-d', strtotime("-1 day", strtotime($nextDate)));
         }
+
         $isEqualBothDateEqual = check_differenceDate($nextNewDate, $key, 'eq');
-        if($isEqualBothDateEqual){
-          $fieldName =  date('d/m/Y', strtotime($key)) ;
-        }else{
+        if ($isEqualBothDateEqual) {
+          $fieldName =  date('d/m/Y', strtotime($key));
+        } else {
           $fieldName =  date('d/m/Y', strtotime($key)) . ' - ' . date('d/m/Y', strtotime($nextNewDate));
         }
       }

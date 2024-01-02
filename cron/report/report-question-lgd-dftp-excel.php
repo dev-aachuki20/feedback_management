@@ -142,7 +142,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
           // echo '</pre>';
           foreach($surveyResponse as $key => $value){
             $j= $i+1;
-            echo "Key ::".$key.'<br><br><br><br>';
             if ($freqInterval == 24) {
               $fieldName = $key;
             } else {

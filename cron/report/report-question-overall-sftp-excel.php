@@ -1,10 +1,13 @@
 <?php
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $data_type    = $filter['field'];
 $surveyid     = $filter['survey_id'];
 $interval     = $row_report['time_interval'] / 24;
+$frequency_interval = $row_report['sch_interval'] / 24;
+
 $nextDate     = $row_report['next_date'];
 $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nextDate)));
 
@@ -50,7 +53,12 @@ $style = [
 ];
 
 $surveyName = getSurvey()[$surveyid];
-$dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' .date('d/m/Y', strtotime("-1 day", strtotime($nextDate)));
+
+if ($frequency_interval == 1) {
+  $dateParameter = date('d/m/Y', strtotime($startDate));
+} else {
+  $dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime("-1 day", strtotime($nextDate)));
+}
 
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
@@ -136,4 +144,3 @@ $activeSheet->getStyle('A1')->applyFromArray($style);
 // Save the Excel file
 $writer = new Xlsx($spreadsheet);
 $writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
-
