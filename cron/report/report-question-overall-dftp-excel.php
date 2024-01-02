@@ -1,14 +1,13 @@
 <?php
 
-// use PhpOffice\PhpSpreadsheet\Spreadsheet;
-// use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-$filter = json_decode($row_report['filter'], 1);
 
 $data_type    = $filter['field'];
 $surveyid     = $filter['survey_id'];
 $interval     = $row_report['sch_interval'] / 24;
-$freqInterval     = $row_report['time_interval'] / 24;
+$freqInterval = $row_report['time_interval'] / 24;
 $nextDate     = $row_report['next_date'];
 
 $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nextDate)));
@@ -18,17 +17,17 @@ if ($row_report['time_interval'] == 24) {
   echo 'time_interval daily <br>'; 
   $timeIntervalArray = getDaily($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 168) {
-  $timeIntervalArray = array_values(getWeeklyDate($startDate, $nextDate));
+  $timeIntervalArray = getWeeklyDate($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 720) {
-  $timeIntervalArray = array_values(getMonthly($startDate, $nextDate));
+  $timeIntervalArray = getMonthly($startDate, $nextDate);
 } else if ($row_report['time_interval'] == 2160) {
   echo 'sdzsdc <br>';
   $timeIntervalArray = getQuarterly($startDate, $nextDate);
 }
 
-echo '<pre>';
-print_r($timeIntervalArray);
-echo '</pre>';
+// echo '<pre>';
+// print_r($timeIntervalArray);
+// echo '</pre>';
 
 $ans_filter_query = '';
 if (!empty($startDate) and !empty($nextDate)) {
@@ -50,11 +49,8 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   for ($i = 0; $i < count($timeIntervalArray) - 1; $i++) {
     $fromDate = date('Y-m-d', strtotime($timeIntervalArray[$i]));
     $toDate = date('Y-m-d', strtotime($timeIntervalArray[$i + 1]));
-
-    echo $fromDate . ' fromDate <br>';
-    echo $toDate . 'toDate <br>';
-
-    $filterData = " and  cdate between $fromDate and '" . date('Y-m-d', strtotime($toDate)) . "'";
+    
+    $filterData = " and  cdate between '$fromDate' and '" . date('Y-m-d', strtotime($toDate)) . "'";
 
     record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $filterData  and questionid = " . $row_get_questions['id'] . " order By cdate asc", 1);
     $created_date = $fromDate;
@@ -106,7 +102,7 @@ echo $row_report['id'];
 
 print_r($questions);
 echo '</pre>';
-die();
+
 // create excel start
 /** Print Excel file start */
 $style = [
@@ -156,7 +152,17 @@ foreach ($questions as $stepId => $question) {
       if ($freqInterval == 24) {
         $fieldName = $key;
       } else {
-        $fieldName = $key . ' - ' . date('Y-m-d', strtotime("+" . $freqInterval . " day", strtotime($key)));
+        $nextNewDate = date('Y-m-d', strtotime("+" . ($freqInterval-1) . " day", strtotime($key)));
+        $isNextDateExceed = check_differenceDate($nextNewDate, $nextDate, 'gt');
+        if($isNextDateExceed){
+          $nextNewDate = date('Y-m-d', strtotime("-1 day", strtotime($nextDate)));
+        }
+        $isEqualBothDateEqual = check_differenceDate($nextNewDate, $key, 'eq');
+        if($isEqualBothDateEqual){
+          $fieldName =  date('d/m/Y', strtotime($key)) ;
+        }else{
+          $fieldName =  date('d/m/Y', strtotime($key)) . ' - ' . date('d/m/Y', strtotime($nextNewDate));
+        }
       }
 
       if ($answer_type == 1 || $answer_type == 4 || $answer_type == 6) {
@@ -172,10 +178,13 @@ foreach ($questions as $stepId => $question) {
         // for result and response heading
         $activeSheet->setCellValue($char . $j, 'RESULT');
         $activeSheet->getStyle($char . $j)->applyFromArray($style);
+        $activeSheet->getColumnDimension($char)->setWidth(100, 'px');
 
         $char = chr(ord($char) + 1);
         $activeSheet->setCellValue($char . $j, 'RESPONSE');
         $activeSheet->getStyle(($char) . $j)->applyFromArray($style);
+        $activeSheet->getColumnDimension($char)->setWidth(100, 'px');
+
         $startCell = chr(ord($char) - 1);
         $questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =" . $key);
         record_set("get_question_details", "select * from questions_detail where surveyid='" . $surveyid . "' and questionid=$question_id");
@@ -195,7 +204,9 @@ foreach ($questions as $stepId => $question) {
       } else {
         // for location names 
         $char++;
-        $activeSheet->setCellValue($char . $i, "$locationName");
+        $activeSheet->setCellValue($char . $i, "$fieldName");
+        $stChar = chr(ord($char) + 1);
+        $activeSheet->mergeCells("$char$i:$stChar$i");
         $activeSheet->getStyle($char . $i)->applyFromArray($style);
 
         // for result and response heading

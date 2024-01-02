@@ -15,6 +15,11 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
     $is_today_due_date = check_differenceDate($current_date, $next_date, 'eq');
     $is_curr_lte_end_date = check_differenceDate($current_date, $end_date, 'lte');
 
+    echo '<hr/> is_due_gt_start_date =>'.$is_due_gt_start_date.'<br/>';
+    echo 'current_date =>'.$current_date.'<br/>';
+    echo 'is_today_due_date =>'.$is_today_due_date.'<br/>';
+    echo 'is_curr_lte_end_date =>'.$is_curr_lte_end_date.'<hr/> <br/> ';
+
     if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $row_report['send_to'] != null) {
         echo $row_report['id'] . ' <br>';
         $filter = json_decode($row_report['filter'], 1);
@@ -22,16 +27,19 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
             if ($row_report['sch_interval'] == $row_report['time_interval']) {
                 echo 'SFTP ' . $row_report['id'] . '<br>';
                 include('../report/report-question-overall-sftp-pdf.php');
-                // include('../report/report-question-overall-sftp-excel.php');
+                include('../report/report-question-overall-sftp-excel.php');
             } else {
                 echo 'DFTP ' . $row_report['id'] . '<br>';
                 include('../report/report-question-overall-dftp-pdf.php');
-                // include('../report/report-question-overall-dftp-excel.php');
+                include('../report/report-question-overall-dftp-excel.php');
             }
         } else {
             // group/location/department
-            echo 'GLD ' . $row_report['id'] . '<br>';
-            include('../report/report-question-overall-LGD-excel.php');
+             if ($row_report['sch_interval'] == $row_report['time_interval']) {
+                include('../report/report-question-lgd-sftp-excel.php');
+            } else {
+                include('../report/report-question-lgd-dftp-excel.php');
+            }
         }
 
 

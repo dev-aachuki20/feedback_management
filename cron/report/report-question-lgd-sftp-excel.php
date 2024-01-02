@@ -1,37 +1,18 @@
 <?php
-require dirname(__DIR__, 2) . '/function/function.php';
-require dirname(__DIR__, 2) . '/function/get_data_function.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-record_set("get_scheduled_reports", "select srt.* from scheduled_report_templates as srt INNER JOIN report_templates as rt ON srt.temp_id = rt.id where rt.report_type=2");
-
-while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
-  $current_date  = date('Y-m-d', time());
-  $start_date = date('Y-m-d', strtotime($row_get_reports['start_date']));
-  $next_date   = date('Y-m-d', strtotime($row_get_reports['next_date']));
-  $end_date   = date('Y-m-d', strtotime($row_get_reports['end_date']));
-  $send_to = $row_get_reports['send_to'];
-  $report_id = $row_get_reports['id'];
-  $is_due_gt_start_date = check_differenceDate($next_date, $start_date, 'gt');
-  $is_today_due_date = check_differenceDate($current_date, $next_date, 'eq');
-  $is_curr_lte_end_date = check_differenceDate($current_date, $end_date, 'lte');
-
-  if ($is_due_gt_start_date && $is_today_due_date && $is_curr_lte_end_date  && $send_to != null) {
-    $filter = json_decode($row_get_reports['filter'], 1);
+    $report_id = $row_report['id'];
+    $filter = json_decode($row_report['filter'], 1);
     $data_type    = $filter['field'];
     $surveyid     = $filter['survey_id'];
-    $interval     = $row_get_reports['sch_interval'] / 24;
-    $nextDate     = $row_get_reports['next_date'];
+    $interval     = $row_report['sch_interval'] / 24;
+    $nextDate     = $row_report['next_date'];
     $startDate    = date('Y-m-d', strtotime("-" . $interval . " day", strtotime($nextDate)));
-
-
     if (!empty($startDate) and !empty($nextDate)) {
       $ans_filter_query .= " and  cdate between '" . date('Y-m-d', strtotime($startDate)) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($nextDate))) . "'";
     }
-
-
     //Survey Questions
     record_set("get_questions", "select * from questions where surveyid='" . $surveyid . "' and cstatus='1' and parendit='0' order by dposition asc");
     $questions = array();
@@ -57,9 +38,9 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
         }
       } 
     }
-    echo '<pre>';
-    print_r($questions);
-    echo '</pre>';
+    // echo '<pre>';
+    // print_r($questions);
+    // echo '</pre>';
     // create excel start
     /** Print Excel file start */
     $style = [
@@ -203,8 +184,5 @@ while ($row_get_reports = mysqli_fetch_assoc($get_scheduled_reports)) {
     
     // Save the Excel file
     $writer = new Xlsx($spreadsheet);
-    $writer->save('document/survey-report-question-tab.xlsx');
+    $writer->save('document/survey-report-question-' . $row_report['id'] . '.xlsx');
 
-    //send mail
-  }
-}

@@ -2,7 +2,6 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-$filter = json_decode($row_report['filter'], 1);
 $data_type    = $filter['field'];
 $surveyid     = $filter['survey_id'];
 $interval     = $row_report['time_interval'] / 24;
