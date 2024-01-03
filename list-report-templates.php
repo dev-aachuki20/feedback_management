@@ -395,10 +395,15 @@ if (isset($_POST['schedule_btn'])) {
       
       alert(`${text[0].toUpperCase()+ text.substring(1)} is required`);
       return false;
+    }else if($("#start_date").val() == ''){
+            alert('Report start date is required');
+    }
+    else if($("#end_date").val() == ''){
+          alert('Report end date is required');
     }else{
       $('.second_form').submit();
     }
-  })
+  });
 
 
   let startDateInput = $('#start_date');

@@ -269,3 +269,8 @@ Stack trace:
 [02-Jan-2024 11:11:19 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
 [02-Jan-2024 11:12:15 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
 [02-Jan-2024 11:13:28 Europe/London] PHP Warning:  Invalid argument supplied for foreach() in /home/dgfm/demo.dgfm.app/report-doc/run/report-question-pdf-previous.php on line 86
+[03-Jan-2024 06:37:55 Europe/London] PHP Warning:  implode(): Invalid arguments passed in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 9
+[03-Jan-2024 06:37:55 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[03-Jan-2024 06:37:55 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[03-Jan-2024 06:38:17 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
+[03-Jan-2024 06:38:17 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298

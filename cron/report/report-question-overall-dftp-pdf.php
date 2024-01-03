@@ -21,7 +21,7 @@ if ($row_report['time_interval'] == 24) {
   $timeIntervalArray = getQuarterly($survey_start_date, $survey_end_date);
 }
 
-// echo $time_interval . ' time_interval <br>';
+// echo 'Time_interval val is: '. $time_interval . ' <br>' ;
 // echo '<pre>';
 // print_r($timeIntervalArray);
 // echo '</pre>';
@@ -48,6 +48,9 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   for ($i = 0; $i < count($timeIntervalArray) - 1; $i++) {
     $fromDate = date('Y-m-d', strtotime($timeIntervalArray[$i]));
     $toDate = date('Y-m-d', strtotime($timeIntervalArray[$i + 1]));
+
+    // echo 'From Date is '.$fromDate.' <br>';
+    // echo 'To Date is '.$toDate.' <br>';
 
     $filterData = " and  cdate between '$fromDate' and '" . date('Y-m-d', strtotime($toDate)) . "'";
 
@@ -99,6 +102,7 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
   }
 }
 
+// echo 'DFTP PDF ARRAY <br>';
 // echo '<pre>';
 // echo $row_report['id']. ' PDF <br>';
 // print_r($surveyQuestions);
@@ -159,15 +163,18 @@ if (count($surveyQuestions) > 0) {
                 <td rowspan="' . $totalRows_get_question_details . '" style="text-align:center;border: 1px solid">' . date('d/m/Y', strtotime($key)) . '</td>';
               } else {
                 $temp_date = date('Y-m-d', strtotime('+' . $time_interval . ' days', strtotime($key)));
+                // echo '$temp_date :'.$temp_date.'<br>';
                 $new_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_date)));
-                $isNewDateExceed = check_differenceDate($new_date, $survey_end_date, 'gt');
+                // echo 'Before $new_date :'.$new_date.'<br>';
+                $isNewDateExceed = check_differenceDate($new_date, date('Y-m-d', strtotime($survey_end_date)), 'gte');
+                // echo '$isNewDateExceed :'.$isNewDateExceed.'<br>';
+                // echo '$survey_end_date :'.$survey_end_date.'<br>';
+
                 // echo $new_date.' new_date <br>';
                 // echo $survey_end_date.' survey_end_date <br>';
                 if ($isNewDateExceed) {
-                  // echo $new_date.' new_date <br>';
-                  // echo $survey_end_date.' survey_end_date <br>';
-                  // die();
                   $new_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_end_date)));
+                  // echo 'inner IF $new_date :'.$new_date.'<br>';
                 }
 
                 $message .= '<tr>

@@ -405,17 +405,29 @@ function getThresholdPercentage()
 
 function getDaily($startDate, $endDate)
 {
+	// echo $startDate . ' startDate <br>';
+	// echo $endDate . ' endDate <br>';
+	// echo 'getDaily <br>';
+
 	$date_range_array = [];
 	while ($startDate < $endDate) {
 		$date_range_array[] = $startDate;
 		$startDate = date('Y-m-d', strtotime("+1 day", strtotime($startDate)));
 	}
-	array_pop($date_range_array);
+	// array_pop($date_range_array);
+
+	// echo '<pre>';
+	// print_r($date_range_array);
+	// echo '</pre>';
 	return $date_range_array;
 }
 
 function getWeeklyDate($startDate, $endDate)
 {
+	// echo $startDate . ' startDate <br>';
+	// echo $endDate . ' endDate <br>';
+	// echo 'getWeeklyDate <br>';
+
 	$date_range_array = [];
 
 	while ($startDate < $endDate) {
@@ -425,15 +437,25 @@ function getWeeklyDate($startDate, $endDate)
 	$lastDate = $date_range_array[count($date_range_array) - 1];
 	$endDate = date('Y-m-d', strtotime($endDate));
 	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
-	if ($is_today_due_date !=1) {
-		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime("-1 day", strtotime($endDate)));
+
+	if ($is_today_due_date != 1) {
+		// $date_range_array[count($date_range_array)] = date('Y-m-d', strtotime("-1 day", strtotime($endDate)));
+		$date_range_array[count($date_range_array)] = date('Y-m-d', strtotime($endDate));
 	}
+
+	// echo '<pre>';
+	// print_r($date_range_array);
+	// echo '</pre>';
 	return $date_range_array;
 }
 
 
 function getMonthly($startDate, $endDate)
 {
+	// echo $startDate . ' startDate <br>';
+	// echo $endDate . ' endDate <br>';
+	// echo 'getMonthly <br>';
+
 	$date_range_array = [];
 	$endDate = date('Y-m-d', strtotime($endDate));
 
@@ -445,13 +467,22 @@ function getMonthly($startDate, $endDate)
 	$lastDate = $date_range_array[count($date_range_array) - 1];
 	$endDate = date('Y-m-d', strtotime($endDate));
 	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
-	if ($is_today_due_date !=1) {
+	if ($is_today_due_date != 1) {
 		$date_range_array[count($date_range_array)] = $endDate;
 	}
+
+	// echo '<pre>';
+	// print_r($date_range_array);
+	// echo '</pre>';
 	return $date_range_array;
 }
 
-function getQuarterly($startDate, $endDate){
+function getQuarterly($startDate, $endDate)
+{
+	// echo $startDate . ' startDate <br>';
+	// echo $endDate . ' endDate <br>';
+	// echo 'getQuarterly <br>';
+
 	$date_range_array = [];
 	$endDate = date('Y-m-d', strtotime($endDate));
 	while ($startDate < $endDate) {
@@ -462,8 +493,12 @@ function getQuarterly($startDate, $endDate){
 	$lastDate = $date_range_array[count($date_range_array) - 1];
 	$endDate = date('Y-m-d', strtotime($endDate));
 	$is_today_due_date = check_differenceDate($lastDate, $endDate, 'eq');
-	if ($is_today_due_date !=1) {
+	if ($is_today_due_date != 1) {
 		$date_range_array[count($date_range_array)] = $endDate;
 	}
+
+	// echo '<pre>';
+	// print_r($date_range_array);
+	// echo '</pre>';
 	return $date_range_array;
 }

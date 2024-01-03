@@ -19,7 +19,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
     while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
       $answer_type = $row_get_questions['answer_type'];
       /* Get answer values attempted */
-      record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_questions['id']." order By cdate asc", 1);
+      record_set("get_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_questions['id']." order By cdate asc");
       if (!empty($totalRows_get_questions_answers)) {
         while ($row_get_questions_answers = mysqli_fetch_assoc($get_questions_answers)) {
           $created_date = date('d-m-Y', strtotime($row_get_questions_answers['cdate']));
@@ -54,8 +54,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
     ];
 
     $surveyName = getSurvey()[$surveyid];
-    $dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime($nextDate));
-
+    if ($interval == 1) {
+      $dateParameter = date('d/m/Y', strtotime($startDate));
+    } else {
+      $dateParameter = date('d/m/Y', strtotime($startDate)) . ' - ' . date('d/m/Y', strtotime("-1 day", strtotime($nextDate)));
+    }
     $spreadsheet = new Spreadsheet();
     $activeSheet = $spreadsheet->getActiveSheet();
 
@@ -122,7 +125,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
               // echo "$fieldName => i :".$i.'  J : '.$j.'<br>';
               $activeSheet->mergeCells("$char$i:$CellTo$i");
 
-              $activeSheet->setCellValue($char.$i, "$fieldName");
+              // $activeSheet->setCellValue($char.$i, "$fieldName");
+              $activeSheet->setCellValue($char.$i, "");
               $activeSheet->getStyle($char.$i)->applyFromArray($style);
               
 
@@ -136,7 +140,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
               $startCell = chr(ord($char) - 1);
               
               $questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);
-              record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id",1);
+              record_set("get_question_details", "select * from questions_detail where surveyid='".$surveyid."' and questionid=$question_id");
               $k =$j+1;
               while($row_get_question_details = mysqli_fetch_assoc($get_question_details)){
                 $totalResponse = array_sum(array_values($value));

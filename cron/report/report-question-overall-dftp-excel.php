@@ -155,7 +155,7 @@ foreach ($questions as $stepId => $question) {
         $fieldName = $key;
       } else {
         $nextNewDate = date('Y-m-d', strtotime("+" . ($freqInterval - 1) . " day", strtotime($key)));
-        $isNextDateExceed = check_differenceDate($nextNewDate, $nextDate, 'gt');
+        $isNextDateExceed = check_differenceDate($nextNewDate, $nextDate, 'gte');
         if ($isNextDateExceed) {
           $nextNewDate = date('Y-m-d', strtotime("-1 day", strtotime($nextDate)));
         }
