@@ -75,6 +75,11 @@ $style = [
     ],
 ];
 
+// echo '<pre>';
+// echo "Amitt";
+// print_r($questions);
+// die();
+// echo '</pre>';
 $surveyName = getSurvey()[$surveyid];
 $dateParameter = date('d/m/Y', strtotime($filter['start_date'])).' - '.date('d/m/Y', strtotime($filter['end_date']));
 
