@@ -274,3 +274,4 @@ Stack trace:
 [03-Jan-2024 06:37:55 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
 [03-Jan-2024 06:38:17 Europe/London] PHP Warning:  ksort() expects parameter 1 to be array, null given in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 152
 [03-Jan-2024 06:38:17 Europe/London] PHP Warning:  count(): Parameter must be an array or an object that implements Countable in /home/dgfm/demo.dgfm.app/report-doc/run/report-pdf.php on line 298
+[04-Jan-2024 06:20:35 Europe/London] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/dgfm/demo.dgfm.app/function/mysql_functions.php on line 52
