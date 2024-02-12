@@ -163,9 +163,15 @@ $html = '<!DOCTYPE html>
     $surveyName = getSurvey()[$surveyId];
     $html .='<h4 align="center"><img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></h4>';
     $html .='<h4 align="center" style="border-bottom:1px solid gray">'.$surveyName.'</h4>';
+    $valData = 1;
     if(count($questions)> 0){
       foreach($questions as $id => $step){
-        $dataTypeName ="";
+        $dataTypeName =""; 
+
+        if($valData != 1){
+          $html .= "<pagebreak />";
+        }
+        $valData++;
         if($data_type == 'location'){
           $dataTypeName = getLocation()[$id];
         }else if ($data_type == 'group') {
@@ -179,40 +185,61 @@ $html = '<!DOCTYPE html>
             $surveyStepName = strtoupper(trim($surveyStep['step_title']));
             $html .='<h4 align="center">'.$surveyStepName.'</h4>';
             foreach($question as $ques){
-            $html .='<h4 align="center" >'.$ques['question'].'</h4>
-            <table class="table table-design mb-4 ">
-              <tbody>
-                  <tr>
-                      <th style="background-color: #f2f2f2;"></th>
-                      <th style="background-color: #f2f2f2;"></th>
-                      <td>Result</td>
-                      <td>Response</td>
-                  </tr>';
-                  foreach($ques['survey_responses'] as $key => $value){
-                    record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
-                    $i=0;
-                    while ($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)) {
-                    $i++;
-                    $scoreCount = 0 ;
-                    $responseCount = array_sum(array_values($value));
-                    if($responseCount == 0){
-                      $scoreValue = '0%';
-                    }else{
-                      $perPercent = 100/$responseCount;
-                      $scoreCount = ($value[$row_get_questions_detail['id']]) ? $value[$row_get_questions_detail['id']] : 0;
-                      $scoreValue = round($scoreCount * $perPercent, 2)."%";
+                  if($ques['answer_type'] == 2 || $ques['answer_type'] == 3){
+                    $html .='<h4 align="center" >'.$ques['question'].'</h4>';
+                    $html .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
+                      <tr style="background-color:#f0f0f0;">
+                        <th>Respondent</th>
+                        <th align="center">ANSWERS</th>
+                      </tr>';                 
+                    foreach($ques['survey_responses'] as $key => $value){
+                      record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
+                      $i=0;
+                      foreach($value as $dt){
+                        $html .='<tr>
+                            <td>'. ++$i .'</td>
+                            <td align="center">'.$dt.'</td>
+                          </tr>
+                        </table>';
+                      }
                     }
-                    $html .='<tr>';
-                    if($i==1){
-                      $html .='<th rowspan="'.$totalRows_get_questions_detail.'" style="background-color: #f2f2f2;">'.$key.'</th>';
-                    }
-                      $html .=' <td style="background-color: #f2f2f2;">'.$row_get_questions_detail['description'].' </td>
-                              <td>'.$scoreValue.'</td>
-                              <td>'.$scoreCount.'</td>
+                  }elseif($ques['answer_type'] !== 2 || $ques['answer_type'] !== 3){
+                    $html .='<h4 align="center" >'.$ques['question'].'</h4>
+                      <table class="table table-design mb-4 ">
+                        <tbody>
+                            <tr>
+                              <th style="background-color: #f2f2f2;"></th>
+                              <th style="background-color: #f2f2f2;"></th>
+                              <td>Result</td>
+                              <td>Response</td>
                             </tr>';
-                  }}
-                $html .='</tbody>
-          </table>';
+                    foreach($ques['survey_responses'] as $key => $value){
+                      record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
+                      $i=0;
+                      while ($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)) {
+                        $i++;
+                        $scoreCount = 0 ;
+                        $responseCount = array_sum(array_values($value));
+                        if($responseCount == 0){
+                          $scoreValue = '0%';
+                        }else{
+                          $perPercent = 100/$responseCount;
+                          $scoreCount = ($value[$row_get_questions_detail['id']]) ? $value[$row_get_questions_detail['id']] : 0;
+                          $scoreValue = round($scoreCount * $perPercent, 2)."%";
+                        }
+                        $html .='<tr>';
+                        if($i==1){
+                          $html .='<th rowspan="'.$totalRows_get_questions_detail.'" style="background-color: #f2f2f2;">'.$key.'</th>';
+                        }
+                          $html .=' <td style="background-color: #f2f2f2;">'.$row_get_questions_detail['description'].' </td>
+                                  <td>'.$scoreValue.'</td>
+                                  <td>'.$scoreCount.'</td>
+                                </tr>';
+                      }
+                    }
+                      $html .='</tbody>
+                    </table>';
+                  }
             }
         }
       }

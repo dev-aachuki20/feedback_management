@@ -91,16 +91,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
       $spreadsheet->createSheet();
       $spreadsheet->setActiveSheetIndex($tab - 1);  // Set the active sheet
       $activeSheet = $spreadsheet->getActiveSheet();
-      $dataTypeName = '';
-      
-      $activeSheet->setTitle("LOCATION ID ".$id);
-            
-      $activeSheet->setCellValue('A1', $surveyName);
-      $activeSheet->setCellValue('A2', $dateParameter);
-
-      $activeSheet->getColumnDimension('A')->setWidth(500, 'px');
-      $activeSheet->getColumnDimension('B')->setWidth(100, 'px');
-      $activeSheet->getColumnDimension('C')->setWidth(100, 'px');
       $dataTypeName ="";
       if($data_type == 'location'){
         $dataTypeName = getLocation()[$id];
@@ -109,6 +99,16 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
       }else if ($data_type == 'department') {
         $dataTypeName = getDepartment()[$id];
       }
+      
+      $activeSheet->setTitle("$dataTypeName");
+            
+      $activeSheet->setCellValue('A1', $surveyName);
+      $activeSheet->setCellValue('A2', $dateParameter);
+
+      $activeSheet->getColumnDimension('A')->setWidth(500, 'px');
+      $activeSheet->getColumnDimension('B')->setWidth(100, 'px');
+      $activeSheet->getColumnDimension('C')->setWidth(100, 'px');
+     
       $activeSheet->setCellValue('B1', "$dataTypeName");
       $activeSheet->mergeCells('B1:F1');
 
@@ -199,7 +199,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
               $activeSheet->getStyle($char.$i)->applyFromArray($style);
       
               // for result and response heading
-              $activeSheet->setCellValue($char.$j, 'S.NO.');
+              $activeSheet->setCellValue($char.$j, 'Respondent');
               $activeSheet->getStyle($char.$j)->applyFromArray($style);
 
               $char = chr(ord($char) + 1);

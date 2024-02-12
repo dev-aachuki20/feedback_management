@@ -161,7 +161,7 @@ foreach($questions as $stepId => $question){
 				$activeSheet->getStyle($char.$i)->applyFromArray($style);
 
 				// for result and response heading
-				$activeSheet->setCellValue($char.$j, 'S.NO.');
+				$activeSheet->setCellValue($char.$j, 'Respondent');
 				$char = chr(ord($char) + 1);
 				$activeSheet->setCellValue($char.$j, 'ANSWER');
 				$startCell = chr(ord($char) - 1);

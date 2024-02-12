@@ -68,10 +68,17 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
       $spreadsheet->createSheet();
       $spreadsheet->setActiveSheetIndex($tab - 1);  // Set the active sheet
       $activeSheet = $spreadsheet->getActiveSheet();
-      $dataTypeName = '';
+      $dataTypeName ="";
+      if($data_type == 'location'){
+        $dataTypeName = getLocation()[$id];
+      }else if ($data_type == 'group') {
+        $dataTypeName = getGroup()[$id];
+      }else if ($data_type == 'department') {
+        $dataTypeName = getDepartment()[$id];
+      }
       
-      $activeSheet->setTitle("LOCATION ID ".$id);
-            
+      $activeSheet->setTitle("$dataTypeName");
+
       $activeSheet->setCellValue('A1', $surveyName);
       $activeSheet->setCellValue('A2', $dateParameter);
 
@@ -161,7 +168,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
               $activeSheet->getStyle($char.$i)->applyFromArray($style);
       
               // for result and response heading
-              $activeSheet->setCellValue($char.$j, 'S.NO.');
+              $activeSheet->setCellValue($char.$j, 'Respondent');
               $activeSheet->getStyle($char.$j)->applyFromArray($style);
 
               $char = chr(ord($char) + 1);

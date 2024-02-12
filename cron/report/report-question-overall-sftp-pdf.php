@@ -228,7 +228,7 @@ if (count($surveyQuestions) > 0) {
 
         $message .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
                 <tr style="background-color:#f0f0f0;">
-                  <th>S.NO.</th>
+                  <th>Respondent</th>
                   <th align="center">ANSWERS</th>
                 </tr>';
         $sno = 0;

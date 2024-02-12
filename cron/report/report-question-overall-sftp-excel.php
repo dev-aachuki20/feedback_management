@@ -94,7 +94,7 @@ foreach ($questions as $stepId => $question) {
       $activeSheet->setCellValue('C' . $i, 'RESPONSES');
     } else {
       $activeSheet->setCellValue('A' . $i, '');
-      $activeSheet->setCellValue('B' . $i, 'S.NO.');
+      $activeSheet->setCellValue('B' . $i, 'Respondent');
       $activeSheet->setCellValue('C' . $i, 'ANSWERS');
     }
 
