@@ -189,21 +189,28 @@ $html = '<!DOCTYPE html>
                     $html .='<h4 align="center" >'.$ques['question'].'</h4>';
                     $html .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
                       <tr style="background-color:#f0f0f0;">
+                        <th></th>
                         <th>Respondent</th>
                         <th align="center">ANSWERS</th>
-                      </tr>';                 
-                    foreach($ques['survey_responses'] as $key => $value){
-                      record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
-                      $i=0;
-                      foreach($value as $dt){
-                        $html .='<tr>
-                            <td>'. ++$i .'</td>
-                            <td align="center">'.$dt.'</td>
-                          </tr>
-                        </table>';
+                      </tr>';
+                    foreach($ques['survey_responses'] as $date_key => $reponses){
+                      $html .='<tr>';
+                      $ftrr = count($reponses);
+                      $html .= '<th rowspan="'.$ftrr.'">'.$date_key.'</th>';
+                      $i=1;
+                      foreach($reponses as $respondent_key => $text_reponse){
+                        $counter = $respondent_key+1;
+                        if($i == 1){
+                          $html .= '<td>'.$counter.'</td>
+                                    <td>'.$text_reponse.'</td></tr>';   
+                        }else{
+                          $html .= '<tr><td>'.$counter.'</td>
+                          <td>'.$text_reponse.'</td></tr>';
+                        }
                       }
                     }
-                  }elseif($ques['answer_type'] !== 2 || $ques['answer_type'] !== 3){
+                    $html .= '</table>';
+                  }else{
                     $html .='<h4 align="center" >'.$ques['question'].'</h4>
                       <table class="table table-design mb-4 ">
                         <tbody>
@@ -213,16 +220,6 @@ $html = '<!DOCTYPE html>
                               <td>Result</td>
                               <td>Response</td>
                             </tr>';
-
-                          $answeredOptions = implode(",", array_keys($ques['survey_responses']));
-
-                          record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyId . "' AND cstatus='1'  AND questionid = " . $ques['id'] . " AND id NOT IN (" . $answeredOptions . ")");
-
-                          if (!empty($totalRows_get_remaining_questions_options)) {
-                              while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
-                                  $ques['survey_responses'][$row_remaining_questions_option['id']] = 0;
-                              }
-                          }
 
                     foreach($ques['survey_responses'] as $key => $value){
                       record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
