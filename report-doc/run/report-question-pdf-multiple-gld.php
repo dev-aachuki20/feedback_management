@@ -213,6 +213,17 @@ $html = '<!DOCTYPE html>
                               <td>Result</td>
                               <td>Response</td>
                             </tr>';
+
+                          $answeredOptions = implode(",", array_keys($ques['survey_responses']));
+
+                          record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyId . "' AND cstatus='1'  AND questionid = " . $ques['id'] . " AND id NOT IN (" . $answeredOptions . ")");
+
+                          if (!empty($totalRows_get_remaining_questions_options)) {
+                              while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
+                                  $ques['survey_responses'][$row_remaining_questions_option['id']] = 0;
+                              }
+                          }
+
                     foreach($ques['survey_responses'] as $key => $value){
                       record_set("get_questions_detail", "select * from questions_detail where surveyid=$surveyId  and questionid= ".$ques['id']." and cstatus=1");
                       $i=0;

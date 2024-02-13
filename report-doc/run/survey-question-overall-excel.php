@@ -114,6 +114,17 @@ foreach($questions as $stepId => $question){
 		$counter = 1;
 		
 		$sum_of_count = 0;
+
+		$answeredOptions = implode(",", array_keys($data['survey_responses']));
+
+		record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyid . "' AND cstatus='1'  AND questionid = " . $data['id'] . " AND id NOT IN (" . $answeredOptions . ")");
+
+		if (!empty($totalRows_get_remaining_questions_options)) {
+			while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
+				$data['survey_responses'][$row_remaining_questions_option['id']] = 0;
+			}
+		}
+		
 		foreach($data['survey_responses'] as $key => $value){
 			$i++;
 			$questionDetails = record_set_single("get_question_details", "SELECT description FROM questions_detail where id =". $key);

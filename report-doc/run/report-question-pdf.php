@@ -165,6 +165,17 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
               if ($sum_of_count > 0) {
                 $perResponsePercentage = 100 / $sum_of_count;
               }
+
+              $answeredOptions = implode(",", array_keys($question['survey_responses']));
+
+              record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyId . "' AND cstatus='1'  AND questionid = " . $question['id'] . " AND id NOT IN (" . $answeredOptions . ")");
+
+              if (!empty($totalRows_get_remaining_questions_options)) {
+                  while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
+                      $question['survey_responses'][$row_remaining_questions_option['id']] = 0;
+                  }
+              }
+              
               foreach ($question['survey_responses'] as $key => $val) {
                 $scoreValue = round($perResponsePercentage * $val, 2);
                 $questionDescriptionData = record_set_single("get_question_description_data", "SELECT description FROM questions_detail where id =" . $key);

@@ -116,6 +116,16 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
           $answer_type = $data['answer_type'];
           $question_id = $data['id'];
           $i++;
+
+          $answeredOptions = implode(",", array_keys($data['survey_responses']));
+          record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyid . "' AND cstatus='1'  AND questionid = " . $data['id'] . " AND id NOT IN (" . $answeredOptions . ")");
+
+          if (!empty($totalRows_get_remaining_questions_options)) {
+            while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
+              $data['survey_responses'][$row_remaining_questions_option['id']] = 0;
+            }
+          }
+
           $surveyResponse = $data['survey_responses'];
           $char = "A";
           foreach($surveyResponse as $key => $value){
