@@ -213,7 +213,7 @@ foreach ($questions as $stepId => $question) {
         $activeSheet->getStyle($char . $i)->applyFromArray($style);
 
         // for result and response heading
-        $activeSheet->setCellValue($char . $j, 'Respondent');
+        $activeSheet->setCellValue($char . $j, 'RESPONDENT');
         $activeSheet->getStyle($char . $j)->applyFromArray($style);
 
         $char = chr(ord($char) + 1);

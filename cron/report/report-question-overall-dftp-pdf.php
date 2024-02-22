@@ -120,11 +120,11 @@ $message = '<div align="center">
 
 if ($interval == 1) {
   $message .= '<tr>
-              <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h2></td>
+              <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h3></td>
             </tr>';
 } else {
   $message .= '<tr>
-            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h2></td>
+            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h3></td>
             </tr>';
 }
 

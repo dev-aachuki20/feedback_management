@@ -77,11 +77,12 @@
             <ul class="treeview-menu ">
                 <?php if($_SESSION['user_type'] <3) {?>
                     <li class="treeview <?=($_GET['page']=='about' and $_GET['type']=='survey')?'active':''?>">
-                        <a href="?page=about&type=survey" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+                        <a class="nav-link" href="./about-us/Survey.pdf?type=survey"><i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a>
                     </li>
 
                     <li class="treeview <?=($_GET['page']=='contact-us' and $_GET['type']=='survey')?'active':''?>">
-                        <a href="?page=contact-us&type=survey" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
+                        <!-- <a href="?page=contact-us&type=survey" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a>  -->
+                        <a href="https://forms.monday.com/forms/26aca990f8a46879c553077ef9583c8d?r=use1" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
                     </li>
                 <?php }?>
                 <li class="treeview <?=($_GET['page']=='view-survey' and $_GET['type']=='survey')?'active':''?>">
@@ -115,11 +116,11 @@
             <ul class="treeview-menu">
                 <?php if($_SESSION['user_type'] <3) {?>
                     <li class="treeview <?=($_GET['page']=='about' and $_GET['type']=='pulse')?'active':''?>">
-                        <a href="?page=about&type=pulse" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+                        <a class="nav-link" href="./about-us/Pulses.pdf?type=pulse"><i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a>
                     </li>
 
                     <li class="treeview  <?=($_GET['page']=='contact-us' and $_GET['type']=='pulse')?'active':''?>">
-                        <a href="?page=contact-us&type=pulse" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
+                        <a href="https://forms.monday.com/forms/db94a0d6621aa675fc652c6f4eaa7fac?r=use1" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
                     </li>
                 <?php }?>
                 <li class="treeview <?=($_GET['page']=='view-survey' and $_GET['type']=='pulse')?'active':''?>">
@@ -154,11 +155,11 @@
         <ul class="treeview-menu ">
         <?php if($_SESSION['user_type'] <3) { ?>
             <li class="treeview <?=($_GET['page']=='about' and $_GET['type']=='engagement')?'active':''?>">
-                <a href="?page=about&type=engagement" class="nav-link"> <i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a> 
+                <a class="nav-link" href="./about-us/Engagements.pdf?type=engagement"><i class="fa fa-light fa-info"></i> <span>ABOUT</span> </a>
             </li>
 
             <li class="treeview <?=($_GET['page']=='contact-us' and $_GET['type']=='engagement')?'active':''?>">
-                <a href="?page=contact-us&type=engagement" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
+                <a href="https://forms.monday.com/forms/244e201a15e6ee459ba87fd7bff15440?r=use1" class="nav-link"> <i class="fa fa-solid fa-at"></i> <span>CONTACT US</span> </a> 
             </li>
             <?php }?>
             <li class="treeview <?=($_GET['page']=='view-survey' and $_GET['type']=='engagement')?'active':''?>">

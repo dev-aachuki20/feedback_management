@@ -87,11 +87,11 @@ $message = '<div align="center">
 
 if ($days_to_subtract == 1) {
   $message .= '<tr>
-        <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h2></td>
+        <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h3></td>
       </tr>';
 } else {
   $message .= '<tr>
-      <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h2></td>
+      <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h3></td>
       </tr>';
 }
 
@@ -239,7 +239,7 @@ if (count($surveyQuestions) > 0) {
 
         $message .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
                 <tr style="background-color:#f0f0f0;">
-                  <th>Respondent</th>
+                  <th>RESPONDENT</th>
                   <th align="center">ANSWERS</th>
                 </tr>';
         $sno = 0;

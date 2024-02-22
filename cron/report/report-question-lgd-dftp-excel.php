@@ -164,7 +164,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
               // echo 'start cell : '.$char.' End Cell : '.$CellTo.'<br>';
               // echo "$fieldName => i :".$i.'  J : '.$j.'<br>';
               $activeSheet->mergeCells("$char$i:$CellTo$i");
-              $activeSheet->setCellValue($char.$i, $fieldName);
+              // $activeSheet->setCellValue($char.$i, $fieldName);
+              $activeSheet->setCellValue($char.$i, "$dataTypeName");
               $activeSheet->getStyle($char.$i)->applyFromArray($style);
               
 
@@ -195,11 +196,12 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
             }else{
               // for location names 
               $char++;
-              $activeSheet->setCellValue($char.$i, "$locationName");
+              // $activeSheet->setCellValue($char.$i, "$locationName");
+              $activeSheet->setCellValue($char.$i, "$dataTypeName");
               $activeSheet->getStyle($char.$i)->applyFromArray($style);
       
               // for result and response heading
-              $activeSheet->setCellValue($char.$j, 'Respondent');
+              $activeSheet->setCellValue($char.$j, 'RESPONDENT');
               $activeSheet->getStyle($char.$j)->applyFromArray($style);
 
               $char = chr(ord($char) + 1);
