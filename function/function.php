@@ -1406,6 +1406,9 @@ function check_differenceDate($date1, $date2, $type = "gt")
 function create_mpdf($html = '', $file_name = '', $output)
 {
 	$mpdf = new \Mpdf\Mpdf();
+	$mpdf->AddPageByArray([
+		'margin-bottom' => 30,
+	]);
 	$footer = '<div style="text-align: center;"> ' . POWERED_BY . '
 	<center><img  src="' . BASE_URL . FOOTER_LOGO . '" alt="" width="150"/></center>
 	</div>';

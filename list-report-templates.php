@@ -200,7 +200,7 @@ if (isset($_POST['schedule_btn'])) {
           <input type="hidden" name="export_document" id="chk-export-csv" value="">       
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary export-doc"  data-type="pdf">DOWNLOAD PDF</button>
-            <button type="submit" class="btn btn-primary export-doc"  data-type="csv">DOWNLOAD CSV</button>
+            <button type="submit" class="btn btn-primary export-doc"  data-type="csv">DOWNLOAD EXCEL</button>
             <button type="submit" class="btn btn-success green-btn" id="schedule_btn" name="schedule_btn">Save</button>
             <button type="button" class="btn btn-danger closes" data-dismiss="modal" aria-label="Close" style="background-color:#ff1c00 !important;"> Cancel</button>
           </div>

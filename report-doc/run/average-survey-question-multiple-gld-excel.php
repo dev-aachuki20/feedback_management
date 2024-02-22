@@ -157,13 +157,16 @@ foreach($questions as $stepId => $question){
 			}else{
 				// for location names 
 				$char++;
-				$activeSheet->setCellValue($char.$i, "$locationName");
+				// $activeSheet->setCellValue($char.$i, "$locationName");
+				$activeSheet->setCellValue($char.$i, "$fieldName");
 				$activeSheet->getStyle($char.$i)->applyFromArray($style);
 
 				// for result and response heading
-				$activeSheet->setCellValue($char.$j, 'Respondent');
+				$activeSheet->setCellValue($char.$j, 'RESPONDENT');
+				$activeSheet->getStyle($char.$j)->applyFromArray($style);
 				$char = chr(ord($char) + 1);
 				$activeSheet->setCellValue($char.$j, 'ANSWER');
+				$activeSheet->getStyle($char.$j)->applyFromArray($style);
 				$startCell = chr(ord($char) - 1);
 				$activeSheet->mergeCells($startCell.$i .":". $char.$i);
 				$counter = 1;

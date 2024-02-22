@@ -244,7 +244,7 @@ if(!empty($filter['start_date']) and !empty($filter['end_date'])){
 
         $message .= '<table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
               <tr style="background-color:#f0f0f0;">
-                <th>Respondent</th>
+                <th>RESPONDENT</th>
                 <th align="center">ANSWERS</th>
               </tr>';
         $sno = 0;

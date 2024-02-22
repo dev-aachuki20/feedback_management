@@ -124,7 +124,7 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
 
   if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
     $message .= '<tr>
-                    <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($filter['start_date'])) . '-' . date('d/m/Y', strtotime($filter['end_date'])) . ' </h2></td>
+                    <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h4 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($filter['start_date'])) . '-' . date('d/m/Y', strtotime($filter['end_date'])) . ' </h4></td>
                 </tr>';
   }
 
@@ -272,7 +272,7 @@ if (isset($_POST['export_document']) and $_POST['export_document'] == 2) {
 
           $message .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
               <tr style="background-color:#f0f0f0;">
-                <th>Respondent</th>
+                <th>RESPONDENT</th>
                 <th align="center">ANSWERS</th>
               </tr>';
           $sno = 0;

@@ -179,7 +179,15 @@ $html = '<!DOCTYPE html>
         }else if ($data_type == 'department') {
           $dataTypeName = getDepartment()[$id];
         }
+        
+        /* Break the page and show the survey name,dataTypeName and date range for all the new page  */
+        // $html .='<h4 align="center" style="border-bottom:1px solid gray">'.$surveyName.'</h4>';
         $html .='<h4 align="center">'.$dataTypeName.'</h4>';
+        if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
+          $html .= '<h4 align="center">' 
+                    . date('d/m/Y', strtotime($filter['start_date'])) . '-' . date('d/m/Y', strtotime($filter['end_date'])) . 
+                  '</h4>';
+        }
         foreach($step as $stepId => $question){
             $surveyStep = record_set_single("get_survey_step", "SELECT step_title FROM surveys_steps where id =" . $stepId);
             $surveyStepName = strtoupper(trim($surveyStep['step_title']));
@@ -187,12 +195,13 @@ $html = '<!DOCTYPE html>
             foreach($question as $ques){
                   if($ques['answer_type'] == 2 || $ques['answer_type'] == 3){
                     $html .='<h4 align="center" >'.$ques['question'].'</h4>';
-                    $html .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
+                    $html .= '<table width="100%" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
                       <tr style="background-color:#f0f0f0;">
                         <th></th>
-                        <th>Respondent</th>
+                        <th>RESPONDENT</th>
                         <th align="center">ANSWERS</th>
                       </tr>';
+
                     foreach($ques['survey_responses'] as $date_key => $reponses){
                       $html .='<tr>';
                       $ftrr = count($reponses);
@@ -202,10 +211,12 @@ $html = '<!DOCTYPE html>
                         $counter = $respondent_key+1;
                         if($i == 1){
                           $html .= '<td>'.$counter.'</td>
-                                    <td>'.$text_reponse.'</td></tr>';   
+                                    <td>'.$text_reponse.'</td><tr>';   
                         }else{
-                          $html .= '<tr><td>'.$counter.'</td>
-                          <td>'.$text_reponse.'</td></tr>';
+                          $html .= '<tr>
+                                      <td>'.$counter.'</td>
+                                      <td>'.$text_reponse.'</td>
+                                    </tr>';
                         }
                       }
                     }
@@ -217,8 +228,8 @@ $html = '<!DOCTYPE html>
                             <tr>
                               <th style="background-color: #f2f2f2;"></th>
                               <th style="background-color: #f2f2f2;"></th>
-                              <td>Result</td>
-                              <td>Response</td>
+                              <th>RESULT</th>
+                              <th>RESPONSE</th>
                             </tr>';
 
                     foreach($ques['survey_responses'] as $key => $value){
