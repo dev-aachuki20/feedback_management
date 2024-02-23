@@ -150,7 +150,7 @@ $html = '<!DOCTYPE html>
             th {
                 border: 1px solid #0a0a0a;
                 text-align: left;
-                padding: 8px;
+                padding: 3px 4px;
             }
 
             th[rowspan="2"]{
@@ -161,8 +161,8 @@ $html = '<!DOCTYPE html>
     </head>
     <body>';
     $surveyName = getSurvey()[$surveyId];
-    $html .='<h4 align="center"><img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></h4>';
-    $html .='<h4 align="center" style="border-bottom:1px solid gray">'.$surveyName.'</h4>';
+    $html .='<div align="center"><img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></div>';
+    $html .='<h3 align="center" style="border-bottom:1px solid gray;padding-bottom: 8px;margin-top:1px;margin-bottom: 0;font-family: Arial, Helvetica, sans-serif;">'.$surveyName.'</h3>';
     $valData = 1;
     if(count($questions)> 0){
       foreach($questions as $id => $step){
@@ -182,30 +182,30 @@ $html = '<!DOCTYPE html>
         
         /* Break the page and show the survey name,dataTypeName and date range for all the new page  */
         // $html .='<h4 align="center" style="border-bottom:1px solid gray">'.$surveyName.'</h4>';
-        $html .='<h4 align="center">'.$dataTypeName.'</h4>';
+        $html .='<h4 align="center" style="margin-bottom: 0;margin-top: 9px;font-family: Arial, Helvetica, sans-serif;">'.$dataTypeName.'</h4>';
         if (!empty($filter['start_date']) and !empty($filter['end_date'])) {
-          $html .= '<h4 align="center">' 
+          $html .= '<h4 align="center" style="margin-top: 6px;margin-bottom: 6px;font-family: Arial, Helvetica, sans-serif;">' 
                     . date('d/m/Y', strtotime($filter['start_date'])) . '-' . date('d/m/Y', strtotime($filter['end_date'])) . 
                   '</h4>';
         }
         foreach($step as $stepId => $question){
             $surveyStep = record_set_single("get_survey_step", "SELECT step_title FROM surveys_steps where id =" . $stepId);
             $surveyStepName = strtoupper(trim($surveyStep['step_title']));
-            $html .='<h4 align="center">'.$surveyStepName.'</h4>';
+            $html .='<h4 align="center" style="margin-top: 6px;margin-bottom: 0;font-family: Arial, Helvetica, sans-serif;">'.$surveyStepName.'</h4>';
             foreach($question as $ques){
                   if($ques['answer_type'] == 2 || $ques['answer_type'] == 3){
-                    $html .='<h4 align="center" >'.$ques['question'].'</h4>';
-                    $html .= '<table width="100%" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
+                    $html .='<h4 align="center" style="margin-top:3px;font-family: Arial, Helvetica, sans-serif;margin-bottom: 5px;">'.$ques['question'].'</h4>';
+                    $html .= '<table width="100%" align="center" style="font-size:14px;margin-bottom: 13px;font-family: Arial, Helvetica, sans-serif;margin-top: 0;" border="1" cellspacing="0" cellpadding="4">
                       <tr style="background-color:#f0f0f0;">
                         <th></th>
                         <th>RESPONDENT</th>
-                        <th align="center">ANSWERS</th>
+                        <th>ANSWERS</th>
                       </tr>';
 
                     foreach($ques['survey_responses'] as $date_key => $reponses){
                       $html .='<tr>';
                       $ftrr = count($reponses);
-                      $html .= '<th rowspan="'.$ftrr.'">'.$date_key.'</th>';
+                      $html .= '<th rowspan="'.$ftrr.'" style="background-color: #f0f0f0;">'.$date_key.'</th>';
                       $i=1;
                       foreach($reponses as $respondent_key => $text_reponse){
                         $counter = $respondent_key+1;
@@ -222,12 +222,12 @@ $html = '<!DOCTYPE html>
                     }
                     $html .= '</table>';
                   }else{
-                    $html .='<h4 align="center" >'.$ques['question'].'</h4>
-                      <table class="table table-design mb-4 ">
+                    $html .='<h4 align="center" style="margin-top:3px;font-family: Arial, Helvetica, sans-serif;margin-bottom: 5px;">'.$ques['question'].'</h4>
+                      <table class="table table-design mb-4" style="font-family: Arial, Helvetica, sans-serif;margin-bottom: 13px;">
                         <tbody>
-                            <tr>
-                              <th style="background-color: #f2f2f2;"></th>
-                              <th style="background-color: #f2f2f2;"></th>
+                            <tr style="background-color: #f0f0f0;">
+                              <th></th>
+                              <th></th>
                               <th>RESULT</th>
                               <th>RESPONSE</th>
                             </tr>';
@@ -248,9 +248,9 @@ $html = '<!DOCTYPE html>
                         }
                         $html .='<tr>';
                         if($i==1){
-                          $html .='<th rowspan="'.$totalRows_get_questions_detail.'" style="background-color: #f2f2f2;">'.$key.'</th>';
+                          $html .='<th rowspan="'.$totalRows_get_questions_detail.'" style="background-color: #f0f0f0;">'.$key.'</th>';
                         }
-                          $html .=' <td style="background-color: #f2f2f2;">'.$row_get_questions_detail['description'].' </td>
+                          $html .=' <td>'.$row_get_questions_detail['description'].' </td>
                                   <td>'.$scoreValue.'</td>
                                   <td>'.$scoreCount.'</td>
                                 </tr>';
@@ -263,7 +263,7 @@ $html = '<!DOCTYPE html>
         }
       }
     }else{
-      $html .="<h2 align='center'>No Data Found</h2>";
+      $html .="<h2 align='center' style='font-family: Arial, Helvetica, sans-serif;'>No Data Found</h2>";
     }
     $html .='</body>
 </html>';
