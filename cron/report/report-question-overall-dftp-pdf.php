@@ -111,20 +111,20 @@ while ($row_get_questions = mysqli_fetch_assoc($get_questions)) {
 
 $message = '<div align="center">
     <img src="' . getHomeUrl() . MAIN_LOGO . '"  width="200"></div>
-      <table width="100%">
+      <table width="100%" style="font-family: Arial, Helvetica, sans-serif;">
         <thead>
           <tr>
-            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">' . getSurvey()[$surveyId] . ' </h2></td>
+            <td colspan="4" style="text-align:center;border-bottom: 1px solid gray;padding-bottom: 10px;"><h3 align="center" style="margin-top:0;font-family: Arial, Helvetica, sans-serif;">' . getSurvey()[$surveyId] . ' </h3></td>
           </tr>';
 
 
 if ($interval == 1) {
   $message .= '<tr>
-              <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h3></td>
+              <td colspan="4" style="text-align:center;padding-top: 9px;font-family: Arial, Helvetica, sans-serif;"><h4 align="center" style="margin-top: 0;margin-bottom: 0;">' . date('d/m/Y', strtotime($survey_start_date)) . ' </h4></td>
             </tr>';
 } else {
   $message .= '<tr>
-            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h3 align="center" style="margin:20px;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h3></td>
+            <td colspan="4" style="text-align:center;padding-top: 9px;font-family: Arial, Helvetica, sans-serif;"><h4 align="center" style="margin-top: 0;margin-bottom: 0;">' . date('d/m/Y', strtotime($survey_start_date)) . '-' .  date('d/m/Y', strtotime("-1 day", strtotime($survey_end_date))) . ' </h4></td>
             </tr>';
 }
 
@@ -135,21 +135,21 @@ if (count($surveyQuestions) > 0) {
     $surveyStep = record_set_single("get_survey_step", "SELECT step_title FROM surveys_steps where id =" . $surveyStepId);
     if (isset($surveyStep) && is_array($surveyStep) && count($surveyStep) > 0) {
       $message .= '<div class="container">
-            <h4 align="center" style="margin-top:20px;margin-bottom:10px;">' . strtoupper($surveyStep['step_title']) . '</h4>';
+            <h4 align="center" style="margin-top:5px;margin-bottom:2px;font-family: Arial, Helvetica, sans-serif;">' . strtoupper($surveyStep['step_title']) . '</h4>';
     }
     foreach ($questions as $question) {
       if ($question['answer_type'] == 1 || $question['answer_type'] == 4 || $question['answer_type'] == 6) {
         if (!array_key_exists("having_child", $question)) {
           $message .= '<div class="container">
-              <h4 align="center" style="margin-top:20px;margin-bottom:10px;">' . $question['question']  . '</h4>';
+              <h4 align="center" style="margin-top:0px;text-align:center;font-family: Arial, Helvetica, sans-serif;margin-bottom: 4px;">' . $question['question']  . '</h4>';
 
-          $message .= ' <table width="510px" align="center" cellspacing="0" cellpadding="4" border-bottom:none !important; style="font-size:14px;">
+          $message .= ' <table width="510px" align="center" cellspacing="0" cellpadding="4" border-bottom:none !important; style="font-size:14px;font-family: Arial, Helvetica, sans-serif;margin-bottom: 10px;">
               <thead>
                 <tr>
-                  <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">Date</th>
-                  <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
-                  <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
-                  <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
+                  <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;text-align: left;">Date</th>
+                  <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;text-align: left;">ANSWERS</th>
+                  <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:left;">RESULT</th>
+                  <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:left;">RESPONSES</th>
                 </tr>
               </thead>
               <tbody>';
@@ -160,7 +160,7 @@ if (count($surveyQuestions) > 0) {
               record_set("get_question_details", "select id,description,answer from questions_detail where surveyid='" . $surveyId . "' and questionid=$question[id]");
               if ($time_interval == 1) {
                 $message .= '<tr>
-                <td rowspan="' . $totalRows_get_question_details . '" style="text-align:center;border: 1px solid">' . date('d/m/Y', strtotime($key)) . '</td>';
+                <td rowspan="' . $totalRows_get_question_details . '" style="text-align:left;border: 1px solid">' . date('d/m/Y', strtotime($key)) . '</td>';
               } else {
                 $temp_date = date('Y-m-d', strtotime('+' . $time_interval . ' days', strtotime($key)));
                 // echo '$temp_date :'.$temp_date.'<br>';
@@ -178,7 +178,7 @@ if (count($surveyQuestions) > 0) {
                 }
 
                 $message .= '<tr>
-                <td rowspan="' . $totalRows_get_question_details . '" style="text-align:center;border: 1px solid">' . date('d/m/Y', strtotime($key)) . '-' . date('d/m/Y', strtotime($new_date)) . '</td>';
+                <td rowspan="' . $totalRows_get_question_details . '" style="text-align:left;border: 1px solid">' . date('d/m/Y', strtotime($key)) . '-' . date('d/m/Y', strtotime($new_date)) . '</td>';
               }
 
               $total = 0;
@@ -193,12 +193,12 @@ if (count($surveyQuestions) > 0) {
                 $custom_style = $totalRows_get_question_details == $total ? 'text-align:center;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid' : 'text-align:center;border-top: 1px solid;border-right: 1px solid;';
 
                 if ($total == 1) {
-                  $message .= '<td style="' . $custom_style . '">' . $row_get_question_detail['description'] . '</td>
+                  $message .= '<td style="text-align:left;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid;">' . $row_get_question_detail['description'] . '</td>
                       <td style="' . $custom_style . '">' . $response_percentage . '%</td>
                       <td style="' . $custom_style . '">' . $no_of_response . '</td>
                       </tr>';
                 } else {
-                  $message .= '<tr><td style="' . $custom_style . '">' . $row_get_question_detail['description'] . '</td>
+                  $message .= '<tr><td style="text-align:left;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid;">' . $row_get_question_detail['description'] . '</td>
                       <td style="' . $custom_style . '">' . $response_percentage . '%</td>
                       <td style="' . $custom_style . '">' . $no_of_response . '</td>
                       </tr>';
@@ -209,23 +209,23 @@ if (count($surveyQuestions) > 0) {
             $message .= '</tbody></table>';
           } else {
             $message .= '<tr>
-                                <td style="border: 1px solid; text-align:center;" colspan="4">NO ANSWER AVAILABLE</td>
+                                <td style="border: 1px solid; text-align:center;font-family: Arial, Helvetica, sans-serif;" colspan="4">NO ANSWER AVAILABLE</td>
                               </tr></tbody></table>';
           }
         } else {
           if ($question['answer_type'] == 1) {
-            $message .= '<table width="505px" align="center" class="question_table" style="max-width: 505px; margin: auto; width: 100%;">
+            $message .= '<table width="505px" align="center" class="question_table" style="max-width: 505px; margin-top: 10px; width: 100%;font-family: Arial, Helvetica, sans-serif;">
                   <tr>
                     <td align="center" colspan="3">
-                    <h3 style="margin-top:10px;">' . $question['question'] . '</h3>
+                    <h3 style="margin-top:0px;font-family: Arial, Helvetica, sans-serif;margin-bottom: 0;">' . $question['question'] . '</h3>
                   </td>
                   </tr>
                   </table>
-                  <table width="510px" align="center" style="font-size:14px;border-collapse: collapse;" border="1" cellspacing="0" cellpadding="4">
+                  <table width="510px" align="center" style="font-size:14px;border-collapse: collapse;font-family: Arial, Helvetica, sans-serif;" border="1" cellspacing="0" cellpadding="4">
                   <thead>
                   <tr>
-                  <th  style="background-color:#f0f0f0;" rowspan="2"></th>
-                  <th  style="background-color:#f0f0f0;" rowspan="2">Date</th>';
+                  <th  style="background-color:#f0f0f0;text-align: left;" rowspan="2"></th>
+                  <th  style="background-color:#f0f0f0;text-align: left;" rowspan="2">Date</th>';
 
             record_set("get_parent_question_options", "select id, description from questions_detail where surveyid='" . $surveyId . "' and questionid = " . $question['id']);
 
@@ -292,18 +292,18 @@ if (count($surveyQuestions) > 0) {
       }
 
       if ($question['answer_type'] == 2 || $question['answer_type'] == 3) {
-        $message .= '<table width="505px" align="center" style="margin-top:30px;">
+        $message .= '<table width="505px" align="center" style="margin-top:10px;font-family: Arial, Helvetica, sans-serif;">
                   <tr>
                     <td align="center">
-                      <h4 style="margin-top:10px;">' . $question['question'] . '</h4>
+                      <h4 style="margin-top:0px;font-family: Arial, Helvetica, sans-serif;">' . $question['question'] . '</h4>
                     </td>
                   </tr>
                 </table>';
 
-        $message .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;" border="1" cellspacing="0" cellpadding="4">
+        $message .= '<table width="505px" align="center" style="font-size:14px;margin-bottom: 10px;font-family: Arial, Helvetica, sans-serif;" border="1" cellspacing="0" cellpadding="4">
                   <tr style="background-color:#f0f0f0;">
-                    <th>Date</th>
-                    <th align="center">ANSWERS</th>
+                    <th style="text-align: left;">Date</th>
+                    <th align="left">ANSWERS</th>
                   </tr>';
         $sno = 0;
 
@@ -312,7 +312,7 @@ if (count($surveyQuestions) > 0) {
 
             if ($time_interval == 1) {
               $message .= '<tr>
-              <td rowspan="' . count($data) . '" style="text-align:center;border: 1px solid">' . date('d/m/Y', strtotime($dateKey)) . '</td>';
+              <td rowspan="' . count($data) . '" style="text-align:left;border: 1px solid">' . date('d/m/Y', strtotime($dateKey)) . '</td>';
             } else {
               $temp_date = date('Y-m-d', strtotime('+' . $time_interval . ' days', strtotime($dateKey)));
               $new_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_date)));
@@ -321,13 +321,13 @@ if (count($surveyQuestions) > 0) {
                 $new_date = date('Y-m-d', strtotime('-1 day', strtotime($survey_end_date)));
               }
               $message .= '<tr>
-              <td rowspan="' . count($data) . '" style="text-align:center;border: 1px solid">' . date('d/m/Y', strtotime($dateKey)) . '-' . date('d/m/Y', strtotime($new_date)) . '</td>';
+              <td rowspan="' . count($data) . '" style="text-align:left;border: 1px solid">' . date('d/m/Y', strtotime($dateKey)) . '-' . date('d/m/Y', strtotime($new_date)) . '</td>';
             }
 
             $total = 0;
             foreach ($data as $sr_no => $ans_txt) {
               $total++;
-              $custom_style = $totalRows_get_question_details == $total ? 'text-align:center;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid' : 'text-align:center;border-top: 1px solid;border-right: 1px solid;';
+              $custom_style = $totalRows_get_question_details == $total ? 'text-align:left;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid' : 'text-align:left;border-top: 1px solid;border-right: 1px solid;';
               if ($total == 1) {
                 $message .= '<td style="' . $custom_style . '">' . $ans_txt . '</td>
                     </tr>';
