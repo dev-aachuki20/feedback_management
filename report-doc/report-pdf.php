@@ -13,6 +13,11 @@ $filter = json_decode($row_get_report['filter'],1);
 
 $data_type = $filter['field'];
 $survey_id   = $filter['survey_id'];
+
+/* Get Date */
+$sdate = $row_get_report['start_date'];
+$edate = $row_get_report['end_date'];
+
 $field_value = implode(',',$filter['field_value']);
 if(is_array($survey_id)){
     $survey_id = implode(',',$survey_id);
@@ -292,6 +297,10 @@ $j = 6;
                             <div class="title">
                                 <h4 style="border-top: 1px solid #d2cfcf;border-bottom: 1px solid #c8bfbf;padding: 6px 0;font-size: 17px;">' . strtoupper($data_type . ' Statistics') . '</h4>
                                 <h4>' . strtoupper(getSurvey()[$survey_id]) . '</h4>';
+                                
+                                if(!empty($sdate) and !empty($edate)){
+                                    $html .='<h4>' . date('d/m/Y', strtotime($sdate)) .'-'.date('d/m/Y', strtotime($edate)).'</h4>'; 
+                                }
                             $html .= '</div>
                         </div>
                     </div>   
