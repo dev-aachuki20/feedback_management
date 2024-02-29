@@ -8,6 +8,11 @@ $filter = json_decode($row_get_report['filter'],1);
 
 $data_type = $filter['field'];
 $surveyid   = $filter['survey_id'];
+
+/* Get Date */
+$sdate = $row_get_report['start_date'];
+$edate = $row_get_report['end_date'];
+
 $field_value = implode(',',$filter['field_value']);
 
 if(isset($surveyid)){
@@ -69,10 +74,14 @@ $message = '<div align="center">
     <table width="100%" style="font-family: Arial, Helvetica, sans-serif;">
         <thead>
           <tr>
-            <td colspan="4" style="text-align:center;border-bottom: 1px solid gray;padding-bottom: 10px;padding-top: 0;"><h3 align="center" style="margin-top:15px;font-family: Arial, Helvetica, sans-serif;">'.$row_get_survey['name'].' </h3></td>
-          </tr>
-        </thead>
-    </table>';
+            <td colspan="4" style="text-align:center;border-bottom: 1px solid gray;padding-bottom: 10px;padding-top: 0;"><h3 align="center" style="margin-top:10px;font-family: Arial, Helvetica, sans-serif;">'.$row_get_survey['name'].' </h3></td>
+          </tr>';
+          if (!empty($sdate) and !empty($edate)) {
+            $message .= '<tr>
+                <td colspan="4" style="text-align:center;padding-top: 8px;font-family: Arial, Helvetica, sans-serif;"><h4 align="center">' . date('d/m/Y', strtotime($sdate)) . '-' . date('d/m/Y', strtotime($edate)) . ' </h4></td>
+            </tr>';
+          }
+    $message .= '</thead></table>';
   foreach($survey_steps AS $key => $value) { 
       $message .= '<div class="container" style="page-break-after: always;height: 500px;">
         <h4 align="center" style="margin-top:8px;margin-bottom:0;font-family: Arial, Helvetica, sans-serif;">'.$value['title'].'</h4>';
