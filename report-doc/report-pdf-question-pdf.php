@@ -66,16 +66,16 @@ $row_get_location = mysqli_fetch_assoc($get_location);
 
 $message = '<div align="center">
   <img src="'.getHomeUrl().MAIN_LOGO.'"  width="200"></div>
-    <table width="100%">
+    <table width="100%" style="font-family: Arial, Helvetica, sans-serif;">
         <thead>
           <tr>
-            <td colspan="4" style="text-align:center; margin-top:10px;margin-bottom:10px;"><h2 align="center" style="margin:20px;">'.$row_get_survey['name'].' </h2></td>
+            <td colspan="4" style="text-align:center;border-bottom: 1px solid gray;padding-bottom: 10px;padding-top: 0;"><h3 align="center" style="margin-top:15px;font-family: Arial, Helvetica, sans-serif;">'.$row_get_survey['name'].' </h3></td>
           </tr>
         </thead>
     </table>';
   foreach($survey_steps AS $key => $value) { 
       $message .= '<div class="container" style="page-break-after: always;height: 500px;">
-        <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
+        <h4 align="center" style="margin-top:8px;margin-bottom:0;font-family: Arial, Helvetica, sans-serif;">'.$value['title'].'</h4>';
         foreach($questions[$key] AS $question){
           $questionid   = $question['id'];
           $answer_type  = $question['answer_type'];
@@ -119,14 +119,14 @@ $message = '<div align="center">
               record_set("get_child_questions", $get_child_questions);
             }
             if(empty($totalRows_get_child_questions)){
-                $message .='<table width="505px" align="center" style="page-break-inside: avoid; ">
+                $message .='<table width="505px" align="center" style="page-break-inside: avoid;font-family: Arial, Helvetica, sans-serif;">
                   <tr>
-                    <td align="center" colspan="3">
-                    <h4 colspan="2" style="margin-top:10px;text-align:center;">'.$question['question'].'</h4>
+                    <td align="center" colspan="3" style="padding-bottom: 0 !important;">
+                    <h4 colspan="2" style="margin-top:15px;margin-bottom: 0;text-align:center;font-family: Arial, Helvetica, sans-serif;">'.$question['question'].'</h4>
                     </td>
                   </tr>
                   <tr>
-                    <td width="304px;">';
+                    <td width="304px;" style="padding: 0 !important;">';
                       $clr_loop=0;
                       $table_display_data = array();
                       foreach($questions_array as $key=>$val){
@@ -147,11 +147,11 @@ $message = '<div align="center">
                   </tr>
                   <tr>
                     <td colspan="3">
-                      <table style="font-size:14px;" width="100%" cellspacing="0" cellpadding="4" border-bottom:none !important;>
+                      <table style="font-size:14px;font-family: Arial, Helvetica, sans-serif;border-bottom:none !important" width="100%" cellspacing="0" cellpadding="4">
                         <tr>
-                          <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
-                          <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
-                          <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
+                          <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;text-align: left;">ANSWERS</th>
+                          <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:left;">RESULT</th>
+                          <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:left;">RESPONSES</th>
                         </tr>';
                         $total = 0;
                         foreach($table_display_data as $key=>$val){ 
@@ -170,19 +170,16 @@ $message = '<div align="center">
                       $message .='</table>
                     </td>
                   </tr>
-                  <tr>
-                    <td colspan="2" style="height:40px;">&nbsp;</td>
-                  </tr>
                 </table>';
             } else{ 
-            $message .= '<table width="505px" align="center">
+            $message .= '<table width="505px" align="center" style="font-family: Arial, Helvetica, sans-serif;">
               <tr>
                 <td align="center" colspan="3">
-                  <h3 style="margin-top:10px;">'.$question['question'].'</h3>
+                  <h4 style="margin-top:15px;">'.$question['question'].'</h4>
                 </td>
               </tr>
             </table>
-            <table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
+            <table width="505px" align="center" style="font-size:14px;font-family: Arial, Helvetica, sans-serif;" border="1" cellspacing="0" cellpadding="4">
               <tbody>
                 <tr>
                   <td style="background-color:#f0f0f0;">&nbsp;</td>'.
@@ -220,18 +217,18 @@ $message = '<div align="center">
           }
 
           if($answer_type==2 || $answer_type==3){
-            $message .= '<table width="505px" align="center">
+            $message .= '<table width="505px" align="center" style="font-family: Arial, Helvetica, sans-serif;">
               <tr>
-                <td align="center">
-                  <h4 style="margin-top:10px;">'.$question['question'].'</h4>
+                <td align="center" style="padding-top: 10px;">
+                  <h4 style="margin-top:15px;">'.$question['question'].'</h4>
                 </td>
               </tr>
             </table>';
 
-            $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
+            $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;font-family: Arial, Helvetica, sans-serif;" border="1" cellspacing="0" cellpadding="4">
               <tr style="background-color:#f0f0f0;">
-                <th>RESPONDENT</th>
-                <th align="center">ANSWERS</th>
+                <th align="left">RESPONDENT</th>
+                <th align="left">ANSWERS</th>
               </tr>';
               $sno = 0;
               if(!empty($answers_array)){
