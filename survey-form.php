@@ -908,8 +908,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 																	foreach($child_answer as $key=>$child_answer_option){  ?>
 																		<td class="show_smily_<?php echo $show_smily; ?> smile-block">
 																		<label>
-																			<div>
-																				<img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
+																			<div style="font-weight: normal;">
+																				<?php echo $child_answer_option['description']; ?> <img style="width:40px" class="smily_icon" src="<?=$tickCrossRatingImages[$child_answer_option['rating_option_type']]?>">
 																			</div>
 
 																			<input style="visibility:hidden;" type="radio" class="skip-question form-check-input option_<?php echo $questionid; ?> smily_icon_input subque" name="answerid[<?php echo $question['id']; ?>]" data-value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" value="<?php echo $key; ?>--<?php echo $child_answer_option['description']; ?>" 

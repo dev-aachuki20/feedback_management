@@ -259,6 +259,9 @@ if(!empty($_POST['submit'])){
               $insert =  dbRowInsert("relation_table",$data_role);
             }
           }
+          
+          $rnd = rand(1000, 99999);
+	      send_welcome_email($_POST['email'], $_POST['name'], $rnd);
 
           $msg = "User Added Successfully";
           alertSuccess( $msg,'?page=view-user');

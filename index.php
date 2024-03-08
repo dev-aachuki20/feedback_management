@@ -173,7 +173,7 @@ else{
       </ul>
     </section>
     <div class="sidebar-footer">
-      <li class="help-question "> <a href="#" > <i class="fa fa-question"></i> <span>Help</span></a> </li>
+      <li class="help-question"><a target="_blank" href="./help/DGFM HELP Training.pdf"> <i class="fa fa-question"></i> <span>Help</span></a></li>
     </div>
   </aside>
   <div class="content-wrapper">

@@ -621,6 +621,14 @@ label.form-check-label.active {
     margin-bottom: 5px;
 }
 
+/*08-03-2024*/
+.show_smily_{
+    position: relative;
+}
+.smily_icon_input{
+    position: absolute;
+}
+
 
 @media screen and (max-width: 520px) {
     .new-content-main{
