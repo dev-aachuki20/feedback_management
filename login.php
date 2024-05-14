@@ -24,6 +24,12 @@ if(isset($_POST['login'])){
       }
       $_SESSION['user_locationid'] = implode(',', $arr);
 			$mess='Admin Login Successful';
+
+        if (isset($_SESSION['REQUESTED_URI'])) {
+          reDirect($_SESSION['REQUESTED_URI']);
+          unset($_SESSION['REQUESTED_URI']);
+        }
+
 	    	reDirect('index.php?mess='.$mess);
 		}else{
       $msg = '<div style="background: red;color: #fff;text-align: center;margin: 20px 0px;padding: 5px;" role="alert">Email or password is not correct</div>';

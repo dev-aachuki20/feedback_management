@@ -39,7 +39,9 @@
       if(!empty($_POST['password'])){
           $data['password']= md5($_POST['password']);
       }
-      
+      if($_SESSION['user_type'] <3){
+        $data['user_type']= $_POST['user_type'];
+      }
       $updte=	dbRowUpdate("manage_users", $data, "where id=".$_GET['id']);
       if(!empty($updte)){
           //assign user location,group,department
@@ -160,18 +162,20 @@ if(!empty($_POST['submit'])){
         //reDirect("?page=add-user&msg=".$mess);		
 
     }else{
-      $data = array(
+        $rnd = rand(1000, 99999);
+        $data = array(
           "name" => $_POST['name'],
           "email" => $_POST['email'],
           "password" => md5($_POST['password']),					
           "phone"=> $_POST['phone'],
           "user_type" => $_POST['user_type'],
           "photo" => $result,
+          "activation_key" => $rnd,
           "cstatus" => $_POST['status'],
           'cip'=>ipAddress(),
           'cby'=>$_SESSION['user_id'],
           'cdate'=>date("Y-m-d H:i:s")
-      );
+        );
       $insert_value =  dbRowInsert("manage_users",$data);
     
       if(!empty($insert_value )){	
@@ -260,7 +264,7 @@ if(!empty($_POST['submit'])){
             }
           }
           
-          $rnd = rand(1000, 99999);
+
 	      send_welcome_email($_POST['email'], $_POST['name'], $rnd);
 
           $msg = "User Added Successfully";
@@ -308,7 +312,7 @@ if(!empty($_POST['submit'])){
                 <div class="form-group">
                   <input type="hidden" id="hidden_user_type" name="user_type" value="<?=$row_get_user_id['user_type']?>">
                   <label>User Type *</label>
-                    <select class="form-control" tabindex=7 id="user_type" <?=($_GET['id'])?'disabled':'required'?>>
+                    <select class="form-control" tabindex=7 id="user_type" <?=($_GET['id'] && $_SESSION['user_type'] > 2)?'disabled':'required'?>>
                         <option value="">Select User Type</option>
                       <?php   
                         foreach($user_types_array as $key => $value){

@@ -593,7 +593,9 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 														$DepartmentId = $row_get_survey['departments'];
 													}
 
-													record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1 and id != 4");	
+													record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1");	
+
+													// record_set("get_department", "select * from departments where id in(".$DepartmentId.") AND cstatus=1 and id != 4");	
 
 													//record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc",2);
 
@@ -637,7 +639,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 														$RoleId = $row_get_survey['roles'];
 													}
 
-													record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1 and id != 4");				
+													record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1");	
+
+													// record_set("get_role", "select * from roles where id in(".$RoleId.") AND cstatus=1 and id != 4");		
+
 													// record_set("get_roles", "select * from roles where id in(".$row_get_survey['roles'].") AND id != 4 AND cstatus=1 order by name asc");
 
 													if($totalRows_get_roles == 1){
