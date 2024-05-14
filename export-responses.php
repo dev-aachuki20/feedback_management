@@ -16,8 +16,8 @@
         }
         $query = 'SELECT * FROM answers where id !=0 '.$where;
         if(!empty($data['fdate']) && !empty($data['sdate'])){  
-            $query .= " where cdate between '".date('Y-m-d', strtotime($data['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($data['sdate'])))."'";
-            $dateflag= true;
+            $query .= " AND cdate between '".date('Y-m-d', strtotime($data['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($data['sdate'])))."'";
+            $dateflag= true; // removed where as per the issue 4 from document "HATS Bugs - updated with comments 09.05.24"
         }
 
         if(!empty($data['departmentid'])){

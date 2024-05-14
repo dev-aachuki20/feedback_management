@@ -451,7 +451,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                       if($answer_type !=5){ ?>
                       <tr>
                         <td scope="row" class="remove-bt"><?=$i?></td>
-                        <td class="remove-bt" style="border-left:none;border-right:none;"><?=$question?></td>
+                        <td class="remove-bt" style="border-left:none;border-right:none;"><?=(is_array($question) ? $question['question'] : $question )?></td>
                         <td class="remove-bt" ><?=$answer_value?></td>
                       </tr>
                       <?php } }
@@ -529,7 +529,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
                             ?>
                            <tr>
                             <td scope="row" class="remove-bt"><?=$i?></td>
-                            <td class="remove-bt" style="border-left:none;border-right:none;"><?=$question?></td>
+                            <td class="remove-bt" style="border-left:none;border-right:none;"><?=(is_array($question) ? $question['question'] : $question )?></td>
                             <td class="remove-bt" ><?=$answer_value?></td>
                           </tr>
                           <?php

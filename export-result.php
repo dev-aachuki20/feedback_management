@@ -14,7 +14,10 @@ if(!empty($_REQUEST['location']) and $_REQUEST['location']!=4){
 	$ans_filter_query .= " and locationid = ".$_REQUEST['location'];
 }
 if(!empty($_GET['surveyid'])){
-	$query = "SELECT * FROM answers  where surveyid='".$surveyid."' ".$ans_filter_query." group by cdate order by cdate DESC;";
+	// old query changed on document "Patient Satisfaction Survey-2024-05-14-05_18_18"
+	// $query = "SELECT * FROM answers  where surveyid='".$surveyid."' ".$ans_filter_query." group by cdate order by cdate DESC;";
+	$query = "SELECT * FROM answers  where surveyid='".$surveyid."' ".$ans_filter_query." group by cby order by cdate DESC;";
+
 }else{
 	echo "Invalid request"; exit;
 }
@@ -35,7 +38,7 @@ if($totalRows_getdata>0){
 	$row_excel_data = array();
 	while ($row_getdata = mysqli_fetch_assoc($getdata)) {
 		
-		/** CALCUCLATE RESULT */
+		/** Calculate RESULT */
 		$survey_score = survey_score_calculation($row_getdata['surveyid'],$row_getdata['cby']);
 		$row_excel_data[$i]['Date'] 		= $row_getdata['cdate']; 
 		$row_excel_data[$i]['Survey ID'] 	= $row_getdata['surveyid']; 
