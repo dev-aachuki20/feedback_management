@@ -132,7 +132,12 @@ if (count($surveyQuestions) > 0) {
 
             $answeredOptions = implode(",", array_keys($question['survey_responses']));
 
-            record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyId . "' AND cstatus='1'  AND questionid = " . $question['id'] . " AND id NOT IN (" . $answeredOptions . ")");
+            $notInFilter = '';
+            if($answeredOptions){
+              $notInFilter = "AND id NOT IN (" . $answeredOptions . ")";
+            }
+        
+            record_set("get_remaining_questions_options", "SELECT questions_detail.id FROM questions_detail WHERE surveyid='" . $surveyId . "' AND cstatus='1'  AND questionid = " . $question['id'] . " $notInFilter ");
 
             if (!empty($totalRows_get_remaining_questions_options)) {
                 while ($row_remaining_questions_option = mysqli_fetch_assoc($get_remaining_questions_options)) {
