@@ -247,6 +247,7 @@ function upload_multiple_image($folder_path, $image_id, $j)
 function check_login()
 {
 	if (empty($_SESSION['user_id'])) {
+		$_SESSION['REQUESTED_URI'] = $_SERVER['REQUEST_URI'];
 		reDirect("login.php");
 	}
 }

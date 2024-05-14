@@ -57,10 +57,11 @@
                     </ul>
                 </li>
 
+                
                 <li class="treeview <?php if(in_array($_GET['page'],array('view-survey','add-survey','view-survey_questions','edit-survey_questions','add-survey_questions')) and !isset($_GET['type'])) { echo 'active';}?>">
                     <a href="#" class="nav-link"> <i class="fa fa-list-alt"></i> <span>SURVEYS</span> <i class="fa fa-angle-left pull-right"></i></a> 
                     <ul class="treeview-menu timeline-area child <?=make_sidebar_active($_GET['page'],array('view-survey','add-survey'))?>">
-                        <?php if($_SESSION['user_type']<=2) {?>
+                        <?php if($_SESSION['user_type']< 2) {?>
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],'add-survey')?> "><a href="?page=add-survey" class="nav-link"> <i class=""></i> <span>ADD SURVEY</span></a> </li>
                         <?php } ?>    
                         <li class="treeview cusul-line <?=make_sidebar_active($_GET['page'],array('view-survey','view-survey_questions','edit-survey_questions','add-survey_questions'))?> "><a href="?page=view-survey" class="nav-link"> <i class=""></i> <span>VIEW SURVEYS</span></a> </li>
