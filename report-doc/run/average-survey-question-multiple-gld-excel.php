@@ -96,8 +96,8 @@ $activeSheet->getColumnDimension('A')->setWidth(600, 'px');
 $i = 2;
 
 foreach($questions as $stepId => $question){
-	$activeSheet->setCellValue('A'.$i, '');
 	$i++;
+	$activeSheet->setCellValue('A'.$i, '');
 	$surveyStep = record_set_single("get_survey_step", "SELECT step_title FROM surveys_steps where id =" . $stepId);
 	$surveyStepName = strtoupper(trim($surveyStep['step_title']));
 	$activeSheet->setCellValue('A'.$i, "$surveyStepName");
