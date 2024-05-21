@@ -507,7 +507,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 												}else{
 													$GroupId = $row_get_survey['groups'];
 												}
-												record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
+
+												// record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND id != 4 AND cstatus=1 order by name asc");	
+
+												record_set("get_group", "select * from `groups` where id in(".$GroupId.") AND cstatus=1 order by name asc");	
 												if($totalRows_get_group == 1){
 													while($row_get_group = mysqli_fetch_assoc($get_group)){
 														echo '<input type="hidden" name="groupid" value="'.$row_get_group['id'].'">';
@@ -551,7 +554,10 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 													$LocationId = $row_get_survey['locations'];
 												}
 
-												record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc");	
+												// record_set("get_location", "select * from locations where id in(".$LocationId.") AND id != 4 AND cstatus=1 order by name asc");	
+
+												record_set("get_location", "select * from locations where id in(".$LocationId.")  AND cstatus=1 order by name asc");	
+
 												if($totalRows_get_location == 1){
 													while($row_get_location = mysqli_fetch_assoc($get_location)){
 														echo '<input type="hidden" name="locationid" value="'.$row_get_location['id'].'">';
