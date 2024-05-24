@@ -360,7 +360,7 @@ function sendNotificationThreshold($surveyId, $data)
                 				<td></td>
                 			</tr>
                 			<tr>
-                			<td><p style="font-size:15px;margin:10px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type=' . $type . '" target="_blank">Click here</a> to view the response.</p></td>
+                			<td><p style="font-size:15px;margin:10px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type=' . $type . '&response=' . $_SESSION['maxid'] . '" target="_blank">Click here</a> to view the response.</p></td>
                 			</tr>
                 			<tr>
                 			<td height="20px;">&nbsp;</td>

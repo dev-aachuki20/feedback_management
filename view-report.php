@@ -10,7 +10,9 @@ $roleByUsers       = get_filter_data_by_user('roles');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($page_type,1);
 
-// get asssign ids only
+
+
+// get assign ids only
 $assign_department = array();
 foreach($departmentByUsers as $department){
     $assign_department[] = $department['id'];
@@ -41,11 +43,14 @@ $grp_ids     = implode(',',$assign_group);
 $surveys_ids = implode(',',$assign_survey);
 $role_ids = implode(',',$assign_role);
 
-
 // get record 
 //if(!empty($_POST['surveys'])){
     $dateflag= false;
     $query = 'SELECT * FROM answers where id !=0 ';
+
+    if(isset($_GET['response']) && !empty($_GET['response'])){
+        $query .= " and cby = '".$_GET['response']."'";
+    }
 
     if(!empty($_POST['departmentid'])){
         $query .= " and departmentid = '".$_POST['departmentid']."'";
@@ -87,7 +92,7 @@ $role_ids = implode(',',$assign_role);
     while($row_get_departments = mysqli_fetch_assoc($get_departments)){
         $departments[$row_get_departments['id']] = $row_get_departments['name'];
     }
-    record_set("get_recent_entry",$query);
+    record_set("get_recent_entry", $query);
 //}
 ?>
 <style>
@@ -102,7 +107,7 @@ $role_ids = implode(',',$assign_role);
     <!-- top box container start-->
      <?php include ('./section/top-box-container-count.php');?>
     <!-- top box container start-->
-    <div class="box box-default">
+    <div class="box box-default <?= isset($_GET['response']) && !empty($_GET['response']) ? 'd-none' : '' ?> ">
         <form action="" method="POST" id="viewReportcsv">
             <!-- <input type="hidden" name="post_values" value =<?=json_encode($_POST)?> > -->
             <div class="box-header">
