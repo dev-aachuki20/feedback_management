@@ -3,10 +3,12 @@ include('function/function.php');
 include('function/get_data_function.php');
 
 $surveyid=$_GET['surveyid'];
+$surveyName = 'Default';
 if(isset($_GET['surveyid'])){
 	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1 ");	
 	if($totalRows_get_survey>0){
 		$row_get_survey = mysqli_fetch_assoc($get_survey);
+    $surveyName = $row_get_survey['name'];
 	}else{
 		echo 'Wrong survey ID.'; exit;
 	}
@@ -507,4 +509,4 @@ $pdf = $dompdf->output();
 $file_location = "upload/trans_docs/".'Quotation'.$_GET['eid'].".pdf";
 file_put_contents($file_location,$pdf);*/
 // Output the generated PDF to Browser 
-$dompdf->stream($_GET['name'], array("Attachment"=>0));
+$dompdf->stream($surveyName, array("Attachment"=>0));
