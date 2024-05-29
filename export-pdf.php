@@ -236,7 +236,7 @@ if(count($survey_steps)>0){
                 </tr>
               </table>';
           } else{ 
-          $message .= '<table width="505px" align="center">
+          $message .= '<table width="505px" align="center" style="page-break-inside: avoid;>
             <tr>
               <td align="center" colspan="3">
                 <h3 style="margin-top:10px;">'.$question['question'].'</h3>
@@ -291,10 +291,11 @@ if(count($survey_steps)>0){
 
           $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
             <tr style="background-color:#f0f0f0;">
-              <th>S.NO.</th>
+              <th>S.NO. 11</th>
               <th align="center">ANSWERS</th>
             </tr>';
             $sno = 0;
+            
             if(!empty($answers_array)){
               foreach ($answers_array as $key=>$val){ 
                 if(isset($val) && !empty($val) && $val != ""){
@@ -354,7 +355,7 @@ if(count($survey_steps)>0){
           record_set("get_child_questions", $get_child_questions);
         }
         if(empty($totalRows_get_child_questions)){
-            $message .='<table width="505px" align="center" style="page-break-inside: avoid; ">
+            $message .='<table width="505px" align="center" style="page-break-inside: avoid;">
               <tr>
                 <td align="center" colspan="3">
                 <h4 colspan="2" style="margin-top:10px;text-align:center;">'.$question['question'].'</h4>
@@ -415,8 +416,6 @@ if(count($survey_steps)>0){
             </table>';
           
         } else{ 
-         
-
         $message .= '<table width="505px" align="center">
           <tr>
             <td align="center" colspan="3">
@@ -424,7 +423,7 @@ if(count($survey_steps)>0){
             </td>
           </tr>
         </table>
-        <table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
+        <table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4" style="page-break-inside: avoid;>
           <tbody>
             <tr>
               <td style="background-color:#f0f0f0;">&nbsp;</td>'.
@@ -462,7 +461,7 @@ if(count($survey_steps)>0){
       }
 
       if($answer_type==2 || $answer_type==3){
-        $message .= '<table width="505px" align="center">
+        $message .= '<table width="505px" align="center" style="page-break-inside: avoid;>
           <tr>
             <td align="center">
               <h4 style="margin-top:10px;">'.$question['question'].'</h4>
@@ -470,7 +469,7 @@ if(count($survey_steps)>0){
           </tr>
         </table>';
 
-        $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
+        $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4" style="page-break-inside: avoid;>
           <tr style="background-color:#f0f0f0;">
             <th>S.NO.</th>
             <th align="center">ANSWERS</th>
