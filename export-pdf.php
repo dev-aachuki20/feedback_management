@@ -71,7 +71,7 @@ $message = '<!DOCTYPE html>
   margin-bottom: 1cm;
 }
 body{
-  padding-bottom: 20px;
+  padding-bottom: 50px;
 }
 footer {
   position: fixed;
@@ -115,8 +115,8 @@ $message .= '<table width="100%" style="text-align:center;">
       </tbody>
   </table>';
 
-$message .='<footer style="page-break-inside: avoid;">
-<div style="text-align: center;margin-bottom:10px;" >
+$message .='<footer style="page-break-inside:avoid;">
+<div style="text-align: center;" >
 <span style="font-size:14px;">'.POWERED_BY.'</span>
 <center><img  src="'.FOOTER_LOGO.'" alt="" width="150" style="background-color: #fff;"/></center>
 </div>
@@ -236,7 +236,7 @@ if(count($survey_steps)>0){
                 </tr>
               </table>';
           } else{ 
-          $message .= '<table width="505px" align="center" style="page-break-inside: avoid;>
+          $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
             <tr>
               <td align="center" colspan="3">
                 <h3 style="margin-top:10px;">'.$question['question'].'</h3>
@@ -289,9 +289,9 @@ if(count($survey_steps)>0){
             </tr>
           </table>';
 
-          $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
+          $message .= '<table width="505px" width="505px" align="center" style="page-break-inside:always;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
             <tr style="background-color:#f0f0f0;">
-              <th>S.NO. 11</th>
+              <th>S.NO.</th>
               <th align="center">ANSWERS</th>
             </tr>';
             $sno = 0;
@@ -303,7 +303,7 @@ if(count($survey_steps)>0){
                 }
               }
             }else{ 
-              $message .=  '<tr><td>NO ANSWER AVAILABLE</td></tr>';
+              $message .=  '<tr><td colspan="2"  align="center">NO ANSWER AVAILABLE</td></tr>';
             }
           $message .= '</table>';
         }
@@ -416,14 +416,14 @@ if(count($survey_steps)>0){
             </table>';
           
         } else{ 
-        $message .= '<table width="505px" align="center">
+        $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
           <tr>
             <td align="center" colspan="3">
               <h3 style="margin-top:10px;">'.$question['question'].'</h3>
             </td>
           </tr>
         </table>
-        <table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4" style="page-break-inside: avoid;>
+        <table width="505px" align="center" style="page-break-inside: avoid;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
           <tbody>
             <tr>
               <td style="background-color:#f0f0f0;">&nbsp;</td>'.
@@ -461,7 +461,7 @@ if(count($survey_steps)>0){
       }
 
       if($answer_type==2 || $answer_type==3){
-        $message .= '<table width="505px" align="center" style="page-break-inside: avoid;>
+        $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
           <tr>
             <td align="center">
               <h4 style="margin-top:10px;">'.$question['question'].'</h4>
@@ -469,7 +469,7 @@ if(count($survey_steps)>0){
           </tr>
         </table>';
 
-        $message .= '<table width="505px" width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4" style="page-break-inside: avoid;>
+        $message .= '<table width="505px" width="505px" align="center" style="page-break-inside:always;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
           <tr style="background-color:#f0f0f0;">
             <th>S.NO.</th>
             <th align="center">ANSWERS</th>
@@ -482,7 +482,7 @@ if(count($survey_steps)>0){
               }
             }
           }else{ 
-            $message .=  '<tr><td>NO ANSWER AVAILABLE</td></tr>';
+            $message .=  '<tr><td colspan="2" align="center">NO ANSWER AVAILABLE</td></tr>';
           }
         $message .= '</table>';
       }
