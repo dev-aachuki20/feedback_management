@@ -268,7 +268,7 @@ $allUsers = getUsers();
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Response Limit</label>
-                                    <input type="text" class="form-control" name="survey_needed" id="survey_needed" value="<?php echo $row_get_surveys['survey_needed'];?>"/>
+                                    <input type="text" class="form-control" name="survey_needed" id="survey_needed" min="1" max="2147483646" value="<?php echo $row_get_surveys['survey_needed'];?>"/>
                                 </div>
                             </div>
                             <div class="col-md-6">
