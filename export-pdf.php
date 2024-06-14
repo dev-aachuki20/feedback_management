@@ -126,10 +126,12 @@ $message .='<footer style="page-break-inside:avoid;">
 if(count($survey_steps)>0){
   $mainCount = 1; 
   foreach($survey_steps AS $key => $value) { 
-    $message .= '<div class="container">
-      <h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>';
+    $message .= '<div class="container">';
 
+      $qcount = 0;
       foreach($questions[$key] AS $question){
+        $qcount++;
+
         $questionid   = $question['id'];
         $answer_type  = $question['answer_type'];
         $totalRows_get_child_questions = 0;
@@ -164,6 +166,7 @@ if(count($survey_steps)>0){
           $counts = array_count_values($answers_array);
         }
       
+        $message .= '<div style="page-break-inside:avoid;">';
         if($answer_type==1 || $answer_type==4 || $answer_type==6){
         
           if($answer_type==1){
@@ -174,7 +177,10 @@ if(count($survey_steps)>0){
           if(empty($totalRows_get_child_questions)){
               $message .='<table width="505px" align="center" style="page-break-inside: avoid;">
                 <tr>
-                  <td align="center" colspan="3">
+                  <td align="center" colspan="3">';
+                  if($qcount == 1){ $message .='
+                    <h4 align="center" style="margin-top:10px;margin-bottom:10px;">'.$value['title'].'</h4>';
+                  } $message .='
                   <h4 colspan="2" style="margin-top:10px;text-align:center;">'.$question['question'].'</h4>
                   </td>
                 </tr>
@@ -198,47 +204,44 @@ if(count($survey_steps)>0){
                     $message .= '
                   </td>
                 </tr>
+              </table>
+              <table style="font-size:14px;" width="505px" align="center" cellspacing="0" cellpadding="4" >
                 <tr>
-                  <td colspan="3">
-                    <table style="font-size:14px;" width="100%" cellspacing="0" cellpadding="4" border-bottom:none !important;>
-                      <tr>
-                        <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
-                        <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
-                        <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
-                      </tr>';
-                      $total = 0;
-                      
-                      $sum_of_count = array_sum(array_column($table_display_data, "count"));
-                      $perResponsePercentage = 100/$sum_of_count;
-                      foreach($table_display_data as $key=>$val){ 
-                        $scoreValue = round($perResponsePercentage*$val['count'],2);
-                        if(is_nan($scoreValue)){
-                          $scoreValue = 0;
-                        }
-                        $response = ($val['count'])?$val['count']:0;
-                        $message .='<tr>
-                          <td style="border: 1px solid">'.$key.'</td>
-                          <td style="text-align:center;border: 1px solid">'.$scoreValue.'%</td>
-                          <td style="text-align:center;border: 1px solid">'.$response.'</td>
-                        </tr>';
-                        $total +=$val['count'];
-                      } 
-                      $message .='<tr style="border:none;">
-                        <td style="border:none;"></td>
-                        <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
-                        <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
-                      </tr>';
-                    $message .='</table>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="height:40px;">&nbsp;</td>
-                </tr>
-              </table>';
+                  <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
+                  <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
+                  <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
+                </tr>';
+                $total = 0;
+                
+                $sum_of_count = array_sum(array_column($table_display_data, "count"));
+                $perResponsePercentage = 100/$sum_of_count;
+                foreach($table_display_data as $key=>$val){ 
+                  $scoreValue = round($perResponsePercentage*$val['count'],2);
+                  if(is_nan($scoreValue)){
+                    $scoreValue = 0;
+                  }
+                  $response = ($val['count'])?$val['count']:0;
+                  
+                  $message .='<tr>
+                    <td style="border: 1px solid">'.$key.'</td>
+                    <td style="text-align:center;border: 1px solid">'.$scoreValue.'%</td>
+                    <td style="text-align:center;border: 1px solid">'.$response.'</td>
+                  </tr>';
+                  $total +=$val['count'];
+                } 
+                $message .='<tr style="border:none;">
+                  <td style="border:none;"></td>
+                  <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
+                  <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
+                </tr>';
+              $message .='</table>';
           } else{ 
           $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
             <tr>
-              <td align="center" colspan="3">
+              <td align="center" colspan="3">';
+                if($qcount == 1){ $message .='
+                  <h4 align="center" style="margin-top:10px;margin-bottom:10px;">'.$value['title'].'</h4>';
+                } $message .='
                 <h3 style="margin-top:10px;">'.$question['question'].'</h3>
               </td>
             </tr>
@@ -283,7 +286,10 @@ if(count($survey_steps)>0){
         if($answer_type==2 || $answer_type==3){
           $message .= '<table width="505px" height="100vh" align="center">
             <tr>
-              <td align="center">
+              <td align="center" colspan="3">';
+                if($qcount == 1){ $message .='
+                  <h4 align="center" style="margin-top:10px;margin-bottom:10px;">'.$value['title'].'</h4>';
+                } $message .='
                 <h4 style="margin-top:10px;">'.$question['question'].'</h4>
               </td>
             </tr>
@@ -291,7 +297,7 @@ if(count($survey_steps)>0){
 
           $message .= '<table width="505px" width="505px" align="center" style="page-break-inside:always;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
             <tr style="background-color:#f0f0f0;">
-              <th>S.NO.</th>
+              <th>RESPONDENT</th>
               <th align="center">ANSWERS</th>
             </tr>';
             $sno = 0;
@@ -307,11 +313,15 @@ if(count($survey_steps)>0){
             }
           $message .= '</table>';
         }
+        // Divider in two questions
+        $message .= '<table><tr><td style="height:40px;">&nbsp;</td></tr></table>
+        </div>';
       } 
     $message .='</div>';
   }
 
 }else{
+  $message .= '<div class="container">';
     foreach($questions[0] AS $question){
       $questionid   = $question['id'];
       $answer_type  = $question['answer_type'];
@@ -346,7 +356,7 @@ if(count($survey_steps)>0){
         }
         $counts = array_count_values($answers_array);
       }
-    
+      $message .= '<div style="page-break-inside:avoid;">';
       if($answer_type==1 || $answer_type==4 || $answer_type==6){
       
         if($answer_type==1){
@@ -381,39 +391,32 @@ if(count($survey_steps)>0){
                   $message .= '
                 </td>
               </tr>
+            </table>
+            <table style="font-size:14px;" align="center" width="505px" cellspacing="0" cellpadding="4">
               <tr>
-                <td colspan="3">
-                  <table style="font-size:14px;" width="100%" cellspacing="0" cellpadding="4" border-bottom:none !important;>
-                    <tr>
-                      <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
-                      <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
-                      <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
-                    </tr>';
-                    $total = 0;
-                    
-                    $sum_of_count = array_sum(array_column($table_display_data, "count"));
-                    $perResponsePercentage = 100/$sum_of_count;
-                    foreach($table_display_data as $key=>$val){ 
-                      $response = ($val['count'])?$val['count']:0;
-                      $message .='<tr>
-                        <td style="border: 1px solid">'.$key.'</td>
-                        <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
-                        <td style="text-align:center;border: 1px solid">'.$response.'</td>
-                      </tr>';
-                      $total +=$val['count'];
-                    } 
-                    $message .='<tr style="border:none;">
-                      <td style="border:none;"></td>
-                      <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
-                      <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
-                    </tr>';
-                  $message .='</table>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" style="height:40px;">&nbsp;</td>
-              </tr>
-            </table>';
+                <th style="background-color:#f0f0f0; border: 1px solid ;border-bottom: none;">ANSWERS</th>
+                <th style="background-color:#f0f0f0;width:80px;border: 1px solid ;border-bottom: none;text-align:center;">RESULT</th>
+                <th style="background-color:#f0f0f0;width:70px;border: 1px solid;border-bottom: none;text-align:center;">RESPONSES</th>
+              </tr>';
+              $total = 0;
+              
+              $sum_of_count = array_sum(array_column($table_display_data, "count"));
+              $perResponsePercentage = 100/$sum_of_count;
+              foreach($table_display_data as $key=>$val){ 
+                $response = ($val['count'])?$val['count']:0;
+                $message .='<tr>
+                  <td style="border: 1px solid">'.$key.'</td>
+                  <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
+                  <td style="text-align:center;border: 1px solid">'.$response.'</td>
+                </tr>';
+                $total +=$val['count'];
+              } 
+              $message .='<tr style="border:none;">
+                <td style="border:none;"></td>
+                <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
+                <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
+              </tr>';
+            $message .='</table>';
           
         } else{ 
         $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
@@ -471,7 +474,7 @@ if(count($survey_steps)>0){
 
         $message .= '<table width="505px" width="505px" align="center" style="page-break-inside:always;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
           <tr style="background-color:#f0f0f0;">
-            <th>S.NO.</th>
+            <th>RESPONDENT</th>
             <th align="center">ANSWERS</th>
           </tr>';
           $sno = 0;
@@ -486,12 +489,17 @@ if(count($survey_steps)>0){
           }
         $message .= '</table>';
       }
+      // Divider in two questions
+      $message .= '<table><tr><td style="height:40px;">&nbsp;</td></tr></table>
+      </div>';
     } 
-
+    $message .='</div>';
 }
 
 
 $message .='</body></html>';
+
+// echo $message;die;
 
 // Include auto loader 
 require_once 'dompdf/autoload.inc.php'; 
