@@ -215,71 +215,107 @@ if(count($survey_steps)>0){
                 
                 $sum_of_count = array_sum(array_column($table_display_data, "count"));
                 $perResponsePercentage = 100/$sum_of_count;
-                foreach($table_display_data as $key=>$val){ 
-                  $scoreValue = round($perResponsePercentage*$val['count'],2);
-                  if(is_nan($scoreValue)){
-                    $scoreValue = 0;
-                  }
-                  $response = ($val['count'])?$val['count']:0;
-                  
-                  $message .='<tr>
-                    <td style="border: 1px solid">'.$key.'</td>
-                    <td style="text-align:center;border: 1px solid">'.$scoreValue.'%</td>
-                    <td style="text-align:center;border: 1px solid">'.$response.'</td>
+                if(count(array_filter($table_display_data)) > 0){
+                  foreach($table_display_data as $key=>$val){ 
+                    $scoreValue = round($perResponsePercentage*$val['count'],2);
+                    if(is_nan($scoreValue)){
+                      $scoreValue = 0;
+                    }
+                    $response = ($val['count'])?$val['count']:0;
+                    
+                    $message .='<tr>
+                      <td style="border: 1px solid">'.$key.'</td>
+                      <td style="text-align:center;border: 1px solid">'.$scoreValue.'%</td>
+                      <td style="text-align:center;border: 1px solid">'.$response.'</td>
+                    </tr>';
+                    $total +=$val['count'];
+                  } 
+                  $message .='<tr style="border:none;">
+                    <td style="border:none;"></td>
+                    <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
+                    <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
                   </tr>';
-                  $total +=$val['count'];
-                } 
-                $message .='<tr style="border:none;">
-                  <td style="border:none;"></td>
-                  <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
-                  <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
-                </tr>';
+                } else{ 
+                  $message .=  '<tr><td colspan="3"  align="center" style="border: 1px solid;">NO ANSWER AVAILABLE</td></tr>';
+                }                
               $message .='</table>';
           } else{ 
-          $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
-            <tr>
-              <td align="center" colspan="3">';
-                if($qcount == 1){ $message .='
-                  <h4 align="center" style="margin-top:10px;margin-bottom:10px;">'.$value['title'].'</h4>';
-                } $message .='
-                <h3 style="margin-top:10px;">'.$question['question'].'</h3>
-              </td>
-            </tr>
-          </table>
-          <table width="505px" align="center" style="font-size:14px;" border="1" cellspacing="0" cellpadding="4">
-            <tbody>
+            $message .= '<table width="505px" align="center" style="page-break-inside: avoid;">
               <tr>
-                <td style="background-color:#f0f0f0;">&nbsp;</td>'.
-                $child_answer = array();
-                $tdloop = 0;
-                record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-                while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
-                  $tdloop++; 
-                  $message .= '<td style="background-color:#f0f0f0;">'.
-                    $child_answer[$row_get_questions_detail['id']]= $row_get_questions_detail['description'];
-                    $row_get_questions_detail['description'];
-                  '</td>';
-                }
-              $message .= '</tr>';
-              while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){
-                $message .= '<tr>
-                  <td style="background-color:#f0f0f0;">'.$row_get_child_questions['question'].'
-                  </td>';
+                <td align="center" colspan="3">';
+                  if($qcount == 1){ $message .='
+                    <h4 align="center" style="margin-top:10px;margin-bottom:10px;">'.$value['title'].'</h4>';
+                  } $message .='
+                  <h3 style="margin-top:10px;">'.$question['question'].'</h3>
+                </td>
+              </tr>
+            </table>
+            <table width="505px" align="center" style="font-size:14px;border-collapse: collapse;font-family: Arial, Helvetica, sans-serif;width: 505px;word-break: break-word;border-bottom: 1px solid #000 !important;" border="1" cellspacing="0" cellpadding="4">
+              <thead>
+              <tr>
+              <th  style="background-color:#f0f0f0;" rowspan="2"></th>';
 
-                  $answers_array = array();
-                  record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$row_get_child_questions['id']."' ");	
-                  if($totalRows_get_answers>0){
-                    while($row_get_answers = mysqli_fetch_assoc($get_answers)){
-                    //print_r($row_get_answers);
-                    $answers_array[$row_get_answers['id']] = $row_get_answers['answerid'];
+              record_set("get_parent_question_options", "select id, description from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $question['id']);
+              $options = [];
+              if (!empty($totalRows_get_parent_question_options)) {
+                $i = 0;
+                while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
+                  $options[$row_parent_question_option['id']] = 0;
+                  $message .= '<th style="background-color:#f0f0f0;" colspan="2">' . $row_parent_question_option['description'] . '</th>';
+                  $i++;
+                }
+                $message .= '</tr><tr>';
+
+                for ($j = $i; $j > 0; $j--) {
+                  $message .= '<th style="word-break: break-word;">RESULT</th><th style="word-break: break-word;">RESPONSES</th>';
+                }
+                $message .= '</tr></thead><tbody><tr>';
+              }
+
+              $childQues = [];
+              $mergedSurveyResponses = [];
+              if (!empty($totalRows_get_child_questions)) {
+                while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+                  $childQues[$row_get_child_question['id']]['id']           = $row_get_child_question['id'];
+                  $childQues[$row_get_child_question['id']]['question']     = $row_get_child_question['question'];
+                  $childQues[$row_get_child_question['id']]['ifrequired']   = $row_get_child_question['ifrequired'];
+                  $childQues[$row_get_child_question['id']]['answer_type']  = $row_get_child_question['answer_type'];
+
+                  $childQues[$row_get_child_question['id']]['survey_responses']  = $options;
+
+                  record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
+
+                  if (!empty($totalRows_get_child_questions_answers)) {
+                    while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
+                      $childQues[$row_get_child_question['id']]['survey_responses'][$row_get_child_questions_answer['answerid']]  += 1;
                     }
                   }
-                  $anscount =  count($answers_array);
-                  $counts = array_count_values($answers_array);
-                $message .= '</tr>';
+                }
               }
-            $message .= '</tbody>
-          </table>';
+              foreach ($childQues as $key => $child_question) {
+                foreach ($child_question['survey_responses'] as $child_key => $response) {
+                  $mergedSurveyResponses[$child_key] += $response > 0 ? $response : 0;
+                }
+              }
+
+              foreach ($childQues as $key => $child_question) {
+                $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $child_question['question'] . '</td>';
+                $k = 0;
+                foreach ($child_question['survey_responses'] as $child_key => $response) {
+                  $sum_of_responses = $mergedSurveyResponses[$child_key];
+                  if ($sum_of_responses > 0) {
+                    $per_res_score = 100 / $sum_of_responses;
+                  } else {
+                    $per_res_score = 0;
+                  }
+                  $score = round($per_res_score * $response, 2);
+                  $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $score . '%</td>';
+                  $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $response . '</td>';
+                }
+                
+                $message .= '</tr><tr style="border: 1px solid;">';
+              }
+            $message .= '</tr></tbody></table>';
           }
         }
 
@@ -302,7 +338,7 @@ if(count($survey_steps)>0){
             </tr>';
             $sno = 0;
             
-            if(!empty($answers_array)){
+            if(!empty(array_filter($answers_array)) ){
               foreach ($answers_array as $key=>$val){ 
                 if(isset($val) && !empty($val) && $val != ""){
                   $message .=  '<tr><td>'.++$sno.'</td><td>'.$val.'</td></tr>';
@@ -402,20 +438,24 @@ if(count($survey_steps)>0){
               
               $sum_of_count = array_sum(array_column($table_display_data, "count"));
               $perResponsePercentage = 100/$sum_of_count;
-              foreach($table_display_data as $key=>$val){ 
-                $response = ($val['count'])?$val['count']:0;
-                $message .='<tr>
-                  <td style="border: 1px solid">'.$key.'</td>
-                  <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
-                  <td style="text-align:center;border: 1px solid">'.$response.'</td>
+              if(count(array_filter($table_display_data)) > 0){
+                foreach($table_display_data as $key=>$val){ 
+                  $response = ($val['count'])?$val['count']:0;
+                  $message .='<tr>
+                    <td style="border: 1px solid">'.$key.'</td>
+                    <td style="text-align:center;border: 1px solid">'.round($perResponsePercentage*$val['count'],2).'%</td>
+                    <td style="text-align:center;border: 1px solid">'.$response.'</td>
+                  </tr>';
+                  $total +=$val['count'];
+                } 
+                $message .='<tr style="border:none;">
+                  <td style="border:none;"></td>
+                  <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
+                  <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
                 </tr>';
-                $total +=$val['count'];
-              } 
-              $message .='<tr style="border:none;">
-                <td style="border:none;"></td>
-                <td style="border:none;text-align:center;"><strong>TOTAL</strong></td>
-                <td style="border:none;text-align:center"><strong>'.$total.'</strong></td>
-              </tr>';
+              } else {
+                $message .=  '<tr><td colspan="3" align="center">NO ANSWER AVAILABLE</td></tr>';
+              }
             $message .='</table>';
           
         } else{ 
@@ -426,40 +466,72 @@ if(count($survey_steps)>0){
             </td>
           </tr>
         </table>
-        <table width="505px" align="center" style="page-break-inside: avoid;font-size:14px;" border="1" cellspacing="0" cellpadding="4">
-          <tbody>
+        <table width="505px" align="center" style="font-size:14px;border-collapse: collapse;font-family: Arial, Helvetica, sans-serif;border-bottom: 1px solid #000 !important;" border="1" cellspacing="0" cellpadding="4">
+            <thead>
             <tr>
-              <td style="background-color:#f0f0f0;">&nbsp;</td>'.
-              $child_answer = array();
-              $tdloop = 0;
-              record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'  ");
-              while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){ 
-                $tdloop++; 
-                $message .= '<td style="background-color:#f0f0f0;">'.
-                  $child_answer[$row_get_questions_detail['id']]= $row_get_questions_detail['description'];
-                  $row_get_questions_detail['description'];
-                '</td>';
-              }
-            $message .= '</tr>';
-            while($row_get_child_questions = mysqli_fetch_assoc($get_child_questions)){
-              $message .= '<tr>
-                <td style="background-color:#f0f0f0;">'.$row_get_child_questions['question'].'
-                </td>';
+            <th  style="background-color:#f0f0f0;" rowspan="2"></th>';
 
-                $answers_array = array();
-                record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$row_get_child_questions['id']."' ");	
-                if($totalRows_get_answers>0){
-                  while($row_get_answers = mysqli_fetch_assoc($get_answers)){
-                  //print_r($row_get_answers);
-                  $answers_array[$row_get_answers['id']] = $row_get_answers['answerid'];
+            record_set("get_parent_question_options", "select id, description from questions_detail where surveyid='" . $surveyid . "' and questionid = " . $question['id']);
+            $options = [];
+            if (!empty($totalRows_get_parent_question_options)) {
+              $i = 0;
+              while ($row_parent_question_option = mysqli_fetch_assoc($get_parent_question_options)) {
+                $options[$row_parent_question_option['id']] = 0;
+                $message .= '<th style="background-color:#f0f0f0;" colspan="2">' . $row_parent_question_option['description'] . '</th>';
+                $i++;
+              }
+              $message .= '</tr><tr>';
+
+              for ($j = $i; $j > 0; $j--) {
+                $message .= '<th>RESULT</th><th>RESPONSES</th>';
+              }
+              $message .= '</tr></thead><tbody><tr>';
+            }
+
+            $childQues = [];
+            $mergedSurveyResponses = [];
+            if (!empty($totalRows_get_child_questions)) {
+              while ($row_get_child_question = mysqli_fetch_assoc($get_child_questions)) {
+                $childQues[$row_get_child_question['id']]['id']           = $row_get_child_question['id'];
+                $childQues[$row_get_child_question['id']]['question']     = $row_get_child_question['question'];
+                $childQues[$row_get_child_question['id']]['ifrequired']   = $row_get_child_question['ifrequired'];
+                $childQues[$row_get_child_question['id']]['answer_type']  = $row_get_child_question['answer_type'];
+
+                $childQues[$row_get_child_question['id']]['survey_responses']  = $options;
+
+                record_set("get_child_questions_answers", "select * from answers where surveyid='" . $surveyid . "' and cstatus='1' $ans_filter_query  and questionid = " . $row_get_child_question['id']);
+
+                if (!empty($totalRows_get_child_questions_answers)) {
+                  while ($row_get_child_questions_answer = mysqli_fetch_assoc($get_child_questions_answers)) {
+                    $childQues[$row_get_child_question['id']]['survey_responses'][$row_get_child_questions_answer['answerid']]  += 1;
                   }
                 }
-                $anscount =  count($answers_array);
-                $counts = array_count_values($answers_array);
-              $message .= '</tr>';
+              }
             }
-          $message .= '</tbody>
-        </table>';
+            foreach ($childQues as $key => $child_question) {
+              foreach ($child_question['survey_responses'] as $child_key => $response) {
+                $mergedSurveyResponses[$child_key] += $response > 0 ? $response : 0;
+              }
+            }
+
+            foreach ($childQues as $key => $child_question) {
+              $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $child_question['question'] . '</td>';
+              $k = 0;
+              foreach ($child_question['survey_responses'] as $child_key => $response) {
+                $sum_of_responses = $mergedSurveyResponses[$child_key];
+                if ($sum_of_responses > 0) {
+                  $per_res_score = 100 / $sum_of_responses;
+                } else {
+                  $per_res_score = 0;
+                }
+                $score = round($per_res_score * $response, 2);
+                $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $score . '%</td>';
+                $message .= '<td style="background-color:#f0f0f0;border: 1px solid;">' . $response . '</td>';
+              }
+              
+              $message .= '</tr><tr style="border: 1px solid;">';
+            }
+          $message .= '</tr></tbody></table>';
         }
       }
 
@@ -478,7 +550,7 @@ if(count($survey_steps)>0){
             <th align="center">ANSWERS</th>
           </tr>';
           $sno = 0;
-          if(!empty($answers_array)){
+          if(!empty(array_filter($answers_array)) ){
             foreach ($answers_array as $key=>$val){ 
               if(isset($val) && !empty($val) && $val != ""){
                 $message .=  '<tr><td>'.++$sno.'</td><td>'.$val.'</td></tr>';
