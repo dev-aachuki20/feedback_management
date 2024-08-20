@@ -55,6 +55,14 @@ $role_ids = implode(',',$assign_role);
     if(!empty($_POST['departmentid'])){
         $query .= " and departmentid = '".$_POST['departmentid']."'";
     }
+    else{
+        // If no department ID is provided in the POST request, check if there is a predefined list of department IDs ($dep_ids).
+        if($dep_ids){
+            $query .= " and departmentid IN ($dep_ids)";
+        }else{
+            $query .= " and departmentid IN (0)";
+        }  
+    }
 
     if(!empty($_POST['roleid'])){
         $query .= " and roleid = '".$_POST['roleid']."'";
@@ -62,7 +70,16 @@ $role_ids = implode(',',$assign_role);
 
     if(!empty($_POST['locationid'])){
         $query .= "and locationid = '".$_POST['locationid']."'";
+    }else{
+        // If no location ID is provided in the POST request, check if there is a predefined list of location IDs ($loc_ids).
+        if($loc_ids){
+            $query .= " and locationid IN ($loc_ids)";
+        }else{
+            $query .= " and locationid IN (0)";
+        }    
     }
+
+
     if(!empty($_POST['surveys'])){
         $query .= " and surveyid =".$_POST['surveys'];
     }else{
@@ -72,9 +89,19 @@ $role_ids = implode(',',$assign_role);
             $query .= " and surveyid IN (0)";
         }
     }
+
+
     if(!empty($_POST['groupid'])){
         $query .= " and groupid = '".$_POST['groupid']."'";
+    }else{
+        // If no group ID is provided in the POST request, check if there is a predefined list of group IDs ($grp_ids).
+        if($grp_ids){
+            $query .= " and groupid IN ($grp_ids)";
+        }else{
+            $query .= " and groupid IN (0)";
+        }  
     }
+
     if(!empty($_POST['fdate']) && !empty($_POST['sdate'])){  
         $query .= " and cdate between '".date('Y-m-d', strtotime($_POST['fdate']))."' and '".date('Y-m-d', strtotime("+1 day",strtotime($_POST['sdate'])))."'";
     }
