@@ -243,7 +243,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 } 
 ?>
 <!DOCTYPE HTML>
-<html lang="en" class="notranslate" translate="no">
+<!--<html lang="en" class="notranslate" translate="no">-->
+<html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title><?php echo $row_get_survey['name']; ?></title>
@@ -253,7 +254,7 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 		<!-- autocomplete css -->
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<meta name="google" content="notranslate" />
+		<!--<meta name="google" content="notranslate" />-->
 		<style>
 		select{
 			font-size: 50px;
@@ -435,7 +436,65 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 }
 		<?php //echo $row_get_survey['css_txt']; ?>
 		</style>
-	</head>
+		
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+    
+   
+    // function setLanguageToEnglish() {
+    //         // Check for the Google Translate iframe and set language
+    //         const translateFrame = document.querySelector('iframe.goog-te-banner-frame');
+    //         if (translateFrame) {
+    //             const frameDocument = translateFrame.contentDocument || translateFrame.contentWindow.document;
+    //             const langSelector = frameDocument.querySelector('.goog-te-combo');
+    //             if (langSelector) {
+    //                 langSelector.value = 'en'; // Set language to English
+    //                 langSelector.dispatchEvent(new Event('change')); // Trigger the change event
+    //             }
+    //         }
+    //     }
+
+    //     function waitForTranslateFrame() {
+    //         // Poll for the presence of Google Translate iframe
+    //         const checkFrame = setInterval(() => {
+    //             const translateFrame = document.querySelector('iframe.goog-te-banner-frame');
+    //             if (translateFrame) {
+    //                 clearInterval(checkFrame);
+    //                 setLanguageToEnglish(); // Set language once the frame is available
+    //             }
+    //         }, 1000); // Check every second
+    //     }
+
+    //     function clearTranslateCookies() {
+    //         // Clear Google Translate cookies to prevent language retention
+    //         document.cookie.split(';').forEach(cookie => {
+    //             const name = cookie.split('=')[0].trim();
+    //             document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+    //         });
+    //     }
+
+    //     function reloadPageWithLanguage() {
+    //         // Reload the page with the English language parameter
+    //         if (window.location.search.indexOf('googtrans=en') === -1) {
+    //             window.location.search += (window.location.search ? '&' : '?') + 'googtrans=en';
+    //         }
+    //     }
+
+    //     document.addEventListener('DOMContentLoaded', () => {
+    //         googleTranslateElementInit();
+    //         clearTranslateCookies(); // Clear any stored cookies
+    //         reloadPageWithLanguage(); // Force page reload with English
+    //         setTimeout(waitForTranslateFrame, 3000); // Adjust timeout as necessary
+    //     });
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
 <body>
 <section class="signup-step-container">
     <div class="container">
@@ -445,6 +504,8 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 		<h2 align="center">
 			<?php echo $row_get_survey['name']?>
 		</h2>
+		<!-- Google Translate Dropdown -->
+        <div id="google_translate_element"></div>
 	  	<?php
 		  	$survey_needed = $row_get_survey['survey_needed'];
 			if(empty($survey_needed)){
@@ -1611,5 +1672,19 @@ $(document).on('click, change','.skip-question', function(){
 		<?php echo POWERED_BY; ?>
 		<center><img  src="<?= BASE_URL.FOOTER_LOGO?>" alt="" width="150"/></center>
 	</div>
+  <script type="text/javascript">
+       window.onload = function() {
+  var translateElement = document.querySelector('#google_translate_element');
+  if (translateElement) {
+    var iframe = translateElement.querySelector('iframe');
+    if (iframe) {
+      var iframeWindow = iframe.contentWindow;
+      if (iframeWindow) {
+        iframeWindow.postMessage({ 'message': 'setLang', 'lang': 'en' }, '*');
+      }
+    }
+  }
+}
+    </script>
 </body>
 </html>
