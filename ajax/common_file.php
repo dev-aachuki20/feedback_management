@@ -475,7 +475,12 @@ if (isset($_POST['mode']) and $_POST['mode'] == 'add_edit_survey_form') {
                   <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" checked id="flexCheckCheckedDisabled">
                 </div>
               </div>
-              <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+              <div class="col-xs-3 col-sm-3 col-md-3">
+                <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
+                  <input style="zoom: 2;margin: 0;" class="form-check-input pdf-checkbox" name="is_pdf[]" type="checkbox">
+                </div>
+              </div> 
+              <div class="col-xs-3 col-sm-3 col-md-3">
                 <button class="btn btn-danger delete-row"><i class="fa fa-trash"></i></button>
               </div>
             </div>

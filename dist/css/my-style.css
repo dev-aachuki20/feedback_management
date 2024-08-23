@@ -630,11 +630,13 @@ label.form-check-label.active {
 }
 
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 1199px) {
     .new-content-main{
         overflow-x: auto;
     }
     .new-content-main>div{
-        width: 460px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 460px;
     }
 }

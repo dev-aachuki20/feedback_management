@@ -389,6 +389,9 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 {
 
 	$send_to = $recipients['email'];
+	$user_name = $recipients['name'];
+	$from_mail = ADMIN_EMAIL;
+	$message = 'Hello ' . $user_name . ' here is the full servey pdf';
 	$getSurveyDetails = getaxecuteQuery_fn("SELECT * from surveys where id=$surveyid");
 	$row_get_survey_details = mysqli_fetch_assoc($getSurveyDetails);
 	$type = 'survey';
@@ -448,7 +451,12 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 		</table></td>
 	</tr>
 	</table>';
-	send_mail($send_to, $subject, $body);
+	
+	$attachments = array('file.pdf');
+	// Send the email with optional PDF attachment
+	send_survey_pdf_with_email($attachments, $send_to, $from_mail, $user_name, $subject, $message, $body);
+
+	// send_mail($send_to, $subject, $body);
 }
 
 function send_mail($send_to, $subject, $body)
@@ -1647,5 +1655,38 @@ function downloadZip($filename, $absoluteFilePath)
 		header('Content-Length: ' . filesize($absoluteFilePath));
 		readfile($absoluteFilePath);
 		// exit();
+	}
+}
+
+function send_survey_pdf_with_email($attachments, $to, $from_mail, $name, $subject, $message, $body_content)
+{
+	try {
+		$mail = new PHPMailer(true);
+		$mail->isSMTP();
+		$mail->Host = SMTP_HOST;
+		$mail->SMTPAuth = true;
+		$mail->Port = SMTP_PORT;
+		$mail->Username = SMTP_USER;
+		$mail->Password = SMTP_PASS;
+
+		$mail->setFrom($from_mail, $name);
+		$mail->addAddress($to);
+
+		$mail->isHTML(true);
+		$mail->Subject = $subject;
+		$body = $body_content;
+		$mail->Body = $body;
+		foreach ($attachments as $key => $filePath) {
+			$mail->addAttachment($filePath);
+		}
+
+		// $mail->SMTPDebug = 4;
+		$mail->send();
+
+		return true;
+	} catch (Exception $e) {
+		// echo "Message could not be sent. Mailer Error: { $e->getMessage()}";
+		return false;
+		//echo "Message could not be sent. Mailer Error: {$e}";
 	}
 }

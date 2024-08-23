@@ -9,7 +9,6 @@
     }
     
     if($_POST['update']){
-
         $dataCol = array(
             "name"                          => $_POST['name'],
             "survey_type"                   => $_POST['survey_type'],
@@ -46,14 +45,18 @@
             //"isStep"             => (isset($_POST['isStep'])) ? 1 : 0,
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
+
         if($_SESSION['user_type']==1){
             $data = array_merge($dataCol,$new_data);
             $mailing_user_ids = $_POST['mailing_user_id'];
             $contact_requested = $_POST['contact_requested'];
+            $is_pdf = isset($_POST['is_pdf']) && $_POST['is_pdf'] == 'on' ? 1 : 0;
         }else if($_SESSION['user_type']==2) {
             $data = $new_data;
             $mailing_user_ids = $_POST['mailing_user_id'];
             $contact_requested = $_POST['contact_requested'];
+            $is_pdf = isset($_POST['is_pdf']) && $_POST['is_pdf'] == 'on' ? 1 : 0;
+
         }
         $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
 
@@ -81,9 +84,11 @@
 
             // insert user mails for notification
             dbRowDelete('surveys_mailing_users', 'survey_id ='.$_GET['id']);
+
             if(is_array($mailing_user_ids) && count($mailing_user_ids) > 0 && is_array($contact_requested) && count($contact_requested) > 0){
                 foreach ($mailing_user_ids as $key => $user_id){
-                    $userMailData = array("survey_id" => $_GET['id'], "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key]);
+                    $is_pdf_value = isset($_POST['is_pdf'][$user_id]) ? 1 : 0;
+                    $userMailData = array("survey_id" => $_GET['id'], "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key], "is_pdf" => $is_pdf_value);
                     $insert_steps =  dbRowInsert("surveys_mailing_users",$userMailData);
                 }
             }
@@ -146,6 +151,7 @@
 
         $mailing_user_ids = $_POST['mailing_user_id'];
         $contact_requested = $_POST['contact_requested'];
+        $is_pdf = isset($_POST['is_pdf']) ? $_POST['is_pdf'] : [];
         
 
         $insert_value =  dbRowInsert("surveys",$dataCol);
@@ -169,7 +175,8 @@
             // insert user mails for notification
             if(is_array($mailing_user_ids) && count($mailing_user_ids) > 0 && is_array($contact_requested) && count($contact_requested) > 0){
                 foreach ($mailing_user_ids as $key => $user_id){
-                    $userMailData = array("survey_id" => $insert_value, "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key]);
+                    $is_pdf_value = isset($is_pdf[$key]) && $is_pdf[$key] == 'on' ? 1 : 0;
+                    $userMailData = array("survey_id" => $insert_value, "user_id" => $user_id, "is_contact_requested" => $contact_requested[$key], "is_pdf" => $is_pdf_value);
                     $insert_steps =  dbRowInsert("surveys_mailing_users",$userMailData);
                 }
             }
@@ -593,6 +600,11 @@ $allUsers = getUsers();
                                                             <label>No</label>
                                                         </div>
                                                     </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0;">
+                                                            <label>PDF</label>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                                                         <div class="form-group" style="margin-bottom: 0;">
                                                             <label></label>
@@ -606,6 +618,7 @@ $allUsers = getUsers();
 
                                         if(isset($_GET['id']) && $_GET['id'] > 0 && $totalRows_get_mailing_users > 0){ 
                                             while ($row_mailing_user = mysqli_fetch_assoc($get_mailing_users)) {
+                                                $mailing_user_id = $row_mailing_user['user_id'];
                                             ?>
                                             <div class="row new-row">
                                             <div class="col-xs-8 col-sm-8 col-md-8">
@@ -628,6 +641,19 @@ $allUsers = getUsers();
                                                     <div class="col-xs-3 col-sm-3 col-md-3">
                                                         <div class="form-group" style="margin-bottom: 0;margin-top: 4px;">
                                                             <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" id="flexCheckCheckedDisabled" <?=($row_mailing_user['is_contact_requested'] == 2) ? 'checked' : ''?>>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0; margin-top: 4px;">
+                                                            <input 
+                                                                style="zoom: 2; margin: 0;" 
+                                                                class="form-check-input pdf-checkbox" 
+                                                                name="is_pdf[<?= $mailing_user_id ?>]" 
+                                                                type="checkbox" 
+                                                                value="<?= ($row_mailing_user['is_pdf'] == 1) ? 1 : 0 ?>" 
+                                                                id="is_pdf_<?= $mailing_user_id ?>" 
+                                                                <?= ($row_mailing_user['is_pdf'] == 1) ? 'checked' : '' ?>
+                                                            >
                                                         </div>
                                                     </div>
                                                 </div>
@@ -657,6 +683,18 @@ $allUsers = getUsers();
                                                             <input style="zoom: 2;margin: 0;" class="form-check-input contacted-checkbox" name="contact_requested[]" type="checkbox" value="2" id="flexCheckCheckedDisabled" >
                                                         </div>
                                                     </div>
+                                                    <div class="col-xs-3 col-sm-3 col-md-3">
+                                                        <div class="form-group" style="margin-bottom: 0; margin-top: 4px;">
+                                                            <input 
+                                                                style="zoom: 2; margin: 0;" 
+                                                                class="form-check-input pdf-checkbox" 
+                                                                name="is_pdf[]" 
+                                                                type="checkbox"
+                                                                id="is_pdf_new"
+                                                            >
+                                                        </div>
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -792,6 +830,7 @@ function select_all_option(idFirst,idSecond){
         $("#select_users").prop("disabled", false);
         $(".mailing_users").prop("disabled", false);
         $(".contacted-checkbox").prop("disabled", false);
+        $(".pdf-checkbox").prop("disabled", false);
 
 <?php } } ?>
 
