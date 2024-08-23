@@ -150,7 +150,15 @@
   <script src="plugins/datatables/jquery.dataTables.min.js"></script> 
   <script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
   <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
-
+  <style>
+    .box-body {
+      overflow: hidden;
+    }
+    .box-body .dataTables_wrapper  {
+      overflow: auto hidden;
+    }
+  </style>
+  
   <script type="text/javascript">
     $(function () {
       $("#example1").DataTable({"paging": true,"ordering": false});
