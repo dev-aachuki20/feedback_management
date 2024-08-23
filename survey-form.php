@@ -206,6 +206,11 @@ if(isset($_POST['submit'])){
 			if(!empty($user) && !empty($user['email']) && (($to_be_contacted == 1 && $row_mailing_user['is_contact_requested']==1) || ($to_be_contacted == 0 && $row_mailing_user['is_contact_requested']==2))){
 				$to_mail['name'] = 'User';
 				$to_mail['email'] = $user['email'];
+
+				// Check if the user requested the PDF
+				if ($row_mailing_user['is_pdf'] == 1) {
+					$to_mail['attachments'] = array('file.pdf'); // Add attachment for PDF request
+				}
 			}
 		}
 	}

@@ -392,6 +392,8 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 	$user_name = $recipients['name'];
 	$from_mail = ADMIN_EMAIL;
 	$message = 'Hello ' . $user_name . ' here is the full servey pdf';
+	$attachments = $recipients['attachments'];
+
 	$getSurveyDetails = getaxecuteQuery_fn("SELECT * from surveys where id=$surveyid");
 	$row_get_survey_details = mysqli_fetch_assoc($getSurveyDetails);
 	$type = 'survey';
@@ -451,8 +453,8 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 		</table></td>
 	</tr>
 	</table>';
-	
-	$attachments = array('file.pdf');
+
+	// $attachments = array('file.pdf');
 	// Send the email with optional PDF attachment
 	send_survey_pdf_with_email($attachments, $send_to, $from_mail, $user_name, $subject, $message, $body);
 
