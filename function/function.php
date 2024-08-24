@@ -1708,6 +1708,7 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 	global $get_location, $row_get_location;
 	global $get_contact, $row_get_contact;
 	global $get_survey_result, $row_get_survey_result;
+	
 
 	record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$surveyid."' and cby='".$userid."'");
                                 
@@ -1846,9 +1847,9 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 		}
 	}
 
-	$html = '';
+	$html = '<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">';
 
-	$html .= '<div id="reportPage">
+	$html .= '<div id="reportPage" style="font-family: Roboto;">
 		<div align="center"><img src="'.MAIN_LOGO.'" width="200"></div>
 			<h2 align="center" style="margin:20px;">'.strtoupper($row_get_survey['name']).'</h2>';
 
@@ -1869,27 +1870,23 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 			$contactDetails = json_decode($row_get_contact['answertext'],1);
 			
 			$html .= '<div class="container">
-				<table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
-					<thead style="border-top:1px solid black;border-bottom:1px solid black;">
-					<tr>
-						<th class="thead" style="width:5%;">Group:</th>
-						<th class="thead" style="width:45%;padding: 0px;">'.(getGroup()[$row_get_loc_dep['groupid']]).'</th>
-						<th class="thead" style="width:5%;">Location:</th>
-						<th class="thead" style="width:45%;padding: 0px;">'.(getLocation()[$row_get_loc_dep['locationid']]).'</th>
-					</tr>
-					</thead>
-					<thead style="border-top:1px solid black;border-bottom:1px solid black;">
-					<tr>
-					<th class="thead" style="width:5%;">Department:</th>
-						<th class="thead" style="width:45%;padding: 0px;">'.(getDepartment()[$row_get_loc_dep['departmentid']]).'</th>
-						<th class="thead" style="width:5%;">Role:</th>
-						<th class="thead" style="width:45%;padding: 0px;">'.(getRole()[$row_get_loc_dep['groupid']]).'</th>
-					</tr>
-					</thead>
+				<table style="font-size: 14px; width: 100%; font-family: Roboto; border-collapse: collapse; border-left: none; border-right: none;" border="1" align="center" cellspacing="0" cellpadding="4">
+					<tbody>
+                    <tr>
+                        <td class="thead" style="font-size: 16px; padding: 10px; border-left: none; border-right: none;"><div style="display: flex; align-items: center; justify-content: start; gap: 20px;"><strong style="min-width: 100px; text-align: start;">Group : </strong> <span style="font-weight: 400;">'.(getGroup()[$row_get_loc_dep['groupid']]).'</span></div></td>
+                        <td class="thead" style="font-size: 16px; padding: 10px; border-left: none; border-right: none;"><div style="display: flex; align-items: center; justify-content: start; gap: 20px;"><strong style="min-width: 100px; text-align: start;">Location : </strong> <span style="font-weight: 400;">'.(getLocation()[$row_get_loc_dep['locationid']]).'</span></div></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td class="thead" style="font-size: 16px; padding: 10px; border-left: none; border-right: none;"><div style="display: flex; align-items: center; justify-content: start; gap: 20px;"><strong style="min-width: 100px; text-align: start;">Department : </strong> <span style="font-weight: 400;">'.(getDepartment()[$row_get_loc_dep['departmentid']]).'</span></div></td>
+                        <td class="thead" style="font-size: 16px; padding: 10px; border-left: none; border-right: none;"><div style="display: flex; align-items: center; justify-content: start; gap: 20px;"><strong style="min-width: 100px; text-align: start;">Role : </strong> <span style="font-weight: 400;">'.(getRole()[$row_get_loc_dep['groupid']]).'</span></div></td>
+                    </tr>
+                </tbody>
 				</table>';
 			
 				if($contacted == 1){
-					$html .= '<table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
+					$html .= '<table style="font-size:14px;width:100%; font-family: Roboto;" align="center"  cellspacing="0" cellpadding="4" >
 						<thead>
 							<tr>
 								<th colspan="3"></th>
@@ -1911,20 +1908,20 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 					</table>';
 				}
 				if(isset($score)){
-					$html .= '<h2 class="text-center" style="margin-top:20px;">SURVEY SCORE: '.$score.'%</h2>';
+					$html .= '<h2 align="center" style="margin-top:20px;">SURVEY SCORE: '.$score.'%</h2>';
 				} $html .= '
 			</div>
 			<div class="container">';				
 				if(count($survey_steps)> 0) {
 					foreach($survey_steps AS $key => $value) {
-						$html .= '<div class="">  
-							<h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>
-							<table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
+						$html .= '<div class="" style="page-break-inside: avoid;">  
+							<h4 align="center" style="margin-top:20px; margin-bottom:10px;">'.$value['title'].'</h4>
+							<table style="font-size:14px;width:100%; border-collapse: collapse; font-family: Roboto;" border ="1" cellspacing="0" cellpadding="4" align="center">
 								<thead>
 									<tr>
-										<th scope="col" style="width:40px;">#</th>
-										<th scope="col" style="border-left:none;border-right:none;width:600px;">QUESTION</th>
-										<th scope="col" style="width:500px;">ANSWER</th>
+										<th scope="col" style="width:40px; padding: 10px;">#</th>
+										<th scope="col" style="border-left:none;border-right:none;width:600px; padding: 10px;">QUESTION</th>
+										<th scope="col" style="width:500px; padding: 10px;">ANSWER</th>
 									</tr>
 								</thead>
 								<tbody>';
@@ -1985,9 +1982,9 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 									} 
 									if($answer_type !=5){
 										$html .= '<tr>
-											<td scope="row" class="remove-bt">'.$i.'</td>
-											<td class="remove-bt" style="border-left:none;border-right:none;">'.(is_array($question) ? $question['question'] : $question ).'</td>
-											<td class="remove-bt" >'.($answer_value ?? 'N/A').'</td>
+											<td align="center" style="padding: 10px;" class="remove-bt">'.$i.'</td>
+											<td class="remove-bt" style="padding: 10px;">'.(is_array($question) ? $question['question'] : $question ).'</td>
+											<td class="remove-bt" style="padding: 10px;">'.($answer_value ?? 'N/A').'</td>
 										</tr>';
 									} 
 								} $html .= '
@@ -1998,12 +1995,12 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 				} else{
 					$html .= '<div class="">  
 						<h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>
-						<table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
+						<table style="font-size:14px;width:100%; border-collapse: collapse; font-family: Roboto;" border ="1" cellspacing="0" cellpadding="4" align="center">
 							<thead>
 								<tr>
-									<th scope="col" style="width:40px;">#</th>
-									<th scope="col" style="border-left:none;border-right:none;width:600px;">QUESTION</th>
-									<th scope="col" style="width:500px;">ANSWER</th>
+									<th scope="col" style="width:40px; padding: 10px;">#</th>
+									<th scope="col" style="border-left:none;border-right:none;width:600px; padding: 10px;">QUESTION</th>
+									<th scope="col" style="width:500px; padding: 10px;">ANSWER</th>
 								</tr>
 							</thead>
 							<tbody>';
@@ -2056,9 +2053,9 @@ function generateSurveyPdf($surveyid, $userid, $file_name){
 									} 
 									if($answer_type !=5){
 										$html .= '<tr>
-											<td scope="row" class="remove-bt">'.$i.'</td>
-											<td class="remove-bt" style="border-left:none;border-right:none;">'.(is_array($question) ? $question['question'] : $question ).'</td>
-											<td class="remove-bt" >'.($answer_value ?? 'N/A').'</td>
+											<td align="center" style="padding: 10px;" class="remove-bt">'.$i.'</td>
+											<td class="remove-bt" style="border-left:none;border-right:none; padding: 10px;">'.(is_array($question) ? $question['question'] : $question ).'</td>
+											<td class="remove-bt" style="padding: 10px;">'.($answer_value ?? 'N/A').'</td>
 										</tr>';
 									}
 								} $html .= '
