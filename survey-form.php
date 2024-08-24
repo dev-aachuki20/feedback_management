@@ -209,7 +209,8 @@ if(isset($_POST['submit'])){
 
 				// Check if the user requested the PDF
 				if ($row_mailing_user['is_pdf'] == 1) {
-					$to_mail['attachments'] = array('file.pdf'); // Add attachment for PDF request
+					generateSurveyPdf($surveyid, $_SESSION['maxid'], 'survey_result_pdf.pdf');
+					$to_mail['attachments'] = array('survey_result_pdf.pdf'); // Add attachment for PDF request
 				}
 			}
 		}
@@ -220,6 +221,7 @@ if(isset($_POST['submit'])){
 		$contacted = $to_be_contacted;
 		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $contacted );
 	}
+	unlink("survey_result_pdf.pdf");
 	$msg = "Question Submitted Successfully";
 	reDirect("survey-thankyou.php?msg=".$msg."&surveyid=".$_REQUEST['surveyid']);
 }

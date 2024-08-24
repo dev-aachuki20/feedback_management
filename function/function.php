@@ -1692,3 +1692,414 @@ function send_survey_pdf_with_email($attachments, $to, $from_mail, $name, $subje
 		//echo "Message could not be sent. Mailer Error: {$e}";
 	}
 }
+
+// create pdf for send survey to user
+function generateSurveyPdf($surveyid, $userid, $file_name){
+	global $get_survey, $row_get_survey;
+	global $get_contact_action, $totalRows_get_contact_action, $row_get_contact_action;
+	global $get_contact_action_single, $totalRows_get_contact_action_single, $row_get_contact_action_single;
+	global $get_survey_id, $totalRows_get_survey_id, $row_get_survey_id;
+	global $get_questions, $row_get_questions;
+	global $get_surveys_steps, $row_get_surveys_steps;
+	global $get_questions_detail, $totalRows_get_questions_detail, $row_get_questions_detail;
+	global $get_answers, $totalRows_get_answers, $row_get_answers;
+	global $get_loc_dep, $row_get_loc_dep;
+	global $get_department, $row_get_department;
+	global $get_location, $row_get_location;
+	global $get_contact, $row_get_contact;
+	global $get_survey_result, $row_get_survey_result;
+
+	record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$surveyid."' and cby='".$userid."'");
+                                
+	$achieved_result_val = 0;
+	$total_result_val=0;
+	$contacted     = 0;
+	$i=0;	
+	$showAllComment =[];
+
+	while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
+		$result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
+		if($result_question){
+			if(!in_array($result_question['answer_type'],array(2,3,5))){
+				$total_result_val = ($i+1)*100;
+				$achieved_result_val += $row_get_survey_result['answerval'];
+				$i++;
+			}
+		}
+		if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
+			$contacted = 1;
+		}
+	}
+	$score = $achieved_result_val*100/$total_result_val;
+	if($achieved_result_val==0 and $total_result_val==0){
+		$score=100;
+	}
+	
+	record_set("get_survey", "select * from surveys where id='".$surveyid."' and cstatus=1");
+	$row_get_survey = mysqli_fetch_assoc($get_survey);
+		
+
+	if(isset($userid)){
+		record_set("get_contact_action", "select * from survey_contact_action where user_id='".$userid."'");
+		if($totalRows_get_contact_action > 0){ 
+			$i = 0;
+		  	while($row_get_contact_action = mysqli_fetch_assoc($get_contact_action)){
+				if($row_get_contact_action['action'] == 1){
+				$showAllComment[$i]['action']='UNASSIGNED';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				if($row_get_contact_action['action'] == 2){
+				$showAllComment[$i]['action']='ASSIGNED';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				if($row_get_contact_action['action'] == 3){
+				$showAllComment[$i]['action']='IN PROGRESS';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				if($row_get_contact_action['action'] == 4){
+				$showAllComment[$i]['action']='VOID';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				if($row_get_contact_action['action'] == 5){
+				$showAllComment[$i]['action']='RESOLVED-POSITIVE';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				if($row_get_contact_action['action'] == 6){
+				$showAllComment[$i]['action']='RESOLVED-NEGATIVE';
+				$showAllComment[$i]['status']=$row_get_contact_action['action'];
+				}
+				
+				$showAllComment[$i]['comment']=$row_get_contact_action['comment'];
+				$showAllComment[$i]['created_date']=$row_get_contact_action['created_date'];
+			
+				$showAllComment[$i]['cby_user_id']=$row_get_contact_action['cby'];
+				$i++;
+			}
+		}
+		
+		record_set("get_contact_action_single", "select * from survey_contact_action where user_id='".$userid."' order by action desc");
+		if($totalRows_get_contact_action_single > 0){
+			$row_get_contact_action_single = mysqli_fetch_assoc($get_contact_action_single);
+			if($row_get_contact_action_single['action'] == 1){
+			  $co_action = "In progress";
+			  $contact_comment = $row_get_contact_action_single['comment'];
+			  $created_date=$row_get_contact_action_single['created_date'];
+		
+			}else if($row_get_contact_action_single['action'] == 2){
+			  $co_action =  "Void";
+			  $contact_comment = $row_get_contact_action_single['comment'];
+			  $created_date=$row_get_contact_action_single['created_date'];
+		
+			}else if($row_get_contact_action_single['action'] == 3){
+			  $co_action =  "Resolved-Positive";
+			  $contact_comment = $row_get_contact_action_single['comment'];
+			  $created_date=$row_get_contact_action_single['created_date'];
+			}
+			else if($row_get_contact_action_single['action'] == 4){
+			  $co_action =  "Resolved-Negative";
+			  $contact_comment = $row_get_contact_action_single['comment'];
+			  $created_date=$row_get_contact_action_single['created_date'];
+			}
+		}		 
+	}
+	
+	record_set("get_survey_id", "select surveyid from answers where cby='".$userid."'");
+	if($totalRows_get_survey_id > 0){
+		$row_get_survey_id = mysqli_fetch_assoc($get_survey_id);
+		$survey_id = $row_get_survey_id['surveyid'];
+	}
+
+	//filter
+	$ans_filter_query='';
+	if($userid){
+		$ans_filter_query .= " and cby='".$userid."' ";
+	}
+	if($_REQUEST['month']){
+		$ans_filter_query .= " and cdate like '".$_REQUEST['month']."-%' ";
+	}
+
+	//Survey Steps 
+	$survey_steps = array();
+	if($row_get_survey['isStep'] == 1){
+		record_set("get_surveys_steps", "select * from surveys_steps where survey_id='".$surveyid."' order by step_number asc");
+		while($row_get_surveys_steps = mysqli_fetch_assoc($get_surveys_steps)){
+			$survey_steps[$row_get_surveys_steps['id']]['number'] = $row_get_surveys_steps['step_number'];
+			$survey_steps[$row_get_surveys_steps['id']]['title'] = $row_get_surveys_steps['step_title'];
+		}
+	}
+
+	//Survey Questions
+	record_set("get_questions", "select * from questions where surveyid='".$surveyid."' and cstatus='1' and parendit='0' order by dposition asc");
+	$questions = array();
+	while($row_get_questions = mysqli_fetch_assoc($get_questions)){
+		if($row_get_questions['survey_step_id'] != 0){
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['question'] = $row_get_questions['question'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['ifrequired'] = $row_get_questions['ifrequired'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
+		}
+		if($row_get_questions['survey_step_id'] == 0){
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['id'] = $row_get_questions['id'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['question'] = $row_get_questions['question'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['ifrequired'] = $row_get_questions['ifrequired'];
+			$questions[$row_get_questions['survey_step_id']][$row_get_questions['id']]['answer_type'] = $row_get_questions['answer_type'];
+		}
+	}
+
+	$html = '';
+
+	$html .= '<div id="reportPage">
+		<div align="center"><img src="'.MAIN_LOGO.'" width="200"></div>
+			<h2 align="center" style="margin:20px;">'.strtoupper($row_get_survey['name']).'</h2>';
+
+			record_set("get_loc_dep", "select locationid,groupid,roleid,departmentid from answers where surveyid='".$surveyid."' ".$ans_filter_query);
+			$row_get_loc_dep = mysqli_fetch_assoc($get_loc_dep);
+			
+			//Department			
+			record_set("get_department", "select name from departments where id = '".$row_get_loc_dep['departmentid']."'");
+			$row_get_department = mysqli_fetch_assoc($get_department);
+
+			//Location			
+			record_set("get_location", "select name from locations where id = '".$row_get_loc_dep['locationid']."'");
+			$row_get_location = mysqli_fetch_assoc($get_location);
+
+			//Contact Details			
+			record_set("get_contact", "select answertext from answers where surveyid ='".$surveyid."' and cby='".$cby_userid."' and answerid='-2' and answerval='100' and cstatus=1");
+			$row_get_contact = mysqli_fetch_assoc($get_contact);
+			$contactDetails = json_decode($row_get_contact['answertext'],1);
+			
+			$html .= '<div class="container">
+				<table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
+					<thead style="border-top:1px solid black;border-bottom:1px solid black;">
+					<tr>
+						<th class="thead" style="width:5%;">Group:</th>
+						<th class="thead" style="width:45%;padding: 0px;">'.(getGroup()[$row_get_loc_dep['groupid']]).'</th>
+						<th class="thead" style="width:5%;">Location:</th>
+						<th class="thead" style="width:45%;padding: 0px;">'.(getLocation()[$row_get_loc_dep['locationid']]).'</th>
+					</tr>
+					</thead>
+					<thead style="border-top:1px solid black;border-bottom:1px solid black;">
+					<tr>
+					<th class="thead" style="width:5%;">Department:</th>
+						<th class="thead" style="width:45%;padding: 0px;">'.(getDepartment()[$row_get_loc_dep['departmentid']]).'</th>
+						<th class="thead" style="width:5%;">Role:</th>
+						<th class="thead" style="width:45%;padding: 0px;">'.(getRole()[$row_get_loc_dep['groupid']]).'</th>
+					</tr>
+					</thead>
+				</table>';
+			
+				if($contacted == 1){
+					$html .= '<table style="font-size:14px;width:100%;" align="center"  cellspacing="0" cellpadding="4" >
+						<thead>
+							<tr>
+								<th colspan="3"></th>
+							</tr>
+							<tr>
+								<th colspan="3">Contact Details</th>
+							</tr>
+						</thead>
+
+						<tbody style="border-bottom:1px solid black;">';
+							$name =  $contactDetails['first_name'].' '.$contactDetails['last_name'];
+							
+							$html .= '<tr>
+								<td><strong>Name</strong> : '.$name.'</td>
+								<td><strong>Phone Number</strong> : '.$contactDetails['phone_number'].'</td>
+								<td><strong>Contact Email</strong> : '.$contactDetails['to_be_contact_mail'].'</td>
+							</tr>
+						</tbody>
+					</table>';
+				}
+				if(isset($score)){
+					$html .= '<h2 class="text-center" style="margin-top:20px;">SURVEY SCORE: '.$score.'%</h2>';
+				} $html .= '
+			</div>
+			<div class="container">';				
+				if(count($survey_steps)> 0) {
+					foreach($survey_steps AS $key => $value) {
+						$html .= '<div class="">  
+							<h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>
+							<table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
+								<thead>
+									<tr>
+										<th scope="col" style="width:40px;">#</th>
+										<th scope="col" style="border-left:none;border-right:none;width:600px;">QUESTION</th>
+										<th scope="col" style="width:500px;">ANSWER</th>
+									</tr>
+								</thead>
+								<tbody>';
+
+								$i=0;                    
+								foreach($questions[$key] AS $question){
+									$i++;
+									$questionid = $question['id']; 
+									$answer_type = $question['answer_type'];
+									$totalRows_get_child_questions = 0;
+									$questions_array = array();
+									$answers_array = array();
+
+									// for radio rating dropdown
+									if($answer_type == 1 || $answer_type == 4 || $answer_type == 6){										
+										record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'"); 
+										if($totalRows_get_questions_detail>0){
+											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+												if($row_get_questions_detail['condition_yes_no'] == 1){
+													$questions_array[$row_get_questions_detail['id']] = $row_get_questions_detail['description'].' (Conditional)';
+												}else{
+													$questions_array[$row_get_questions_detail['id']] = $row_get_questions_detail['description'];
+												}
+											}
+										}
+										
+										record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$questionid."' ");  
+										if($totalRows_get_answers>0){
+											while($row_get_answers = mysqli_fetch_assoc($get_answers)){
+												$answers_array[$row_get_answers['id']] = $row_get_answers['answerid'];
+											}
+										}
+										$question = $question['question'];
+										foreach($answers_array as $key => $value){
+										$answer_value =  $questions_array[$value];
+										}
+									}
+
+									// textbox or textarea
+									if($answer_type == 2 || $answer_type == 3){
+										record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$questionid."' ");  
+										if($totalRows_get_answers>0){
+											while($row_get_answers = mysqli_fetch_assoc($get_answers)){
+												if($row_get_answers['answerid']==0){
+												$answers_array[$row_get_answers['questionid']] = $row_get_answers['answertext'];
+												}else{
+												$answers_array[$row_get_answers['id']] = 0011;
+												}
+											
+											}
+										}
+										foreach($answers_array as $key => $value){
+											if($key == $question['id']){
+												$question = $question['question'];
+												$answer_value = $value;
+											}
+										}
+									} 
+									if($answer_type !=5){
+										$html .= '<tr>
+											<td scope="row" class="remove-bt">'.$i.'</td>
+											<td class="remove-bt" style="border-left:none;border-right:none;">'.(is_array($question) ? $question['question'] : $question ).'</td>
+											<td class="remove-bt" >'.($answer_value ?? 'N/A').'</td>
+										</tr>';
+									} 
+								} $html .= '
+							</tbody>
+						</table>
+						</div>';
+					} 
+				} else{
+					$html .= '<div class="">  
+						<h4 align="center" style="margin-top:20px;margin-bottom:10px;">'.$value['title'].'</h4>
+						<table style="font-size:14px;width:100%;" border ="1" cellspacing="0" cellpadding="4" align="center">
+							<thead>
+								<tr>
+									<th scope="col" style="width:40px;">#</th>
+									<th scope="col" style="border-left:none;border-right:none;width:600px;">QUESTION</th>
+									<th scope="col" style="width:500px;">ANSWER</th>
+								</tr>
+							</thead>
+							<tbody>';
+								$i=0;
+								foreach($questions[0] AS $question){
+									$i++;
+									$questionid = $question['id']; 
+									$answer_type = $question['answer_type'];
+									$totalRows_get_child_questions = 0;
+									if($answer_type == 1 || $answer_type == 4 || $answer_type == 6){
+										record_set("get_questions_detail", "select * from questions_detail where questionid='".$questionid."' and surveyid='".$surveyid."' and cstatus='1'"); 
+										if($totalRows_get_questions_detail>0){
+											while($row_get_questions_detail = mysqli_fetch_assoc($get_questions_detail)){
+												if($row_get_questions_detail['condition_yes_no'] == 1){
+													$questions_array[$row_get_questions_detail['id']] = $row_get_questions_detail['description'].' (Conditional)';
+												}else{
+													$questions_array[$row_get_questions_detail['id']] = $row_get_questions_detail['description'];
+												}
+											}
+										}
+										record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$questionid."' ");  
+										if($totalRows_get_answers>0){
+											while($row_get_answers = mysqli_fetch_assoc($get_answers)){
+												$answers_array[$row_get_answers['id']] = $row_get_answers['answerid'];
+											}
+										}
+										$question = $question['question'];
+										foreach($answers_array as $key => $value){
+											$answer_value =  $questions_array[$value];
+										}
+									}
+									// textbox or textarea
+									if($answer_type == 2 || $answer_type == 3){
+										record_set("get_answers", "select * from answers where surveyid='".$surveyid."' ".$ans_filter_query." and questionid='".$questionid."' ");  
+										if($totalRows_get_answers>0){
+											while($row_get_answers = mysqli_fetch_assoc($get_answers)){
+												if($row_get_answers['answerid']==0){
+													$answers_array[$row_get_answers['questionid']] = $row_get_answers['answertext'];
+												}else{
+													$answers_array[$row_get_answers['id']] = 0011;
+												}
+											}
+										}
+										foreach($answers_array as $key => $value){
+											if($key == $question['id']){
+												$question = $question['question'];
+												$answer_value = $value;
+											}
+										}
+									} 
+									if($answer_type !=5){
+										$html .= '<tr>
+											<td scope="row" class="remove-bt">'.$i.'</td>
+											<td class="remove-bt" style="border-left:none;border-right:none;">'.(is_array($question) ? $question['question'] : $question ).'</td>
+											<td class="remove-bt" >'.($answer_value ?? 'N/A').'</td>
+										</tr>';
+									}
+								} $html .= '
+							</tbody>
+						</table>
+					</div>';
+				}
+
+				$html .= '<div class="row">';
+					if(count($showAllComment) > 0 ) {
+						$html .= '<h2 align="center" style="margin-top:20px;margin-bottom:10px;">CONTACT</h2>';
+					}
+					
+					foreach($showAllComment as $comm) {
+						$html .= '<hr style="border: 0.5px solid #d3cccc;"/>
+						<div class="col-md-12" style="text-align: center;">
+							<div class="col-md-4">
+								<div class="col-md-6" style="padding: 0px;"><strong>STATUS UPDATED TO :</strong></div>
+								<div class="col-md-6" style="padding: 0px;text-align:left;">'.($comm['action']).'</div> 
+							</div>
+							
+							<div class="col-md-4">
+								<div class="col-md-5" style="padding: 0px;text-align: right;"><strong>USERNAME :</strong></div>
+								<div class="col-md-7" style="padding: 0px 5px;text-align:left;">'.get_user_datails($comm['cby_user_id'])['name'].'</div>
+							</div>
+							<div class="col-md-4">
+								<div class="col-md-7" style="padding: 0px;text-align: right;"><strong>CONTACTED ON :</strong></div>
+								<div class="col-md-5" style="padding: 0px;text-align: right;">'.date('d-m-Y h:s:i',strtotime($comm['created_date'])).'</div>
+							</div>
+						</div>
+						<div class="col-md-12" style="margin: 43px 0px 40px 0px;">
+							<div class="col-md-8">
+								<div class="col-md-6" style="text-align:right;padding: 0px;"><strong>COMMENT :</strong></div>
+								<div class="col-md-6" style="text-align:left;padding: 0px 5px;">'.$comm['comment'].'</div>
+							</div>
+						</div>
+						<hr style="border: 0.5px solid #d3cccc;"/>';
+					} $html .= '
+				</div>
+			</div>
+		</div>
+    </div>';
+	create_mpdf($html, $file_name, 'F');
+}
