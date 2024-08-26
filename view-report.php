@@ -268,7 +268,7 @@
             "rowCallback": function(row, data, index) {
             },
             'columns': [
-                { data: 'date', "bSortable": false, "sWidth": "5%" },
+                { data: 'cdate', "sWidth": "20%" },
                 { data: 'survey_name', "sWidth": "20%" },
                 { data: 'group_name', "sWidth": "20%" },
                 { data: 'location_name', "sWidth": "10%" },
@@ -276,7 +276,7 @@
                 { data: 'role_name', "sWidth": "20%" },
                 { data: 'respondendent_number', "sWidth": "20%" },
                 { data: 'result_response', "sWidth": "20%" },
-                { data: 'contact_request', "sWidth": "20%", "bSortable": false, },
+                { data: 'contact_request', "sWidth": "20%" },
                 { data: 'action', "bSortable": false, "sWidth": "10%" },
             ],
             "language": {

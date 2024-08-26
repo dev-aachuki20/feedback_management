@@ -144,16 +144,16 @@ ans.locationid,
 ans.departmentid,
 ans.roleid,
 
-(SELECT name FROM surveys s WHERE s.id = ans.surveyid) AS survey_name,
-(SELECT name FROM groups g WHERE g.id = ans.groupid) AS group_name,
-(SELECT name FROM locations l WHERE l.id = ans.locationid) AS location_name,
-(SELECT name FROM departments d WHERE d.id = ans.departmentid) AS department_name,
-(SELECT name FROM roles r WHERE r.id = ans.roleid) AS role_name,
-(SELECT COUNT(DISTINCT a2.cby) FROM answers a2 WHERE a2.surveyid = ans.surveyid AND a2.cby < ans.cby ) + 1 AS respondendent_number,
+(SELECT name FROM `surveys` s WHERE s.id = ans.surveyid) AS survey_name,
+(SELECT name FROM `groups` g WHERE g.id = ans.groupid) AS group_name,
+(SELECT name FROM `locations` l WHERE l.id = ans.locationid) AS location_name,
+(SELECT name FROM `departments` d WHERE d.id = ans.departmentid) AS department_name,
+(SELECT name FROM `roles` r WHERE r.id = ans.roleid) AS role_name,
+(SELECT COUNT(DISTINCT a2.cby) FROM `answers` a2 WHERE a2.surveyid = ans.surveyid AND a2.cby < ans.cby ) + 1 AS respondendent_number,
 
-(SELECT SUM(IF(q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5), a.answerval, 0)) FROM answers a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby ) * 100 / ( SELECT COUNT(*) * 100 FROM answers a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5) ) AS result_response,
+(SELECT SUM(IF(q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5), a.answerval, 0)) FROM `answers` a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby ) * 100 / ( SELECT COUNT(*) * 100 FROM `answers` a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5) ) AS result_response,
 
-(CASE WHEN EXISTS ( SELECT 1 FROM answers a WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND a.answerid = -2 AND a.answerval = 100 ) THEN 1 ELSE 0 END ) AS contact_request";
+(CASE WHEN EXISTS ( SELECT 1 FROM `answers` a WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND a.answerid = -2 AND a.answerval = 100 ) THEN 1 ELSE 0 END ) AS contact_request";
 
 
 
@@ -165,7 +165,7 @@ $query .= " GROUP BY cby ORDER BY $columnName $columnDir";
 record_set("get_recent_entry", $query." LIMIT $start, $length");
 
 // get count filter count
-$queryFilter = "SELECT id FROM answers ans where id !=0 $where";
+$queryFilter = "SELECT $get_rows FROM answers ans where id !=0 $where";
 $queryFilter .= " GROUP BY cby ORDER BY $columnName $columnDir";
 $totalQueryCount = "SELECT COUNT(*) as total_count FROM ($queryFilter) as grouped_results";
 record_set("get_recent_COUNT_entry", $totalQueryCount);
@@ -203,7 +203,7 @@ if($totalRecordwithFilter >0){
 
         // Add row data to the data array
         $data[] = array(
-            "date"                  => date("d-m-Y", strtotime($row_get_recent_entry['cdate'])),
+            "cdate"                  => date("d-m-Y", strtotime($row_get_recent_entry['cdate'])),
             "survey_name"           => $row_get_recent_entry['survey_name'],
             "group_name"            => $row_get_recent_entry['group_name'],
             "location_name"         => $row_get_recent_entry['location_name'],
