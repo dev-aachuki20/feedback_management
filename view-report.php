@@ -1,3 +1,45 @@
+<?php
+
+    $page_type = $_GET['type'];
+    
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $surveyByUsers     = get_survey_data_by_user($page_type, 1);
+    
+    // get assign ids only
+    $assign_department = array();
+    foreach ($departmentByUsers as $department) {
+        $assign_department[] = $department['id'];
+    }
+    
+    $assign_location = array();
+    foreach ($locationByUsers as $location) {
+        $assign_location[] = $location['id'];
+    }
+    $assign_group = array();
+    foreach ($groupByUsers as $group) {
+        $assign_group[] = $group['id'];
+    }
+    
+    $assign_survey = array();
+    foreach ($surveyByUsers as $survey) {
+        $assign_survey[] = $survey['id'];
+    }
+    
+    $dep_ids     = implode(',', $assign_department);
+    $loc_ids     = implode(',', $assign_location);
+    $grp_ids     = implode(',', $assign_group);
+    $surveys_ids = implode(',', $assign_survey);
+
+    // Fetch departments for displaying purposes
+    record_set("get_departments", "SELECT * FROM departments");
+    $departments = array();
+    while ($row_get_departments = mysqli_fetch_assoc($get_departments)) {
+        $departments[$row_get_departments['id']] = $row_get_departments['name'];
+    }
+?>
+
 <style>
     .d-none{
         display: none !important;
@@ -119,7 +161,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>&nbsp;</label>
-                            <input type="button" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search" value="Search"/>
+                            <button type="submit" style="background-color: #00a65a !important;border-color: #008d4c;"name="filter" class="btn btn-success btn-block search">Search</button>
                         </div>
                     </div>
                 </div>
@@ -168,7 +210,7 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-html2canvas@latest/dist/jspdf-html2canvas.min.js"></script> 
 <script>
-    $(document).on('click','#exportascsv',function(){
+    /* $(document).on('click','#exportascsv',function(){
         $('#viewReportcsv').attr('action', 'export-report-table.php');
         $('#viewReportcsv').submit();
         $('#viewReportcsv').attr('action', '');
@@ -176,69 +218,98 @@
     $(document).on('click','.search',function(){
         let surveys     = $('.surveys').val();
         $("#viewReportcsv").submit();
-        // if(surveys ==''){
-        //     $(".col-md-3").css("height", "87");
-        //     $('.error').show();
-        //     return;
-        // }else {
-        //     $('.error').hide();
-        //     $("#viewReportcsv").submit();
-        // }
-    });
+    }); */
 
+    $(document).ready(function(e){
+        runDatatable('init');
+    })
 
-    var tableOptions = {
-        'processing': true,
-        'serverSide': true,
-        'serverMethod': 'post',
-        "aaSorting": [],
-        "bAutoWidth": false,
-        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-        'ajax': {
-            'url': '<?=baseUrl()?>ajax/datatable/view-report-data-fetch.php',
-        },
-        "rowCallback": function(row, data, index) {
-        },
-        'columns': [
-            { data: 'date', "bSortable": false, "sWidth": "5%" },
-            { data: 'survey_name', "sWidth": "20%" },
-            { data: 'group', "sWidth": "20%" },
-            { data: 'location', "sWidth": "10%" },
-            { data: 'department', "sWidth": "20%" },
-            { data: 'roles', "sWidth": "20%" },
-            { data: 'respondendent_number', "sWidth": "20%" },
-            { data: 'result', "sWidth": "20%" },
-            { data: 'contact_request', "sWidth": "20%" },
-            { data: 'action', "bSortable": false, "sWidth": "10%" },
-        ],
-        "language": {
-            "processing": ' <i class="fa fa-spinner fa-pulse fa-2x fa-fw" style="color: #d1d3d4; font-size: 40px;"></i>',
+    $(document).on('submit', '#viewReportcsv', function(e){
+        e.preventDefault();
+        filterData = {
+            fdate        : $('input[name="fdate"]').val(),
+            sdate        : $('input[name="sdate"]').val(),
+            surveys      : $('select[name="surveys"]').val(),
+            groupid      : $('select[name="groupid"]').val(),
+            locationid   : $('select[name="locationid"]').val(),
+            departmentid : $('select[name="departmentid"]').val(),
+            roleid       : $('select[name="roleid"]').val(),
+            contacted    : $('select[name="contacted"]').val(),
+        };
+        runDatatable('filter', filterData);
+    })
+
+    function runDatatable(dt_type = '', filterData=''){
+        var ids = {
+            'dep_ids' : "<?= $dep_ids ?>",
+            'loc_ids' : "<?= $loc_ids ?>",
+            'grp_ids' : "<?= $grp_ids ?>",
+            'surveys_ids' : "<?= $surveys_ids ?>"
         }
-    };
 
-    $(document).ready(function() {
-        $('#report-common-table').DataTable(tableOptions);
-    });
+        var tableOptions = {
+            'processing': true,
+            'serverSide': true,
+            'serverMethod': 'post',
+            "aaSorting": [],
+            "bAutoWidth": false,
+            'searching': false, 
+            "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+            'ajax': {
+                'method': 'GET',
+                'url': '<?=baseUrl()?>ajax/datatable/view-report-data-fetch.php',
+                'data' : {
+                    ids : ids,
+                    type : "<?= $page_type ?>",
+                    departments : <?= json_encode($departments) ?>,
+                    filterData: filterData
+                }
+            },
+            "rowCallback": function(row, data, index) {
+            },
+            'columns': [
+                { data: 'date', "bSortable": false, "sWidth": "5%" },
+                { data: 'survey_name', "sWidth": "20%" },
+                { data: 'group_name', "sWidth": "20%" },
+                { data: 'location_name', "sWidth": "10%" },
+                { data: 'department_name', "sWidth": "20%" },
+                { data: 'role_name', "sWidth": "20%" },
+                { data: 'respondendent_number', "sWidth": "20%" },
+                { data: 'result_response', "sWidth": "20%" },
+                { data: 'contact_request', "sWidth": "20%", "bSortable": false, },
+                { data: 'action', "bSortable": false, "sWidth": "10%" },
+            ],
+            "language": {
+                "processing": ' <i class="fa fa-spinner fa-pulse fa-2x fa-fw" style="color: #d1d3d4; font-size: 40px;"></i>',
+            }
+        };
+        if(dt_type == 'init'){
+            $('#report-common-table').DataTable(tableOptions);
+        } else {
+            $('#report-common-table').DataTable().destroy();
+            $('#report-common-table').DataTable(tableOptions);
+        }
+    }
 
     $(document).on('change','.department',function(){
-    //let interval = $('#interval').val();
-    let department = $(this).val();
-    $('#roleid').html('');
-      $.ajax({
-      type: "POST",
-          url: 'ajax/common_file.php',
-          dataType: "json",
-          data: {
-            department: department,
-            mode:'load_role',
-          }, 
-          success: function(response)
-          {
-            $('#roleid').append(`<option value="">Select Role</option>`);
-            for(data in response){
-              $('#roleid').append(`<option value="${data}">${response[data]}</option>`);
+        //let interval = $('#interval').val();
+        let department = $(this).val();
+        $('#roleid').html('');
+        $.ajax({
+        type: "POST",
+            url: 'ajax/common_file.php',
+            dataType: "json",
+            data: {
+                department: department,
+                mode:'load_role',
+            }, 
+            success: function(response)
+            {
+                $('#roleid').append(`<option value="">Select Role</option>`);
+                for(data in response){
+                $('#roleid').append(`<option value="${data}">${response[data]}</option>`);
+                }
             }
-          }
-      })
+        })
     });
 </script>

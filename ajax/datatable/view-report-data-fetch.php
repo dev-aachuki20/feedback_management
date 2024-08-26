@@ -7,169 +7,182 @@ use Google\Protobuf\Option;
 $draw  = $_REQUEST['draw'];
 $start = $_REQUEST['start'];
 $length = $_REQUEST['length'];
-$page_type = $_GET['type'];
-$locationByUsers   = get_filter_data_by_user('locations');
-$departmentByUsers = get_filter_data_by_user('departments');
-$roleByUsers       = get_filter_data_by_user('roles');
-$groupByUsers      = get_filter_data_by_user('groups');
-$surveyByUsers     = get_survey_data_by_user($page_type, 1);
 
-// get assign ids only
-$assign_department = array();
-foreach ($departmentByUsers as $department) {
-    $assign_department[] = $department['id'];
+$search_val = $_REQUEST['search']['value']; // Search value
+
+if(isset($_REQUEST['order'][0]['column'])){
+    $col_index 	= $_REQUEST['order'][0]['column']; // Column index
+    $columnName = $_REQUEST['columns'][$col_index]['data']; // Column name
+    $columnDir 	= $_REQUEST['order'][0]['dir']; // asc or desc
 }
 
-$assign_location = array();
-foreach ($locationByUsers as $location) {
-    $assign_location[] = $location['id'];
-}
-$assign_group = array();
-foreach ($groupByUsers as $group) {
-    $assign_group[] = $group['id'];
+if(!isset($_REQUEST['order'][0]['column'])){
+    $columnName = 'id';
+    $columnDir = 'desc';
 }
 
-$assign_role = array();
-foreach ($roleByUsers as $role) {
-    $assign_role[] = $role['id'];
-}
+$page_type = $_REQUEST['type'];
 
-$assign_survey = array();
-foreach ($surveyByUsers as $survey) {
-    $assign_survey[] = $survey['id'];
-}
+$ids = $_REQUEST['ids'];
+$filterData = $_REQUEST['filterData'];
 
-$dep_ids     = implode(',', $assign_department);
-$loc_ids     = implode(',', $assign_location);
-$grp_ids     = implode(',', $assign_group);
-$surveys_ids = implode(',', $assign_survey);
-$role_ids    = implode(',', $assign_role);
+$dep_ids        = $ids['dep_ids'];
+$loc_ids        = $ids['loc_ids'];
+$surveys_ids    = $ids['surveys_ids'];
+$grp_ids        = $ids['grp_ids'];
 
-
+$departments = json_decode($_REQUEST['departments'], true);
 
 $data = array();
 
+
+// TotalRecord : Start
+$connection=get_connection();
+
+if ($dep_ids) {
+    $t_where .= " and departmentid IN ($dep_ids)";
+} else {
+    $t_where .= " and departmentid IN (0)";
+}
+
+if ($loc_ids) {
+    $t_where .= " and locationid IN ($loc_ids)";
+} else {
+    $t_where .= " and locationid IN (0)";
+}
+
+if ($surveys_ids) {
+    $t_where .= " and surveyid IN ($surveys_ids)";
+} else {
+    $t_where .= " and surveyid IN (0)";
+}
+
+if ($grp_ids) {
+    $t_where .= " and groupid IN ($grp_ids)";
+} else {
+    $t_where .= " and groupid IN (0)";
+}
+
+$t_query = "SELECT id FROM answers where id !=0 $t_where";
+$t_query .= " GROUP BY cby ORDER BY id DESC";
+
+$t_query = "SELECT COUNT(*) as total_count FROM ($t_query) as grouped_results";
+$totalRes       = mysqli_query($connection, $t_query) or die(mysqli_error($error));
+$totalData = mysqli_fetch_assoc($totalRes);
+
+$totalRecords = $totalData['total_count']; 
+// TotalRecord : End
+
+
 ## Fetch records
 // $dateflag = false;
-$query = 'SELECT * FROM answers where id !=0 ';
+$where = '';
+$whereFilter = '';
 
-if (isset($_GET['response']) && !empty($_GET['response'])) {
-    $query .= " and cby = '" . $_GET['response'] . "'";
+if (isset($_REQUEST['response']) && !empty($_REQUEST['response'])) {
+    $where .= " and cby = '" . $_GET['response'] . "'";
 }
 
-if (!empty($_POST['departmentid'])) {
-    $query .= " and departmentid = '" . $_POST['departmentid'] . "'";
+if (isset($filterData['departmentid']) && !empty($filterData['departmentid'])) {
+    $where .= " and departmentid = '" . $filterData['departmentid'] . "'";
 } else {
-    // If no department ID is provided in the POST request, check if there is a predefined list of department IDs ($dep_ids).
     if ($dep_ids) {
-        $query .= " and departmentid IN ($dep_ids)";
+        $where .= " and departmentid IN ($dep_ids)";
     } else {
-        $query .= " and departmentid IN (0)";
+        $where .= " and departmentid IN (0)";
     }
 }
 
-if (!empty($_POST['roleid'])) {
-    $query .= " and roleid = '" . $_POST['roleid'] . "'";
+if (isset($filterData['roleid']) && !empty($filterData['roleid'])) {
+    $where .= " and roleid = '" . $filterData['roleid'] . "'";
 }
 
-if (!empty($_POST['locationid'])) {
-    $query .= "and locationid = '" . $_POST['locationid'] . "'";
+if (isset($filterData['locationid']) && !empty($filterData['locationid'])) {
+    $where .= "and locationid = '" . $filterData['locationid'] . "'";
 } else {
-    // If no location ID is provided in the POST request, check if there is a predefined list of location IDs ($loc_ids).
     if ($loc_ids) {
-        $query .= " and locationid IN ($loc_ids)";
+        $where .= " and locationid IN ($loc_ids)";
     } else {
-        $query .= " and locationid IN (0)";
+        $where .= " and locationid IN (0)";
     }
 }
 
 
-if (!empty($_POST['surveys'])) {
-    $query .= " and surveyid =" . $_POST['surveys'];
+if (isset($filterData['surveys']) && !empty($filterData['surveys'])) {
+    $where .= " and surveyid =" . $filterData['surveys'];
 } else {
     if ($surveys_ids) {
-        $query .= " and surveyid IN ($surveys_ids)";
+        $where .= " and surveyid IN ($surveys_ids)";
     } else {
-        $query .= " and surveyid IN (0)";
+        $where .= " and surveyid IN (0)";
     }
 }
 
 
-if (!empty($_POST['groupid'])) {
-    $query .= " and groupid = '" . $_POST['groupid'] . "'";
+if (isset($filterData['groupid']) && !empty($filterData['groupid'])) {
+    $where .= " and groupid = '" . $filterData['groupid'] . "'";
 } else {
-    // If no group ID is provided in the POST request, check if there is a predefined list of group IDs ($grp_ids).
     if ($grp_ids) {
-        $query .= " and groupid IN ($grp_ids)";
+        $where .= " and groupid IN ($grp_ids)";
     } else {
-        $query .= " and groupid IN (0)";
+        $where .= " and groupid IN (0)";
     }
 }
 
-if (!empty($_POST['fdate']) && !empty($_POST['sdate'])) {
-    $query .= " and cdate between '" . date('Y-m-d', strtotime($_POST['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($_POST['sdate']))) . "'";
+if (isset($filterData['fdate']) && isset($filterData['sdate']) && !empty($filterData['fdate']) && !empty($filterData['sdate'])) {
+    $where .= " and cdate between '" . date('Y-m-d', strtotime($filterData['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filterData['sdate']))) . "'";
 }
-// if(!empty($_POST['contacted']) and $_POST['contacted'] !=3){
-//     if($_POST['contacted'] == 1){
-//         $query .= " and  answerid =-2 and answerval=100";
-//     }else {
-//         $query .= " and  answerid != -2 and answerval != 100";
-//     }
-// }
+
+
+
+
+$get_rows = "ans.id,
+ans.cdate,
+ans.surveyid,
+ans.groupid,
+ans.locationid,
+ans.departmentid,
+ans.roleid,
+
+(SELECT name FROM surveys s WHERE s.id = ans.surveyid) AS survey_name,
+(SELECT name FROM groups g WHERE g.id = ans.groupid) AS group_name,
+(SELECT name FROM locations l WHERE l.id = ans.locationid) AS location_name,
+(SELECT name FROM departments d WHERE d.id = ans.departmentid) AS department_name,
+(SELECT name FROM roles r WHERE r.id = ans.roleid) AS role_name,
+(SELECT COUNT(DISTINCT a2.cby) FROM answers a2 WHERE a2.surveyid = ans.surveyid AND a2.cby < ans.cby ) + 1 AS respondendent_number,
+
+(SELECT SUM(IF(q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5), a.answerval, 0)) FROM answers a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby ) * 100 / ( SELECT COUNT(*) * 100 FROM answers a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5) ) AS result_response,
+
+(CASE WHEN EXISTS ( SELECT 1 FROM answers a WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND a.answerid = -2 AND a.answerval = 100 ) THEN 1 ELSE 0 END ) AS contact_request";
+
+
+
+
+$query = "SELECT $get_rows FROM answers ans where id !=0 $where";
 // LIMIT $start, $length
-$query .= " GROUP BY cby ORDER BY id DESC";
-// Fetch departments for displaying purposes
-record_set("get_departments", "SELECT * FROM departments");
-$departments = array();
-while ($row_get_departments = mysqli_fetch_assoc($get_departments)) {
-    $departments[$row_get_departments['id']] = $row_get_departments['name'];
-}
+$query .= " GROUP BY cby ORDER BY $columnName $columnDir";
+
 record_set("get_recent_entry", $query." LIMIT $start, $length");
-record_set("get_recent_COUNT_entry", $query);
-$totalRecords = $totalRows_get_recent_COUNT_entry; 
 
-if($totalRecords >0){
+// get count filter count
+$queryFilter = "SELECT id FROM answers ans where id !=0 $where";
+$queryFilter .= " GROUP BY cby ORDER BY $columnName $columnDir";
+$totalQueryCount = "SELECT COUNT(*) as total_count FROM ($queryFilter) as grouped_results";
+record_set("get_recent_COUNT_entry", $totalQueryCount);
+$row_get_recent_COUNT_entry = mysqli_fetch_assoc($get_recent_COUNT_entry);
+
+$totalRecordwithFilter = $row_get_recent_COUNT_entry['total_count'];
+
+if($totalRecordwithFilter >0){
     while($row_get_recent_entry = mysqli_fetch_assoc($get_recent_entry)){
-        record_set("get_survey_detail", "SELECT * FROM surveys where id='".$row_get_recent_entry['surveyid']."'");	
-        $row_get_survey_detail = mysqli_fetch_assoc($get_survey_detail);
-        
-        $row_survey_entry = 1;
-        record_set("survey_entry", "SELECT DISTINCT cby FROM answers where surveyid='".$row_get_survey_detail['id']."' and cby <".$row_get_recent_entry['cby']);
-        $row_survey_entry = $totalRows_survey_entry+$row_survey_entry;
-    
-        $total_result_val=0;  
-        $achieved_result_val = 0;
-        $to_bo_contacted     = 0;
-        $i=0;
-
-        record_set("get_survey_result", "SELECT answerid,answerval,questionid,answertext FROM answers where surveyid='".$row_get_recent_entry['surveyid']."' and cby='".$row_get_recent_entry['cby']."'");
-
-        while($row_get_survey_result = mysqli_fetch_assoc($get_survey_result)){
-        $result_question =  record_set_single("get_question_type", "SELECT answer_type FROM questions where is_weighted=1 and id =".$row_get_survey_result['questionid']);
-            if($result_question){
-                if(!in_array($result_question['answer_type'],array(2,3,5))){
-                    $total_result_val = ($i+1)*100;
-                    $achieved_result_val += $row_get_survey_result['answerval'];
-                    $i++;
-                }
-            }
-            if($row_get_survey_result['answerid'] == -2 && $row_get_survey_result['answerval'] == 100){
-                $to_bo_contacted = 1;
-            }
-        }
-        $result_response = $achieved_result_val*100/$total_result_val;
-        if($achieved_result_val==0 and $total_result_val==0){
-            $result_response=100;
-        }
-        // if($to_bo_contacted == 0 and $_POST['contacted'] == 2){
-        //     continue;
-        // }
+        $result_response = $row_get_recent_entry['result_response'];
+        $to_bo_contacted = $row_get_recent_entry['contact_request'];
         // for filter using contact
-        if($_POST['contacted'] !='' and  $_POST['contacted']!=3){
-            if($to_bo_contacted == 1 && $_POST['contacted'] == 2){
+        if(isset($filterData['contacted']) && $filterData['contacted'] !='' and  $filterData['contacted']!=3){
+            if($to_bo_contacted == 1 && $filterData['contacted'] == 2){
                 continue;
             }
-            if($to_bo_contacted == 0 && $_POST['contacted'] == 1){
+            if($to_bo_contacted == 0 && isset($filterData['contacted']) && $filterData['contacted'] == 1){
                 continue;
             }
         }
@@ -185,20 +198,21 @@ if($totalRecords >0){
         }else{ 
             $contactedLabel ='<a class="btn btn-xs btn-danger">No</a>';
         } 
-            
+
+        $actionBtn = '<a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=' . $row_get_recent_entry['surveyid'] . '&userid=' . $row_get_recent_entry['cby'] . '&score=' . round($result_response, 2) . '&contacted=' . $to_be_contacted . '" target="_blank">VIEW DETAILS</a>';
 
         // Add row data to the data array
         $data[] = array(
-            "date" => date("d-m-Y", strtotime($row_get_recent_entry['cdate'])),
-            "survey_name" => $row_get_survey_detail['name'],
-            "group" => getGroup()[$row_get_recent_entry['groupid']],
-            "location" => getLocation()[$row_get_recent_entry['locationid']],
-            "department" => $departments[$row_get_recent_entry['departmentid']] ?? '',
-            "roles" => getRole()[$row_get_recent_entry['roleid']],
-            "respondendent_number" => $row_survey_entry,
-            "result" => '<label class="label label-' . $label_class . '">' . round($result_response, 2) . '%</label>',
-            "contact_request" => $contactedLabel,
-            "action" => '<a class="btn btn-xs btn-primary" href="survey-result.php?surveyid=' . $row_get_recent_entry['surveyid'] . '&userid=' . $row_get_recent_entry['cby'] . '&score=' . round($result_response, 2) . '&contacted=' . $to_be_contacted . '" target="_blank">VIEW DETAILS</a>'
+            "date"                  => date("d-m-Y", strtotime($row_get_recent_entry['cdate'])),
+            "survey_name"           => $row_get_recent_entry['survey_name'],
+            "group_name"            => $row_get_recent_entry['group_name'],
+            "location_name"         => $row_get_recent_entry['location_name'],
+            "department_name"       => $row_get_recent_entry['department_name'],
+            "role_name"             => $row_get_recent_entry['role_name'],
+            "respondendent_number"  => $row_get_recent_entry['respondendent_number'],
+            "result_response"       => '<label class="label label-' . $label_class . '">' . round($result_response, 2) . '%</label>',
+            "contact_request"       => $contactedLabel,
+            "action"                => $actionBtn
         );
     }
 }
@@ -207,7 +221,7 @@ if($totalRecords >0){
 $response = array(
     "draw" => intval($draw),
     "iTotalRecords" => $totalRecords,
-    "iTotalDisplayRecords" => $totalRecords,
+    "iTotalDisplayRecords" => $totalRecordwithFilter,
     "aaData" => $data
 );
 echo json_encode($response);
