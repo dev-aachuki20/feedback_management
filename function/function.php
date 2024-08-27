@@ -391,6 +391,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 	$send_to = $recipients['email'];
 	$user_name = $recipients['name'];
 	$from_mail = ADMIN_EMAIL;
+	$sendFrom = EMAIL_SEND_FROM;
 	$message = 'Hello ' . $user_name . ' here is the full servey pdf';
 	$attachments = $recipients['attachments'];
 
@@ -456,7 +457,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 
 	// $attachments = array('file.pdf');
 	// Send the email with optional PDF attachment
-	send_survey_pdf_with_email($attachments, $send_to, $from_mail, $user_name, $subject, $message, $body);
+	send_survey_pdf_with_email($attachments, $send_to, $from_mail, $sendFrom, $subject, $message, $body);
 
 	// send_mail($send_to, $subject, $body);
 }

@@ -1,5 +1,6 @@
 <?php 
 //set logo
+define('EMAIL_SEND_FROM', 'DGFM System');
 define('ADMIN_EMAIL', 'system@dgfm.app');
 define('ADMIN_NAME', 'Data Group');
 define('MAIN_LOGO', 'upload_image/dgs-logo-2.jpg');
