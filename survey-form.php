@@ -430,7 +430,44 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 			border-color: #3c3e3e;
 			box-shadow: 7px 1px 7px #8a8686;
 		}
-	@media only screen and (max-width: 800px) {
+		.goog-te-gadget-simple {
+            height: 45px;
+            min-width: 300px;
+            padding: 13px 12px;
+            font-size: 14px !important;
+            line-height: 1.42857143;
+            display: inline-flex !important;
+            align-items: center;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc !important;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+		}
+		.goog-te-gadget-simple:focus {
+            border-color: #66afe9 !important;
+            outline: 0;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        }
+		.goog-te-gadget-icon, .goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed img, .goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed span:nth-of-type(2){
+		    display: none;
+		}
+		.goog-te-gadget-simple .VIpgJd-ZVi9od-xl07Ob-lTBxed{
+		    text-decoration: none;
+	        display: flex;
+            align-items: center;
+            justify-content: space-between;
+		}
+		.goog-te-gadget-simple>span{
+		    width: 100%;
+		}
+		
+		
+		
+@media only screen and (max-width: 800px) {
 	.langselect {
 		margin-top: 1rem;
 	}
@@ -448,10 +485,12 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
             pageLanguage: 'en',
+            includedLanguages: 'pl,ro,pa,ur,pt,en,es,ar,bn,gu,it,ta,fr,lt,zh-TW,tr,bg,ru,fa,hu,el,pe',
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false
         }, 'google_translate_element');
     }
+    
     
    
     // function setLanguageToEnglish() {
