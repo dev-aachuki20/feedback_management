@@ -70,7 +70,7 @@ function sendEmailPdf($email_to, $user_name, $subject, $body, $pdf = null, $pdf_
 		$mail->Port       = SMTP_PORT;
 
 		//Recipients
-		$mail->setFrom(ADMIN_EMAIL, ADMIN_NAME);
+		$mail->setFrom(ADMIN_EMAIL, EMAIL_SEND_FROM);
 		$mail->addAddress($email_to, $user_name);
 
 		//Attachment
@@ -255,12 +255,14 @@ function check_login()
 function forgot_password($user_email, $password)
 {
 	$from = ADMIN_EMAIL;
+	$from_name = EMAIL_SEND_FROM;
 	$to = $user_email;
 	$subject = "Password Recovery Email";
 	$body = "Dear Admin,<br><br>Your login details :<br> Email ID : $user_email <br> password : $password";
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	$headers .= 'From: <' . $from . '>' . "\r\n";
+// 	$headers .= 'From: <' . $from . '>' . "\r\n";
+	$headers .= 'From: ' . $from_name . ' <' . $from . '>' . "\r\n"; // Include both name and email
 	return mail($to, $subject, $body, $headers);
 }
 
@@ -1100,7 +1102,7 @@ function sendEmailWithAttachment($email_to, $user_name, $subject, $body, $attach
 		$mail->Port       = SMTP_PORT;
 
 		//Recipients
-		$mail->setFrom(ADMIN_EMAIL, ADMIN_NAME);
+		$mail->setFrom(ADMIN_EMAIL, EMAIL_SEND_FROM);
 		$mail->addAddress($email_to, $user_name);
 
 		//Attachment

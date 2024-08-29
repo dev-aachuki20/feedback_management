@@ -56,11 +56,12 @@ while ($row_report = mysqli_fetch_assoc($get_scheduled_reports)) {
             $user_details = get_user_datails($userId);
             $to = $user_details['email'];
             $from_mail = ADMIN_EMAIL;
+            $sendFrom = EMAIL_SEND_FROM;
             $name = $user_details['name'];
             $subject = "Schedule Report";
             $message = 'Hello ' . $name . ' you have schedule report';
 
-            $mail = cron_emails($attachments, $to, $from_mail, $name, $subject, $message);
+            $mail = cron_emails($attachments, $to, $from_mail, $sendFrom, $subject, $message);
         }
 
         // update next schedule date with interval
