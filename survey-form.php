@@ -489,6 +489,17 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false
         }, 'google_translate_element');
+        
+        // Wait for the dropdown to render and change the label
+        setTimeout(function() {
+            // Find the dropdown option for Portuguese (Brazil) and modify it
+            var portugueseOption = document.querySelector('.goog-te-combo option[value="pt"]');
+            
+            if (portugueseOption) {
+                portugueseOption.text = 'Portuguese'; // Change the label text
+                console.log('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF');
+            }
+        }, 1000); // Delay to make sure the widget is loaded
     }
     
     
