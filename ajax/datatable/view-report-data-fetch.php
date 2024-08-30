@@ -17,7 +17,7 @@ if(isset($_REQUEST['order'][0]['column'])){
 }
 
 if(!isset($_REQUEST['order'][0]['column'])){
-    $columnName = 'id';
+    $columnName = 'ans.id';
     $columnDir = 'desc';
 }
 
@@ -133,40 +133,54 @@ if (isset($filterData['fdate']) && isset($filterData['sdate']) && !empty($filter
     $where .= " and cdate between '" . date('Y-m-d', strtotime($filterData['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filterData['sdate']))) . "'";
 }
 
-
-
-
 $get_rows = "ans.id,
-ans.cdate,
-ans.surveyid,
-ans.groupid,
-ans.locationid,
-ans.departmentid,
-ans.roleid,
+    ans.cdate,
+    ans.surveyid,
+    ans.groupid,
+    ans.locationid,
+    ans.departmentid,
+    ans.roleid,
+    s.name AS survey_name,
+    g.name AS group_name,
+    l.name AS location_name,
+    d.name AS department_name,
+    r.name AS role_name,
+    
+    ROW_NUMBER() OVER (PARTITION BY ans.surveyid ORDER BY ans.cby) AS respondendent_number,
+    COALESCE(( SELECT SUM(IF(q.is_weighted = 1 AND q.answer_type NOT IN (2, 3, 5), a.answerval, 0)) FROM `answers` a JOIN `questions` q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby ), 0 ) * 100 / (
+        SELECT COUNT(*) * 100 FROM `answers` a JOIN `questions` q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND q.is_weighted = 1 AND q.answer_type NOT IN (2, 3, 5)
+    ) AS result_response,
 
-(SELECT name FROM `surveys` s WHERE s.id = ans.surveyid) AS survey_name,
-(SELECT name FROM `groups` g WHERE g.id = ans.groupid) AS group_name,
-(SELECT name FROM `locations` l WHERE l.id = ans.locationid) AS location_name,
-(SELECT name FROM `departments` d WHERE d.id = ans.departmentid) AS department_name,
-(SELECT name FROM `roles` r WHERE r.id = ans.roleid) AS role_name,
-(SELECT COUNT(DISTINCT a2.cby) FROM `answers` a2 WHERE a2.surveyid = ans.surveyid AND a2.cby < ans.cby ) + 1 AS respondendent_number,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM `answers` a
+            WHERE a.surveyid = ans.surveyid 
+              AND a.cby = ans.cby 
+              AND a.answerid = -2 
+              AND a.answerval = 100
+        ) THEN 1
+        ELSE 0
+    END AS contact_request";
 
-(SELECT SUM(IF(q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5), a.answerval, 0)) FROM `answers` a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby ) * 100 / ( SELECT COUNT(*) * 100 FROM `answers` a JOIN questions q ON a.questionid = q.id WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND q.is_weighted = 1 AND q.answer_type NOT IN (2,3,5) ) AS result_response,
 
-(CASE WHEN EXISTS ( SELECT 1 FROM `answers` a WHERE a.surveyid = ans.surveyid AND a.cby = ans.cby AND a.answerid = -2 AND a.answerval = 100 ) THEN 1 ELSE 0 END ) AS contact_request";
+$joins = "LEFT JOIN `surveys` s ON s.id = ans.surveyid";
+$joins .= " LEFT JOIN `groups` g ON g.id = ans.groupid";
+$joins .= " LEFT JOIN `locations` l ON l.id = ans.locationid";
+$joins .= " LEFT JOIN `departments` d ON d.id = ans.departmentid";
+$joins .= " LEFT JOIN `roles` r ON r.id = ans.roleid";
 
 
 
-
-$query = "SELECT $get_rows FROM answers ans where id !=0 $where";
+$query = "SELECT $get_rows FROM `answers` ans $joins where ans.id !=0 $where";
 // LIMIT $start, $length
-$query .= " GROUP BY cby ORDER BY $columnName $columnDir";
+$query .= " GROUP BY ans.cby ORDER BY $columnName $columnDir";
 
 record_set("get_recent_entry", $query." LIMIT $start, $length");
 
 // get count filter count
-$queryFilter = "SELECT $get_rows FROM answers ans where id !=0 $where";
-$queryFilter .= " GROUP BY cby ORDER BY $columnName $columnDir";
+$queryFilter = "SELECT $get_rows FROM `answers` ans $joins where ans.id !=0 $where";
+$queryFilter .= " GROUP BY ans.cby ORDER BY $columnName $columnDir";
 $totalQueryCount = "SELECT COUNT(*) as total_count FROM ($queryFilter) as grouped_results";
 record_set("get_recent_COUNT_entry", $totalQueryCount);
 $row_get_recent_COUNT_entry = mysqli_fetch_assoc($get_recent_COUNT_entry);
