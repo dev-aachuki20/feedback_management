@@ -6,6 +6,7 @@
         $row_get_surveys = mysqli_fetch_assoc($get_surveys);
         record_set("get_mailing_users", "select * from surveys_mailing_users where survey_id='".$_GET['id']."'");
         record_set("isSurveyRelatedToAssignTask", "select * from assign_task  where survey_id='".$_GET['id']."'");
+        record_set("isSurveyRelatedToContactedYes", "select * from answers where id !=0 and surveyid='".$_GET['id']."' and answerid =-2 and answerval=100 GROUP by cby");
     }
     
     if($_POST['update']){
@@ -23,9 +24,9 @@
             "start_date"                    => $_POST['sdate'],
             "end_date"                      => $_POST['edate'],
             "question_limit"                => $_POST['question_limit'],
-            // "isStep"                        => (isset($_POST['isStep'])) ? 1 : 0,
+            // "isStep"                     => (isset($_POST['isStep'])) ? 1 : 0,
             "isStep"                        => 1,
-            "isEnableContacted"             => (isset($_POST['isEnableContacted'])) ? 1 : 0,
+            "isEnableContacted"          => (isset($_POST['isEnableContacted'])) ? 1 : 0,
             "contacted_request_label"       => $_POST['contacted_request_label'],
             "google_review_link"            => $_POST['google_review_link'],
             "facebook_review_link"          => $_POST['facebook_review_link'],
@@ -46,6 +47,10 @@
             //"isEnableContacted"  => (isset($_POST['isEnableContacted'])) ? 1 : 0,
         );
 
+        // if($totalRows_isSurveyRelatedToAssignTask == 0){
+        //     $dataCol['isEnableContacted'] = (isset($_POST['isEnableContacted'])) ? 1 : 0;
+        // }
+
         if($_SESSION['user_type']==1){
             $data = array_merge($dataCol,$new_data);
             $mailing_user_ids = $_POST['mailing_user_id'];
@@ -58,8 +63,8 @@
             $is_pdf = isset($_POST['is_pdf']) && $_POST['is_pdf'] == 'on' ? 1 : 0;
 
         }
-        $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
 
+        $updte=	dbRowUpdate("surveys", $data, "where id=".$_GET['id']);		
     
         if(!empty($updte)){
             $numberOfStep = (isset($_POST['numberOfStep']) && !empty($_POST['numberOfStep'])) ?  $_POST['numberOfStep'] : 1;
@@ -193,15 +198,12 @@
         //reDirect("?page=add-survey&msg=".$msg);		
     }
 
+    // get data by user.
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $groupByUsers      = get_filter_data_by_user('groups');  
 
-
-// get data by user
-$departmentByUsers = get_filter_data_by_user('departments');
-$locationByUsers   = get_filter_data_by_user('locations');
-$groupByUsers      = get_filter_data_by_user('groups');  
-
-$allUsers = getUsers();
-
+    $allUsers = getUsers();
 ?>
 
 
@@ -456,7 +458,10 @@ $allUsers = getUsers();
                                     <div class="col-md-7">
                                         <div class="form-group">
                                             <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?> <?=$totalRows_isSurveyRelatedToAssignTask > 0 ? 'disabled':''?>>
+                                                <input type="checkbox" class="form-check-input" id="isEnableContacted" name="isEnableContacted" <?php echo ($row_get_surveys['isEnableContacted'] == 1) ? "checked" : ""; ?>>
+                                                <?php 
+                                                // $totalRows_isSurveyRelatedToAssignTask > 0 ? 'disabled':''
+                                                // $totalRows_isSurveyRelatedToAssignTask > 0 || $totalRows_isSurveyRelatedToContactedYes > 0 ?'disabled':'' ?>
                                                 <label class="form-check-label" for="isEnableContacted"> Enable Contact Requests </label>
                                             </div>
                                         </div>

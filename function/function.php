@@ -426,7 +426,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 
 	$body .= '<tr>
 				<td><p style="font-size:15px;margin:10px;">Hello ' . $recipients['name'] . '</p> <br>
-					<p style="font-size:15px;margin:10px;">A new Response has been submitted for ' . $survey_name . '.';
+					<p style="font-size:15px;margin:10px;">A new response has been submitted for ' . $survey_name . '.';
 	if ($to_be_contacted == 1) {
 		$body .= 'The respondent has requested contact.';
 	}
