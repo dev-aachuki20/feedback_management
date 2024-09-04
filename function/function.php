@@ -19,8 +19,8 @@ define('SMTP_PORT', "587");
 define('SMTPAuth', true);   
 
 // define('SMTP_HOST', "sandbox.smtp.mailtrap.io");
-// define('SMTP_USER', "a4675565cb1dd9");
-// define('SMTP_PASS', "4574e6f43e2c75");
+// define('SMTP_USER', "1d52672ce0a883");
+// define('SMTP_PASS', "2990c94747dc69");
 // define('SMTP_PORT', "2525");
 // define('SMTPAuth', true);
 //mail trap

@@ -12,7 +12,7 @@ define('POWERED_BY', 'Powered by Data Group Solutions');
 
 require_once("connectin_config.php");
     if(in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
-		//define('BASE_URL', 'http://localhost/feedback_management/');
+		define('BASE_URL', 'http://localhost/feedback_management/');
 		//define('BASE_URL', 'http://localhost/demo.dgfm.app/');
 		define('BASE_URL', 'https://demo.dgfm.app/');
 	}

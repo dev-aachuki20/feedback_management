@@ -401,7 +401,7 @@ if(isset($_POST['submit'])){
 	}
 
 
-
+	$email_list = [];
 	if($totalRows_get_mailing_users > 0){ 
 
 		while ($row_mailing_user = mysqli_fetch_assoc($get_mailing_users)) {
@@ -418,13 +418,15 @@ if(isset($_POST['submit'])){
 
 				// Check if the user requested the PDF
 					
+				$to_mail['attachments'] = [];
+
+				// Check if the user requested the PDF
 				if ($row_mailing_user['is_pdf'] == 1) {
-
-					generateSurveyPdf($surveyid, $_SESSION['maxid'], 'survey_result_pdf.pdf');
-
-					$to_mail['attachments'] = array('survey_result_pdf.pdf'); // Add attachment for PDF request
-
+					$pdf_filename = 'survey_result_pdf.pdf';
+					generateSurveyPdf($surveyid, $_SESSION['maxid'], $pdf_filename);	
+					$to_mail['attachments'] = [$pdf_filename];					
 				}
+				$email_list[] = $to_mail;
 
 			}
 
@@ -432,17 +434,22 @@ if(isset($_POST['submit'])){
 
 	}
 
-	
-
-	if(count($to_mail) > 0){
-
-		//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
-
-		$contacted = $to_be_contacted;
-
-		send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $contacted );
-
+	if (count($email_list) > 0) {
+		// Send email to all users in the list
+		foreach ($email_list as $email_data) {
+			send_survey_completed_email($email_data, $row_get_survey['name'], $surveyid, $to_be_contacted);
+		}
 	}
+
+	// if(count($to_mail) > 0){
+
+	// 	//send_survey_email($to_mail, $row_get_survey['name'], $surveyid, $to_be_contacted, $to_be_contacted_mail,$contact, $_SESSION['maxid']);
+
+	// 	$contacted = $to_be_contacted;
+
+	// 	send_survey_completed_email($to_mail, $row_get_survey['name'], $surveyid, $contacted );
+
+	// }
 
 	unlink("survey_result_pdf.pdf");
 
