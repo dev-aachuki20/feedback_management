@@ -1,5 +1,5 @@
 <?php
-
+    $emailResponse = '';
     $page_type = $_GET['type'];
     
     $locationByUsers   = get_filter_data_by_user('locations');
@@ -7,6 +7,10 @@
     $groupByUsers      = get_filter_data_by_user('groups');
     $surveyByUsers     = get_survey_data_by_user($page_type, 1);
     
+    if (isset($_REQUEST['response']) && !empty($_REQUEST['response'])) {
+        $emailResponse .= $_GET['response'];
+    }
+
     // get assign ids only
     $assign_department = array();
     foreach ($departmentByUsers as $department) {
@@ -262,7 +266,8 @@
                     ids : ids,
                     type : "<?= $page_type ?>",
                     departments : <?= json_encode($departments) ?>,
-                    filterData: filterData
+                    filterData: filterData,
+                    response: "<?=$emailResponse?>"
                 }
             },
             "rowCallback": function(row, data, index) {

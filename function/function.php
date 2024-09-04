@@ -394,7 +394,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 	$user_name = $recipients['name'];
 	$from_mail = ADMIN_EMAIL;
 	$sendFrom = EMAIL_SEND_FROM;
-	$message = 'Hello ' . $user_name . ' here is the full servey pdf';
+	$message = 'Hello ' . $user_name . ' here is the full survey pdf';
 	$attachments = $recipients['attachments'];
 
 	$getSurveyDetails = getaxecuteQuery_fn("SELECT * from surveys where id=$surveyid");
@@ -437,7 +437,7 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 				<td></td>
 			</tr>
 			<tr>
-			<td><p style="font-size:15px;margin:6px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type=' . $type . '" target="_blank">Click here</a> to view the response.</p></td>
+			<td><p style="font-size:15px;margin:6px;"><a style=" Green border: none;color: white;padding: 2px 2px;text-align: center;text-decoration: none;display: inline-block;margin: 4px 2px;  color:blue; cursor: pointer;" href="' . BASE_URL . 'index.php?page=view-report&type=' . $type . '&response=' . $_SESSION['maxid'] . '" target="_blank">Click here</a> to view the response.</p></td>
 			</tr>
 			<tr>
 			<td height="20px;"><p style="font-size:15px;margin:10px;">DGFM System</p></td>
@@ -467,9 +467,10 @@ function send_survey_completed_email($recipients, $survey_name, $surveyid, $to_b
 function send_mail($send_to, $subject, $body)
 {
 	$from = ADMIN_EMAIL;
+	$sendFrom = EMAIL_SEND_FROM;
 	$headers = "MIME-Version: 1.0" . "\r\n";
 	$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-	$headers .= 'From: Survey Entry Alert<' . $from . '>' . "\r\n";
+	$headers .= 'From: '.$sendFrom.'<' . $from . '>' . "\r\n";
 	$success = mail($send_to, $subject, $body, $headers);
 }
 
