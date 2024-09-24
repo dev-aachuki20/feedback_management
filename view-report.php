@@ -14,22 +14,39 @@
 
     // get assign ids only
     $assign_department = array();
-    foreach ($departmentByUsers as $department) {
-        $assign_department[] = $department['id'];
+    if(count($departmentByUsers) > 0) {
+        foreach($departmentByUsers as $department){
+            $assign_department[] = $department['id'];
+        }
+    }else{
+        $assign_department[] = 0;
     }
-    
+
     $assign_location = array();
-    foreach ($locationByUsers as $location) {
-        $assign_location[] = $location['id'];
+    if(count($locationByUsers) > 0) {
+        foreach($locationByUsers as $location){
+            $assign_location[] = $location['id'];
+        }
+    }else{
+        $assign_location[] = 0;
     }
+
     $assign_group = array();
-    foreach ($groupByUsers as $group) {
-        $assign_group[] = $group['id'];
+    if(count($groupByUsers) > 0){
+        foreach($groupByUsers as $group){
+            $assign_group[] = $group['id'];
+        }
+    }else {
+        $assign_group[] = 0;
     }
     
     $assign_survey = array();
-    foreach ($surveyByUsers as $survey) {
-        $assign_survey[] = $survey['id'];
+    if(count($surveyByUsers) > 0){
+        foreach($surveyByUsers as $survey){
+            $assign_survey[] = $survey['id'];
+        }
+    } else {
+        $assign_survey[] = 0;
     }
     
     $dep_ids     = implode(',', $assign_department);

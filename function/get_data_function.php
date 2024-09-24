@@ -249,7 +249,7 @@ function get_filter_data_by_user($table)
 function get_survey_data_by_user($survey_type, $confidential = 0)
 {
 	// get survey by user access
-	if ($_SESSION['user_type'] < 2) {
+	/* if ($_SESSION['user_type'] <= 2) {
 		$filter = '';
 	} else {
 		$survey_id = get_assigned_user_data($_SESSION['user_id'], $survey_type);
@@ -259,6 +259,17 @@ function get_survey_data_by_user($survey_type, $confidential = 0)
 		} else {
 			$filter = " and id IN (0)";
 		}
+	} */
+	$survey_id = get_assigned_user_data($_SESSION['user_id'], $survey_type);
+	if($_SESSION['user_type'] < 2){
+	  $filter = '';
+	} else {
+		if($survey_id){
+			$survey_id = implode(',', $survey_id);
+			$filter = " and id IN($survey_id)";
+		}else {
+			$filter = " and id IN(0)";
+	  	}
 	}
 	// get survey type
 	if ($survey_type == 'engagement') {
@@ -273,7 +284,7 @@ function get_survey_data_by_user($survey_type, $confidential = 0)
 	if ($confidential == 1) {
 		$sFilter .= " and confidential !=1";
 	}
-	$allowed_data = getaxecuteQuery_fn("select * from surveys where id>0 and cstatus=1 $filter $sFilter order by cdate desc");
+	$allowed_data = getaxecuteQuery_fn("select * from surveys where id>0 $filter and cstatus=1 $sFilter order by cdate desc");
 	$arr = array();
 	while ($row_get_data = mysqli_fetch_assoc($allowed_data)) {
 		$arr[] = $row_get_data;

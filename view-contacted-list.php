@@ -7,12 +7,16 @@ $locationByUsers   = get_filter_data_by_user('locations');
 $groupByUsers      = get_filter_data_by_user('groups');
 $surveyByUsers     = get_survey_data_by_user($_GET['type'],1);
 
+
 $assign_survey = array();
-foreach($surveyByUsers as $survey){
-    $assign_survey[] = $survey['id'];
+if(count($surveyByUsers) > 0){
+    foreach($surveyByUsers as $survey){
+        $assign_survey[] = $survey['id'];
+    }
+} else {
+    $assign_survey[] = 0;
 }
 $surveys_ids = implode(',',$assign_survey);
-
 
 
 //disable checkbox and assign button for manager

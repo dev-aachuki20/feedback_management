@@ -1,31 +1,52 @@
 <?php 
+    $page_type = $_GET['type'];
+
     // get data by user
     $departmentByUsers = get_filter_data_by_user('departments');
     $locationByUsers   = get_filter_data_by_user('locations');
     $groupByUsers      = get_filter_data_by_user('groups');
-    $surveyByUsers     = get_survey_data_by_user($_GET['type']);
+    $surveyByUsers     = get_survey_data_by_user($page_type);
     $roleByUsers       = get_filter_data_by_user('roles');
     $loggedIn_user_id    = $_SESSION['user_id'];
     $loggedIn_user_type  = $_SESSION['user_type'];
 
     // get asssign ids only
     $assign_department = array();
-    foreach($departmentByUsers as $department){
-        $assign_department[] = $department['id'];
+    if(count($departmentByUsers) > 0) {
+        foreach($departmentByUsers as $department){
+            $assign_department[] = $department['id'];
+        }
+    }else{
+        $assign_department[] = 0;
     }
-    $assign_location = array();
-    foreach($locationByUsers as $location){
-        $assign_location[] = $location['id'];
-    }
-    $assign_group = array();
 
-    foreach($groupByUsers as $group){
-        $assign_group[] = $group['id'];
+    $assign_location = array();
+    if(count($locationByUsers) > 0) {
+        foreach($locationByUsers as $location){
+            $assign_location[] = $location['id'];
+        }
+    }else{
+        $assign_location[] = 0;
     }
+
+    $assign_group = array();
+    if(count($groupByUsers) > 0){
+        foreach($groupByUsers as $group){
+            $assign_group[] = $group['id'];
+        }
+    }else {
+        $assign_group[] = 0;
+    }
+    
     $assign_survey = array();
-    foreach($surveyByUsers as $survey){
-        $assign_survey[] = $survey['id'];
+    if(count($surveyByUsers) > 0){
+        foreach($surveyByUsers as $survey){
+            $assign_survey[] = $survey['id'];
+        }
+    } else {
+        $assign_survey[] = 0;
     }
+
     $assign_role = array();
     foreach($roleByUsers as $role){
         $assign_role[] = $role['id'];
