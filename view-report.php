@@ -5,6 +5,7 @@
     $locationByUsers   = get_filter_data_by_user('locations');
     $departmentByUsers = get_filter_data_by_user('departments');
     $groupByUsers      = get_filter_data_by_user('groups');
+    $roleByUsers       = get_filter_data_by_user('roles');
     $surveyByUsers     = get_survey_data_by_user($page_type, 1);
     
     if (isset($_REQUEST['response']) && !empty($_REQUEST['response'])) {

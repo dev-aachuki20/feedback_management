@@ -17,14 +17,27 @@
             </thead>
             <tbody>
               <?php 
-              if($_SESSION['user_type']<=2){
+              /* 
+                if($_SESSION['user_type']<=2){
+                  $filter = '';
+                }else {
+                  //for admin
+                  $filter = " and cby='".$_SESSION['user_id']."'";
+                  $location_ids = get_assing_id_dept_loc_grp_survey('location');
+                  if($location_ids){
+                    $filter .= " OR id IN ($location_ids)";
+                  }
+                }
+              */
+              if($_SESSION['user_type'] < 2){
                 $filter = '';
               }else {
                 //for admin
-                $filter = " and cby='".$_SESSION['user_id']."'";
                 $location_ids = get_assing_id_dept_loc_grp_survey('location');
                 if($location_ids){
-                  $filter .= " OR id IN ($location_ids)";
+                  $filter .= " AND id IN ($location_ids)";
+                } else {
+                  $filter .= " AND id IN (0)";
                 }
               }
                 record_set("get_locations", "select * from locations where id>0 $filter order by cdate desc");				

@@ -28,20 +28,32 @@
                 </thead>
                 <tbody>
                  <?php 
-                    
+                    /* 
+                       //for super admin and dgs
+                      $survey_id = get_assing_id_dept_loc_grp_survey();
+                      //$survey_id = implode(',',array_unique($survey_id));
+
+                      if($_SESSION['user_type']<=2){
+                        $filter = '';
+                      }else {
+                        //for admin and other user
+                        $filter = " and cby=".$_SESSION['user_id']."";
+                        if($survey_id){
+                          $filter .= " OR id IN($survey_id)";
+                        }else {
+                          $filter .= " OR id IN(0)";
+                        }
+                      }
+                    */
                     //for super admin and dgs
                     $survey_id = get_assing_id_dept_loc_grp_survey();
-                    //$survey_id = implode(',',array_unique($survey_id));
-
-                    if($_SESSION['user_type']<=2){
+                    if($_SESSION['user_type']<2){
                       $filter = '';
                     }else {
-                      //for admin and other user
-                      $filter = " and cby=".$_SESSION['user_id']."";
                       if($survey_id){
-                        $filter .= " OR id IN($survey_id)";
+                        $filter .= " and id IN($survey_id)";
                       }else {
-                        $filter .= " OR id IN(0)";
+                        $filter .= " and id IN(0)";
                       }
                     }
                     // check survey type using type 

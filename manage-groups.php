@@ -17,16 +17,27 @@
             </thead>
             <tbody>
               <?php 
-              if($_SESSION['user_type']<=2){
-                $filter = '';
-              }else {
-                //for other
-                $filter = " and cby='".$_SESSION['user_id']."'";
-                $group_ids = get_assing_id_dept_loc_grp_survey('group');
-                if($group_ids){
-                  $filter .= " OR id IN ($group_ids)";
+                /* if($_SESSION['user_type']<=2){
+                  $filter = '';
+                }else {
+                  //for other
+                  $filter = " and cby='".$_SESSION['user_id']."'";
+                  $group_ids = get_assing_id_dept_loc_grp_survey('group');
+                  if($group_ids){
+                    $filter .= " OR id IN ($group_ids)";
+                  }
+                } */
+                /* For Dgs Office */
+                if($_SESSION['user_type'] < 2){
+                  $filter = '';
+                }else {
+                  $group_ids = get_assing_id_dept_loc_grp_survey('group');
+                  if($group_ids){
+                    $filter .= " AND id IN ($group_ids)";
+                  } else {
+                    $filter .= " AND id IN (0)";
+                  }
                 }
-              }
                 record_set("get_groups", "select * from `groups` where id>0 $filter order by cdate desc");				
                 while($row_get_groups = mysqli_fetch_assoc($get_groups)){
               ?>

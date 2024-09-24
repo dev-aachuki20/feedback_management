@@ -18,17 +18,29 @@
             </thead>
             <tbody>
             <?php 
-            //for super admin and Dgs User
-            if($_SESSION['user_type'] <=2){
-              $filter = '';
-            }else {
-              //for other
-              $filter = " and cby='".$_SESSION['user_id']."'";
-              $role_ids = get_assing_id_dept_loc_grp_survey('role');
-              if($role_ids){
-                $filter .= " OR id IN ($role_ids)";
+              /* if($_SESSION['user_type'] <=2){
+                $filter = '';
+              }else {
+                //for other
+                $filter = " and cby='".$_SESSION['user_id']."'";
+                $role_ids = get_assing_id_dept_loc_grp_survey('role');
+                if($role_ids){
+                  $filter .= " OR id IN ($role_ids)";
+                }
+              } */
+              /* for Dgs Office */
+              if($_SESSION['user_type'] < 2){
+                $filter = '';
+              }else {
+                //for other
+                // $filter = " and cby='".$_SESSION['user_id']."'";
+                $role_ids = get_assing_id_dept_loc_grp_survey('role');
+                if($role_ids){
+                  $filter .= " AND id IN ($role_ids)";
+                } else {
+                  $filter .= " AND id IN (0)";
+                }
               }
-            }
               record_set("get_roles", "select * from roles where id>0 $filter order by cdate desc");				
               while($row_get_roles = mysqli_fetch_assoc($get_roles)){ ?>
               <tr>

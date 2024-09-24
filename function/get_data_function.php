@@ -115,7 +115,7 @@ function get_assing_id_dept_loc_grp_survey($table_name = null)
 		$arr_id[] = $row_get_relation_data['table_id'];
 	}
 
-	if ($_SESSION['user_type'] <= 2) {
+	if ($_SESSION['user_type'] < 2) {
 		$table_ids = '';
 	} else {
 		$table_ids = implode(',', $arr_id);
@@ -216,13 +216,24 @@ function get_filter_data_by_user($table)
 		$arr_id[] = $row_get_relation_data['table_id'];
 	}
 	$table_ids = implode(',', $arr_id);
-	if ($_SESSION['user_type'] <= 2) {
+	$filter = '';
+	/* if ($_SESSION['user_type'] <= 2) {
 		$filter = '';
 	} else {
 		//for other user
 		$filter = " and cby='" . $_SESSION['user_id'] . "' ";
 		if ($table_ids) {
 			$filter .= " OR id IN ($table_ids)";
+		}
+	} */
+	if ($_SESSION['user_type'] < 2) {
+		$filter = '';
+	} else {
+		//for other user
+		if ($table_ids) {
+			$filter .= " AND id IN ($table_ids)";
+		} else {
+			$filter .= " AND id IN (0)";
 		}
 	}
 
@@ -238,7 +249,7 @@ function get_filter_data_by_user($table)
 function get_survey_data_by_user($survey_type, $confidential = 0)
 {
 	// get survey by user access
-	if ($_SESSION['user_type'] <= 2) {
+	if ($_SESSION['user_type'] < 2) {
 		$filter = '';
 	} else {
 		$survey_id = get_assigned_user_data($_SESSION['user_id'], $survey_type);
