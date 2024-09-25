@@ -137,7 +137,19 @@ function get_allowed_survey($survey_type = '', $confidential = 0, $active = "")
 	}
 	// survey assign to user 
 	$user_id = $_SESSION['user_id'];
-	if ($_SESSION['user_type'] > 2) {
+	// if ($_SESSION['user_type'] > 2) {
+	// 	$survey_id = get_assigned_user_data($user_id, $survey_type);
+	// 	$survey_id = implode(',', $survey_id);
+	// 	if ($survey_id) {
+	// 		$sFilter .= " and id IN ($survey_id)";
+	// 	} else {
+	// 		$sFilter .= " and id IN (0)";
+	// 	}
+	// }
+
+	if($_SESSION['user_type'] < 2){
+		$sFilter .= '';
+	} else {
 		$survey_id = get_assigned_user_data($user_id, $survey_type);
 		$survey_id = implode(',', $survey_id);
 		if ($survey_id) {

@@ -13,21 +13,68 @@ $sdate       = $_GET['sdate'];
 $surveyName = getSurvey()[$surveyid];
 
 if($survey_type=='location'){
-    $query = " and surveyid =".$surveyid." and locationid in (select id from locations where cstatus=1)";  
+    /* $query = " and surveyid =".$surveyid." and locationid in (select id from locations where cstatus=1)";  
+    $groupBy = 'locationid'; */
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $locationIds = array_map(function($items) {
+        return $items['id'];
+    }, $locationByUsers);
+    if (count($locationIds) > 0) {
+        $locationIds = implode(',', $locationIds);
+    } else {
+        $locationIds = -1;
+    }
+
+    $query = " and surveyid =".$surveyid." and locationid in ($locationIds)";
     $groupBy = 'locationid';
 }
 //survey group
 else if($survey_type=='group'){
-    $query = " and surveyid =".$surveyid." and groupid in (select id from `groups` where cstatus=1)";  
+    /* $query = " and surveyid =".$surveyid." and groupid in (select id from `groups` where cstatus=1)";  
+    $groupBy = 'group'; */
+
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $groupIds = array_map(function($items) {
+        return $items['id'];
+    }, $groupByUsers);
+    if (count($groupIds) > 0) {
+        $groupIds = implode(',', $groupIds);
+    } else {
+        $groupIds = -1;
+    }
+    $query = " and surveyid =".$surveyid." and groupid in ($groupIds)";
     $groupBy = 'group';
 }
 //survey department
 else if($survey_type=='department'){
-    $query = " and surveyid =".$surveyid." and departmentid in (select id from departments where cstatus=1)";
+    /* $query = " and surveyid =".$surveyid." and departmentid in (select id from departments where cstatus=1)";
+    $groupBy = 'departmentid'; */
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $departmentIds = array_map(function($items) {
+        return $items['id'];
+    }, $departmentByUsers);
+    if (count($departmentIds) > 0) {
+        $departmentIds = implode(',', $departmentIds);
+    } else {
+        $departmentIds = -1;
+    }
+    $query = " and surveyid =".$surveyid." and departmentid in ($departmentIds)";
     $groupBy = 'departmentid';
 }
 else if($survey_type=='role'){
-    $query = " and surveyid =".$surveyid." and roleid in (select id from roles where cstatus=1)";
+    /* $query = " and surveyid =".$surveyid." and roleid in (select id from roles where cstatus=1)";
+    $groupBy = 'roleid'; */
+
+    $roleByUsers       = get_filter_data_by_user('roles');
+    $roleIds = array_map(function($items) {
+        return $items['id'];
+    }, $roleByUsers);
+    if (count($roleIds) > 0) {
+        $roleIds = implode(',', $roleIds);
+    } else {
+        $roleIds = -1;
+    }
+    $query = " and surveyid =".$surveyid." and roleid in ($roleIds)";
     $groupBy = 'roleid';
 }
 if(!empty( $fdate) and !empty( $sdate)){

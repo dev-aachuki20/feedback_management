@@ -7,28 +7,81 @@ $allSurvey = getSurvey();
 $querys = 'SELECT * FROM answers where id!=0 ';
 $groupBy = '';
 if ($_POST['data_type'] == 'location') {
-    $query = " and surveyid =" . $_POST['survey'] . " and locationid in (select id from locations where cstatus=1)";
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $locationIds = array_map(function($items) {
+        return $items['id'];
+    }, $locationByUsers);
+    if (count($locationIds) > 0) {
+        $locationIds = implode(',', $locationIds);
+    } else {
+        $locationIds = -1;
+    }
+
+    // $query = " and surveyid =" . $_POST['survey'] . " and locationid in (select id from locations where cstatus=1)";
+    $query = " and surveyid =" . $_POST['survey'] . " and locationid in ($locationIds)";
     $groupBy = 'locationid';
 } else if ($_POST['data_type'] == 'group') {
-    $query = " and surveyid =" . $_POST['survey'] . " and groupid in (select id from `groups` where cstatus=1)";
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $groupIds = array_map(function($items) {
+        return $items['id'];
+    }, $groupByUsers);
+    if (count($groupIds) > 0) {
+        $groupIds = implode(',', $groupIds);
+    } else {
+        $groupIds = -1;
+    }
+    // $query = " and surveyid =" . $_POST['survey'] . " and groupid in (select id from `groups` where cstatus=1)";
+    $query = " and surveyid =" . $_POST['survey'] . " and groupid in ($groupIds)";
     $groupBy = 'group';
 } else if ($_POST['data_type'] == 'department') {
-    $query = " and surveyid =" . $_POST['survey'] . " and departmentid in (select id from departments where cstatus=1)";
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $departmentIds = array_map(function($items) {
+        return $items['id'];
+    }, $departmentByUsers);
+    if (count($departmentIds) > 0) {
+        $departmentIds = implode(',', $departmentIds);
+    } else {
+        $departmentIds = -1;
+    }
+    // $query = " and surveyid =" . $_POST['survey'] . " and departmentid in (select id from departments where cstatus=1)";
+    $query = " and surveyid =" . $_POST['survey'] . " and departmentid in ($departmentIds)";
     $groupBy = 'departmentid';
 } else if ($_POST['data_type'] == 'role') {
-    $query = " and surveyid =" . $_POST['survey'] . " and roleid in (select id from departments where cstatus=1)";
+    $roleByUsers       = get_filter_data_by_user('roles');
+    $roleIds = array_map(function($items) {
+        return $items['id'];
+    }, $roleByUsers);
+    if (count($roleIds) > 0) {
+        $roleIds = implode(',', $roleIds);
+    } else {
+        $roleIds = -1;
+    }
+    // $query = " and surveyid =" . $_POST['survey'] . " and roleid in (select id from departments where cstatus=1)";
+    $query = " and surveyid =" . $_POST['survey'] . " and roleid in ($roleIds)";
     $groupBy = 'roleid';
 } else {
-    $survey_allow = get_allowed_survey($_POST['survey_type'],'',1);
-    $survey_allow_id = implode(',', array_keys($survey_allow));
-    $filterdata = '';
-    if ($survey_allow_id) {
-        $filterdata = " and id IN($survey_allow_id)";
-    } else {
-        // if no survey is allowed
-        $filterdata = " and id IN(0)";
+    // $survey_allow = get_allowed_survey($_POST['survey_type'],'',1);
+    // $survey_allow_id = implode(',', array_keys($survey_allow));
+    // $filterdata = '';
+    // if ($survey_allow_id) {
+    //     $filterdata = " and id IN($survey_allow_id)";
+    // } else {
+    //     // if no survey is allowed
+    //     $filterdata = " and id IN(0)";
+    // } 
+    // $query = " and surveyid IN (select id from surveys where cstatus=1 $filterdata)";
+    
+   
+    $surveyByUsers     = get_survey_data_by_user($_POST['survey_type'], 1);
+    $surveyIds = array_map(function($items) {
+        return $items['id'];
+    }, $surveyByUsers);
+    if (count($surveyIds) > 0) {
+        $surveyIds = implode(',', $surveyIds);
+    }else{
+        $surveyIds = 0;
     }
-    $query = " and surveyid IN (select id from surveys where cstatus=1 $filterdata)";
+    $query = " and surveyid IN ($surveyIds)";
     $groupBy = 'surveyid';
 }
 
@@ -44,7 +97,7 @@ if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
-record_set("get_entry", $querys . $query . " GROUP by cby");
+record_set("get_entry", $querys . $query . " GROUP by cby",2);
 if ($totalRows_get_entry) {
     $survey_data = array();
     $to_bo_contacted = 0;

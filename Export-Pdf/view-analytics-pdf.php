@@ -11,16 +11,61 @@ $surveyid   = $_POST['survey'];
 $querys = 'SELECT * FROM answers where id!=0 and surveyid = ' . $surveyid;
 $groupBy = '';
 if ($_POST['survey_type'] == 'location') {
-    $query = " and locationid in (select id from locations where cstatus=1)";
+    /* $query = " and locationid in (select id from locations where cstatus=1)";
+    $groupBy = 'locationid'; */
+    $locationByUsers   = get_filter_data_by_user('locations');
+    $locationIds = array_map(function($items) {
+        return $items['id'];
+    }, $locationByUsers);
+    if (count($locationIds) > 0) {
+        $locationIds = implode(',', $locationIds);
+    } else {
+        $locationIds = -1;
+    }
+    $query = " and locationid in ($locationIds)";
     $groupBy = 'locationid';
 } else if ($_POST['survey_type'] == 'group') {
-    $query = " and groupid in (select id from `groups` where cstatus=1)";
+    /* $query = " and groupid in (select id from `groups` where cstatus=1)";
+    $groupBy = 'group'; */
+    $groupByUsers      = get_filter_data_by_user('groups');
+    $groupIds = array_map(function($items) {
+        return $items['id'];
+    }, $groupByUsers);
+    if (count($groupIds) > 0) {
+        $groupIds = implode(',', $groupIds);
+    } else {
+        $groupIds = -1;
+    }
+    $query = " and groupid in ($groupIds)";
     $groupBy = 'group';
 } else if ($_POST['survey_type'] == 'department') {
-    $query = " and departmentid in (select id from departments where cstatus=1)";
+    /* $query = " and departmentid in (select id from departments where cstatus=1)";
+    $groupBy = 'departmentid'; */
+    $departmentByUsers = get_filter_data_by_user('departments');
+    $departmentIds = array_map(function($items) {
+        return $items['id'];
+    }, $departmentByUsers);
+    if (count($departmentIds) > 0) {
+        $departmentIds = implode(',', $departmentIds);
+    } else {
+        $departmentIds = -1;
+    }
+
+    $query = " and departmentid in ($departmentIds)";
     $groupBy = 'departmentid';
 } else if ($_POST['survey_type'] == 'role') {
-    $query = " and roleid in (select id from roles where cstatus=1)";
+    /* $query = " and roleid in (select id from roles where cstatus=1)";
+    $groupBy = 'roleid'; */
+    $roleByUsers       = get_filter_data_by_user('roles');
+    $roleIds = array_map(function($items) {
+        return $items['id'];
+    }, $roleByUsers);
+    if (count($roleIds) > 0) {
+        $roleIds = implode(',', $roleIds);
+    } else {
+        $roleIds = -1;
+    }
+    $query = " and roleid in ($roleIds)";
     $groupBy = 'roleid';
 }
 
