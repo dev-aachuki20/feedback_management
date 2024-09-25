@@ -97,7 +97,7 @@ if (!empty($_POST['fdate']) and !empty($_POST['sdate'])) {
 record_set("total_survey", "SELECT COUNT(DISTINCT(cby)) as totalCount FROM answers WHERE id!=0  $query");
 $row_total_survey = mysqli_fetch_assoc($total_survey);
 $total_survey = $row_total_survey['totalCount'];
-record_set("get_entry", $querys . $query . " GROUP by cby",2);
+record_set("get_entry", $querys . $query . " GROUP by cby");
 if ($totalRows_get_entry) {
     $survey_data = array();
     $to_bo_contacted = 0;
