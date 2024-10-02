@@ -304,7 +304,7 @@ if(isset($_POST['submit'])){
 
 		'last_name'=>$_POST['last_name'],
 
-		'phone_number'=>$_POST['phone_number'],
+		'phone_number'=>$_POST['phone_number'] ?? null,
 
 		'to_be_contact_mail'=>$_POST['to_be_contact_mail']
 
@@ -2285,13 +2285,13 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 											<div class="col-md-6">
 
-												<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail" required> 
+												<input type="email" class="form-control" id="to_be_contact_mail" placeholder="Your email" name="to_be_contact_mail"> 
 
 											</div>
 
 											<div class="col-md-6">
 
-												<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number" required>
+												<input type="number" class="form-control" id="phone" name="phone_number" placeholder="Your phone number">
 
 											</div>
 
@@ -2615,24 +2615,40 @@ $(document).ready(function () {
 
 	});
 
+	$("#surveyForm #to_be_contact_mail, #surveyForm #phone").on("keyup change", function(e) {
+		$('.validate-error').remove();	
+		$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('error').addClass('valid');
+		var emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
+		var phoneFilled = $("#surveyForm #phone").val().trim() !== "";
+		if(!emailField && !phoneFilled){
+			$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('valid').addClass('error');
 
+			$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #phone');
+			$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #to_be_contact_mail');
+			return false;
+		}
+	})
 
 	$('.finalSubmit').click(function(){
+		var emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
+		var phoneFilled = $("#surveyForm #phone").val().trim() !== "";
 
+		// $('.error').remove();
+		$('.validate-error').remove();
 		$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
 
         if($("#surveyForm").valid()){
-
         	var active = $('.wizard .nav-tabs li.active');
-
 	        active.next().removeClass('disabled');
-
 	        nextTab(active);
-
         }else{
+			if(!emailField && !phoneFilled){
+				$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('valid').addClass('error');
 
+				$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #phone');
+				$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #to_be_contact_mail');
+			}
         	return false;
-
         }
 
 	});
