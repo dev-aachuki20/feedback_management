@@ -2615,7 +2615,7 @@ $(document).ready(function () {
 
 	});
 
-	$("#surveyForm #to_be_contact_mail, #surveyForm #phone").on("keyup change", function(e) {
+	$("#surveyForm #to_be_contact_mail, #surveyForm #phone").on("keyup", function(e) {
 		$('.validate-error').remove();	
 		$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('error').addClass('valid');
 		var emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
@@ -2625,19 +2625,18 @@ $(document).ready(function () {
 
 			$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #phone');
 			$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #to_be_contact_mail');
-			return false;
 		}
-	})
+	});
 
 	$('.finalSubmit').click(function(){
+
+		$('.validate-error').remove();
 		var emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
 		var phoneFilled = $("#surveyForm #phone").val().trim() !== "";
 
-		// $('.error').remove();
-		$('.validate-error').remove();
 		$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
-
-        if($("#surveyForm").valid()){
+		// console.log($("#surveyForm").valid() && (emailField || phoneFilled));
+        if($("#surveyForm").valid() && (emailField || phoneFilled)){
         	var active = $('.wizard .nav-tabs li.active');
 	        active.next().removeClass('disabled');
 	        nextTab(active);
