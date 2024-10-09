@@ -2426,174 +2426,60 @@ while($row_get_questions = mysqli_fetch_assoc($get_questions)){
 
 
 <script type="text/javascript">
-
-
-
 // ------------step-wizard-------------
 
-
-
 $(document).ready(function () {
-
-
-
 	$("#to_be_contact_mail_div").hide();
-
-
-
-	
-
-
-
 	$('body').on('click', '.smily_icon', function () {
-
-
-
-
-
-
-
 		$(this).closest("tr").find("td").css("background-color", "#FFF");
-
-
-
 		$(this).closest("td").css("background-color", "#FFF");
-
-
-
-
-
-
-
 		$(this).closest("tr").find("td").removeClass("active");
-
-
-
 		$(this).closest("td").addClass('active');
-
-
-
-
-
-
-
 	});
 
-
-
-
-
-
-
+	var toBeContactFlag = false; 
 	$('input[type=radio][name=to_be_contact]').change(function() {
-
-
-
 	    if (this.value == '1') {
-
-
-
+			toBeContactFlag = true;
 			$('#to_be_contact-error').remove();
-
-
-
 	        $("#to_be_contact_mail_div").show();
-
-
-
 	        $("#accept_privacy").attr("required", "required");
-
-
-
 	    } else {
-
-
-
+			toBeContactFlag = false;
 			$('#to_be_contact-error').remove();
-
-
-
 	        $("#to_be_contact_mail_div").hide();
-
-
-
 	        $("#accept_privacy").removeAttr("required");
-
-
-
 	    }
-
-
-
 	});
-
-
-
-
-
-
 
     $('.nav-tabs > li a[title]').tooltip();   
-
-
-
     //Wizard
-
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-
         var target = $(e.target);   
-
         if (target.parent().hasClass('disabled')) {
-
             return false;
-
         }
-
     });
-
-
 
     $(".next-step,.submit-survey-btn, .tab-next").click(function (e) {
-
 		// $("#surveyForm").validate({
-
 		// 	errorPlacement: function(error, element) {
-
 		// 		console.log(element,'element');
-
 		// 	// Identify the target div
-
 		// 	var targetDiv = element.find(".question-div");
-
-
-
 		// 	// Append the error message after the target div
-
 		// 	error.insertAfter(targetDiv);
-
 		// 	}
-
 		// });
-
     	$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
-
         if($("#surveyForm").valid()){
-
         	var active = $('.wizard .nav-tabs li.active');
-
 	        active.next().removeClass('disabled');
-
 	        nextTab(active);
-
         }else{
-
         	return false;
-
         }
-
     });
-
-
 
     $(".prev-step,.tab-prev").click(function (e) {
 
@@ -2604,8 +2490,6 @@ $(document).ready(function () {
 
 
     });
-
-
 
 	$('.next-step, .prev-step').click(function(){
 
@@ -2629,27 +2513,28 @@ $(document).ready(function () {
 	});
 
 	$('.finalSubmit').click(function(){
-
 		$('.validate-error').remove();
-		var emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
-		var phoneFilled = $("#surveyForm #phone").val().trim() !== "";
+
+		let emailField = $('#surveyForm #to_be_contact_mail').val().trim() !== "";
+		let phoneFilled = $("#surveyForm #phone").val().trim() !== "";
 
 		$("#surveyForm").validate().settings.ignore = ":disabled,:hidden";
-		// console.log($("#surveyForm").valid() && (emailField || phoneFilled));
-        if($("#surveyForm").valid() && (emailField || phoneFilled)){
-        	var active = $('.wizard .nav-tabs li.active');
-	        active.next().removeClass('disabled');
-	        nextTab(active);
-        }else{
-			if(!emailField && !phoneFilled){
-				$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('valid').addClass('error');
+		
+		if($("#surveyForm").valid()){
+			if(toBeContactFlag && !emailField && !phoneFilled){
+					$('#surveyForm #to_be_contact_mail, #surveyForm #phone').removeClass('valid').addClass('error');
 
-				$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #phone');
-				$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #to_be_contact_mail');
+					$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #phone');
+					$('<span class="validate-error error">Please fill in at least one of the fields: email or phone.</span>').insertAfter('#surveyForm #to_be_contact_mail');
+				return false;
+			}else{
+				var active = $('.wizard .nav-tabs li.active');
+				active.next().removeClass('disabled');
+				nextTab(active);
 			}
-        	return false;
-        }
-
+		}else{
+			return false;
+		}
 	});
 
 
@@ -2662,19 +2547,11 @@ $(document).ready(function () {
 
 });
 
-
-
-
-
-
-
 function nextTab(elem) {
 
     $(elem).next().find('a[data-toggle="tab"]').click();
 
 }
-
-
 
 function prevTab(elem) {
 
@@ -2686,55 +2563,17 @@ function prevTab(elem) {
 
 }
 
-
-
-
-
-
-
-
-
-
-
 $('.nav-tabs').on('click', 'li', function() {
-
-
-
     $('.nav-tabs li.active').removeClass('active');
 
-
-
     $(this).addClass('active');
-
-
-
 });	
 
-
-
-
-
-
-
 <?php
-
-
-
 if($row_get_survey['isSchoolAllowed'] == 1){
-
-
-
 ?>
 
-
-
 // $(function() {
-
-
-
-
-
-
 
 // 	var langId = 0;
 
