@@ -257,7 +257,7 @@ if (isset($filterData['groupid']) && !empty($filterData['groupid'])) {
 
 if (isset($filterData['fdate']) && isset($filterData['sdate']) && !empty($filterData['fdate']) && !empty($filterData['sdate'])) {
 
-    $where .= " and cdate between '" . date('Y-m-d', strtotime($filterData['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filterData['sdate']))) . "'";
+    $where .= " and ans.cdate between '" . date('Y-m-d', strtotime($filterData['fdate'])) . "' and '" . date('Y-m-d', strtotime("+1 day", strtotime($filterData['sdate']))) . "'";
 
 }
 
